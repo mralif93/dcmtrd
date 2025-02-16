@@ -42,7 +42,7 @@ class IssuerController extends Controller
         $validated = $request->validate([
             'issuer_short_name' => 'required|string|max:50|unique:issuers',
             'issuer_name' => 'required|string|max:100',
-            'registration_number' => 'required|numeric|unique:issuers',
+            'registration_number' => 'required|unique:issuers',
             'debenture' => 'nullable|string|max:100',
             'trustee_fee_amount_1' => 'nullable|numeric',
             'trustee_fee_amount_2' => 'nullable|numeric',
@@ -84,7 +84,7 @@ class IssuerController extends Controller
         $validated = $request->validate([
             'issuer_short_name' => 'required|string|max:50|unique:issuers,issuer_short_name,' . $issuer->id,
             'issuer_name' => 'required|string|max:100',
-            'registration_number' => 'required|numeric|unique:issuers,registration_number,' . $issuer->id,
+            'registration_number' => 'required|unique:issuers,registration_number,' . $issuer->id,
             'debenture' => 'nullable|string|max:100',
             'trustee_fee_amount_1' => 'nullable|numeric',
             'trustee_fee_amount_2' => 'nullable|numeric',

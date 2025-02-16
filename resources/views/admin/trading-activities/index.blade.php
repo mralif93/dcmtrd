@@ -61,8 +61,8 @@
                             @forelse($activities as $activity)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4">
-                                        <div class="font-medium text-indigo-600">{{ $activity->bondInfo->isin_code }}</div>
-                                        <div class="text-sm text-gray-500">{{ $activity->bondInfo->stock_code }}</div>
+                                        <div class="font-medium text-indigo-600">{{ $activity->bond->isin_code }}</div>
+                                        <div class="text-sm text-gray-500">{{ $activity->bond->stock_code }}</div>
                                     </td>
                                     
                                     <td class="px-6 py-4">

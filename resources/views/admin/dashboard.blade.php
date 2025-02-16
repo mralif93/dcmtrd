@@ -35,15 +35,6 @@
                     color="bg-blue-100"
                 />
 
-                <!-- Bond Info -->
-                <x-dashboard-card
-                    title="Bond Info"
-                    icon="document-chart-bar"
-                    :count="$bondInfoCount"
-                    :href="route('bond-info.index')"
-                    color="bg-blue-100"
-                />
-
                 <!-- Rating Movements -->
                 <x-dashboard-card
                     title="Rating Movements"

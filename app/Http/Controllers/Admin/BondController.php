@@ -5,180 +5,185 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Bond;
 use App\Models\Issuer;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class BondController extends Controller
 {
-    /**
-     * Display a listing of the resource with search.
-     */
     public function index(Request $request)
     {
-        try {
-            $searchTerm = $request->input('search');
-            
-            $bonds = Bond::with('issuer')
-                ->when($searchTerm, function ($query) use ($searchTerm) {
-                    return $query->where(function ($q) use ($searchTerm) {
-                        $q->where('bond_sukuk_name', 'LIKE', "%{$searchTerm}%")
-                          ->orWhere('rating', 'LIKE', "%{$searchTerm}%")
-                          ->orWhere('facility_code', 'LIKE', "%{$searchTerm}%");
-                    });
-                })
-                ->latest()
-                ->paginate(config('app.pagination_per_page', 10));
+        $searchTerm = $request->input('search');
+        
+        $bonds = Bond::with('issuer')
+            ->when($searchTerm, function ($query) use ($searchTerm) {
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('bond_sukuk_name', 'like', "%$searchTerm%")
+                      ->orWhere('isin_code', 'like', "%$searchTerm%")
+                      ->orWhere('stock_code', 'like', "%$searchTerm%")
+                      ->orWhereHas('issuer', function ($q) use ($searchTerm) {
+                          $q->where('issuer_name', 'like', "%$searchTerm%");
+                      });
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
 
-            return view('admin.bonds.index', compact('bonds', 'searchTerm'));
-
-        } catch (\Exception $e) {
-            Log::error('Bond index error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Error loading bonds');
-        }
+        return view('admin.bonds.index', compact('bonds', 'searchTerm'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        try {
-            $issuers = Cache::remember('issuers_list', 3600, function () {
-                return Issuer::orderBy('issuer_name')->get();
-            });
-
-            return view('admin.bonds.create', compact('issuers'));
-
-        } catch (\Exception $e) {
-            Log::error('Bond create form error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Error loading form');
-        }
+        $issuers = Issuer::orderBy('issuer_name')->get();
+        return view('admin.bonds.create', compact('issuers'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        $validated = $this->validateBond($request);
+        
         try {
-            $validated = $request->validate([
-                'issuer_id' => 'required|exists:issuers,id',
-                'bond_sukuk_name' => 'required|string|max:100|unique:bonds',
-                'sub_name' => 'nullable|string|max:100',
-                'rating' => 'required|string|in:AAA,AA+,AA,AA-,A+,A,A-,BBB+,BBB,BBB-,BB+,BB,BB-,B+,B,B-,CCC,CC,C,D',
-                'category' => 'required|string|max:50',
-                'last_traded_date' => 'required|date_format:Y-m-d',
-                'last_traded_yield' => 'required|numeric|between:0,99.99',
-                'last_traded_price' => 'required|numeric|min:0',
-                'last_traded_amount' => 'required|numeric|min:0',
-                'o_s_amount' => 'required|numeric|min:0',
-                'residual_tenure' => 'required|integer|min:0|max:100',
-                'facility_code' => 'required|string|max:50',
-                'status' => 'required|in:active,inactive,matured',
-                'approval_date_time' => 'nullable|date',
-            ]);
+            DB::beginTransaction();
+            
+            $bond = Bond::create($validated);
+            $bond->updateOutstandingAmount();
+            
+            DB::commit();
 
-            Bond::create([
-                ...$validated,
-                'last_traded_date' => Carbon::parse($validated['last_traded_date']),
-                'approval_date_time' => $validated['approval_date_time'] 
-                    ? Carbon::parse($validated['approval_date_time'])
-                    : now(),
-            ]);
-
-            return redirect()->route('bonds.index')
+            return redirect()->route('bonds.show', $bond)
                 ->with('success', 'Bond created successfully');
-
+                
         } catch (\Exception $e) {
-            Log::error('Bond store error: ' . $e->getMessage());
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Error creating bond: ' . $e->getMessage());
+            DB::rollBack();
+            return back()->withInput()->with('error', 'Error creating bond: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Bond $bond)
     {
-        // Load relationships normally
-        $bond->load(['issuer', 'bondInfo']);
+        $bond->load([
+            'issuer',
+            'ratingMovements',
+            'paymentSchedules',
+            'tradingActivities' => fn($q) => $q->latest()->limit(10),
+            'redemption.callSchedules',
+            'redemption.lockoutPeriods',
+            'charts'
+        ]);
+
         return view('admin.bonds.show', compact('bond'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Bond $bond)
     {
-        $issuers = Issuer::all();
+        $issuers = Issuer::orderBy('issuer_name')->get();
         return view('admin.bonds.edit', compact('bond', 'issuers'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Bond $bond)
     {
+        $validated = $this->validateBond($request, $bond);
+        
         try {
-            $validated = $request->validate([
-                'issuer_id' => 'required|exists:issuers,id',
-                'bond_sukuk_name' => 'required|string|max:100|unique:bonds,bond_sukuk_name,'.$bond->id,
-                'sub_name' => 'nullable|string|max:100',
-                'rating' => 'required|string|in:AAA,AA+,AA,AA-,A+,A,A-,BBB+,BBB,BBB-,BB+,BB,BB-,B+,B,B-,CCC,CC,C,D',
-                'category' => 'required|string|max:50',
-                'last_traded_date' => 'required|date_format:Y-m-d',
-                'last_traded_yield' => 'required|numeric|between:0,99.99',
-                'last_traded_price' => 'required|numeric|min:0',
-                'last_traded_amount' => 'required|numeric|min:0',
-                'o_s_amount' => 'required|numeric|min:0',
-                'residual_tenure' => 'required|integer|min:0|max:100',
-                'facility_code' => 'required|string|max:50',
-                'status' => 'required|in:active,inactive,matured',
-                'approval_date_time' => 'nullable|date',
-            ]);
-    
-            $updateData = [
-                ...$validated,
-                'last_traded_date' => Carbon::parse($validated['last_traded_date']),
-                'approval_date_time' => isset($validated['approval_date_time']) 
-                    ? Carbon::parse($validated['approval_date_time'])
-                    : $bond->approval_date_time
-            ];
-    
-            $bond->update($updateData);
-    
-            return redirect()->route('bonds.index')
+            DB::beginTransaction();
+            
+            $bond->update($validated);
+            $bond->updateOutstandingAmount();
+            $bond->markAsMatured();
+            
+            DB::commit();
+
+            return redirect()->route('bonds.show', $bond)
                 ->with('success', 'Bond updated successfully');
-    
+                
         } catch (\Exception $e) {
-            Log::error('Bond update error: ' . $e->getMessage());
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Update failed: ' . $e->getMessage());
+            DB::rollBack();
+            return back()->withInput()->with('error', 'Error updating bond: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Bond $bond)
     {
         try {
-            $this->authorize('delete', $bond);
+            DB::beginTransaction();
             
             $bond->delete();
             
+            DB::commit();
+
             return redirect()->route('bonds.index')
                 ->with('success', 'Bond deleted successfully');
-
+                
         } catch (\Exception $e) {
-            Log::error('Bond destroy error: ' . $e->getMessage());
-            return redirect()->back()
-                ->with('error', 'Error deleting bond: ' . $e->getMessage());
+            DB::rollBack();
+            return back()->with('error', 'Error deleting bond: ' . $e->getMessage());
         }
+    }
+
+    protected function validateBond(Request $request, Bond $bond = null)
+    {
+        return $request->validate([
+            'bond_sukuk_name' => 'required|string|max:255',
+            'sub_name' => 'nullable|string|max:255',
+            'issuer_id' => 'required|exists:issuers,id',
+            'isin_code' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('bonds')->ignore($bond?->id)
+            ],
+            'stock_code' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('bonds')->ignore($bond?->id)
+            ],
+            'instrument_code' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('bonds')->ignore($bond?->id)
+            ],
+            'sub_category' => 'nullable|string|max:255',
+            'issue_date' => 'required|date',
+            'maturity_date' => 'required|date|after:issue_date',
+            'coupon_rate' => 'required|numeric|between:0,100',
+            'coupon_type' => 'required|in:Fixed,Floating',
+            'coupon_frequency' => 'required|in:Monthly,Quarterly,Semi-Annual,Annual',
+            'day_count' => 'required|string|max:50',
+            'principal' => 'required|numeric|min:0',
+            'o_s_amount' => 'required|numeric|min:0',
+            'rating' => 'nullable|string|max:50',
+            'status' => 'required|in:Active,Matured,Called',
+            'amount_issued' => 'required|numeric|min:0',
+            'amount_outstanding' => 'required|numeric|min:0',
+            'lead_arranger' => 'nullable|string|max:255',
+            'facility_agent' => 'nullable|string|max:255',
+            'facility_code' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('bonds')->ignore($bond?->id)
+            ],
+            'last_traded_yield' => 'nullable|numeric|min:0',
+            'last_traded_price' => 'nullable|numeric|min:0',
+            'last_traded_amount' => 'nullable|numeric|min:0',
+            'last_traded_date' => 'nullable|date',
+            'prev_coupon_payment_date' => 'nullable|date',
+            'first_coupon_payment_date' => 'nullable|date',
+            'next_coupon_payment_date' => 'nullable|date',
+            'last_coupon_payment_date' => 'nullable|date',
+            'coupon_accrual' => 'nullable|numeric|min:0',
+            'approval_date_time' => 'nullable|date',
+            'ratings' => 'nullable|json',
+            'issue_tenure_years' => 'required|integer|min:1',
+            'residual_tenure_years' => 'required|integer|min:0',
+        ], [
+            'maturity_date.after' => 'Maturity date must be after issue date',
+            'coupon_rate.between' => 'Coupon rate must be between 0 and 100 percent',
+            'issuer_id.exists' => 'The selected issuer is invalid',
+            'unique' => 'This :attribute is already in use',
+        ]);
     }
 }

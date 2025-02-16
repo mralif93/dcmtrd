@@ -48,7 +48,7 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Short Name</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Issuer Name</th> <!-- Fixed typo: "Issue" → "Issuer" -->
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Issuer Name</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Registration No.</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
@@ -58,7 +58,7 @@
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4 font-medium text-gray-900">{{ $issuer->issuer_short_name }}</td>
                                     <td class="px-6 py-4">{{ $issuer->issuer_name }}</td>
-                                    <td class="px-6 py-4">{{ number_format($issuer->registration_number) }}</td> <!-- Format registration number -->
+                                    <td class="px-6 py-4">{{ $issuer->registration_number }}</td>
                                     <td class="px-6 py-4 space-x-2">
                                         <a href="{{ route('issuers.show', $issuer) }}" 
                                         class="px-3 py-1 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors">

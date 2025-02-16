@@ -13,24 +13,14 @@ return new class extends Migration
     {
         Schema::create('trading_activities', function (Blueprint $table) {
             $table->id();
-            
-            // Foreign Key
-            $table->foreignId('bond_info_id')->constrained('bond_infos')->onDelete('cascade');
-
-            // Trading Details
             $table->date('trade_date');
             $table->time('input_time');
-            $table->decimal('amount', 18, 2)->comment("In RM millions"); // e.g., 1.50 = RM 1.5 million
-            $table->decimal('price', 15, 4); // e.g., 102.5000
-            $table->decimal('yield', 5, 2)->comment("Percentage"); // e.g., 5.25%
+            $table->decimal('amount', 15, 2);
+            $table->decimal('price', 10, 2);
+            $table->decimal('yield', 5, 2);
             $table->date('value_date');
-            
+            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
-
-            // Indexes
-            $table->index(['bond_info_id', 'trade_date']);
-            $table->index('trade_date');
-            $table->index('value_date');
         });
     }
 

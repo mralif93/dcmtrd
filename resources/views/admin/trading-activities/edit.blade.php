@@ -38,12 +38,12 @@
                             <!-- Bond Selection -->
                             <div class="space-y-4">
                                 <div>
-                                    <label for="bond_info_id" class="block text-sm font-medium text-gray-700">Bond *</label>
-                                    <select name="bond_info_id" id="bond_info_id" required
+                                    <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
+                                    <select name="bond_id" id="bond_id" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">Select a Bond</option>
                                         @foreach($bonds as $bond)
-                                            <option value="{{ $bond->id }}" @selected($activity->bond_info_id == $bond->id)>
+                                            <option value="{{ $bond->id }}" @selected($activity->bond_id == $bond->id)>
                                                 {{ $bond->isin_code }} - {{ $bond->stock_code }}
                                             </option>
                                         @endforeach

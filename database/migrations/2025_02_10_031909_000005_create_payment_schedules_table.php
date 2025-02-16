@@ -10,25 +10,14 @@ return new class extends Migration
     {
         Schema::create('payment_schedules', function (Blueprint $table) {
             $table->id();
-            
-            // Foreign Key
-            $table->foreignId('bond_info_id')
-                ->constrained('bond_infos')
-                ->onDelete('cascade');
-
             $table->date('start_date');
             $table->date('end_date');
             $table->date('payment_date');
-            $table->date('ex_date')->index();
+            $table->date('ex_date');
             $table->decimal('coupon_rate', 5, 2);
-            $table->date('adjustment_date')->nullable()->index();
-
-            // Timestamps
+            $table->date('adjustment_date')->nullable();
+            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
-
-            $table->index(['bond_info_id', 'ex_date']);
-            $table->index(['start_date', 'end_date']);
-            $table->unique(['bond_info_id', 'start_date', 'end_date']);
         });
     }
 

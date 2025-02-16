@@ -2,19 +2,25 @@
 
 namespace Database\Seeders;
 
-use App\Models\FacilityInformation;
-use App\Models\RelatedDocument;
 use Illuminate\Database\Seeder;
+use App\Models\RelatedDocument;
+use App\Models\FacilityInformation;
 
 class RelatedDocumentSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run()
     {
-        // Create 3-5 documents per facility
-        foreach (FacilityInformation::all() as $facility) {
-            RelatedDocument::factory()
-                ->count(rand(3, 5))
-                ->create(['facility_id' => $facility->id]);
+        $facilities = FacilityInformation::all();
+
+        foreach ($facilities as $facility) {
+            RelatedDocument::factory()->count(2)->create([
+                'facility_id' => $facility->id,
+            ]);
         }
     }
 }

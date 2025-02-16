@@ -27,7 +27,7 @@
                                         <option value="">Select a Redemption</option>
                                         @foreach($redemptions as $redemption)
                                             <option value="{{ $redemption->id }}" @selected(old('redemption_id') == $redemption->id)>
-                                                {{ $redemption->bondInfo->isin_code }} - {{ $redemption->bondInfo->stock_code }}
+                                                {{ $redemption->bond->isin_code }} - {{ $redemption->bond->stock_code }}
                                             </option>
                                         @endforeach
                                     </select>

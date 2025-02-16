@@ -12,15 +12,14 @@ class RatingMovementFactory extends Factory
     public function definition()
     {
         return [
-            // Link to bond_infos table
-            'bond_info_id' => \App\Models\BondInfo::factory(), 
-            'rating_agency' => $this->faker->randomElement(["Moody's", "S&P", "Fitch"]),
-            'effective_date' => $this->faker->date(), // Y-m-d format
-            'rating_tenure' => $this->faker->numberBetween(6, 60),
-            'rating' => $this->faker->randomElement(['AAA', 'AA+', 'BBB-']),
-            'rating_action' => $this->faker->randomElement(['Upgrade', 'Downgrade']),
-            'rating_outlook' => $this->faker->randomElement(['Stable', 'Negative']),
-            'rating_watch' => $this->faker->randomElement(['Positive Watch', 'Negative Watch']),
+            'rating_agency' => $this->faker->randomElement(['Moody\'s', 'S&P', 'Fitch']),
+            'effective_date' => $this->faker->date(),
+            'rating_tenure' => $this->faker->word,
+            'rating' => $this->faker->randomElement(['AAA', 'AA+', 'AA', 'AA-']),
+            'rating_action' => $this->faker->randomElement(['Upgrade', 'Downgrade', 'Affirmed']),
+            'rating_outlook' => $this->faker->randomElement(['Stable', 'Positive', 'Negative']),
+            'rating_watch' => $this->faker->randomElement(['Developing', 'Positive', 'Negative']),
+            'bond_id' => \App\Models\Bond::factory(),
         ];
     }
 }

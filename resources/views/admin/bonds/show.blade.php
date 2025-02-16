@@ -23,146 +23,199 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <!-- Header Section -->
-                <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg font-medium text-gray-900">Core Bond Information</h3>
+                <!-- Core Information Section -->
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Core Information</h3>
                 </div>
-
-                <!-- Main Details -->
-                <div class="border-t border-gray-200">
-                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 px-4 py-5 sm:p-6">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Left Column -->
                         <div class="space-y-4">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Bond Name</dt>
                                 <dd class="mt-1 text-sm text-gray-900">{{ $bond->bond_sukuk_name }}</dd>
                             </div>
-                            
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Issuer</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $bond->issuer?->issuer_short_name ?? 'N/A' }} - 
-                                    {{ $bond->issuer?->issuer_name ?? 'N/A' }}
+                                    {{ $bond->issuer->issuer_short_name }} - {{ $bond->issuer->issuer_name }}
                                 </dd>
                             </div>
-                            
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Facility Code</dt>
-                                <dd class="mt-1 text-sm text-gray-900 font-mono">
-                                    {{ $bond->facility_code ?? 'N/A' }}
-                                </dd>
+                                <dt class="text-sm font-medium text-gray-500">ISIN Code</dt>
+                                <dd class="mt-1 text-sm text-gray-900 font-mono">{{ $bond->isin_code }}</dd>
                             </div>
                         </div>
 
                         <!-- Right Column -->
                         <div class="space-y-4">
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Rating</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                                        {{ $bond->rating }}
-                                    </span>
-                                </dd>
+                                <dt class="text-sm font-medium text-gray-500">Sub Name</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->sub_name ?? 'N/A' }}</dd>
                             </div>
-                            
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Status</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    <span class="px-2 py-1 rounded-full text-sm {{ 
-                                        $bond->status === 'active' ? 'bg-green-100 text-green-800' : 
-                                        ($bond->status === 'matured' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800') 
-                                    }}">
-                                        {{ ucfirst($bond->status) }}
-                                    </span>
-                                </dd>
+                                <dt class="text-sm font-medium text-gray-500">Stock Code</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->stock_code ?? 'N/A' }}</dd>
                             </div>
-                            
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Category</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->category }}</dd>
+                                <dt class="text-sm font-medium text-gray-500">Instrument Code</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->instrument_code }}</dd>
                             </div>
                         </div>
-                    </dl>
+                    </div>
                 </div>
 
-                <!-- Trading Information Section -->
+                <!-- Tenure & Dates Section -->
                 <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Trading Information</h3>
-                    <dl class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Last Traded Price</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                RM{{ number_format($bond->last_traded_price, 2) }}
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Last Traded Yield</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ number_format($bond->last_traded_yield, 2) }}%
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Trade Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ $bond->last_traded_date?->format('d/m/Y') ?? 'N/A' }}
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-
-                <!-- Financial Details Section -->
-                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Financial Details</h3>
-                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
-                        <div class="space-y-4">
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Outstanding Amount</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    RM{{ number_format($bond->o_s_amount, 2) }}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Residual Tenure</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $bond->residual_tenure }} years
-                                </dd>
-                            </div>
-                        </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Tenure & Dates</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-4">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Issue Date</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $bond->bondInfo?->issue_date?->format('d/m/Y') ?? 'N/A' }}
-                                </dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->issue_date->format('d/m/Y') }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Maturity Date</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $bond->bondInfo?->maturity_date?->format('d/m/Y') ?? 'N/A' }}
-                                </dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->maturity_date->format('d/m/Y') }}</dd>
                             </div>
                         </div>
-                    </dl>
+                        <div class="space-y-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Issue Tenure</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->issue_tenure_years }} years</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Residual Tenure</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->residual_tenure_years }} years</dd>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coupon Details Section -->
+                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Coupon Details</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Coupon Rate</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->coupon_rate }}%</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Coupon Type</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->coupon_type }}</dd>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Frequency</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->coupon_frequency }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Day Count</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->day_count }}</dd>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Information Section -->
+                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Financial Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Principal Amount</dt>
+                                <dd class="mt-1 text-sm text-gray-900">RM{{ number_format($bond->principal, 2) }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Amount Issued</dt>
+                                <dd class="mt-1 text-sm text-gray-900">RM{{ number_format($bond->amount_issued, 2) }}</dd>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Outstanding Amount</dt>
+                                <dd class="mt-1 text-sm text-gray-900">RM{{ number_format($bond->amount_outstanding, 2) }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">OS Amount</dt>
+                                <dd class="mt-1 text-sm text-gray-900">RM{{ number_format($bond->o_s_amount, 2) }}</dd>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rating Information Section -->
+                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Rating Information</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Current Rating</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                    {{ $bond->rating }}
+                                </span>
+                            </dd>
+                        </div>
+                        
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500 mb-2">Rating History</dt>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agency</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Effective Date</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Outlook</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @forelse($bond->ratingMovements as $movement)
+                                        <tr>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $movement->rating_agency }}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ $movement->effective_date->format('d/m/Y') }}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap">
+                                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                                    {{ $movement->rating }}
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $movement->rating_action }}</td>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $movement->rating_outlook }}</td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="5" class="px-4 py-4 text-center text-gray-500">No rating history available</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- System Information Section -->
                 <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
-                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ $bond->created_at->format('d/m/Y H:i') }}
-                            </dd>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->created_at->format('d/m/Y H:i') }}</dd>
+                            </div>
                         </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ $bond->updated_at->format('d/m/Y H:i') }}
-                            </dd>
+                        <div class="space-y-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Updated At</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->updated_at->format('d/m/Y H:i') }}</dd>
+                            </div>
                         </div>
-                    </dl>
+                    </div>
                 </div>
+
 
                 <!-- Action Buttons -->
                 <div class="border-t border-gray-200 px-4 py-4 sm:px-6">

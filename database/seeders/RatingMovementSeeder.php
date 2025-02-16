@@ -2,21 +2,25 @@
 
 namespace Database\Seeders;
 
-use App\Models\BondInfo;
-use App\Models\RatingMovement;
 use Illuminate\Database\Seeder;
+use App\Models\RatingMovement;
+use App\Models\Bond;
 
 class RatingMovementSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run()
     {
-        // Create 5-10 rating movements per bond_info
-        foreach (BondInfo::all() as $bondInfo) {
-            RatingMovement::factory()
-                ->count(rand(5, 10)) // Random number of ratings per bond
-                ->create([
-                    'bond_info_id' => $bondInfo->id, // Link to the current bond_info
-                ]);
+        $bonds = Bond::all();
+
+        foreach ($bonds as $bond) {
+            RatingMovement::factory()->count(3)->create([
+                'bond_id' => $bond->id,
+            ]);
         }
     }
 }

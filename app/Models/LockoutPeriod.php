@@ -4,16 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LockoutPeriod extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'redemption_id',
         'start_date',
-        'end_date'
+        'end_date',
+        'redemption_id',
     ];
 
     protected $casts = [
@@ -21,7 +20,7 @@ class LockoutPeriod extends Model
         'end_date' => 'date',
     ];
 
-    public function redemption(): BelongsTo
+    public function redemption()
     {
         return $this->belongsTo(Redemption::class);
     }

@@ -23,7 +23,7 @@
                             <input type="text" 
                                 name="search" 
                                 value="{{ $searchTerm }}"
-                                placeholder="Search by coupon rate or date..." 
+                                placeholder="Search by coupon rate, dates, or bond..." 
                                 class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
                             
                             <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
@@ -63,14 +63,17 @@
                             @forelse($paymentSchedules as $schedule)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4">
-                                        <div class="font-medium text-indigo-600">{{ $schedule->bondInfo->isin_code }}</div>
-                                        <div class="text-sm text-gray-500">{{ $schedule->bondInfo->stock_code }}</div>
+                                        <div class="font-medium text-indigo-600">{{ $schedule->bond->isin_code }}</div>
+                                        <div class="text-sm text-gray-500">{{ $schedule->bond->stock_code }}</div>
                                     </td>
                                     
                                     <td class="px-6 py-4">
                                         <div class="text-sm text-gray-900">
                                             {{ $schedule->start_date->format('d/m/Y') }} - 
                                             {{ $schedule->end_date->format('d/m/Y') }}
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            Payment: {{ $schedule->payment_date->format('d/m/Y') }}
                                         </div>
                                     </td>
                                     
@@ -82,7 +85,7 @@
                                     
                                     <td class="px-6 py-4">
                                         <div class="text-sm font-medium text-gray-900">
-                                            {{ $schedule->coupon_rate }}%
+                                            {{ number_format($schedule->coupon_rate, 2) }}%
                                         </div>
                                     </td>
                                     

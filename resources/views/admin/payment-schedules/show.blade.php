@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-6">
-                <p class="mt-2 text-lg text-gray-600">Detailed information about {{ $schedule->bondInfo->isin_code }} schedule</p>
+                <p class="mt-2 text-lg text-gray-600">Detailed information about {{ $schedule->bond->isin_code }} schedule</p>
             </div>
 
             @if(session('success'))
@@ -27,12 +27,11 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <!-- Header Section -->
-                <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg font-medium text-gray-900">Core Schedule Information</h3>
+                <!-- Core Information Section -->
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Core Information</h3>
                 </div>
 
-                <!-- Main Details -->
                 <div class="border-t border-gray-200">
                     <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 px-4 py-5 sm:p-6">
                         <!-- Left Column -->
@@ -40,14 +39,16 @@
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Bond Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $schedule->bondInfo->isin_code }} - {{ $schedule->bondInfo->stock_code }}
+                                    <div class="font-medium">{{ $schedule->bond->bond_sukuk_name }}</div>
+                                    <div class="text-indigo-600">{{ $schedule->bond->isin_code }}</div>
+                                    <div class="text-gray-500 mt-1">{{ $schedule->bond->stock_code }}</div>
                                 </dd>
                             </div>
                             
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Facility Code</dt>
                                 <dd class="mt-1 text-sm text-gray-900 font-mono">
-                                    {{ $schedule->bondInfo->facility_code ?? 'N/A' }}
+                                    {{ $schedule->bond->facility_code ?? 'N/A' }}
                                 </dd>
                             </div>
                         </div>
@@ -57,14 +58,14 @@
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Coupon Rate</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm">
-                                        {{ $schedule->coupon_rate }}%
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                        {{ number_format($schedule->coupon_rate, 2) }}%
                                     </span>
                                 </dd>
                             </div>
                             
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Status</dt>
+                                <dt class="text-sm font-medium text-gray-500">Schedule Status</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
                                     <span class="px-2 py-1 rounded-full text-sm {{ 
                                         $schedule->end_date->isFuture() ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' 
@@ -79,25 +80,31 @@
 
                 <!-- Schedule Dates Section -->
                 <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Schedule Dates</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Schedule Timeline</h3>
                     <dl class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Period</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->start_date->format('d/m/Y') }} - 
-                                {{ $schedule->end_date->format('d/m/Y') }}
+                                {{ $schedule->start_date->format('d M Y') }} - 
+                                {{ $schedule->end_date->format('d M Y') }}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Payment Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $schedule->payment_date->format('d M Y') }}
                             </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Ex-Date</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->ex_date->format('d/m/Y') }}
+                                {{ $schedule->ex_date->format('d M Y') }}
                             </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Adjustment Date</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->adjustment_date?->format('d/m/Y') ?? 'N/A' }}
+                                {{ $schedule->adjustment_date?->format('d M Y') ?? 'N/A' }}
                             </dd>
                         </div>
                     </dl>
@@ -110,13 +117,13 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->created_at->format('d/m/Y H:i') }}
+                                {{ $schedule->created_at->format('d M Y H:i') }}
                             </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->updated_at->format('d/m/Y H:i') }}
+                                {{ $schedule->updated_at->format('d M Y H:i') }}
                             </dd>
                         </div>
                     </dl>

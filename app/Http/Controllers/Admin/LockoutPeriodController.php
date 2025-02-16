@@ -16,12 +16,12 @@ class LockoutPeriodController extends Controller
     {
         $searchTerm = $request->input('search');
         
-        $lockoutPeriods = LockoutPeriod::with('redemption.bondInfo')
+        $lockoutPeriods = LockoutPeriod::with('redemption.bond')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where(function ($q) use ($searchTerm) {
                     $q->whereDate('start_date', $searchTerm)
                       ->orWhereDate('end_date', $searchTerm)
-                      ->orWhereHas('redemption.bondInfo', function ($q) use ($searchTerm) {
+                      ->orWhereHas('redemption.bond', function ($q) use ($searchTerm) {
                           $q->where('isin_code', 'like', "%{$searchTerm}%")
                             ->orWhere('stock_code', 'like', "%{$searchTerm}%");
                       });
@@ -43,7 +43,7 @@ class LockoutPeriodController extends Controller
     public function create()
     {
         return view('admin.lockout-periods.create', [
-            'redemptions' => Redemption::with('bondInfo')->get()
+            'redemptions' => Redemption::with('bond')->get()
         ]);
     }
 
@@ -82,7 +82,7 @@ class LockoutPeriodController extends Controller
     public function show(LockoutPeriod $lockoutPeriod)
     {
         return view('admin.lockout-periods.show', [
-            'period' => $lockoutPeriod->load('redemption.bondInfo')
+            'period' => $lockoutPeriod->load('redemption.bond')
         ]);
     }
 
@@ -94,7 +94,7 @@ class LockoutPeriodController extends Controller
     {
         return view('admin.lockout-periods.edit', [
             'period' => $lockoutPeriod,
-            'redemptions' => Redemption::with('bondInfo')->get()
+            'redemptions' => Redemption::with('bond')->get()
         ]);
     }
 

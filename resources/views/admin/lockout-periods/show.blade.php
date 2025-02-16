@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-6">
-                <p class="mt-2 text-lg text-gray-600">Detailed information about {{ $period->redemption->bondInfo->isin_code }} lockout period</p>
+                <p class="mt-2 text-lg text-gray-600">Detailed information about {{ $period->redemption->bond->isin_code }} lockout period</p>
             </div>
 
             @if(session('success'))
@@ -40,8 +40,8 @@
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Bond Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $period->redemption->bondInfo->isin_code }} - 
-                                    {{ $period->redemption->bondInfo->stock_code }}
+                                    {{ $period->redemption->bond->isin_code }} - 
+                                    {{ $period->redemption->bond->stock_code }}
                                 </dd>
                             </div>
                             

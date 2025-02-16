@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-6">
-                <p class="mt-2 text-lg text-gray-600">Detailed information about {{ $ratingMovement->bondInfo->isin_code }} rating</p>
+                <p class="mt-2 text-lg text-gray-600">Detailed information for {{ $ratingMovement->bond->isin_code }} rating movement</p>
             </div>
 
             @if(session('success'))
@@ -27,16 +27,23 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <!-- Header Section -->
-                <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg font-medium text-gray-900">Core Rating Information</h3>
+                <!-- Core Information Section -->
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Core Information</h3>
                 </div>
 
-                <!-- Main Details -->
                 <div class="border-t border-gray-200">
                     <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 px-4 py-5 sm:p-6">
                         <!-- Left Column -->
                         <div class="space-y-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Bond Information</dt>
+                                <dd class="mt-1 text-sm text-gray-900">
+                                    {{ $ratingMovement->bond->bond_sukuk_name }}<br>
+                                    <span class="font-mono">{{ $ratingMovement->bond->isin_code }}</span>
+                                </dd>
+                            </div>
+                            
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Rating Agency</dt>
                                 <dd class="mt-1 text-sm text-gray-900">{{ $ratingMovement->rating_agency }}</dd>
@@ -45,14 +52,7 @@
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Effective Date</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $ratingMovement->effective_date->format('d/m/Y') }}
-                                </dd>
-                            </div>
-                            
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Associated Bond</dt>
-                                <dd class="mt-1 text-sm text-gray-900 font-mono">
-                                    {{ $ratingMovement->bondInfo->isin_code }}
+                                    {{ $ratingMovement->effective_date->format('d M Y') }}
                                 </dd>
                             </div>
                         </div>
@@ -62,8 +62,7 @@
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Rating</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    <span class="px-2 py-1 rounded-full text-sm 
-                                        {{ str_starts_with($ratingMovement->rating, 'A') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    <span class="px-2 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
                                         {{ $ratingMovement->rating }}
                                     </span>
                                 </dd>
@@ -72,16 +71,18 @@
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Rating Action</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    <span class="px-2 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                                    <span class="px-2 py-1 rounded-full text-sm 
+                                        {{ $ratingMovement->rating_action === 'Upgrade' ? 'bg-green-100 text-green-800' : 
+                                        ($ratingMovement->rating_action === 'Downgrade' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800') }}">
                                         {{ $ratingMovement->rating_action }}
                                     </span>
                                 </dd>
                             </div>
                             
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Tenure</dt>
+                                <dt class="text-sm font-medium text-gray-500">Rating Tenure</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $ratingMovement->rating_tenure }} months
+                                    {{ $ratingMovement->rating_tenure }}
                                 </dd>
                             </div>
                         </div>
@@ -90,20 +91,20 @@
 
                 <!-- Status Information Section -->
                 <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Status Information</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Status Details</h3>
                     <dl class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Outlook</dt>
                             <dd class="mt-1 text-sm text-gray-900">
                                 <span class="px-2 py-1 rounded-full text-sm 
-                                    {{ $ratingMovement->rating_outlook === 'Positive' ? 'bg-blue-100 text-blue-800' : 
+                                    {{ $ratingMovement->rating_outlook === 'Positive' ? 'bg-green-100 text-green-800' : 
                                     ($ratingMovement->rating_outlook === 'Negative' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800') }}">
                                     {{ $ratingMovement->rating_outlook }}
                                 </span>
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Watch Status</dt>
+                            <dt class="text-sm font-medium text-gray-500">Rating Watch</dt>
                             <dd class="mt-1 text-sm text-gray-900">
                                 @if($ratingMovement->rating_watch)
                                 <span class="px-2 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
@@ -117,7 +118,7 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $ratingMovement->updated_at->format('d/m/Y H:i') }}
+                                {{ $ratingMovement->updated_at->format('d M Y H:i') }}
                             </dd>
                         </div>
                     </dl>
@@ -130,13 +131,13 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $ratingMovement->created_at->format('d/m/Y H:i') }}
+                                {{ $ratingMovement->created_at->format('d M Y H:i') }}
                             </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $ratingMovement->updated_at->format('d/m/Y H:i') }}
+                                {{ $ratingMovement->updated_at->format('d M Y H:i') }}
                             </dd>
                         </div>
                     </dl>

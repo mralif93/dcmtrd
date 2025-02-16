@@ -48,7 +48,7 @@
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Registration Number</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ number_format($issuer->registration_number) }}
+                                    {{ $issuer->registration_number }}
                                 </dd>
                             </div>
                         </div>

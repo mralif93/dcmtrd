@@ -4,20 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PaymentSchedule extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'bond_info_id',
         'start_date',
         'end_date',
         'payment_date',
         'ex_date',
         'coupon_rate',
-        'adjustment_date'
+        'adjustment_date',
+        'bond_id',
     ];
 
     protected $casts = [
@@ -28,8 +27,8 @@ class PaymentSchedule extends Model
         'adjustment_date' => 'date',
     ];
 
-    public function bondInfo(): BelongsTo
+    public function bond()
     {
-        return $this->belongsTo(BondInfo::class);
+        return $this->belongsTo(Bond::class);
     }
 }

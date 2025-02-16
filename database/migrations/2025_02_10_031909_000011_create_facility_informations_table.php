@@ -13,47 +13,27 @@ return new class extends Migration
     {
         Schema::create('facility_informations', function (Blueprint $table) {
             $table->id();
-
-            // Foreign Key
-            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
-            
-            // Facility Identification
-            $table->string('facility_code', 50)->unique();
-            $table->string('facility_number', 50)->unique();
-            $table->string('facility_name', 100);
-            
-            // Facility Details
-            $table->string('principal_type', 50); // Fixed typo: principle → principal
-            $table->string('islamic_concept', 100)->nullable();
+            $table->string('facility_code')->unique();
+            $table->string('facility_number');
+            $table->string('facility_name');
+            $table->string('principle_type');
+            $table->string('islamic_concept');
             $table->date('maturity_date');
-            $table->string('instrument', 50);
-            $table->enum('instrument_type', ['Sukuk', 'Conventional', 'Hybrid']);
-            
-            // Guarantee Information
-            $table->boolean('guaranteed')->default(false);
-            $table->decimal('total_guaranteed', 18, 2)->default(0);
-            
-            // Financial Indicators
-            $table->string('indicator', 50);
-            $table->string('facility_rating', 10);
-            $table->decimal('facility_amount', 18, 2);
-            $table->decimal('available_limit', 18, 2);
-            $table->decimal('outstanding_amount', 18, 2);
-            
-            // Agent Information
-            $table->string('trustee_security_agent', 100);
-            $table->string('lead_arranger', 100);
-            $table->string('facility_agent', 100);
-            
-            // Date Information
+            $table->string('instrument');
+            $table->string('instrument_type');
+            $table->boolean('guaranteed');
+            $table->decimal('total_guaranteed', 15, 2);
+            $table->string('indicator');
+            $table->string('facility_rating');
+            $table->decimal('facility_amount', 15, 2);
+            $table->decimal('available_limit', 15, 2);
+            $table->decimal('outstanding_amount', 15, 2);
+            $table->string('trustee_security_agent');
+            $table->string('lead_arranger');
+            $table->string('facility_agent');
             $table->date('availability_date');
-
-            // Timestamps
+            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->timestamps();
-            
-            // Indexes
-            $table->index('maturity_date');
-            $table->index('facility_rating');
         });
     }
 

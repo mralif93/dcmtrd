@@ -2,20 +2,25 @@
 
 namespace Database\Factories;
 
-use App\Models\CallSchedule;
+use App\Models\PaymentSchedule;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CallScheduleFactory extends Factory
+class PaymentScheduleFactory extends Factory
 {
-    protected $model = CallSchedule::class;
+    protected $model = PaymentSchedule::class;
 
     public function definition()
     {
+        $startDate = $this->faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d');
+        
         return [
+            'start_date' => $startDate,
+            'end_date' => Carbon::parse($startDate)->addMonths(6)->format('Y-m-d'),
+            'payment_date' => Carbon::parse($startDate)->addMonths(6)->addDays(5)->format('Y-m-d'),
+            'ex_date' => Carbon::parse($startDate)->addMonths(6)->subDays(2),
+            'coupon_rate' => $this->faker->randomFloat(2, 1, 10),
             'bond_id' => \App\Models\Bond::factory(),
-            'call_date' => $this->faker->dateTimeBetween('now', '+5 years'),
-            'call_price' => $this->faker->randomFloat(2, 95, 105),
-            'call_conditions' => $this->faker->text(200),
         ];
     }
 }

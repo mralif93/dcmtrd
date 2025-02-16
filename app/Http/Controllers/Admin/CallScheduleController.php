@@ -16,7 +16,7 @@ class CallScheduleController extends Controller
     {
         $searchTerm = $request->input('search');
         
-        $callSchedules = CallSchedule::with('redemption.bondInfo')
+        $callSchedules = CallSchedule::with('redemption.bond')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where(function ($q) use ($searchTerm) {
                     $q->whereDate('start_date', $searchTerm)
@@ -39,7 +39,7 @@ class CallScheduleController extends Controller
     public function create()
     {
         return view('admin.call-schedules.create', [
-            'redemptions' => Redemption::with('bondInfo')->get()
+            'redemptions' => Redemption::with('bond')->get()
         ]);
     }
 
@@ -79,7 +79,7 @@ class CallScheduleController extends Controller
     public function show(CallSchedule $callSchedule)
     {
         return view('admin.call-schedules.show', [
-            'schedule' => $callSchedule->load('redemption.bondInfo')
+            'schedule' => $callSchedule->load('redemption.bond')
         ]);
     }
 
@@ -90,7 +90,7 @@ class CallScheduleController extends Controller
     {
         return view('admin.call-schedules.edit', [
             'schedule' => $callSchedule,
-            'redemptions' => Redemption::with('bondInfo')->get()
+            'redemptions' => Redemption::with('bond')->get()
         ]);
     }
 

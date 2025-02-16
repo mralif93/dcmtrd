@@ -92,9 +92,6 @@ class FacilityInformationController extends Controller
                 'issuer' => function($query) {
                     $query->with('bonds');
                 },
-                'documents' => function($query) {
-                    $query->latest();
-                }
             ])
         ]);
     }

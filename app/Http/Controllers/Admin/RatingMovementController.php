@@ -5,32 +5,35 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RatingMovement;
-use App\Models\BondInfo;
+use App\Models\Bond;
+use Illuminate\Support\Carbon;
 
 class RatingMovementController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource with search/filter.
      */
     public function index(Request $request)
     {
         $searchTerm = $request->input('search');
         
-        $ratingMovements = RatingMovement::with('bondInfo')
+        $ratingMovements = RatingMovement::with('bond')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where(function ($q) use ($searchTerm) {
                     $q->where('rating_agency', 'like', "%{$searchTerm}%")
                       ->orWhere('rating', 'like', "%{$searchTerm}%")
-                      ->orWhere('rating_action', 'like', "%{$searchTerm}%");
+                      ->orWhere('rating_action', 'like', "%{$searchTerm}%")
+                      ->orWhereHas('bond', function($q) use ($searchTerm) {
+                          $q->where('bond_sukuk_name', 'like', "%{$searchTerm}%")
+                            ->orWhere('isin_code', 'like', "%{$searchTerm}%");
+                      });
                 });
             })
-            ->latest()
-            ->paginate(10);
+            ->latest('effective_date')
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('admin.rating-movements.index', [
-            'ratingMovements' => $ratingMovements,
-            'searchTerm' => $searchTerm
-        ]);
+        return view('admin.rating-movements.index', compact('ratingMovements', 'searchTerm'));
     }
 
     /**
@@ -38,8 +41,12 @@ class RatingMovementController extends Controller
      */
     public function create()
     {
-        $bondInfos = BondInfo::all();
-        return view('admin.rating-movements.create', compact('bondInfos'));
+        $bonds = Bond::active()->get();
+        $agencies = ['MARC', 'RAM', 'Fitch', 'Moody\'s'];
+        $ratingActions = ['Upgrade', 'Downgrade', 'Affirm', 'Place on Watch'];
+        $outlooks = ['Positive', 'Stable', 'Negative', 'Developing'];
+        
+        return view('admin.rating-movements.create', compact('bonds', 'agencies', 'ratingActions', 'outlooks'));
     }
 
     /**
@@ -48,15 +55,18 @@ class RatingMovementController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'bond_info_id' => 'required|exists:bond_infos,id',
+            'bond_id' => 'required|exists:bonds,id',
             'rating_agency' => 'required|string|max:100',
             'effective_date' => 'required|date',
-            'rating_tenure' => 'required|integer|min:1',
-            'rating' => 'required|string|max:10',
+            'rating_tenure' => 'required|string|max:50',
+            'rating' => 'required|string|max:50',
             'rating_action' => 'required|string|max:50',
             'rating_outlook' => 'required|string|max:50',
             'rating_watch' => 'nullable|string|max:50',
         ]);
+
+        // Format effective date consistently
+        $validated['effective_date'] = Carbon::parse($validated['effective_date'])->format('Y-m-d');
 
         RatingMovement::create($validated);
 
@@ -70,7 +80,7 @@ class RatingMovementController extends Controller
     public function show(RatingMovement $ratingMovement)
     {
         return view('admin.rating-movements.show', [
-            'ratingMovement' => $ratingMovement->load('bondInfo')
+            'ratingMovement' => $ratingMovement->load('bond.issuer')
         ]);
     }
 
@@ -79,9 +89,12 @@ class RatingMovementController extends Controller
      */
     public function edit(RatingMovement $ratingMovement)
     {
-        // dd($ratingMovement->toArray());
-        $bondInfos = BondInfo::all();
-        return view('admin.rating-movements.edit', compact('ratingMovement', 'bondInfos'));
+        $bonds = Bond::active()->get();
+        $agencies = ['MARC', 'RAM', 'Fitch', 'Moody\'s'];
+        $ratingActions = ['Upgrade', 'Downgrade', 'Affirm', 'Place on Watch'];
+        $outlooks = ['Positive', 'Stable', 'Negative', 'Developing'];
+        
+        return view('admin.rating-movements.edit', compact('ratingMovement', 'bonds', 'agencies', 'ratingActions', 'outlooks'));
     }
 
     /**
@@ -90,15 +103,17 @@ class RatingMovementController extends Controller
     public function update(Request $request, RatingMovement $ratingMovement)
     {
         $validated = $request->validate([
-            'bond_info_id' => 'required|exists:bond_infos,id',
+            'bond_id' => 'required|exists:bonds,id',
             'rating_agency' => 'required|string|max:100',
             'effective_date' => 'required|date',
-            'rating_tenure' => 'required|integer|min:1',
-            'rating' => 'required|string|max:10',
+            'rating_tenure' => 'required|string|max:50',
+            'rating' => 'required|string|max:50',
             'rating_action' => 'required|string|max:50',
             'rating_outlook' => 'required|string|max:50',
             'rating_watch' => 'nullable|string|max:50',
         ]);
+
+        $validated['effective_date'] = Carbon::parse($validated['effective_date'])->format('Y-m-d');
 
         $ratingMovement->update($validated);
 
@@ -106,15 +121,18 @@ class RatingMovementController extends Controller
             ->with('success', 'Rating movement updated successfully');
     }
 
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(RatingMovement $ratingMovement)
     {
-        $ratingMovement->delete();
-
-        return redirect()->route('rating-movements.index')
-            ->with('success', 'Rating movement deleted successfully');
+        try {
+            $ratingMovement->delete();
+            return redirect()->route('rating-movements.index')
+                ->with('success', 'Rating movement deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Error deleting rating movement: ' . $e->getMessage());
+        }
     }
 }

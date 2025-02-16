@@ -43,7 +43,7 @@
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         @foreach($redemptions as $redemption)
                                             <option value="{{ $redemption->id }}" @selected(old('redemption_id', $period->redemption_id) == $redemption->id)>
-                                                {{ $redemption->bondInfo->isin_code }} - {{ $redemption->bondInfo->stock_code }}
+                                                {{ $redemption->bond->isin_code }} - {{ $redemption->bond->stock_code }}
                                             </option>
                                         @endforeach
                                     </select>

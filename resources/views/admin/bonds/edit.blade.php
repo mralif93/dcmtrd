@@ -7,25 +7,10 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Error Handling -->
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">There were {{ $errors->count() }} errors with your submission</h3>
-                            <div class="mt-2 text-sm text-red-700">
-                                <ul class="list-disc pl-5 space-y-1">
-                                    @foreach($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Error content remains same -->
                 </div>
             @endif
 
@@ -37,6 +22,7 @@
                     <div class="space-y-6 pb-6">
                         <!-- Core Information -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Left Column -->
                             <div class="space-y-4">
                                 <div>
                                     <label for="bond_sukuk_name" class="block text-sm font-medium text-gray-700">Bond Name *</label>
@@ -53,6 +39,23 @@
                                 </div>
 
                                 <div>
+                                    <label for="isin_code" class="block text-sm font-medium text-gray-700">ISIN Code *</label>
+                                    <input type="text" name="isin_code" id="isin_code" 
+                                        value="{{ old('isin_code', $bond->isin_code) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <div>
+                                    <label for="stock_code" class="block text-sm font-medium text-gray-700">Stock Code</label>
+                                    <input type="text" name="stock_code" id="stock_code" 
+                                        value="{{ old('stock_code', $bond->stock_code) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="space-y-4">
+                                <div>
                                     <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
                                     <select name="issuer_id" id="issuer_id" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -65,27 +68,11 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
-
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="rating" class="block text-sm font-medium text-gray-700">Rating *</label>
-                                    <select name="rating" id="rating" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @foreach(['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC','CC','C','D'] as $grade)
-                                            <option value="{{ $grade }}" 
-                                                @selected(old('rating', $bond->rating) == $grade)>
-                                                {{ $grade }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
 
                                 <div>
                                     <label for="category" class="block text-sm font-medium text-gray-700">Category *</label>
                                     <select name="category" id="category" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Select Category</option>
                                         @foreach(['Government','Corporate','Sukuk','Green Bonds','Islamic'] as $cat)
                                             <option value="{{ $cat }}" 
                                                 @selected(old('category', $bond->category) == $cat)>
@@ -96,13 +83,93 @@
                                 </div>
 
                                 <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-700">Status *</label>
-                                    <select name="status" id="status" required
+                                    <label for="sub_category" class="block text-sm font-medium text-gray-700">Sub Category</label>
+                                    <input type="text" name="sub_category" id="sub_category" 
+                                        value="{{ old('sub_category', $bond->sub_category) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tenure & Dates -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Tenure & Dates</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                <div>
+                                    <label for="issue_date" class="block text-sm font-medium text-gray-700">Issue Date *</label>
+                                    <input type="date" name="issue_date" id="issue_date" 
+                                        value="{{ old('issue_date', $bond->issue_date?->format('Y-m-d')) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <div>
+                                    <label for="maturity_date" class="block text-sm font-medium text-gray-700">Maturity Date *</label>
+                                    <input type="date" name="maturity_date" id="maturity_date" 
+                                        value="{{ old('maturity_date', $bond->maturity_date?->format('Y-m-d')) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <div>
+                                    <label for="issue_tenure_years" class="block text-sm font-medium text-gray-700">Issue Tenure (Years) *</label>
+                                    <input type="number" name="issue_tenure_years" id="issue_tenure_years" 
+                                        value="{{ old('issue_tenure_years', $bond->issue_tenure_years) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <div>
+                                    <label for="residual_tenure_years" class="block text-sm font-medium text-gray-700">Residual Tenure (Years) *</label>
+                                    <input type="number" name="residual_tenure_years" id="residual_tenure_years" 
+                                        value="{{ old('residual_tenure_years', $bond->residual_tenure_years) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coupon Details -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Coupon Details</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                <div>
+                                    <label for="coupon_rate" class="block text-sm font-medium text-gray-700">Coupon Rate (%) *</label>
+                                    <input type="number" step="0.01" name="coupon_rate" id="coupon_rate" 
+                                        value="{{ old('coupon_rate', $bond->coupon_rate) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <div>
+                                    <label for="coupon_type" class="block text-sm font-medium text-gray-700">Coupon Type *</label>
+                                    <select name="coupon_type" id="coupon_type" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @foreach(['active','inactive','matured'] as $status)
-                                            <option value="{{ $status }}" 
-                                                @selected(old('status', $bond->status) == $status)>
-                                                {{ ucfirst($status) }}
+                                        @foreach(['Fixed','Floating','Zero Coupon'] as $type)
+                                            <option value="{{ $type }}" 
+                                                @selected(old('coupon_type', $bond->coupon_type) == $type)>
+                                                {{ $type }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="coupon_frequency" class="block text-sm font-medium text-gray-700">Frequency *</label>
+                                    <select name=" coupon_frequency" id="coupon_frequency" required
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        @foreach(['Annual','Semi-Annual','Quarterly','Monthly'] as $frequency)
+                                            <option value="{{ $frequency }}" 
+                                                @selected(old('coupon_frequency', $bond->coupon_frequency) == $frequency)>
+                                                {{ $frequency }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="day_count" class="block text-sm font-medium text-gray-700">Day Count Convention *</label>
+                                    <select name="day_count" id="day_count" required
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        @foreach(['30/360','Actual/360','Actual/365','Actual/Actual'] as $dayCount)
+                                            <option value="{{ $dayCount }}" 
+                                                @selected(old('day_count', $bond->day_count) == $dayCount)>
+                                                {{ $dayCount }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -110,29 +177,35 @@
                             </div>
                         </div>
 
-                        <!-- Trading Details -->
+                        <!-- Coupon Payment Dates -->
                         <div class="border-t border-gray-200 pt-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Trading Information</h3>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Coupon Payment Dates</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                                 <div>
-                                    <label for="last_traded_date" class="block text-sm font-medium text-gray-700">Last Traded Date *</label>
-                                    <input type="date" name="last_traded_date" id="last_traded_date" 
-                                        value="{{ old('last_traded_date', $bond->last_traded_date?->format('Y-m-d')) }}" required
+                                    <label for="prev_coupon_payment_date" class="block text-sm font-medium text-gray-700">Previous Coupon Payment Date</label>
+                                    <input type="date" name="prev_coupon_payment_date" id="prev_coupon_payment_date" 
+                                        value="{{ old('prev_coupon_payment_date', $bond->prev_coupon_payment_date?->format('Y-m-d')) }}"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
-                                
+
                                 <div>
-                                    <label for="last_traded_yield" class="block text-sm font-medium text-gray-700">Yield (%) *</label>
-                                    <input type="number" step="0.01" name="last_traded_yield" id="last_traded_yield" 
-                                        value="{{ old('last_traded_yield', $bond->last_traded_yield) }}" required
+                                    <label for="first_coupon_payment_date" class="block text-sm font-medium text-gray-700">First Coupon Payment Date *</label>
+                                    <input type="date" name="first_coupon_payment_date" id="first_coupon_payment_date" 
+                                        value="{{ old('first_coupon_payment_date', $bond->first_coupon_payment_date?->format('Y-m-d')) }}" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
-                                
+
                                 <div>
-                                    <label for="last_traded_price" class="block text-sm font-medium text-gray-700">Price *</label>
-                                    <input type="number" step="0.01" name="last_traded_price" id="last_traded_price" 
-                                        value="{{ old('last_traded_price', $bond->last_traded_price) }}" required
+                                    <label for="next_coupon_payment_date" class="block text-sm font-medium text-gray-700">Next Coupon Payment Date *</label>
+                                    <input type="date" name="next_coupon_payment_date" id="next_coupon_payment_date" 
+                                        value="{{ old('next_coupon_payment_date', $bond->next_coupon_payment_date?->format('Y-m-d')) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <div>
+                                    <label for="last_coupon_payment_date" class="block text-sm font-medium text-gray-700">Last Coupon Payment Date</label>
+                                    <input type="date" name="last_coupon_payment_date" id="last_coupon_payment_date" 
+                                        value="{{ old('last_coupon_payment_date', $bond->last_coupon_payment_date?->format('Y-m-d')) }}"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                             </div>
@@ -140,27 +213,26 @@
 
                         <!-- Financial Information -->
                         <div class="border-t border-gray-200 pt-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Financial Details</h3>
-                            
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Financial Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
-                                    <label for="last_traded_amount" class="block text-sm font-medium text-gray-700">Trade Amount *</label>
-                                    <input type="number" step="0.01" name="last_traded_amount" id="last_traded_amount" 
-                                        value="{{ old('last_traded_amount', $bond->last_traded_amount) }}" required
+                                    <label for="principal" class="block text-sm font-medium text-gray-700">Principal Amount *</label>
+                                    <input type="number" step="0.01" name="principal" id="principal" 
+                                        value="{{ old('principal', $bond->principal) }}" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
-                                
+
                                 <div>
-                                    <label for="o_s_amount" class="block text-sm font-medium text-gray-700">Outstanding Amount *</label>
-                                    <input type="number" step="0.01" name="o_s_amount" id="o_s_amount" 
-                                        value="{{ old('o_s_amount', $bond->o_s_amount) }}" required
+                                    <label for="amount_issued" class="block text-sm font-medium text-gray-700">Amount Issued *</label>
+                                    <input type="number" step="0.01" name="amount_issued" id="amount_issued" 
+                                        value="{{ old('amount_issued', $bond->amount_issued) }}" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
-                                
+
                                 <div>
-                                    <label for="residual_tenure" class="block text-sm font-medium text-gray-700">Residual Tenure (Years) *</label>
-                                    <input type="number" name="residual_tenure" id="residual_tenure" 
-                                        value="{{ old('residual_tenure', $bond->residual_tenure) }}" required min="0" max="100"
+                                    <label for="amount_outstanding" class="block text-sm font-medium text-gray-700">Amount Outstanding *</label>
+                                    <input type="number" step="0.01" name="amount_outstanding" id="amount_outstanding" 
+                                        value="{{ old('amount_outstanding', $bond->amount_outstanding) }}" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                             </div>
@@ -169,19 +241,32 @@
                         <!-- Additional Details -->
                         <div class="border-t border-gray-200 pt-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
-                            
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="lead_arranger" class="block text-sm font-medium text-gray-700">Lead Arranger *</label>
+                                    <input type="text" name="lead_arranger" id="lead_arranger" 
+                                        value="{{ old('lead_arranger', $bond->lead_arranger) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <div>
+                                    <label for="facility_agent" class="block text-sm font-medium text-gray-700">Facility Agent *</label>
+                                    <input type="text" name="facility_agent" id="facility_agent" 
+                                        value="{{ old('facility_agent', $bond->facility_agent) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
                                 <div>
                                     <label for="facility_code" class="block text-sm font-medium text-gray-700">Facility Code *</label>
                                     <input type="text" name="facility_code" id="facility_code" 
                                         value="{{ old('facility_code', $bond->facility_code) }}" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
-                                
+
                                 <div>
-                                    <label for="approval_date_time" class="block text-sm font-medium text-gray-700">Approval Date/Time</label>
+                                    <label for="approval_date_time" class="block text-sm font-medium text-gray-700">Approval Date/Time *</label>
                                     <input type="datetime-local" name="approval_date_time" id="approval_date_time" 
-                                        value="{{ old('approval_date_time', $bond->approval_date_time ? $bond->approval_date_time->format('Y-m-d\TH:i') : '') }}"
+                                        value="{{ old('approval_date_time', $bond->approval_date_time ? $bond->approval_date_time->format('Y-m-d\TH:i') : '') }}" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                             </div>

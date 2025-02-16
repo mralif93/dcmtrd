@@ -7,6 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
                     <div class="flex">
@@ -38,13 +39,13 @@
                             <!-- Bond Selection -->
                             <div class="space-y-4">
                                 <div>
-                                    <label for="bond_info_id" class="block text-sm font-medium text-gray-700">Bond *</label>
-                                    <select name="bond_info_id" id="bond_info_id" required
+                                    <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
+                                    <select name="bond_id" id="bond_id" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">Select a Bond</option>
-                                        @foreach($bondInfos as $bond)
-                                            <option value="{{ $bond->id }}" @selected(old('bond_info_id') == $bond->id)>
-                                                {{ $bond->isin_code }} - {{ $bond->stock_code }}
+                                        @foreach($bonds as $bond)
+                                            <option value="{{ $bond->id }}" @selected(old('bond_id') == $bond->id)>
+                                                {{ $bond->isin_code }} - {{ $bond->bond_sukuk_name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -57,7 +58,8 @@
                                     <label for="coupon_rate" class="block text-sm font-medium text-gray-700">Coupon Rate (%) *</label>
                                     <input type="number" step="0.01" name="coupon_rate" id="coupon_rate" 
                                         value="{{ old('coupon_rate') }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                        placeholder="e.g., 5.25">
                                 </div>
                             </div>
                         </div>
@@ -80,6 +82,13 @@
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                                 
+                                <div>
+                                    <label for="payment_date" class="block text-sm font-medium text-gray-700">Payment Date *</label>
+                                    <input type="date" name="payment_date" id="payment_date" 
+                                        value="{{ old('payment_date') }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
                                 <div>
                                     <label for="ex_date" class="block text-sm font-medium text-gray-700">Ex-Date *</label>
                                     <input type="date" name="ex_date" id="ex_date" 

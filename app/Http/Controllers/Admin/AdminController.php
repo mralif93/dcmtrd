@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Issuer;
 use App\Models\Bond;
-use App\Models\BondInfo;
 use App\Models\RatingMovement;
 use App\Models\PaymentSchedule;
 use App\Models\Redemption;
@@ -26,7 +25,6 @@ class AdminController extends Controller
             'usersCount' => User::count(),
             'issuersCount' => Issuer::count(),
             'bondsCount' => Bond::count(),
-            'bondInfoCount' => BondInfo::count(),
             'ratingMovementsCount' => RatingMovement::count(),
             'paymentSchedulesCount' => PaymentSchedule::count(),
             'redemptionsCount' => Redemption::count(),

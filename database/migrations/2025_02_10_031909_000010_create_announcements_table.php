@@ -13,26 +13,16 @@ return new class extends Migration
     {
         Schema::create('announcements', function (Blueprint $table) {
             $table->id();
-            
-            // Foreign Key
-            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
-
-            // Announcement Details
             $table->date('announcement_date');
-            $table->string('category', 50); // e.g., "Dividend", "Financial Results"
-            $table->string('sub_category', 50)->nullable(); // e.g., "Interim", "Final"
-            $table->string('title', 200);
+            $table->string('category');
+            $table->string('sub_category');
+            $table->string('title');
             $table->text('description');
-            $table->longText('content'); // For large text content
-            $table->string('attachment')->nullable(); // File path/URL
-            $table->string('source', 100); // e.g., "Bursa Malaysia", "Company Website"
-
-            // Timestamps
+            $table->text('content');
+            $table->string('attachment')->nullable();
+            $table->string('source');
+            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->timestamps();
-
-            // Indexes
-            $table->index('announcement_date');
-            $table->index(['category', 'sub_category']); // Composite index
         });
     }
 

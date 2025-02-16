@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BondInfo;
+use App\Models\Bond;
 use App\Models\PaymentSchedule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class PaymentScheduleController extends Controller
@@ -17,13 +18,17 @@ class PaymentScheduleController extends Controller
     {
         $searchTerm = $request->input('search');
         
-        $paymentSchedules = PaymentSchedule::with('bondInfo')
+        $paymentSchedules = PaymentSchedule::with('bond')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where(function ($q) use ($searchTerm) {
                     $q->where('coupon_rate', 'like', "%{$searchTerm}%")
-                      ->orWhereDate('ex_date', $searchTerm)
+                      ->orWhereDate('payment_date', $searchTerm)
                       ->orWhereDate('start_date', $searchTerm)
-                      ->orWhereDate('end_date', $searchTerm);
+                      ->orWhereDate('end_date', $searchTerm)
+                      ->orWhereHas('bond', function($q) use ($searchTerm) {
+                          $q->where('isin_code', 'like', "%{$searchTerm}%")
+                            ->orWhere('bond_sukuk_name', 'like', "%{$searchTerm}%");
+                      });
                 });
             })
             ->latest()
@@ -37,8 +42,8 @@ class PaymentScheduleController extends Controller
      */
     public function create()
     {
-        $bondInfos = BondInfo::all();
-        return view('admin.payment-schedules.create', compact('bondInfos'));
+        $bonds = Bond::active()->get();
+        return view('admin.payment-schedules.create', compact('bonds'));
     }
 
     /**
@@ -47,28 +52,33 @@ class PaymentScheduleController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'bond_info_id' => 'required|exists:bond_infos,id',
+            'bond_id' => 'required|exists:bonds,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
-            'ex_date' => 'required|date',
-            'coupon_rate' => 'required|numeric|between:0,99.99',
-            'adjustment_date' => 'nullable|date',
+            'payment_date' => 'required|date|after:end_date',
+            'ex_date' => 'required|date|before:payment_date',
+            'coupon_rate' => 'required|decimal:2|between:0,99.99',
+            'adjustment_date' => 'nullable|date|after:start_date',
         ]);
 
-        // Check for existing schedule
-        $exists = PaymentSchedule::where('bond_info_id', $validated['bond_info_id'])
-            ->where('start_date', $validated['start_date'])
-            ->where('end_date', $validated['end_date'])
+        $exists = PaymentSchedule::where('bond_id', $validated['bond_id'])
+            ->where(function ($query) use ($validated) {
+                $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
+                      ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
+            })
             ->exists();
 
         if ($exists) {
-            return back()->withErrors(['schedule' => 'This payment schedule already exists'])->withInput();
+            return back()->withErrors(['schedule' => 'A schedule already exists within this date range'])->withInput();
         }
 
-        PaymentSchedule::create($validated);
-
-        return redirect()->route('payment-schedules.index')
-            ->with('success', 'Payment schedule created successfully');
+        try {
+            PaymentSchedule::create($validated);
+            return redirect()->route('payment-schedules.index')
+                ->with('success', 'Payment schedule created successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Failed to create schedule: ' . $e->getMessage()])->withInput();
+        }
     }
 
     /**
@@ -77,7 +87,7 @@ class PaymentScheduleController extends Controller
     public function show(PaymentSchedule $paymentSchedule)
     {
         return view('admin.payment-schedules.show', [
-            'schedule' => $paymentSchedule->load('bondInfo')
+            'schedule' => $paymentSchedule->load('bond.issuer')
         ]);
     }
 
@@ -86,8 +96,8 @@ class PaymentScheduleController extends Controller
      */
     public function edit(PaymentSchedule $paymentSchedule)
     {
-        $bondInfos = BondInfo::all();
-        return view('admin.payment-schedules.edit', compact('paymentSchedule', 'bondInfos'));
+        $bonds = Bond::active()->get();
+        return view('admin.payment-schedules.edit', compact('paymentSchedule', 'bonds'));
     }
 
     /**
@@ -96,29 +106,34 @@ class PaymentScheduleController extends Controller
     public function update(Request $request, PaymentSchedule $paymentSchedule)
     {
         $validated = $request->validate([
-            'bond_info_id' => 'required|exists:bond_infos,id',
+            'bond_id' => 'required|exists:bonds,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
-            'ex_date' => 'required|date',
-            'coupon_rate' => 'required|numeric|between:0,99.99',
-            'adjustment_date' => 'nullable|date',
+            'payment_date' => 'required|date|after:end_date',
+            'ex_date' => 'required|date|before:payment_date',
+            'coupon_rate' => 'required|decimal:2|between:0,99.99',
+            'adjustment_date' => 'nullable|date|after:start_date',
         ]);
 
-        // Check for existing schedule excluding current
-        $exists = PaymentSchedule::where('bond_info_id', $validated['bond_info_id'])
-            ->where('start_date', $validated['start_date'])
-            ->where('end_date', $validated['end_date'])
+        $exists = PaymentSchedule::where('bond_id', $validated['bond_id'])
             ->where('id', '!=', $paymentSchedule->id)
+            ->where(function ($query) use ($validated) {
+                $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
+                      ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
+            })
             ->exists();
 
         if ($exists) {
-            return back()->withErrors(['schedule' => 'This payment schedule already exists'])->withInput();
+            return back()->withErrors(['schedule' => 'A schedule already exists within this date range'])->withInput();
         }
 
-        $paymentSchedule->update($validated);
-
-        return redirect()->route('payment-schedules.index')
-            ->with('success', 'Payment schedule updated successfully');
+        try {
+            $paymentSchedule->update($validated);
+            return redirect()->route('payment-schedules.index')
+                ->with('success', 'Payment schedule updated successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()])->withInput();
+        }
     }
 
     /**
@@ -126,9 +141,13 @@ class PaymentScheduleController extends Controller
      */
     public function destroy(PaymentSchedule $paymentSchedule)
     {
-        $paymentSchedule->delete();
-
-        return redirect()->route('payment-schedules.index')
-            ->with('success', 'Payment schedule deleted successfully');
+        try {
+            $paymentSchedule->delete();
+            return redirect()->route('payment-schedules.index')
+                ->with('success', 'Payment schedule deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Deletion failed: ' . $e->getMessage());
+        }
     }
 }

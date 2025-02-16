@@ -4,17 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CallSchedule extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'redemption_id',
         'start_date',
         'end_date',
-        'call_price'
+        'call_price',
+        'redemption_id',
     ];
 
     protected $casts = [
@@ -22,7 +21,7 @@ class CallSchedule extends Model
         'end_date' => 'date',
     ];
 
-    public function redemption(): BelongsTo
+    public function redemption()
     {
         return $this->belongsTo(Redemption::class);
     }

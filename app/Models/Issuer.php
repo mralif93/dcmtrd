@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Issuer extends Model
 {
@@ -22,36 +21,31 @@ class Issuer extends Model
         'reminder_1',
         'reminder_2',
         'reminder_3',
-        'trust_deed_date'
+        'trust_deed_date',
     ];
 
     protected $casts = [
-        'trust_deed_date' => 'date',
-        'reminder_1' => 'date',
-        'reminder_2' => 'date',
-        'reminder_3' => 'date',
-        'trustee_fee_amount_1' => 'decimal:2',
-        'trustee_fee_amount_2' => 'decimal:2',
+        'reminder_1' => 'datetime',
+        'reminder_2' => 'datetime',
+        'reminder_3' => 'datetime',
+        'trust_deed_date' => 'datetime',
     ];
 
-    /**
-     * Relationships
-     */
-    public function bonds(): HasMany
+    public function bonds()
     {
         return $this->hasMany(Bond::class);
     }
 
-    public function announcements(): HasMany
+    public function announcements()
     {
         return $this->hasMany(Announcement::class);
     }
 
-    public function facilities(): HasMany
+    public function facilities()
     {
         return $this->hasMany(FacilityInformation::class);
     }
-    
+
     public function documents()
     {
         return $this->hasManyThrough(

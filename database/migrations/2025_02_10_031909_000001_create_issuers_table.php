@@ -13,24 +13,18 @@ return new class extends Migration
     {
         Schema::create('issuers', function (Blueprint $table) {
             $table->id();
-
-            // Required Fields
-            $table->string('issuer_short_name', 50)->unique();
-            $table->string('issuer_name', 100);
-            $table->bigInteger('registration_number')->unsigned()->unique();
-            $table->date('trust_deed_date');
-            
-            // Optional Fields
-            $table->string('debenture', 100)->nullable();
-            $table->decimal('trustee_fee_amount_1', 15, 2)->nullable();
-            $table->decimal('trustee_fee_amount_2', 15, 2)->nullable();
-            $table->string('trustee_role_1', 100)->nullable();
-            $table->string('trustee_role_2', 100)->nullable();
+            $table->string('issuer_short_name');
+            $table->string('issuer_name');
+            $table->string('registration_number')->unique();
+            $table->string('debenture');
+            $table->decimal('trustee_fee_amount_1', 15, 2);
+            $table->decimal('trustee_fee_amount_2', 15, 2);
+            $table->string('trustee_role_1');
+            $table->string('trustee_role_2');
             $table->date('reminder_1')->nullable();
             $table->date('reminder_2')->nullable();
             $table->date('reminder_3')->nullable();
-            
-            // Timestamps
+            $table->date('trust_deed_date');
             $table->timestamps();
         });
     }

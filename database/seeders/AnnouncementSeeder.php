@@ -2,18 +2,25 @@
 
 namespace Database\Seeders;
 
-use App\Models\Issuer;
-use App\Models\Announcement;
 use Illuminate\Database\Seeder;
+use App\Models\Announcement;
+use App\Models\Issuer;
 
 class AnnouncementSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run()
     {
-        Issuer::all()->each(function ($issuer) {
-            Announcement::factory()
-                ->count(rand(5, 10))
-                ->create(['issuer_id' => $issuer->id]);
-        });
+        $issuers = Issuer::all();
+
+        foreach ($issuers as $issuer) {
+            Announcement::factory()->count(3)->create([
+                'issuer_id' => $issuer->id,
+            ]);
+        }
     }
 }

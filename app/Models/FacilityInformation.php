@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FacilityInformation extends Model
 {
@@ -14,11 +12,10 @@ class FacilityInformation extends Model
     protected $table = 'facility_informations';
 
     protected $fillable = [
-        'issuer_id',
         'facility_code',
         'facility_number',
         'facility_name',
-        'principal_type',
+        'principle_type',
         'islamic_concept',
         'maturity_date',
         'instrument',
@@ -33,7 +30,8 @@ class FacilityInformation extends Model
         'trustee_security_agent',
         'lead_arranger',
         'facility_agent',
-        'availability_date'
+        'availability_date',
+        'issuer_id',
     ];
 
     protected $casts = [
@@ -42,6 +40,7 @@ class FacilityInformation extends Model
         'guaranteed' => 'boolean',
     ];
 
+    // Relationships
     public function issuer(): BelongsTo
     {
         return $this->belongsTo(Issuer::class);
@@ -50,5 +49,27 @@ class FacilityInformation extends Model
     public function documents(): HasMany
     {
         return $this->hasMany(RelatedDocument::class, 'facility_id');
+    }
+
+    // Scopes
+    public function scopeWithDocuments(Builder $query): void
+    {
+        $query->whereHas('documents');
+    }
+
+    public function scopeActive(Builder $query): void
+    {
+        $query->whereDate('maturity_date', '>=', now());
+    }
+
+    // Accessors
+    public function getHasDocumentsAttribute(): bool
+    {
+        return $this->documents()->exists();
+    }
+
+    public function getDocumentsCountAttribute(): int
+    {
+        return $this->documents()->count();
     }
 }

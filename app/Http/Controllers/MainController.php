@@ -83,40 +83,40 @@ class MainController extends Controller
             : $emptyPaginator;
 
         // Rating Movements Pagination
-        $ratingMovements = $bond->bondInfo
-            ? $bond->bondInfo->ratingMovements()->paginate($perPage, ['*'], 'ratingMovementsPage')
+        $ratingMovements = $bond
+            ? $bond->ratingMovements()->paginate($perPage, ['*'], 'ratingMovementsPage')
             : $emptyPaginator;
 
         // Payment Schedules Pagination
-        $paymentSchedules = $bond->bondInfo
-            ? $bond->bondInfo->paymentSchedules()->paginate($perPage, ['*'], 'paymentSchedulesPage')
+        $paymentSchedules = $bond
+            ? $bond->paymentSchedules()->paginate($perPage, ['*'], 'paymentSchedulesPage')
             : $emptyPaginator;
 
         // Call Schedules Pagination
-        $callSchedules = $bond->bondInfo && $bond->bondInfo->redemptions
-            ? CallSchedule::whereIn('redemption_id', $bond->bondInfo->redemptions->pluck('id'))
+        $callSchedules = $bond && $bond->redemption
+            ? CallSchedule::whereIn('redemption_id', $bond->redemption->pluck('id'))
                 ->paginate($perPage, ['*'], 'callSchedulesPage')
             : $emptyPaginator;
 
         // Lockout Periods Pagination
-        $lockoutPeriods = $bond->bondInfo && $bond->bondInfo->redemptions
-            ? LockoutPeriod::whereIn('redemption_id', $bond->bondInfo->redemptions->pluck('id'))
+        $lockoutPeriods = $bond && $bond->redemption
+            ? LockoutPeriod::whereIn('redemption_id', $bond->redemption->pluck('id'))
                 ->paginate($perPage, ['*'], 'lockoutPeriodsPage')
             : $emptyPaginator;
 
         // Trading Activities Pagination
-        $tradingActivities = $bond->bondInfo
-            ? $bond->bondInfo->tradingActivities()
+        $tradingActivities = $bond->tradingActivities()
                 ->orderBy('trade_date', 'desc')
                 ->paginate($perPage, ['*'], 'tradingActivitiesPage')
-            : $emptyPaginator;
+            ?? $emptyPaginator;
 
+        // dd($tradingActivities->toArray());
         return view('main.bond', [
             'bond' => $bond,
             'documents' => $documents,
             'ratingMovements' => $ratingMovements,
             'paymentSchedules' => $paymentSchedules,
-            'redemptions' => $bond->bondInfo->redemptions ?? collect(),
+            'redemptions' => $bond->redemption ?? collect(),
             'tradingActivities' => $tradingActivities,
             'callSchedules' => $callSchedules,
             'lockoutPeriods' => $lockoutPeriods,

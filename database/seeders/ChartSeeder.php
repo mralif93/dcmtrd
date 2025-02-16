@@ -2,19 +2,25 @@
 
 namespace Database\Seeders;
 
-use App\Models\Bond;
-use App\Models\Chart;
 use Illuminate\Database\Seeder;
+use App\Models\Chart;
+use App\Models\Bond;
 
 class ChartSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run()
     {
-        // Create 2-3 charts per bond
-        foreach (Bond::all() as $bond) {
-            Chart::factory()
-                ->count(rand(2, 3))
-                ->create(['bond_id' => $bond->id]);
+        $bonds = Bond::all();
+
+        foreach ($bonds as $bond) {
+            Chart::factory()->count(2)->create([
+                'bond_id' => $bond->id,
+            ]);
         }
     }
 }

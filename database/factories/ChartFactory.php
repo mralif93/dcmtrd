@@ -11,18 +11,22 @@ class ChartFactory extends Factory
 
     public function definition()
     {
-        $periodFrom = $this->faker->dateTimeBetween('-1 year', 'now');
-        $periodTo = $this->faker->dateTimeBetween($periodFrom, '+1 year');
-
         return [
-            'bond_id' => \App\Models\Bond::factory(),
+            'availability_date' => $this->faker->date(),
+            'approval_date_time' => $this->faker->dateTime(),
             'chart_type' => $this->faker->randomElement(['line', 'bar', 'pie']),
-            'chart_data' => [
-                'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-                'values' => $this->faker->randomElements(range(100, 1000), 5),
-            ],
-            'period_from' => $periodFrom,
-            'period_to' => $periodTo,
+            'chart_data' => json_encode([
+                'labels' => ['Jan', 'Feb', 'Mar'],
+                'datasets' => [
+                    [
+                        'data' => [rand(1,100), rand(1,100), rand(1,100)],
+                        'label' => 'Sample Data'
+                    ]
+                ]
+            ]),
+            'period_from' => $this->faker->date(),
+            'period_to' => $this->faker->date(),
+            'bond_id' => \App\Models\Bond::factory(),
         ];
     }
 }

@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-6">
-                <p class="mt-2 text-lg text-gray-600">Updating movement for {{ $ratingMovement->bondInfo->isin_code }}</p>
+                <p class="mt-2 text-lg text-gray-600">Updating movement for {{ $ratingMovement->bond->isin_code }}</p>
             </div>
 
             @if($errors->any())
@@ -38,19 +38,18 @@
                     @csrf
                     @method('PUT')
 
-                    <!-- Form content same as create template but with old() values replaced with $ratingMovement->field -->
                     <div class="space-y-6">
                         <!-- Core Information -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-4">
                                 <div>
-                                    <label for="bond_info_id" class="block text-sm font-medium text-gray-700">Bond *</label>
-                                    <select name="bond_info_id" id="bond_info_id" required
+                                    <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
+                                    <select name="bond_id" id="bond_id" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">Select a Bond</option>
-                                        @foreach($bondInfos as $bond)
-                                            <option value="{{ $bond->id }}" @selected(old('bond_info_id', $ratingMovement->bond_info_id) == $bond->id)>
-                                                {{ $bond->isin_code }}
+                                        @foreach($bonds as $bond)
+                                            <option value="{{ $bond->id }}" @selected(old('bond_id', $ratingMovement->bond_id) == $bond->id)>
+                                                {{ $bond->isin_code }} - {{ $bond->bond_sukuk_name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -61,7 +60,7 @@
                                     <select name="rating_agency" id="rating_agency" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">Select Rating Agency</option>
-                                        @foreach(['Standard & Poor\'s', 'Moody\'s', 'Fitch Ratings'] as $agency)
+                                        @foreach($agencies as $agency)
                                             <option value="{{ $agency }}" @selected(old('rating_agency', $ratingMovement->rating_agency) == $agency)>
                                                 {{ $agency }}
                                             </option>
@@ -79,10 +78,11 @@
                                 </div>
 
                                 <div>
-                                    <label for="rating_tenure" class="block text-sm font-medium text-gray-700">Tenure (months) *</label>
-                                    <input type="number" name="rating_tenure" id="rating_tenure" 
-                                        value="{{ old('rating_tenure', $ratingMovement->rating_tenure) }}" required min="1"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <label for="rating_tenure" class="block text-sm font-medium text-gray-700">Rating Tenure *</label>
+                                    <input type="text" name="rating_tenure" id="rating_tenure" 
+                                        value="{{ old('rating_tenure', $ratingMovement->rating_tenure) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                        placeholder="e.g., 5 years">
                                 </div>
                             </div>
                         </div>
@@ -94,21 +94,17 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 <div>
                                     <label for="rating" class="block text-sm font-medium text-gray-700">Rating *</label>
-                                    <select name="rating" id="rating" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @foreach(['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC','CC','C','D'] as $grade)
-                                            <option value="{{ $grade }}" @selected(old('rating', $ratingMovement->rating) == $grade)>
-                                                {{ $grade }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <input type="text" name="rating" id="rating" 
+                                        value="{{ old('rating', $ratingMovement->rating) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                        placeholder="e.g., AA+">
                                 </div>
 
                                 <div>
                                     <label for="rating_action" class="block text-sm font-medium text-gray-700">Action *</label>
                                     <select name="rating_action" id="rating_action" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @foreach(['Upgrade', 'Downgrade', 'Affirmation', 'Withdrawal'] as $action)
+                                        @foreach($ratingActions as $action)
                                             <option value="{{ $action }}" @selected(old('rating_action', $ratingMovement->rating_action) == $action)>
                                                 {{ $action }}
                                             </option>
@@ -120,7 +116,7 @@
                                     <label for="rating_outlook" class="block text-sm font-medium text-gray-700">Outlook *</label>
                                     <select name="rating_outlook" id="rating_outlook" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @foreach(['Positive', 'Negative', 'Stable', 'Developing'] as $outlook)
+                                        @foreach($outlooks as $outlook)
                                             <option value="{{ $outlook }}" @selected(old('rating_outlook', $ratingMovement->rating_outlook) == $outlook)>
                                                 {{ $outlook }}
                                             </option>
@@ -133,11 +129,9 @@
                                     <select name="rating_watch" id="rating_watch"
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">None</option>
-                                        @foreach(['Positive', 'Negative', 'Evolving'] as $watch)
-                                            <option value="{{ $watch }}" @selected(old('rating_watch', $ratingMovement->rating_watch) == $watch)>
-                                                {{ $watch }}
-                                            </option>
-                                        @endforeach
+                                        <option value="Positive" @selected(old('rating_watch', $ratingMovement->rating_watch) == 'Positive')>Positive</option>
+                                        <option value="Negative" @selected(old('rating_watch', $ratingMovement->rating_watch) == 'Negative')>Negative</option>
+                                        <option value="Evolving" @selected(old('rating_watch', $ratingMovement->rating_watch) == 'Evolving')>Evolving</option>
                                     </select>
                                 </div>
                             </div>

@@ -13,20 +13,10 @@ return new class extends Migration
     {
         Schema::create('lockout_periods', function (Blueprint $table) {
             $table->id();
-
-            // Foreign Key
-            $table->foreignId('redemption_id')->constrained('redemptions')->onDelete('cascade');
-
-            // Date Range
             $table->date('start_date');
             $table->date('end_date');
-
-            // Timestamps
+            $table->foreignId('redemption_id')->constrained('redemptions')->onDelete('cascade');
             $table->timestamps();
-
-            // Indexes
-            $table->index('redemption_id');
-            $table->index(['start_date', 'end_date']);
         });
     }
 

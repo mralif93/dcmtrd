@@ -16,7 +16,6 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Admin\IssuerController;
 use App\Http\Controllers\Admin\BondController;
-use App\Http\Controllers\Admin\BondInfoController;
 use App\Http\Controllers\Admin\RatingMovementController;
 use App\Http\Controllers\Admin\PaymentScheduleController;
 use App\Http\Controllers\Admin\RedemptionController;
@@ -63,7 +62,6 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::resource('/admin/users', UserAdminController::class);
     Route::resource('/admin/issuers', IssuerController::class);
     Route::resource('/admin/bonds', BondController::class);
-    Route::resource('/admin/bond-info', BondInfoController::class);
     Route::resource('/admin/rating-movements', RatingMovementController::class);
     Route::resource('/admin/payment-schedules', PaymentScheduleController::class);
     Route::resource('/admin/redemptions', RedemptionController::class);

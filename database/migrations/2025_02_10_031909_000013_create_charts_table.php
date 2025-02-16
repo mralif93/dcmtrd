@@ -13,21 +13,14 @@ return new class extends Migration
     {
         Schema::create('charts', function (Blueprint $table) {
             $table->id();
-
-            // Foreign Key
-            $table->foreignId('bond_id')->constrained()->onDelete('cascade');
-
-            $table->string('chart_type', 50);
+            $table->date('availability_date');
+            $table->dateTime('approval_date_time');
+            $table->string('chart_type');
             $table->json('chart_data');
             $table->date('period_from');
             $table->date('period_to');
-
-            // Timestamp
+            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
-
-            // Indexes for common queries
-            $table->index('chart_type');
-            $table->index(['period_from', 'period_to']);
         });
     }
 

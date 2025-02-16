@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BondInfo;
+use App\Models\bond;
 use App\Models\TradingActivity;
 use Illuminate\Http\Request;
 
@@ -16,12 +16,12 @@ class TradingActivityController extends Controller
     {
         $searchTerm = $request->input('search');
         
-        $activities = TradingActivity::with('bondInfo')
+        $activities = TradingActivity::with('bond')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where(function ($q) use ($searchTerm) {
                     $q->whereDate('trade_date', $searchTerm)
                       ->orWhereDate('value_date', $searchTerm)
-                      ->orWhereHas('bondInfo', function ($q) use ($searchTerm) {
+                      ->orWhereHas('bond', function ($q) use ($searchTerm) {
                           $q->where('isin_code', 'like', "%{$searchTerm}%")
                             ->orWhere('stock_code', 'like', "%{$searchTerm}%");
                       });
@@ -42,7 +42,7 @@ class TradingActivityController extends Controller
     public function create()
     {
         return view('admin.trading-activities.create', [
-            'bonds' => BondInfo::all()
+            'bonds' => bond::all()
         ]);
     }
 
@@ -52,7 +52,7 @@ class TradingActivityController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'bond_info_id' => 'required|exists:bond_infos,id',
+            'bond_id' => 'required|exists:bond,id',
             'trade_date' => 'required|date',
             'input_time' => 'required|date_format:H:i',
             'amount' => 'required|numeric|min:0.01|max:999999999999.99',
@@ -74,7 +74,7 @@ class TradingActivityController extends Controller
     public function show(TradingActivity $tradingActivity)
     {
         return view('admin.trading-activities.show', [
-            'activity' => $tradingActivity->load('bondInfo')
+            'activity' => $tradingActivity->load('bond')
         ]);
     }
 
@@ -85,7 +85,7 @@ class TradingActivityController extends Controller
     {
         return view('admin.trading-activities.edit', [
             'activity' => $tradingActivity,
-            'bonds' => BondInfo::all()
+            'bonds' => Bond::all()
         ]);
     }
 
@@ -95,7 +95,7 @@ class TradingActivityController extends Controller
     public function update(Request $request, TradingActivity $tradingActivity)
     {
         $validated = $request->validate([
-            'bond_info_id' => 'required|exists:bond_infos,id',
+            'bond_id' => 'required|exists:bond,id',
             'trade_date' => 'required|date',
             'input_time' => 'required|date_format:H:i',
             'amount' => 'required|numeric|min:0.01|max:999999999999.99',

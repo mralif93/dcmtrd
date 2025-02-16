@@ -61,8 +61,8 @@
                             @forelse($callSchedules as $schedule)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4">
-                                        <div class="font-medium text-indigo-600">{{ $schedule->redemption->bondInfo->isin_code }}</div>
-                                        <div class="text-sm text-gray-500">{{ $schedule->redemption->bondInfo->stock_code }}</div>
+                                        <div class="font-medium text-indigo-600">{{ $schedule->redemption->bond->isin_code }}</div>
+                                        <div class="text-sm text-gray-500">{{ $schedule->redemption->bond->stock_code }}</div>
                                     </td>
                                     
                                     <td class="px-6 py-4">

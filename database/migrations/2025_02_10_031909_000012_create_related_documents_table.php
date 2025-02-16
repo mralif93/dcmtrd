@@ -13,21 +13,12 @@ return new class extends Migration
     {
         Schema::create('related_documents', function (Blueprint $table) {
             $table->id();
-
-            // Foreign Key
-            $table->foreignId('facility_id')->constrained('facility_informations')->onDelete('cascade');
-
-            $table->string('document_name', 200);
-            $table->string('document_type', 50); // Consider enum for fixed types (e.g., PDF, XLS)
+            $table->string('document_name');
+            $table->string('document_type');
             $table->date('upload_date');
-            $table->string('file_path', 500); // Increased length for file paths
-            
-            // Timestamp
+            $table->string('file_path');
+            $table->foreignId('facility_id')->constrained('facility_informations')->onDelete('cascade');
             $table->timestamps();
-            
-            // Indexes
-            $table->index('document_type');
-            $table->index('upload_date');
         });
     }
 

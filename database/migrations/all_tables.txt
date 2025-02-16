@@ -1,0 +1,181 @@
+Schema::create('issuers', function (Blueprint $table) {
+    $table->id();
+    $table->string('issuer_short_name');
+    $table->string('issuer_name');
+    $table->string('registration_number')->unique();
+    $table->string('debenture');
+    $table->decimal('trustee_fee_amount_1', 15, 2);
+    $table->decimal('trustee_fee_amount_2', 15, 2);
+    $table->string('trustee_role_1');
+    $table->string('trustee_role_2');
+    $table->date('reminder_1')->nullable();
+    $table->date('reminder_2')->nullable();
+    $table->date('reminder_3')->nullable();
+    $table->date('trust_deed_date');
+    $table->timestamps();
+});
+
+Schema::create('bonds', function (Blueprint $table) {
+    $table->id();
+    $table->string('bond_sukuk_name');
+    $table->string('sub_name');
+    $table->string('rating');
+    $table->string('category');
+    $table->decimal('o_s_amount', 15, 2);
+    $table->decimal('principal', 15, 2);
+    $table->string('isin_code');
+    $table->string('stock_code');
+    $table->string('instrument_code');
+    $table->string('sub_category');
+    $table->date('issue_date');
+    $table->date('maturity_date');
+    $table->decimal('coupon_rate', 5, 2);
+    $table->string('coupon_type');
+    $table->string('coupon_frequency');
+    $table->string('day_count');
+    $table->integer('issue_tenure_years');
+    $table->integer('residual_tenure_years');
+    $table->decimal('last_traded_yield', 5, 2);
+    $table->decimal('last_traded_price', 10, 2);
+    $table->decimal('last_traded_amount', 15, 2);
+    $table->date('last_traded_date');
+    $table->json('ratings');
+    $table->decimal('coupon_accrual', 15, 2);
+    $table->date('prev_coupon_payment_date');
+    $table->date('first_coupon_payment_date');
+    $table->date('next_coupon_payment_date');
+    $table->date('last_coupon_payment_date');
+    $table->decimal('amount_issued', 15, 2);
+    $table->decimal('amount_outstanding', 15, 2);
+    $table->string('lead_arranger');
+    $table->string('facility_agent');
+    $table->string('facility_code');
+    $table->string('status');
+    $table->dateTime('approval_date_time');
+    $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+    $table->timestamps();
+});
+
+Schema::create('rating_movements', function (Blueprint $table) {
+    $table->id();
+    $table->string('rating_agency');
+    $table->date('effective_date');
+    $table->string('rating_tenure');
+    $table->string('rating');
+    $table->string('rating_action');
+    $table->string('rating_outlook');
+    $table->string('rating_watch');
+    $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+    $table->timestamps();
+});
+
+Schema::create('payment_schedules', function (Blueprint $table) {
+    $table->id();
+    $table->date('start_date');
+    $table->date('end_date');
+    $table->date('payment_date');
+    $table->date('ex_date');
+    $table->decimal('coupon_rate', 5, 2);
+    $table->date('adjustment_date');
+    $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+    $table->timestamps();
+});
+
+Schema::create('redemptions', function (Blueprint $table) {
+    $table->id();
+    $table->boolean('allow_partial_call');
+    $table->date('last_call_date');
+    $table->string('redeem_nearest_denomination');
+    $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+    $table->timestamps();
+});
+
+Schema::create('call_schedules', function (Blueprint $table) {
+    $table->id();
+    $table->date('start_date');
+    $table->date('end_date');
+    $table->decimal('call_price', 10, 2);
+    $table->foreignId('redemption_id')->constrained('redemptions')->onDelete('cascade');
+    $table->timestamps();
+});
+
+Schema::create('lockout_periods', function (Blueprint $table) {
+    $table->id();
+    $table->date('start_date');
+    $table->date('end_date');
+    $table->foreignId('redemption_id')->constrained('redemptions')->onDelete('cascade');
+    $table->timestamps();
+});
+
+Schema::create('trading_activities', function (Blueprint $table) {
+    $table->id();
+    $table->date('trade_date');
+    $table->time('input_time');
+    $table->decimal('amount', 15, 2);
+    $table->decimal('price', 10, 2);
+    $table->decimal('yield', 5, 2);
+    $table->date('value_date');
+    $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+    $table->timestamps();
+});
+
+Schema::create('announcements', function (Blueprint $table) {
+    $table->id();
+    $table->date('announcement_date');
+    $table->string('category');
+    $table->string('sub_category');
+    $table->string('title');
+    $table->text('description');
+    $table->text('content');
+    $table->string('attachment')->nullable();
+    $table->string('source');
+    $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+    $table->timestamps();
+});
+
+Schema::create('facility_information', function (Blueprint $table) {
+    $table->id();
+    $table->string('facility_code')->unique();
+    $table->string('facility_number');
+    $table->string('facility_name');
+    $table->string('principle_type');
+    $table->string('islamic_concept');
+    $table->date('maturity_date');
+    $table->string('instrument');
+    $table->string('instrument_type');
+    $table->boolean('guaranteed');
+    $table->decimal('total_guaranteed', 15, 2);
+    $table->string('indicator');
+    $table->string('facility_rating');
+    $table->decimal('facility_amount', 15, 2);
+    $table->decimal('available_limit', 15, 2);
+    $table->decimal('outstanding_amount', 15, 2);
+    $table->string('trustee_security_agent');
+    $table->string('lead_arranger');
+    $table->string('facility_agent');
+    $table->date('availability_date');
+    $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+    $table->timestamps();
+});
+
+Schema::create('related_documents', function (Blueprint $table) {
+    $table->id();
+    $table->string('document_name');
+    $table->string('document_type');
+    $table->date('upload_date');
+    $table->string('file_path');
+    $table->foreignId('facility_id')->constrained('facility_information')->onDelete('cascade');
+    $table->timestamps();
+});
+
+Schema::create('charts', function (Blueprint $table) {
+    $table->id();
+    $table->date('availability_date');
+    $table->dateTime('approval_date_time');
+    $table->string('chart_type');
+    $table->json('chart_data');
+    $table->date('period_from');
+    $table->date('period_to');
+    $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+    $table->timestamps();
+});

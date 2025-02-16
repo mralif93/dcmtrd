@@ -13,26 +13,15 @@ return new class extends Migration
     {
         Schema::create('rating_movements', function (Blueprint $table) {
             $table->id();
-
-            // Foreign key
-            $table->foreignId('bond_info_id')->constrained('bond_infos')->onDelete('cascade');
-            
-            // Rating Details
-            $table->string('rating_agency', 100);
+            $table->string('rating_agency');
             $table->date('effective_date');
-            $table->integer('rating_tenure'); // In months
-            $table->string('rating', 10);
-            
-            // Rating Actions
-            $table->string('rating_action', 50);
-            $table->string('rating_outlook', 50);
-            $table->string('rating_watch', 50);
-            
-            // Timestamps
+            $table->string('rating_tenure');
+            $table->string('rating');
+            $table->string('rating_action');
+            $table->string('rating_outlook');
+            $table->string('rating_watch');
+            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
-            
-            // Composite index for common query patterns
-            $table->index(['bond_info_id', 'effective_date', 'rating_agency']);
         });
     }
 

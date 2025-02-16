@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\LockoutPeriod;
-use App\Models\Redemption;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class LockoutPeriodFactory extends Factory
@@ -12,23 +12,12 @@ class LockoutPeriodFactory extends Factory
 
     public function definition()
     {
+        $startDate = $this->faker->dateTimeBetween('-3 months', 'now')->format('Y-m-d');
+        
         return [
-            'redemption_id' => Redemption::factory(),
-            'start_date' => $this->faker->dateTimeBetween('-2 years', '-1 year'),
-            'end_date' => $this->faker->dateTimeBetween('-11 months', '+6 months'),
+            'start_date' => $startDate,
+            'end_date' => Carbon::parse($startDate)->addMonths(2)->format('Y-m-d'),
+            'redemption_id' => \App\Models\Redemption::factory(),
         ];
-    }
-
-    public function configure()
-    {
-        return $this->afterMaking(function (LockoutPeriod $lockoutPeriod) {
-            // Ensure end_date is after start_date
-            if ($lockoutPeriod->end_date <= $lockoutPeriod->start_date) {
-                $lockoutPeriod->end_date = $this->faker->dateTimeBetween(
-                    $lockoutPeriod->start_date,
-                    '+6 months'
-                );
-            }
-        });
     }
 }

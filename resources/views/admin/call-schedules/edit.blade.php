@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-6">
-                <p class="mt-2 text-lg text-gray-600">Modifying schedule for {{ $schedule->redemption->bondInfo->isin_code }}</p>
+                <p class="mt-2 text-lg text-gray-600">Modifying schedule for {{ $schedule->redemption->bond->isin_code }}</p>
             </div>
 
             @if($errors->any())
@@ -49,7 +49,7 @@
                                         @foreach($redemptions as $redemption)
                                             <option value="{{ $redemption->id }}" 
                                                 @selected(old('redemption_id', $schedule->redemption_id) == $redemption->id)>
-                                                {{ $redemption->bondInfo->isin_code }} - {{ $redemption->bondInfo->stock_code }}
+                                                {{ $redemption->bond->isin_code }} - {{ $redemption->bond->stock_code }}
                                             </option>
                                         @endforeach
                                     </select>

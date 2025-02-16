@@ -13,20 +13,11 @@ return new class extends Migration
     {
         Schema::create('redemptions', function (Blueprint $table) {
             $table->id();
-
-            //  Foreign Key
-            $table->foreignId('bond_info_id')->constrained('bond_infos')->onDelete('cascade');
-
-            $table->boolean('allow_partial_call')->default(false);
+            $table->boolean('allow_partial_call');
             $table->date('last_call_date');
-            $table->boolean('redeem_nearest_denomination')->default(false);
-
-            // Timestamps
+            $table->string('redeem_nearest_denomination');
+            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
-        
-            // Indexes
-            $table->index('bond_info_id');
-            $table->index('last_call_date');
         });
     }
 

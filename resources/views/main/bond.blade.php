@@ -36,65 +36,65 @@
 											<div>
 													<p class="text-sm text-gray-500">Principal</p>
 													<p class="font-medium">
-															{{ optional($bond->bondInfo)->principal ? number_format(optional($bond->bondInfo)->principal, 2) : 'N/A' }}
+															{{ optional($bond)->principal ? number_format(optional($bond)->principal, 2) : 'N/A' }}
 													</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">ISIN Code</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->isin_code ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->isin_code ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Islamic Concept</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->islamic_concept ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->islamic_concept ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Stock Code</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->stock_code ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->stock_code ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Instrument Code</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->instrument_code ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->instrument_code ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Category</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->category ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->category ?? 'N/A' }}</p>
 											</div>
 											
 											<div>
 													<p class="text-sm text-gray-500">Issue Date</p>
-													<p class="font-medium">{{ $bond->bondInfo?->issue_date?->format('d/m/Y') ?? 'N/A' }}</p>
+													<p class="font-medium">{{ $bond?->issue_date?->format('d/m/Y') ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Maturity Date</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->maturity_date ? optional($bond->bondInfo)->maturity_date->format('d/m/Y') : 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->maturity_date ? optional($bond)->maturity_date->format('d/m/Y') : 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Coupon Rate</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->coupon_rate?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->coupon_rate?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Coupon Type</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->coupon_type ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->coupon_type ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Coupon Frequency</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->coupon_frequency ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->coupon_frequency ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Day Count</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->day_count ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->day_count ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Issue Tenure (Years)</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->issue_tenure_years ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->issue_tenure_years ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Residual Tenure (Years)</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->residual_tenure_years ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->residual_tenure_years ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Sub Category</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->sub_category ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->sub_category ?? 'N/A' }}</p>
 											</div>
 									</div>
 							</div>
@@ -105,23 +105,23 @@
 								<div class="grid grid-cols-2 gap-4">
 									<div>
 										<p class="text-sm text-gray-500">Coupon Accrual</p>
-										<p class="font-medium">{{ optional($bond->bondInfo)->coupon_accrual ?? 'N/A' }}</p>
+										<p class="font-medium">{{ optional($bond)->coupon_accrual ?? 'N/A' }}</p>
 									</div>
 									<div>
 										<p class="text-sm text-gray-500">Prev Coupon Payment Date</p>
-										<p class="font-medium">{{ optional($bond->bondInfo)->prev_coupon_payment_date ? optional($bond->bondInfo)->prev_coupon_payment_date->format('d-M-Y') : 'N/A' }}</p>
+										<p class="font-medium">{{ optional($bond)->prev_coupon_payment_date ? optional($bond)->prev_coupon_payment_date->format('d-M-Y') : 'N/A' }}</p>
 									</div>
 									<div>
 										<p class="text-sm text-gray-500">First Coupon Payment Date</p>
-										<p class="font-medium">{{ optional($bond->bondInfo)->first_coupon_payment_date ? optional($bond->bondInfo)->first_coupon_payment_date->format('d-M-Y') : 'N/A' }}</p>
+										<p class="font-medium">{{ optional($bond)->first_coupon_payment_date ? optional($bond)->first_coupon_payment_date->format('d-M-Y') : 'N/A' }}</p>
 									</div>
 									<div>
 										<p class="text-sm text-gray-500">Next Coupon Payment Date</p>
-										<p class="font-medium">{{ optional($bond->bondInfo)->next_coupon_payment_date ? optional($bond->bondInfo)->next_coupon_payment_date->format('d-M-Y') : 'N/A' }}</p>
+										<p class="font-medium">{{ optional($bond)->next_coupon_payment_date ? optional($bond)->next_coupon_payment_date->format('d-M-Y') : 'N/A' }}</p>
 									</div>
 									<div>
 										<p class="text-sm text-gray-500">Last Coupon Payment Date</p>
-										<p class="font-medium">{{ optional($bond->bondInfo)->last_coupon_payment_date ? optional($bond->bondInfo)->last_coupon_payment_date->format('d-M-Y') : 'N/A' }}</p>
+										<p class="font-medium">{{ optional($bond)->last_coupon_payment_date ? optional($bond)->last_coupon_payment_date->format('d-M-Y') : 'N/A' }}</p>
 									</div>
 								</div>
 							</div>
@@ -184,13 +184,13 @@
 											<div>
 													<p class="text-sm text-gray-500">Amount Issued (RM'mil)</p>
 													<p class="font-medium">
-															{{ optional($bond->bondInfo)->amount_issued ?? 'N/A' }}
+															{{ optional($bond)->amount_issued ?? 'N/A' }}
 													</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Amount Outstanding (RM'mil)</p>
 													<p class="font-medium">
-															{{ optional($bond->bondInfo)->amount_outstanding ?? 'N/A' }}
+															{{ optional($bond)->amount_outstanding ?? 'N/A' }}
 													</p>
 											</div>
 									</div>
@@ -202,11 +202,11 @@
 									<div class="grid grid-cols-2 gap-4">
 											<div>
 													<p class="text-sm text-gray-500">Lead Arranger</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->lead_arranger ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->lead_arranger ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Facility Agent</p>
-													<p class="font-medium">{{ optional($bond->bondInfo)->facility_agent ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->facility_agent ?? 'N/A' }}</p>
 											</div>
 									</div>
 							</div>
@@ -425,101 +425,97 @@
 				</button>
 				<div x-show="openSection === 'redemption'" x-collapse class="border-t border-gray-200">
 					<div class="p-6 space-y-6">
-							@foreach($redemptions as $redemption)
-							<div class="space-y-4">
-								<h4 class="text-lg font-semibold mb-4">Redemption</h4>
-								<div class="grid grid-cols-3 gap-4">
-									<div>
-										<p class="text-sm text-gray-500">Allow Partial Call</p>
-										<p class="font-medium">{{ $redemption->allow_partial_call ?? 'N/A' }}</p>
-									</div>
-									<div>
-										<p class="text-sm text-gray-500">Last Call Date</p>
-										<p class="font-medium">RM {{ $redemption->last_call_date ?? 'N/A' }}</p>
-									</div>
-									<div>
-										<p class="text-sm text-gray-500">Redeem to Nearest Denomination</p>
-										<p class="font-medium">RM {{ $redemption->redeem_nearest_denomination ?? 'N/A' }}</p>
-									</div>
-								</div>
-
-								<div class="border-t pt-6">
-									<h4 class="text-lg font-semibold mb-4">Call Schedule</h4>
-									<div class="overflow-x-auto rounded-lg border">
-										<table class="min-w-full divide-y divide-gray-200">
-											<thead class="bg-gray-50">
-												<tr>
-													<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start Date</th>
-													<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">End Date</th>
-													<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Call Price</th>
-												</tr>
-											</thead>
-											<tbody class="bg-white divide-y divide-gray-200">
-												@forelse($callSchedules as $schedule)
-													<tr>
-														<td class="px-6 py-4 text-left text-gray-500">
-															{{ $schedule->start_date->format('d-M-Y') }}
-														</td>
-														<td class="px-6 py-4 text-left text-gray-500">
-															{{ $schedule->end_date->format('d-M-Y') }}
-														</td>
-														<td class="px-6 py-4 text-left text-gray-500">
-															{{ $schedule->call_price }}
-														</td>
-													</tr>
-												@empty
-													<tr>
-														<td colspan="3" class="px-6 py-4 text-center text-gray-500">
-															No payment schedules available
-														</td>
-													</tr>
-												@endforelse
-											</tbody>
-										</table>
-
-										@if ($callSchedules->hasPages())
-											<div class="p-6 border-t">
-												{{ $callSchedules->links() }}
-											</div>
-										@endif
-									</div>
-								</div>
-								
-								<div class="border-t pt-6">
-									<h4 class="text-lg font-semibold mb-4">Lockout Periods</h4>
-										<div class="overflow-x-auto rounded-lg border">
-										<table class="min-w-full divide-y divide-gray-200">
-											<thead class="bg-gray-50">
-												<tr>
-													<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start Date</th>
-													<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">End Date</th>
-												</tr>
-											</thead>
-											<tbody class="bg-white divide-y divide-gray-200">
-												@forelse($lockoutPeriods as $period)
-													<tr>
-														<td class="px-6 py-4 text-left text-gray-500">{{ $period->start_date->format('d-M-Y') }}</td>
-														<td class="px-6 py-4 text-left text-gray-500">{{ $period->end_date->format('d-M-Y') }}</td>
-													</tr>
-												@empty
-													<tr>
-														<td colspan="3" class="px-6 py-4 text-center text-gray-500">
-															No lockout periods defined
-														</td>
-													</tr>
-												@endforelse
-											</tbody>
-										</table>
-
-										@if ($lockoutPeriods->hasPages())
-											<div class="p-6 border-t">
-												{{ $lockoutPeriods->links() }}
-											</div>
-										@endif
-									</div>
-								</div>
+						<h4 class="text-lg font-semibold mb-4">Redemption</h4>
+						<div class="grid grid-cols-3 gap-4">
+							<div>
+								<p class="text-sm text-gray-500">Allow Partial Call</p>
+								<p class="font-medium">{{ $redemptions->allow_partial_call ?? 'N/A' }}</p>
 							</div>
-							@endforeach
+							<div>
+								<p class="text-sm text-gray-500">Last Call Date</p>
+								<p class="font-medium">{{ $redemptions->last_call_date->format('d-M-Y') ?? 'N/A' }}</p>
+							</div>
+							<div>
+								<p class="text-sm text-gray-500">Redeem to Nearest Denomination</p>
+								<p class="font-medium">{{ $redemptions->redeem_nearest_denomination ?? 'N/A' }}</p>
+							</div>
+						</div>
+
+						<div class="border-t pt-6">
+							<h4 class="text-lg font-semibold mb-4">Call Schedule</h4>
+							<div class="overflow-x-auto rounded-lg border">
+								<table class="min-w-full divide-y divide-gray-200">
+									<thead class="bg-gray-50">
+										<tr>
+											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start Date</th>
+											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">End Date</th>
+											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Call Price</th>
+										</tr>
+									</thead>
+									<tbody class="bg-white divide-y divide-gray-200">
+										@forelse($callSchedules as $schedule)
+											<tr>
+												<td class="px-6 py-4 text-left text-gray-500">
+													{{ $schedule->start_date->format('d-M-Y') }}
+												</td>
+												<td class="px-6 py-4 text-left text-gray-500">
+													{{ $schedule->end_date->format('d-M-Y') }}
+												</td>
+												<td class="px-6 py-4 text-left text-gray-500">
+													{{ $schedule->call_price }}
+												</td>
+											</tr>
+										@empty
+											<tr>
+												<td colspan="3" class="px-6 py-4 text-center text-gray-500">
+													No payment schedules available
+												</td>
+											</tr>
+										@endforelse
+									</tbody>
+								</table>
+
+								@if ($callSchedules->hasPages())
+									<div class="p-6 border-t">
+										{{ $callSchedules->links() }}
+									</div>
+								@endif
+							</div>
+						</div>
+						
+						<div class="border-t pt-6">
+							<h4 class="text-lg font-semibold mb-4">Lockout Periods</h4>
+								<div class="overflow-x-auto rounded-lg border">
+								<table class="min-w-full divide-y divide-gray-200">
+									<thead class="bg-gray-50">
+										<tr>
+											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start Date</th>
+											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">End Date</th>
+										</tr>
+									</thead>
+									<tbody class="bg-white divide-y divide-gray-200">
+										@forelse($lockoutPeriods as $period)
+											<tr>
+												<td class="px-6 py-4 text-left text-gray-500">{{ $period->start_date->format('d-M-Y') }}</td>
+												<td class="px-6 py-4 text-left text-gray-500">{{ $period->end_date->format('d-M-Y') }}</td>
+											</tr>
+										@empty
+											<tr>
+												<td colspan="3" class="px-6 py-4 text-center text-gray-500">
+													No lockout periods defined
+												</td>
+											</tr>
+										@endforelse
+									</tbody>
+								</table>
+
+								@if ($lockoutPeriods->hasPages())
+									<div class="p-6 border-t">
+										{{ $lockoutPeriods->links() }}
+									</div>
+								@endif
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

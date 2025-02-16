@@ -2,22 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\Bond;
-use App\Models\Issuer;
 use Illuminate\Database\Seeder;
+use App\Models\Bond;
 
 class BondSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run()
     {
-        // Get existing issuers
-        $issuers = Issuer::all();
-
-        // Create 3 bonds per issuer
-        $issuers->each(function ($issuer) {
-            Bond::factory()
-                ->count(3)
-                ->create(['issuer_id' => $issuer->id]);
-        });
+        Bond::factory()->count(10)->create();
     }
 }

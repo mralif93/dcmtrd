@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Issuer;
 use App\Models\Announcement;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,15 +12,15 @@ class AnnouncementFactory extends Factory
     public function definition()
     {
         return [
-            'issuer_id' => Issuer::factory(),
-            'announcement_date' => $this->faker->dateTimeBetween('-1 year'),
-            'category' => $this->faker->randomElement(['Financial', 'Dividend', 'Mergers']),
-            'sub_category' => $this->faker->optional()->randomElement(['Interim', 'Final', 'Special']),
-            'title' => $this->faker->sentence(8),
-            'description' => $this->faker->paragraph(3),
-            'content' => $this->faker->text(2000),
+            'announcement_date' => $this->faker->date(),
+            'category' => $this->faker->randomElement(['Financial', 'Corporate Action', 'General']),
+            'sub_category' => $this->faker->word,
+            'title' => $this->faker->sentence,
+            'description' => $this->faker->paragraph,
+            'content' => $this->faker->text(500),
             'attachment' => $this->faker->optional()->filePath(),
-            'source' => $this->faker->randomElement(['Bursa Malaysia', 'Company Portal']),
+            'source' => $this->faker->company,
+            'issuer_id' => \App\Models\Issuer::factory(),
         ];
     }
 }

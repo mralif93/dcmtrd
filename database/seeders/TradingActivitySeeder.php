@@ -2,19 +2,25 @@
 
 namespace Database\Seeders;
 
-use App\Models\BondInfo;
-use App\Models\TradingActivity;
 use Illuminate\Database\Seeder;
+use App\Models\TradingActivity;
+use App\Models\Bond;
 
 class TradingActivitySeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run()
     {
-        // Create 50-100 trading activities per bond
-        foreach (BondInfo::all() as $bondInfo) {
-            TradingActivity::factory()
-                ->count(rand(50, 100))
-                ->create(['bond_info_id' => $bondInfo->id]);
+        $bonds = Bond::all();
+
+        foreach ($bonds as $bond) {
+            TradingActivity::factory()->count(5)->create([
+                'bond_id' => $bond->id,
+            ]);
         }
     }
 }
