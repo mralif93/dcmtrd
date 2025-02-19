@@ -38,10 +38,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $appends = [
-        'last_login_at'
-    ];
-
     /**
      * Get the attributes that should be cast.
      *

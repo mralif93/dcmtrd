@@ -54,12 +54,7 @@ class UserAdminController extends Controller
     {
         abort_unless(auth()->user()->isAdmin(), 403);
 
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:admin,user'],
-        ]);
+        $request->validate($this->getValidationRules());
 
         User::create([
             'name' => $request->name,
@@ -97,17 +92,15 @@ class UserAdminController extends Controller
     {
         abort_unless(auth()->user()->isAdmin(), 403);
 
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:admin,user'],
-        ]);
+        // Validate the request data
+        $request->validate($this->getValidationRules(true));
 
+        // Prepare the data to update
         $data = [
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
+            'two_factor_enabled' => $request->two_factor_enabled ?? false, // Default to false if not provided
         ];
 
         if ($request->filled('password')) {
@@ -136,5 +129,25 @@ class UserAdminController extends Controller
         $user->delete();
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully');
+    }
+
+    private function getValidationRules($isUpdate = false)
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+            'password' => $isUpdate ? ['nullable', 'confirmed', Rules\Password::defaults()] : ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:admin,user'],
+            'two_factor_enabled' => ['nullable', 'boolean'],
+        ];
+    }
+
+    public function resetTwoFactorCode(): void
+    {
+        $this->forceFill([
+            'two_factor_code' => null,
+            'two_factor_expires_at' => null,
+            'two_factor_verified' => false,
+        ])->save();
     }
 }
