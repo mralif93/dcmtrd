@@ -13,10 +13,10 @@ class AllSeeder extends Seeder
     public function run()
     {
         // Create 10 issuers
-        \App\Models\Issuer::factory(50)->create()->each(function ($issuer) {
+        \App\Models\Issuer::factory(15)->create()->each(function ($issuer) {
             
             // Create 5 bonds for each issuer
-            \App\Models\Bond::factory(15)->create(['issuer_id' => $issuer->id])
+            \App\Models\Bond::factory(5)->create(['issuer_id' => $issuer->id])
                 ->each(function ($bond) {
                     
                     // Create 3 rating movements per bond

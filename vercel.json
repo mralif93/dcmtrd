@@ -29,6 +29,10 @@
 
     "CACHE_DRIVER": "array",
     "LOG_CHANNEL": "stderr",
-    "SESSION_DRIVER": "cookie"
+    "SESSION_DRIVER": "cookie",
+
+    "DB_CONNECTION": "pgsql",
+    "DB_URL": "postgresql://postgres:yPooYIY0qbecqhw1@db.jxotjhriufingyakxwlp.supabase.co:5432/postgres",
+    "DB_PASSWORD": "yPooYIY0qbecqhw1"
   }
 }
