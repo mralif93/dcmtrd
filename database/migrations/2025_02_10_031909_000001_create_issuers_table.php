@@ -16,15 +16,15 @@ return new class extends Migration
             $table->string('issuer_short_name');
             $table->string('issuer_name');
             $table->string('registration_number')->unique();
-            $table->string('debenture');
-            $table->decimal('trustee_fee_amount_1', 15, 2);
-            $table->decimal('trustee_fee_amount_2', 15, 2);
-            $table->string('trustee_role_1');
-            $table->string('trustee_role_2');
+            $table->string('debenture')->nullable();
+            $table->decimal('trustee_fee_amount_1', 15, 2)->nullable();
+            $table->decimal('trustee_fee_amount_2', 15, 2)->nullable();
+            $table->string('trustee_role_1')->nullable();
+            $table->string('trustee_role_2')->nullable();
             $table->date('reminder_1')->nullable();
             $table->date('reminder_2')->nullable();
             $table->date('reminder_3')->nullable();
-            $table->date('trust_deed_date');
+            $table->date('trust_deed_date')->nullable();
             $table->timestamps();
         });
     }
