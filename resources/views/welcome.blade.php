@@ -28,7 +28,7 @@
     </head>
     <body class="flex items-center justify-center bg-gray-100">
       <div class="container mx-auto p-8">
-          <h1 class="text-4xl font-bold text-center mb-8">Welcome to Our Platform</h1>
+          <h1 class="text-4xl font-bold text-center mb-8">Welcome to Our Platforms</h1>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-4">
               <!-- Card 1: List of Issuers -->
               <a href="{{ route('issuer-search.index') }}" class="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
