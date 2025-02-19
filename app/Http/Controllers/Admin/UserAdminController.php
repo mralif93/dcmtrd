@@ -54,7 +54,13 @@ class UserAdminController extends Controller
     {
         abort_unless(auth()->user()->isAdmin(), 403);
 
-        $request->validate($this->getValidationRules());
+        $validate = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', Rule::unique('users')],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:admin,user'],
+            'two_factor_enabled' => ['nullable', 'boolean'],
+        ]);
 
         User::create([
             'name' => $request->name,
@@ -93,7 +99,7 @@ class UserAdminController extends Controller
         abort_unless(auth()->user()->isAdmin(), 403);
 
         // Validate the request data
-        $request->validate($this->getValidationRules(true));
+        $request->validate($this->getValidationRules($user, true));
 
         // Prepare the data to update
         $data = [
@@ -131,7 +137,7 @@ class UserAdminController extends Controller
             ->with('success', 'User deleted successfully');
     }
 
-    private function getValidationRules($isUpdate = false)
+    private function getValidationRules(User $user, $isUpdate = false)
     {
         return [
             'name' => ['required', 'string', 'max:255'],
