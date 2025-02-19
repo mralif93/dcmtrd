@@ -14,7 +14,7 @@
     </div>
 
     <div x-data="{ openSection: 'bonds' }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4 pb-6">
             <!-- Bonds Accordion -->
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <button @click="openSection = openSection === 'bonds' ? null : 'bonds'" 
@@ -139,7 +139,9 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm max-w-md">
-                                    <div class="font-medium text-gray-500">{{ $announcement->title }}</div>
+                                    <a href="{{ route('announcement.show', $announcement) }}">
+                                        <div class="font-medium text-gray-500">{{ $announcement->title }}</div>
+                                    </a>
                                 </td>
                             </tr>
                             @empty
@@ -244,7 +246,9 @@
                             @forelse($facilities as $facility)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {{ $facility->facility_code }}
+                                    <a href="{{ route('facility.show', $facility) }}">
+                                        {{ $facility->facility_code }}
+                                    </a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {{ $facility->facility_name }}

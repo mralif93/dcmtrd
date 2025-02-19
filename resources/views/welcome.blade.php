@@ -33,7 +33,7 @@
               <!-- Card 1: List of Issuers -->
               <a href="{{ route('issuer-search.index') }}" class="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                   <i class="fas fa-building fa-5x mb-4 text-blue-500"></i> <!-- XXL Icon -->
-                  <h2 class="text-2xl font-semibold mb-2">Bond Monitoring (DCMTD)</h2>
+                  <h2 class="text-2xl font-semibold mb-2">Bond Monitoring (DCMTRD)</h2>
                   <p class="text-gray-600 text-center">Explore the various issuers available in the market.</p>
               </a>
 

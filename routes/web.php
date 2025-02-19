@@ -36,6 +36,8 @@ Route::get('/', function () {
 Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
 Route::get('issuer-info/{issuer}', [MainController::class, 'info'])->name('issuer-search.show');
 Route::get('security-info/{bond}', [MainController::class, 'bondInfo'])->name('security-info.show');
+Route::get('announcement/{announcement}', [MainController::class, 'announcement'])->name('announcement.show');
+Route::get('facility-info/{facilityInformation}', [MainController::class, 'facility'])->name('facility.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

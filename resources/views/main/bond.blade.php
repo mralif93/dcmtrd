@@ -13,7 +13,7 @@
 	</div>
 
 	<div x-data="{ openSection: 'bonds' }">
-		<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+		<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4 pb-6">
 			<!-- Bond + Sukuk Information -->
 			<div class="bg-white shadow-sm sm:rounded-lg">
 					<button @click="openSection = openSection === 'bonds' ? null : 'bonds'" 

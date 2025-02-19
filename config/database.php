@@ -40,6 +40,10 @@ return [
             'busy_timeout' => null,
             'journal_mode' => null,
             'synchronous' => null,
+            'options' => [
+                PDO::ATTR_PERSISTENT => true,
+                PDO::ATTR_TIMEOUT => 30, // Set timeout for connections
+            ],
         ],
 
         'mysql' => [

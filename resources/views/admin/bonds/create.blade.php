@@ -66,14 +66,9 @@
 
                                 <div>
                                     <label for="rating" class="block text-sm font-medium text-gray-700">Rating *</label>
-                                    <select name="rating" id="rating" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @foreach(['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC','CC','C','D'] as $grade)
-                                            <option value="{{ $grade }}" @selected(old('rating') == $grade)>
-                                                {{ $grade }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <input type="text" name="rating" id="rating" required
+                                        value="{{ old('rating') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
                                 </div>
 
                                 <div>

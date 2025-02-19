@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Issuer;
+use App\Models\Announcement;
 use App\Models\Bond;
 use App\Models\BondInfo;
 use App\Models\CallSchedule;
 use App\Models\LockoutPeriod;
+use App\Models\FacilityInformation;
 
 class MainController extends Controller
 {
@@ -121,6 +123,51 @@ class MainController extends Controller
             'callSchedules' => $callSchedules,
             'lockoutPeriods' => $lockoutPeriods,
             'charts' => $bond->charts ?? collect()
+        ]);
+    }
+    
+    public function announcement(Announcement $announcement)
+    {
+        // dd($announcement->toArray());
+        return view('main.announcement', compact('announcement'));
+    }
+
+    public function facility(FacilityInformation $facilityInformation)
+    {
+        // Items per page
+        $perPage = 10;
+    
+        // Fetch bonds with pagination
+        $bonds = $facilityInformation->issuer->bonds()
+            ? $facilityInformation->issuer->bonds()->paginate($perPage, ['*'], 'bondsPage')
+            : collect(); // Use an empty collection instead of $emptyPaginator
+    
+        // Documents Pagination
+        $documents = $facilityInformation->documents()
+            ? $facilityInformation->documents()->paginate($perPage, ['*'], 'documentsPage')
+            : collect(); // Use an empty collection instead of $emptyPaginator
+    
+        // Load all rating movements across all bonds
+        $allRatingMovements = $facilityInformation->issuer->bonds->flatMap(function ($bond) {
+            return $bond->ratingMovements; // Collect rating movements from each bond
+        });
+
+        // Paginate the rating movements
+        $currentPage = request()->get('ratingMovementsPage', 1); // Get current page from request
+        $currentPageItems = $allRatingMovements->slice(($currentPage - 1) * $perPage, $perPage)->all(); // Slice the collection
+        $ratingMovements = new LengthAwarePaginator($currentPageItems, $allRatingMovements->count(), $perPage, $currentPage, [
+            'path' => request()->url(), // Set the path for pagination links
+            'query' => request()->query(), // Preserve query parameters
+        ]);
+
+        // dd($bonds->toArray());
+    
+        return view('main.facility', [
+            'issuer' => $facilityInformation->issuer,
+            'facility' => $facilityInformation,
+            'activeBonds' => $bonds,
+            'documents' => $documents,
+            'ratingMovements' => $ratingMovements,
         ]);
     }
 }
