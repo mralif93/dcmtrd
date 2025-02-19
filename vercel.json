@@ -1,9 +1,12 @@
 {
   "version": 2,
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.10.0"
+    }
+  },
   "builds": [
     {
-      "src": "api/index.php",
-      "use": "@vercel/php@0.10.0",
       "config": {
         "includeFiles": [
           "app/**",
