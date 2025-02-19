@@ -27,9 +27,9 @@
         </style>
     </head>
     <body class="flex items-center justify-center bg-gray-100">
-      <div class="container mx-auto p-8">
-          <h1 class="text-4xl font-bold text-center mb-8">Welcome to Our Platform!!</h1>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-4">
+      <div class="container mx-auto p-8 px-8">
+          <h1 class="text-4xl font-bold text-center mb-8">Welcome to Our Platform</h1>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
               <!-- Card 1: List of Issuers -->
               <a href="{{ route('issuer-search.index') }}" class="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                   <i class="fas fa-building fa-5x mb-4 text-blue-500"></i> <!-- XXL Icon -->
@@ -40,7 +40,7 @@
               <!-- Card 2: REITs -->
               <a href="{{ route('login') }}" class="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                   <i class="fas fa-home fa-5x mb-4 text-green-500"></i> <!-- XXL Icon -->
-                  <h2 class="text-2xl font-semibold mb-2">REITs</h2>
+                  <h2 class="text-2xl font-semibold mb-2">Real Estate Investment Trusts (REITs)</h2>
                   <p class="text-gray-600 text-center">Discover Real Estate Investment Trusts and their benefits.</p>
               </a>
           </div>
