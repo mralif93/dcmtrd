@@ -98,12 +98,7 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
-            'sslmode' => 'verify-full',
-            'options' => [
-                PGSQL_CONNECT_FORCE_NEW => true,
-                PGSQL_ATTR_SSL_CERT_DIR => env('DB_SSL_CERT_DIR', '/etc/ssl/certs/'),
-                PGSQL_ATTR_SSL_CA_FILE => env('DB_SSL_CA_FILE', '/etc/ssl/certs/ca-certificates.crt')
-            ],
+            'sslmode' => 'prefer',
         ],
 
         'sqlsrv' => [
