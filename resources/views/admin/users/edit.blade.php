@@ -60,6 +60,7 @@
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">Select Role</option>
                                         <option value="admin" @selected(old('role', $user->role) == 'admin')>Administrator</option>
+                                        <option value="user" @selected(old('role', $user->role) == 'user')>User</option>
                                         <option value="maker" @selected(old('role', $user->role) == 'maker')>Maker</option>
                                         <option value="approver" @selected(old('role', $user->role) == 'approver')>Approver</option>
                                         <option value="legal" @selected(old('role', $user->role) == 'legal')>Legal</option>

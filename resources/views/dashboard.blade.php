@@ -11,10 +11,6 @@
                 <div class="p-6 text-gray-900">
                     {{ __("You're logged in!") }}
                 </div>
-
-                <h1>Issuer</h1>
-                <h1>Bond</h1>
-                <h1></h1>
             </div>
         </div>
     </div>
