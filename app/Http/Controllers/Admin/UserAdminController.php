@@ -98,8 +98,13 @@ class UserAdminController extends Controller
     {
         abort_unless(auth()->user()->isAdmin(), 403);
 
-        // Validate the request data
-        $request->validate($this->getValidationRules($user, true));
+        $validate = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+            'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:admin,user'],
+            'two_factor_enabled' => ['nullable', 'boolean'],
+        ]);
 
         // Prepare the data to update
         $data = [
@@ -135,17 +140,6 @@ class UserAdminController extends Controller
         $user->delete();
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully');
-    }
-
-    private function getValidationRules(User $user, $isUpdate = false)
-    {
-        return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'password' => $isUpdate ? ['nullable', 'confirmed', Rules\Password::defaults()] : ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:admin,user'],
-            'two_factor_enabled' => ['nullable', 'boolean'],
-        ];
     }
 
     public function resetTwoFactorCode(): void
