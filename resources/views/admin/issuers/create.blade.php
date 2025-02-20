@@ -40,18 +40,18 @@
 
                         <!-- Row 1: Full Name -->
                         <div>
-                            <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name *</label>
-                            <input type="text" name="full_name" id="full_name" 
-                                value="{{ old('full_name') }}" required
+                            <label for="issuer_name" class="block text-sm font-medium text-gray-700">Issuer Name *</label>
+                            <input type="text" name="issuer_name" id="issuer_name" 
+                                value="{{ old('issuer_name') }}" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
 
                         <!-- Row 2: Short Name, Registration Number -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="short_name" class="block text-sm font-medium text-gray-700">Short Name *</label>
-                                <input type="text" name="short_name" id="short_name" 
-                                    value="{{ old('short_name') }}" required
+                                <label for="issuer_short_name" class="block text-sm font-medium text-gray-700">Short Name *</label>
+                                <input type="text" name="issuer_short_name" id="issuer_short_name" 
+                                    value="{{ old('issuer_short_name') }}" required
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                             <div>
@@ -67,13 +67,13 @@
                             <div>
                                 <label for="debenture_number" class="block text-sm font-medium text-gray-700">Debenture Number *</label>
                                 <input type="text" name="debenture_number" id="debenture_number" 
-                                    value="{{ old('debenture_number') }}" required
+                                    value="{{ old('debenture_number') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                             <div>
                                 <label for="trust_deed_date" class="block text-sm font-medium text-gray-700">Trust Deed Date *</label>
                                 <input type="date" name="trust_deed_date" id="trust_deed_date" 
-                                    value="{{ old('trust_deed_date') }}" required
+                                    value="{{ old('trust_deed_date') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                         </div>
@@ -88,13 +88,13 @@
                             <div>
                                 <label for="role_1" class="block text-sm font-medium text-gray-700">Role 1 *</label>
                                 <input type="text" name="role_1" id="role_1" 
-                                    value="{{ old('role_1') }}" required
+                                    value="{{ old('role_1') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                             <div>
                                 <label for="fee_amount_1" class="block text-sm font-medium text-gray-700">Fee Amount 1 *</label>
                                 <input type="number" name="fee_amount_1" id="fee_amount_1" 
-                                    value="{{ old('fee_amount_1') }}" required
+                                    value="{{ old('fee_amount_1') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                         </div>
@@ -104,13 +104,13 @@
                             <div>
                                 <label for="role_2" class="block text-sm font-medium text-gray-700">Role 2 *</label>
                                 <input type="text" name="role_2" id="role_2" 
-                                    value="{{ old('role_2') }}" required
+                                    value="{{ old('role_2') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                             <div>
                                 <label for="fee_amount_2" class="block text-sm font-medium text-gray-700">Fee Amount 2 *</label>
                                 <input type="number" name="fee_amount_2" id="fee_amount_2" 
-                                    value="{{ old('fee_amount_2') }}" required
+                                    value="{{ old('fee_amount_2') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                         </div>
@@ -124,7 +124,7 @@
                         <div>
                             <label for="reminder_1" class="block text-sm font-medium text-gray-700">Reminder 1 *</label>
                             <input type="date" name="reminder_1" id="reminder_1" 
-                                value="{{ old('reminder_1') }}" required
+                                value="{{ old('reminder_1') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
 
@@ -132,7 +132,7 @@
                         <div>
                             <label for="reminder_2" class="block text-sm font-medium text-gray-700">Reminder 2 *</label>
                             <input type="date" name="reminder_2" id="reminder_2" 
-                                value="{{ old('reminder_2') }}" required
+                                value="{{ old('reminder_2') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
 
@@ -140,7 +140,7 @@
                         <div>
                             <label for="reminder_3" class="block text-sm font-medium text-gray-700">Reminder 3 *</label>
                             <input type="date" name="reminder_3" id="reminder_3" 
-                                value="{{ old('reminder_3') }}" required
+                                value="{{ old('reminder_3') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
                     </div>

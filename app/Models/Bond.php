@@ -17,7 +17,6 @@ class Bond extends Model
         'sub_name',
         'rating',
         'category',
-        'o_s_amount',
         'principal',
         'isin_code',
         'stock_code',
@@ -35,7 +34,6 @@ class Bond extends Model
         'last_traded_price',
         'last_traded_amount',
         'last_traded_date',
-        'ratings',
         'coupon_accrual',
         'prev_coupon_payment_date',
         'first_coupon_payment_date',
@@ -52,22 +50,23 @@ class Bond extends Model
     ];
 
     protected $casts = [
-        'ratings' => 'array',
         'issue_date' => 'date:Y-m-d',
         'maturity_date' => 'date:Y-m-d',
+        'coupon_rate'=> 'decimal:2',
+        'issue_tenure_years' => 'decimal:4',
+        'residual_tenure_years' => 'decimal:4',
+        'last_traded_yield' => 'decimal:2',
+        'last_traded_price' => 'decimal:2',
+        'last_traded_amount' => 'decimal:2',
         'last_traded_date' => 'date:Y-m-d',
+        'coupon_accrual' => 'date:Y-m-d',
         'prev_coupon_payment_date' => 'date:Y-m-d',
         'first_coupon_payment_date' => 'date:Y-m-d',
         'next_coupon_payment_date' => 'date:Y-m-d',
         'last_coupon_payment_date' => 'date:Y-m-d',
-        'approval_date_time' => 'datetime:Y-m-d H:i:s',
-        'o_s_amount' => 'decimal:2',
-        'principal' => 'decimal:2',
-        'last_traded_price' => 'decimal:2',
-        'last_traded_amount' => 'decimal:2',
-        'coupon_accrual' => 'decimal:2',
         'amount_issued' => 'decimal:2',
         'amount_outstanding' => 'decimal:2',
+        'approval_date_time' => 'datetime:Y-m-d H:i:s',
     ];
 
     // Relationships

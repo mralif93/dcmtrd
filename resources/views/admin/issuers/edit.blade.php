@@ -57,7 +57,7 @@
 
                         <!-- Row 1: Full Name -->
                         <div>
-                            <label for="issuer_name" class="block text-sm font-medium text-gray-700">Full Name *</label>
+                            <label for="issuer_name" class="block text-sm font-medium text-gray-700">Issuer Name *</label>
                             <input type="text" name="issuer_name" id="issuer_name" 
                                 value="{{ old('issuer_name', $issuer->issuer_name) }}" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">

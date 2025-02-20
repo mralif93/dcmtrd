@@ -126,7 +126,7 @@
                         <div class="space-y-4">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Principal Amount</dt>
-                                <dd class="mt-1 text-sm text-gray-900">RM{{ number_format($bond->principal, 2) }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">RM{{ $bond->principal ?? 'N/A' }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Amount Issued</dt>
