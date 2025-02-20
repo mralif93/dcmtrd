@@ -58,22 +58,12 @@ class LockoutPeriodController extends Controller
             'end_date' => 'required|date|after:start_date',
         ]);
 
-        // Check for overlapping periods
-        $exists = LockoutPeriod::where('redemption_id', $validated['redemption_id'])
-            ->where(function ($query) use ($validated) {
-                $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
-                      ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
-            })
-            ->exists();
-
-        if ($exists) {
-            return back()->withErrors(['period' => 'A lockout period already exists for these dates'])->withInput();
+        try {
+            $lockoutPeriod = LockoutPeriod::create($validated);
+            return redirect()->route('lockout-periods.show', $lockoutPeriod)->with('success', 'Lockout period created successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()])->withInput();
         }
-
-        LockoutPeriod::create($validated);
-
-        return redirect()->route('lockout-periods.index')
-            ->with('success', 'Lockout period created successfully');
     }
 
     /**
@@ -109,23 +99,12 @@ class LockoutPeriodController extends Controller
             'end_date' => 'required|date|after:start_date',
         ]);
 
-        // Check for overlapping periods excluding current
-        $exists = LockoutPeriod::where('redemption_id', $validated['redemption_id'])
-            ->where('id', '!=', $lockoutPeriod->id)
-            ->where(function ($query) use ($validated) {
-                $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
-                      ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
-            })
-            ->exists();
-
-        if ($exists) {
-            return back()->withErrors(['period' => 'A lockout period already exists for these dates'])->withInput();
+        try {
+            $lockoutPeriod->update($validated);
+            return redirect()->route('lockout-periods.show', $lockoutPeriod)->with('success', 'Lockout period updated successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()])->withInput();
         }
-
-        $lockoutPeriod->update($validated);
-
-        return redirect()->route('lockout-periods.index')
-            ->with('success', 'Lockout period updated successfully');
     }
 
     /**

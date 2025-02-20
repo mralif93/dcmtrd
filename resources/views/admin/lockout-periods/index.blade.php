@@ -60,8 +60,8 @@
                             @forelse($lockoutPeriods as $period)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4">
-                                        <div class="font-medium text-indigo-600">{{ $period->redemption->bond->isin_code }}</div>
-                                        <div class="text-sm text-gray-500">{{ $period->redemption->bond->stock_code }}</div>
+                                        <div class="font-medium text-indigo-600">{{ $period->redemption->bond->bond_sukuk_name }}</div>
+                                        <div class="text-sm text-gray-500">{{ $period->redemption->bond->sub_name }}</div>
                                     </td>
                                     
                                     <td class="px-6 py-4">

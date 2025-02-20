@@ -7,6 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
                     <div class="flex">
@@ -30,43 +31,38 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <form action="{{ route('lockout-periods.update', $period) }}" method="POST" class="space-y-8 p-6">
+                <form action="{{ route('lockout-periods.update', $period) }}" method="POST" class="p-6">
                     @csrf
                     @method('PUT')
 
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="redemption_id" class="block text-sm font-medium text-gray-700">Redemption *</label>
-                                    <select name="redemption_id" id="redemption_id" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @foreach($redemptions as $redemption)
-                                            <option value="{{ $redemption->id }}" @selected(old('redemption_id', $period->redemption_id) == $redemption->id)>
-                                                {{ $redemption->bond->isin_code }} - {{ $redemption->bond->stock_code }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                    <div class="space-y-6 pb-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="redemption_id" class="block text-sm font-medium text-gray-700">Redemption *</label>
+                                <select name="redemption_id" id="redemption_id" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @foreach($redemptions as $redemption)
+                                        <option value="{{ $redemption->id }}" @selected(old('redemption_id', $period->redemption_id) == $redemption->id)>
+                                            {{ $redemption->bond->bond_sukuk_name }} - {{ $redemption->bond->sub_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 
-                        <div class="border-t border-gray-200 pt-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Period Dates</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date *</label>
-                                    <input type="date" name="start_date" id="start_date" 
-                                        value="{{ old('start_date', $period->start_date->format('Y-m-d')) }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                
-                                <div>
-                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End Date *</label>
-                                    <input type="date" name="end_date" id="end_date" 
-                                        value="{{ old('end_date', $period->end_date->format('Y-m-d')) }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date *</label>
+                                <input type="date" name="start_date" id="start_date" 
+                                    value="{{ old('start_date', $period->start_date->format('Y-m-d')) }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            
+                            <div>
+                                <label for="end_date" class="block text-sm font-medium text-gray-700">End Date *</label>
+                                <input type="date" name="end_date" id="end_date" 
+                                    value="{{ old('end_date', $period->end_date->format('Y-m-d')) }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                         </div>
                     </div>

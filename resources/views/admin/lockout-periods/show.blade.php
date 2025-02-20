@@ -7,9 +7,6 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-6">
-                <p class="mt-2 text-lg text-gray-600">Detailed information about {{ $period->redemption->bond->isin_code }} lockout period</p>
-            </div>
 
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
@@ -40,37 +37,8 @@
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Bond Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $period->redemption->bond->isin_code }} - 
-                                    {{ $period->redemption->bond->stock_code }}
-                                </dd>
-                            </div>
-                            
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Redemption Configuration</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    <span class="px-2 py-1 rounded-full text-sm bg-indigo-100 text-indigo-800">
-                                        {{ $period->redemption->id }}
-                                    </span>
-                                </dd>
-                            </div>
-                        </div>
-
-                        <!-- Right Column -->
-                        <div class="space-y-4">
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Status</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    <span class="px-2 py-1 rounded-full text-sm 
-                                        {{ $period->end_date->isFuture() ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                        {{ $period->end_date->isFuture() ? 'Active' : 'Expired' }}
-                                    </span>
-                                </dd>
-                            </div>
-                            
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Duration</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $period->start_date->diffInDays($period->end_date) }} days
+                                    {{ $period->redemption->bond->bond_sukuk_name }} - 
+                                    {{ $period->redemption->bond->sub_name }}
                                 </dd>
                             </div>
                         </div>
@@ -80,7 +48,7 @@
                 <!-- Lockout Period Dates Section -->
                 <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Lockout Period Dates</h3>
-                    <dl class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Start Date</dt>
                             <dd class="mt-1 text-sm text-gray-900">
@@ -93,12 +61,6 @@
                                 {{ $period->end_date->format('d/m/Y') }}
                             </dd>
                         </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Last Call Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ $period->redemption->last_call_date->format('d/m/Y') }}
-                            </dd>
-                        </div>
                     </dl>
                 </div>
 
@@ -109,13 +71,13 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $period->created_at->format('d/m/Y H:i') }}
+                                {{ $period->created_at->format('d/m/Y h:i A') }}
                             </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $period->updated_at->format('d/m/Y H:i') }}
+                                {{ $period->updated_at->format('d/m/Y h:i A') }}
                             </dd>
                         </div>
                     </dl>
