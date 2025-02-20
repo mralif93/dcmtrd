@@ -7,9 +7,6 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-6">
-                <p class="mt-2 text-lg text-gray-600">Detailed information for {{ $ratingMovement->bond->isin_code }} rating movement</p>
-            </div>
 
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
@@ -27,38 +24,36 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <!-- Core Information Section -->
-                <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900">Core Information</h3>
-                </div>
-
                 <div class="border-t border-gray-200">
-                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 px-4 py-5 sm:p-6">
-                        <!-- Left Column -->
-                        <div class="space-y-4">
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Bond Information</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $ratingMovement->bond->bond_sukuk_name }}<br>
-                                    <span class="font-mono">{{ $ratingMovement->bond->isin_code }}</span>
-                                </dd>
-                            </div>
-                            
+                    <dl class="space-y-6 px-4 py-5 sm:p-6">
+                        <!-- Row 1: Bond -->
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Bond Information</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $ratingMovement->bond->bond_sukuk_name }} - {{ $ratingMovement->bond->isin_code }}
+                            </dd>
+                        </div>
+
+                        <!-- Row 2: Rating Agency & Rating Tenure -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Rating Agency</dt>
                                 <dd class="mt-1 text-sm text-gray-900">{{ $ratingMovement->rating_agency }}</dd>
                             </div>
-                            
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Rating Tenure</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $ratingMovement->rating_tenure }}</dd>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Effective Date & Rating -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Effective Date</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
                                     {{ $ratingMovement->effective_date->format('d M Y') }}
                                 </dd>
                             </div>
-                        </div>
-
-                        <!-- Right Column -->
-                        <div class="space-y-4">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Rating</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
@@ -67,7 +62,10 @@
                                     </span>
                                 </dd>
                             </div>
-                            
+                        </div>
+
+                        <!-- Row 4: Rating Action & Rating Outlook -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Rating Action</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
@@ -78,31 +76,19 @@
                                     </span>
                                 </dd>
                             </div>
-                            
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Rating Tenure</dt>
+                                <dt class="text-sm font-medium text-gray-500">Rating Outlook</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $ratingMovement->rating_tenure }}
+                                    <span class="px-2 py-1 rounded-full text-sm 
+                                        {{ $ratingMovement->rating_outlook === 'Positive' ? 'bg-green-100 text-green-800' : 
+                                        ($ratingMovement->rating_outlook === 'Negative' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800') }}">
+                                        {{ $ratingMovement->rating_outlook }}
+                                    </span>
                                 </dd>
                             </div>
                         </div>
-                    </dl>
-                </div>
 
-                <!-- Status Information Section -->
-                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Status Details</h3>
-                    <dl class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Outlook</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                <span class="px-2 py-1 rounded-full text-sm 
-                                    {{ $ratingMovement->rating_outlook === 'Positive' ? 'bg-green-100 text-green-800' : 
-                                    ($ratingMovement->rating_outlook === 'Negative' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800') }}">
-                                    {{ $ratingMovement->rating_outlook }}
-                                </span>
-                            </dd>
-                        </div>
+                        <!-- Row 5: Rating Watch -->
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Rating Watch</dt>
                             <dd class="mt-1 text-sm text-gray-900">
@@ -113,12 +99,6 @@
                                 @else
                                 <span class="text-gray-500">N/A</span>
                                 @endif
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ $ratingMovement->updated_at->format('d M Y H:i') }}
                             </dd>
                         </div>
                     </dl>

@@ -42,11 +42,7 @@ class RatingMovementController extends Controller
     public function create()
     {
         $bonds = Bond::active()->get();
-        $agencies = ['MARC', 'RAM', 'Fitch', 'Moody\'s'];
-        $ratingActions = ['Upgrade', 'Downgrade', 'Affirm', 'Place on Watch'];
-        $outlooks = ['Positive', 'Stable', 'Negative', 'Developing'];
-        
-        return view('admin.rating-movements.create', compact('bonds', 'agencies', 'ratingActions', 'outlooks'));
+        return view('admin.rating-movements.create', compact('bonds'));
     }
 
     /**
@@ -65,13 +61,9 @@ class RatingMovementController extends Controller
             'rating_watch' => 'nullable|string|max:50',
         ]);
 
-        // Format effective date consistently
-        $validated['effective_date'] = Carbon::parse($validated['effective_date'])->format('Y-m-d');
+        $ratingMovement = RatingMovement::create($validated);
 
-        RatingMovement::create($validated);
-
-        return redirect()->route('rating-movements.index')
-            ->with('success', 'Rating movement created successfully');
+        return redirect()->route('rating-movements.show', $ratingMovement)->with('success', 'Rating movement created successfully');
     }
 
     /**
@@ -90,11 +82,7 @@ class RatingMovementController extends Controller
     public function edit(RatingMovement $ratingMovement)
     {
         $bonds = Bond::active()->get();
-        $agencies = ['MARC', 'RAM', 'Fitch', 'Moody\'s'];
-        $ratingActions = ['Upgrade', 'Downgrade', 'Affirm', 'Place on Watch'];
-        $outlooks = ['Positive', 'Stable', 'Negative', 'Developing'];
-        
-        return view('admin.rating-movements.edit', compact('ratingMovement', 'bonds', 'agencies', 'ratingActions', 'outlooks'));
+        return view('admin.rating-movements.edit', compact('ratingMovement', 'bonds'));
     }
 
     /**
@@ -112,13 +100,8 @@ class RatingMovementController extends Controller
             'rating_outlook' => 'required|string|max:50',
             'rating_watch' => 'nullable|string|max:50',
         ]);
-
-        $validated['effective_date'] = Carbon::parse($validated['effective_date'])->format('Y-m-d');
-
         $ratingMovement->update($validated);
-
-        return redirect()->route('rating-movements.index')
-            ->with('success', 'Rating movement updated successfully');
+        return redirect()->route('rating-movements.show', $ratingMovement)->with('success', 'Rating movement updated successfully');
     }
 
     /**
@@ -126,13 +109,7 @@ class RatingMovementController extends Controller
      */
     public function destroy(RatingMovement $ratingMovement)
     {
-        try {
-            $ratingMovement->delete();
-            return redirect()->route('rating-movements.index')
-                ->with('success', 'Rating movement deleted successfully');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Error deleting rating movement: ' . $e->getMessage());
-        }
+        $ratingMovement->delete();
+        return redirect()->route('rating-movements.index')->with('success', 'Rating movement deleted successfully');
     }
 }

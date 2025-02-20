@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('rating_agency');
             $table->date('effective_date');
             $table->string('rating_tenure');
-            $table->string('rating');
-            $table->string('rating_action');
-            $table->string('rating_outlook');
-            $table->string('rating_watch');
+            $table->string('rating')->nullable();
+            $table->string('rating_action')->nullable();
+            $table->string('rating_outlook')->nullable();
+            $table->string('rating_watch')->nullable();
             $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
         });
