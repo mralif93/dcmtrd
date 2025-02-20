@@ -37,13 +37,13 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-4">
                                 <div>
-                                    <label for="bond_info_id" class="block text-sm font-medium text-gray-700">Bond *</label>
-                                    <select name="bond_info_id" id="bond_info_id" required
+                                    <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
+                                    <select name="bond_id" id="bond_id" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">Select a Bond</option>
                                         @foreach($bonds as $bond)
-                                            <option value="{{ $bond->id }}" @selected(old('bond_info_id') == $bond->id)>
-                                                {{ $bond->isin_code }} - {{ $bond->stock_code }}
+                                            <option value="{{ $bond->id }}" @selected(old('bond_id') == $bond->id)>
+                                                {{ $bond->bond_sukuk_name }} - {{ $bond->sub_name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -64,7 +64,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="flex items-start space-x-3">
                                     <div class="flex items-center h-5">
-                                        <input type="checkbox" name="allow_partial_call" id="allow_partial_call" 
+                                        <input type="checkbox" name="allow_partial_call" id="allow_partial_call" value="1"
                                             @checked(old('allow_partial_call', false)) 
                                             class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                                     </div>
@@ -76,7 +76,7 @@
 
                                 <div class="flex items-start space-x-3">
                                     <div class="flex items-center h-5">
-                                        <input type="checkbox" name="redeem_nearest_denomination" id="redeem_nearest_denomination" 
+                                        <input type="checkbox" name="redeem_nearest_denomination" id="redeem_nearest_denomination" value="1"
                                             @checked(old('redeem_nearest_denomination', false)) 
                                             class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                                     </div>

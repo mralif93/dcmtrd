@@ -54,7 +54,7 @@
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Bond Information</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Partial Redemption</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Last Call Date</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Redemption Method</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Nearest Denomination</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
                         </thead>
@@ -63,8 +63,7 @@
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4">
                                         <div class="font-medium text-gray-900">{{ $redemption->bond->bond_sukuk_name }}</div>
-                                        <div class="text-sm text-indigo-600">{{ $redemption->bond->isin_code }}</div>
-                                        <div class="text-xs text-gray-500">{{ $redemption->bond->stock_code }}</div>
+                                        <div class="text-sm text-indigo-600">{{ $redemption->bond->sub_name }}</div>
                                     </td>
                                     
                                     <td class="px-6 py-4">
@@ -76,17 +75,14 @@
                                     
                                     <td class="px-6 py-4">
                                         <div class="text-sm text-gray-900">
-                                            {{ $redemption->last_call_date->format('d M Y') }}
-                                            <div class="text-xs text-gray-500">
-                                                {{ $redemption->last_call_date->diffForHumans() }}
-                                            </div>
+                                            {{ $redemption->last_call_date->format('d-M-Y') }}
                                         </div>
                                     </td>
                                     
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 rounded-full text-xs 
                                             {{ $redemption->redeem_nearest_denomination ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
-                                            {{ $redemption->redeem_nearest_denomination ? 'Nearest Denomination' : 'Exact Amount' }}
+                                            {{ $redemption->redeem_nearest_denomination ? 'Enabled' : 'Disabled' }}
                                         </span>
                                     </td>
                                     

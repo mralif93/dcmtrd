@@ -52,6 +52,12 @@ class RedemptionController extends Controller
      */
     public function store(Request $request)
     {
+        // Convert checkbox values to proper booleans
+        $request->merge([
+            'allow_partial_call' => $request->has('allow_partial_call'),
+            'redeem_nearest_denomination' => $request->has('redeem_nearest_denomination')
+        ]);
+
         $validated = $request->validate([
             'bond_id' => 'required|exists:bonds,id',
             'allow_partial_call' => 'required|boolean',
@@ -60,21 +66,10 @@ class RedemptionController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($validated) {
-                $redemption = Redemption::create($validated);
-                
-                // Create default lockout period
-                $redemption->lockoutPeriods()->create([
-                    'start_date' => $redemption->bond->issue_date,
-                    'end_date' => $redemption->last_call_date
-                ]);
-            });
-
-            return redirect()->route('redemptions.index')
-                ->with('success', 'Redemption configuration created successfully');
-                
+            $redemption = Redemption::create($validated);
+            return redirect()->route('redemptions.show', $redemption)->with('success', 'Redemption configuration created successfully');
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Creation failed: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()])->withInput();
         }
     }
 
@@ -85,9 +80,7 @@ class RedemptionController extends Controller
     {
         return view('admin.redemptions.show', [
             'redemption' => $redemption->load([
-                'bond.issuer',
-                'callSchedules' => fn($q) => $q->orderBy('call_date'),
-                'lockoutPeriods' => fn($q) => $q->orderBy('start_date')
+                'bond.issuer'
             ])
         ]);
     }
@@ -108,6 +101,12 @@ class RedemptionController extends Controller
      */
     public function update(Request $request, Redemption $redemption)
     {
+        // Convert checkbox values to proper booleans
+        $request->merge([
+            'allow_partial_call' => $request->has('allow_partial_call'),
+            'redeem_nearest_denomination' => $request->has('redeem_nearest_denomination')
+        ]);
+
         $validated = $request->validate([
             'bond_id' => 'required|exists:bonds,id',
             'allow_partial_call' => 'required|boolean',
@@ -116,19 +115,8 @@ class RedemptionController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($redemption, $validated) {
-                $redemption->update($validated);
-                
-                // Update related lockout periods if needed
-                $redemption->lockoutPeriods()->updateOrCreate(
-                    ['redemption_id' => $redemption->id],
-                    ['end_date' => $validated['last_call_date']]
-                );
-            });
-
-            return redirect()->route('redemptions.index')
-                ->with('success', 'Redemption configuration updated successfully');
-                
+            $redemption->update($validated);
+            return redirect()->route('redemptions.show', $redemption)->with('success', 'Redemption configuration updated successfully'); 
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()])->withInput();
         }
@@ -146,9 +134,7 @@ class RedemptionController extends Controller
                 $redemption->delete();
             });
 
-            return redirect()->route('redemptions.index')
-                ->with('success', 'Redemption configuration deleted successfully');
-                
+            return redirect()->route('redemptions.index')->with('success', 'Redemption configuration deleted successfully');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Deletion failed: ' . $e->getMessage());

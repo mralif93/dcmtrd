@@ -7,10 +7,6 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-6">
-                <p class="mt-2 text-lg text-gray-600">Detailed information about {{ $redemption->bond->isin_code }} redemption</p>
-            </div>
-
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
                     <div class="flex items-center">
@@ -27,34 +23,26 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <!-- Core Information Section -->
-                <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900">Core Information</h3>
-                </div>
-
                 <div class="border-t border-gray-200">
-                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 px-4 py-5 sm:p-6">
-                        <!-- Left Column -->
-                        <div class="space-y-4">
+                    <dl class="space-y-6 px-4 py-5 sm:p-6">
+                        <!-- Row 1: Bond Information & Last Call Date -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Bond Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    <div class="font-medium">{{ $redemption->bond->bond_sukuk_name }}</div>
-                                    <div class="text-indigo-600">{{ $redemption->bond->isin_code }}</div>
-                                    <div class="text-gray-500 mt-1">{{ $redemption->bond->stock_code }}</div>
+                                    <div class="font-medium">{{ $redemption->bond->bond_sukuk_name }} - {{ $redemption->bond->sub_name }}</div>
                                 </dd>
                             </div>
-                            
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Last Call Date</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $redemption->last_call_date->format('d M Y') }}
+                                    {{ $redemption->last_call_date->format('d/m/Y H:i A') }}
                                 </dd>
                             </div>
                         </div>
 
-                        <!-- Right Column -->
-                        <div class="space-y-4">
+                        <!-- Row 3: Redemption Settings -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Partial Redemption</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
@@ -78,52 +66,6 @@
                     </dl>
                 </div>
 
-                <!-- Schedule Sections -->
-                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Redemption Timeline</h3>
-                    <div class="space-y-8">
-                        <!-- Call Schedules -->
-                        <div>
-                            <h4 class="text-sm font-medium text-gray-500 mb-4">Call Schedules</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                @forelse($redemption->callSchedules as $schedule)
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <div class="text-sm font-medium text-gray-500">Call Window</div>
-                                    <div class="mt-1 text-sm text-gray-900">
-                                        {{ $schedule->start_date->format('d M Y') }} - 
-                                        {{ $schedule->end_date->format('d M Y') }}
-                                    </div>
-                                    <div class="mt-2">
-                                        <span class="text-sm font-medium text-gray-500">Price:</span>
-                                        <span class="text-sm text-gray-900">RM{{ number_format($schedule->call_price, 2) }}</span>
-                                    </div>
-                                </div>
-                                @empty
-                                <div class="text-gray-500 text-sm col-span-3">No call schedules configured</div>
-                                @endforelse
-                            </div>
-                        </div>
-
-                        <!-- Lockout Periods -->
-                        <div>
-                            <h4 class="text-sm font-medium text-gray-500 mb-4">Lockout Periods</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                @forelse($redemption->lockoutPeriods as $period)
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <div class="text-sm font-medium text-gray-500">Restricted Period</div>
-                                    <div class="mt-1 text-sm text-gray-900">
-                                        {{ $period->start_date->format('d M Y') }} - 
-                                        {{ $period->end_date->format('d M Y') }}
-                                    </div>
-                                </div>
-                                @empty
-                                <div class="text-gray-500 text-sm col-span-3">No lockout periods defined</div>
-                                @endforelse
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- System Information Section -->
                 <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
@@ -131,13 +73,13 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $redemption->created_at->format('d M Y H:i') }}
+                                {{ $redemption->created_at->format('d/m/Y H:i A') }}
                             </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $redemption->updated_at->format('d M Y H:i') }}
+                                {{ $redemption->updated_at->format('d/m/Y H:i A') }}
                             </dd>
                         </div>
                     </dl>
