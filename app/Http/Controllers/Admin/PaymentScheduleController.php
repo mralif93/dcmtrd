@@ -107,13 +107,7 @@ class PaymentScheduleController extends Controller
      */
     public function destroy(PaymentSchedule $paymentSchedule)
     {
-        try {
-            $paymentSchedule->delete();
-            return redirect()->route('payment-schedules.index')
-                ->with('success', 'Payment schedule deleted successfully');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Deletion failed: ' . $e->getMessage());
-        }
+        $paymentSchedule->delete();
+        return redirect()->route('payment-schedules.index')>with('success', 'Payment schedule deleted successfully');
     }
 }
