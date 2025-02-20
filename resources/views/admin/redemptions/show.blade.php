@@ -73,13 +73,13 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $redemption->created_at->format('d/m/Y H:i A') }}
+                                {{ $redemption->created_at->format('d/m/Y h:i A') }}
                             </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $redemption->updated_at->format('d/m/Y H:i A') }}
+                                {{ $redemption->updated_at->format('d/m/Y h:i A') }}
                             </dd>
                         </div>
                     </dl>

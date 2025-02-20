@@ -30,10 +30,10 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <form action="{{ route('call-schedules.store') }}" method="POST" class="space-y-8 p-6">
+                <form action="{{ route('call-schedules.store') }}" method="POST" class="p-6">
                     @csrf
 
-                    <div class="space-y-6">
+                    <div class="space-y-6 pb-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Redemption Selection -->
                             <div class="space-y-4">
@@ -44,7 +44,7 @@
                                         <option value="">Select a Redemption</option>
                                         @foreach($redemptions as $redemption)
                                             <option value="{{ $redemption->id }}" @selected(old('redemption_id') == $redemption->id)>
-                                                {{ $redemption->bond->isin_code }} - {{ $redemption->bond->stock_code }}
+                                                {{ $redemption->bond->bond_sukuk_name }} - {{ $redemption->bond->sub_name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -64,7 +64,6 @@
 
                         <!-- Date Fields -->
                         <div class="border-t border-gray-200 pt-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Schedule Dates</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date *</label>

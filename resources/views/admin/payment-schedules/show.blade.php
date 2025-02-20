@@ -93,13 +93,13 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->created_at->format('d M Y H:i') }}
+                                {{ $schedule->created_at->format('d/m/Y h:i A') }}
                             </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->updated_at->format('d M Y H:i') }}
+                                {{ $schedule->updated_at->format('d/m/Y h:i A') }}
                             </dd>
                         </div>
                     </dl>
