@@ -54,24 +54,26 @@ class AnnouncementController extends Controller
     {
         $validated = $request->validate([
             'issuer_id' => 'required|exists:issuers,id',
-            'announcement_date' => 'required|date',
             'category' => 'required|string|max:50',
             'sub_category' => 'nullable|string|max:50',
+            'source' => 'required|string|max:100',
+            'announcement_date' => 'required|date',
             'title' => 'required|string|max:200',
             'description' => 'required|string',
             'content' => 'required|string',
             'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            'source' => 'required|string|max:100',
         ]);
 
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('attachments');
         }
 
-        Announcement::create($validated);
-
-        return redirect()->route('announcements.index')
-            ->with('success', 'Announcement created successfully');
+        try {
+            $announcement = Announcement::create($validated);
+            return redirect()->route('announcements.show', $announcement)->with('success', 'Announcement created successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Create failed: ' . $e->getMessage()])->withInput();
+        }
     }
 
     /**
@@ -102,14 +104,14 @@ class AnnouncementController extends Controller
     {
         $validated = $request->validate([
             'issuer_id' => 'required|exists:issuers,id',
-            'announcement_date' => 'required|date',
             'category' => 'required|string|max:50',
             'sub_category' => 'nullable|string|max:50',
+            'source' => 'required|string|max:100',
+            'announcement_date' => 'required|date',
             'title' => 'required|string|max:200',
             'description' => 'required|string',
             'content' => 'required|string',
             'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            'source' => 'required|string|max:100',
         ]);
 
         if ($request->hasFile('attachment')) {
@@ -120,10 +122,12 @@ class AnnouncementController extends Controller
             $validated['attachment'] = $request->file('attachment')->store('attachments');
         }
 
-        $announcement->update($validated);
-
-        return redirect()->route('announcements.index')
-            ->with('success', 'Announcement updated successfully');
+        try {
+            $announcement->update($validated);
+            return redirect()->route('announcements.show', $announcement)->with('success', 'Announcement updated successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Create failed: ' . $e->getMessage()])->withInput();
+        }
     }
 
     /**
