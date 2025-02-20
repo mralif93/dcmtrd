@@ -7,10 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-6">
-                <p class="mt-2 text-lg text-gray-600">Detailed information about {{ $schedule->bond->isin_code }} schedule</p>
-            </div>
-
+            
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
                     <div class="flex items-center">
@@ -27,84 +24,63 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <!-- Core Information Section -->
-                <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900">Core Information</h3>
-                </div>
-
                 <div class="border-t border-gray-200">
-                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 px-4 py-5 sm:p-6">
-                        <!-- Left Column -->
-                        <div class="space-y-4">
+                    <dl class="space-y-6 px-4 py-5 sm:p-6">
+                        <!-- Row 1: Bond -->
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Bond Information</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                <div class="font-medium">{{ $schedule->bond->bond_sukuk_name }} - {{ $schedule->bond->sub_name }}</div>
+                            </dd>
+                        </div>
+
+                        <!-- Row 2: Coupon Rate -->
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Coupon Rate</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                    {{ number_format($schedule->coupon_rate, 2) }}%
+                                </span>
+                            </dd>
+                        </div>
+
+                        <!-- Row 3: Start Date & End Date -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Bond Information</dt>
+                                <dt class="text-sm font-medium text-gray-500">Start Date</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    <div class="font-medium">{{ $schedule->bond->bond_sukuk_name }}</div>
-                                    <div class="text-indigo-600">{{ $schedule->bond->isin_code }}</div>
-                                    <div class="text-gray-500 mt-1">{{ $schedule->bond->stock_code }}</div>
+                                    {{ $schedule->start_date->format('d M Y') }}
                                 </dd>
                             </div>
-                            
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Facility Code</dt>
-                                <dd class="mt-1 text-sm text-gray-900 font-mono">
-                                    {{ $schedule->bond->facility_code ?? 'N/A' }}
+                                <dt class="text-sm font-medium text-gray-500">End Date</dt>
+                                <dd class="mt-1 text-sm text-gray-900">
+                                    {{ $schedule->end_date->format('d M Y') }}
                                 </dd>
                             </div>
                         </div>
 
-                        <!-- Right Column -->
-                        <div class="space-y-4">
+                        <!-- Row 4: Ex-Date & Payment Date -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Coupon Rate</dt>
+                                <dt class="text-sm font-medium text-gray-500">Ex-Date</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                                        {{ number_format($schedule->coupon_rate, 2) }}%
-                                    </span>
+                                    {{ $schedule->ex_date->format('d M Y') }}
                                 </dd>
                             </div>
-                            
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Schedule Status</dt>
+                                <dt class="text-sm font-medium text-gray-500">Payment Date</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    <span class="px-2 py-1 rounded-full text-sm {{ 
-                                        $schedule->end_date->isFuture() ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' 
-                                    }}">
-                                        {{ $schedule->end_date->isFuture() ? 'Active' : 'Expired' }}
-                                    </span>
+                                    {{ $schedule->payment_date->format('d M Y') }}
                                 </dd>
                             </div>
                         </div>
-                    </dl>
-                </div>
 
-                <!-- Schedule Dates Section -->
-                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Schedule Timeline</h3>
-                    <dl class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Period</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->start_date->format('d M Y') }} - 
-                                {{ $schedule->end_date->format('d M Y') }}
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Payment Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->payment_date->format('d M Y') }}
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Ex-Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->ex_date->format('d M Y') }}
-                            </dd>
-                        </div>
+                        <!-- Row 5: Adjustment Date -->
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Adjustment Date</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->adjustment_date?->format('d M Y') ?? 'N/A' }}
+                                {{ $schedule->adjustment_date ? $schedule->adjustment_date->format('d M Y') : 'N/A' }}
                             </dd>
                         </div>
                     </dl>

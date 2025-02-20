@@ -55,30 +55,14 @@ class PaymentScheduleController extends Controller
             'bond_id' => 'required|exists:bonds,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
-            'payment_date' => 'required|date|after:end_date',
-            'ex_date' => 'required|date|before:payment_date',
+            'payment_date' => 'required|date',
+            'ex_date' => 'required|date',
             'coupon_rate' => 'required|decimal:2|between:0,99.99',
-            'adjustment_date' => 'nullable|date|after:start_date',
+            'adjustment_date' => 'nullable|date',
         ]);
 
-        $exists = PaymentSchedule::where('bond_id', $validated['bond_id'])
-            ->where(function ($query) use ($validated) {
-                $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
-                      ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
-            })
-            ->exists();
-
-        if ($exists) {
-            return back()->withErrors(['schedule' => 'A schedule already exists within this date range'])->withInput();
-        }
-
-        try {
-            PaymentSchedule::create($validated);
-            return redirect()->route('payment-schedules.index')
-                ->with('success', 'Payment schedule created successfully');
-        } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to create schedule: ' . $e->getMessage()])->withInput();
-        }
+        $paymentSchedule = PaymentSchedule::create($validated);
+        return redirect()->route('payment-schedules.show', $paymentSchedule)->with('success', 'Payment schedule created successfully');
     }
 
     /**
@@ -109,31 +93,13 @@ class PaymentScheduleController extends Controller
             'bond_id' => 'required|exists:bonds,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
-            'payment_date' => 'required|date|after:end_date',
-            'ex_date' => 'required|date|before:payment_date',
+            'payment_date' => 'required|date',
+            'ex_date' => 'required|date',
             'coupon_rate' => 'required|decimal:2|between:0,99.99',
-            'adjustment_date' => 'nullable|date|after:start_date',
+            'adjustment_date' => 'nullable|date',
         ]);
-
-        $exists = PaymentSchedule::where('bond_id', $validated['bond_id'])
-            ->where('id', '!=', $paymentSchedule->id)
-            ->where(function ($query) use ($validated) {
-                $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
-                      ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
-            })
-            ->exists();
-
-        if ($exists) {
-            return back()->withErrors(['schedule' => 'A schedule already exists within this date range'])->withInput();
-        }
-
-        try {
-            $paymentSchedule->update($validated);
-            return redirect()->route('payment-schedules.index')
-                ->with('success', 'Payment schedule updated successfully');
-        } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()])->withInput();
-        }
+        $paymentSchedule->update($validated);
+        return redirect()->route('payment-schedules.show', $paymentSchedule)->with('success', 'Payment schedule updated successfully');
     }
 
     /**

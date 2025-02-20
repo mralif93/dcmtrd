@@ -7,9 +7,6 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-6">
-                <p class="mt-2 text-lg text-gray-600">Updating schedule for {{ $paymentSchedule->bond->isin_code }}</p>
-            </div>
 
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
@@ -34,78 +31,74 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <form action="{{ route('payment-schedules.update', $paymentSchedule) }}" method="POST" class="space-y-8 p-6">
+                <form action="{{ route('payment-schedules.update', $paymentSchedule) }}" method="POST" class="p-6">
                     @csrf
                     @method('PUT')
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Bond Selection -->
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
-                                    <select name="bond_id" id="bond_id" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Select a Bond</option>
-                                        @foreach($bonds as $bond)
-                                            <option value="{{ $bond->id }}" @selected(old('bond_id', $paymentSchedule->bond_id) == $bond->id)>
-                                                {{ $bond->isin_code }} - {{ $bond->bond_sukuk_name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                    
+                    <div class="space-y-6 pb-6">
+                        <!-- Row 1: Bond -->
+                        <div>
+                            <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
+                            <select name="bond_id" id="bond_id" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Select a Bond</option>
+                                @foreach($bonds as $bond)
+                                    <option value="{{ $bond->id }}" @selected(old('bond_id', $paymentSchedule->bond_id) == $bond->id)>
+                                        {{ $bond->isin_code }} - {{ $bond->bond_sukuk_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                            <!-- Coupon Rate -->
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="coupon_rate" class="block text-sm font-medium text-gray-700">Coupon Rate (%) *</label>
-                                    <input type="number" step="0.01" name="coupon_rate" id="coupon_rate" 
-                                        value="{{ old('coupon_rate', $paymentSchedule->coupon_rate) }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        placeholder="e.g., 5.25">
-                                </div>
+                        <!-- Row 2: Coupon Rate -->
+                        <div>
+                            <label for="coupon_rate" class="block text-sm font-medium text-gray-700">Coupon Rate (%) *</label>
+                            <input type="number" step="0.01" name="coupon_rate" id="coupon_rate" 
+                                value="{{ old('coupon_rate', $paymentSchedule->coupon_rate) }}" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="e.g., 5.25">
+                        </div>
+
+                        <!-- Row 3: Start Date & End Date -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date *</label>
+                                <input type="date" name="start_date" id="start_date" 
+                                    value="{{ old('start_date', $paymentSchedule->start_date?->format('Y-m-d')) }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            
+                            <div>
+                                <label for="end_date" class="block text-sm font-medium text-gray-700">End Date *</label>
+                                <input type="date" name="end_date" id="end_date" 
+                                    value="{{ old('end_date', $paymentSchedule->end_date?->format('Y-m-d')) }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                         </div>
 
-                        <!-- Date Fields -->
-                        <div class="border-t border-gray-200 pt-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Schedule Dates</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date *</label>
-                                    <input type="date" name="start_date" id="start_date" 
-                                        value="{{ old('start_date', $paymentSchedule->start_date?->format('Y-m-d')) }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                
-                                <div>
-                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End Date *</label>
-                                    <input type="date" name="end_date" id="end_date" 
-                                        value="{{ old('end_date', $paymentSchedule->end_date?->format('Y-m-d')) }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-
-                                <div>
-                                    <label for="payment_date" class="block text-sm font-medium text-gray-700">Payment Date *</label>
-                                    <input type="date" name="payment_date" id="payment_date" 
-                                        value="{{ old('payment_date', $paymentSchedule->payment_date?->format('Y-m-d')) }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                
-                                <div>
-                                    <label for="ex_date" class="block text-sm font-medium text-gray-700">Ex-Date *</label>
-                                    <input type="date" name="ex_date" id="ex_date" 
-                                        value="{{ old('ex_date', $paymentSchedule->ex_date?->format('Y-m-d')) }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                
-                                <div>
-                                    <label for="adjustment_date" class="block text-sm font-medium text-gray-700">Adjustment Date</label>
-                                    <input type="date" name="adjustment_date" id="adjustment_date" 
-                                        value="{{ old('adjustment_date', $paymentSchedule->adjustment_date?->format('Y-m-d')) }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
+                        <!-- Row 4: Ex-Date & Payment Date -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="ex_date" class="block text-sm font-medium text-gray-700">Ex-Date *</label>
+                                <input type="date" name="ex_date" id="ex_date" 
+                                    value="{{ old('ex_date', $paymentSchedule->ex_date?->format('Y-m-d')) }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
+                            
+                            <div>
+                                <label for="payment_date" class="block text-sm font-medium text-gray-700">Payment Date *</label>
+                                <input type="date" name="payment_date" id="payment_date" 
+                                    value="{{ old('payment_date', $paymentSchedule->payment_date?->format('Y-m-d')) }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                        </div>
+
+                        <!-- Row 5: Adjustment Date -->
+                        <div>
+                            <label for="adjustment_date" class="block text-sm font-medium text-gray-700">Adjustment Date</label>
+                            <input type="date" name="adjustment_date" id="adjustment_date" 
+                                value="{{ old('adjustment_date', $paymentSchedule->adjustment_date?->format('Y-m-d')) }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
                     </div>
 

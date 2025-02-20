@@ -60,9 +60,7 @@ class RatingMovementController extends Controller
             'rating_outlook' => 'required|string|max:50',
             'rating_watch' => 'nullable|string|max:50',
         ]);
-
         $ratingMovement = RatingMovement::create($validated);
-
         return redirect()->route('rating-movements.show', $ratingMovement)->with('success', 'Rating movement created successfully');
     }
 

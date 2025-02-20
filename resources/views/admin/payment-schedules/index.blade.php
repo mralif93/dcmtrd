@@ -63,8 +63,8 @@
                             @forelse($paymentSchedules as $schedule)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4">
-                                        <div class="font-medium text-indigo-600">{{ $schedule->bond->isin_code }}</div>
-                                        <div class="text-sm text-gray-500">{{ $schedule->bond->stock_code }}</div>
+                                        <div class="font-medium text-indigo-600">{{ $schedule->bond->bond_sukuk_name }}</div>
+                                        <div class="text-sm text-gray-500">{{ $schedule->bond->sub_name }}</div>
                                     </td>
                                     
                                     <td class="px-6 py-4">
