@@ -136,8 +136,7 @@ class RedemptionController extends Controller
 
             return redirect()->route('redemptions.index')->with('success', 'Redemption configuration deleted successfully');
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Deletion failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Deletion failed: ' . $e->getMessage());
         }
     }
 }
