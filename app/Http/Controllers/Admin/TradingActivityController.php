@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\bond;
+use App\Models\Bond;
 use App\Models\TradingActivity;
 use Illuminate\Http\Request;
 
@@ -42,7 +42,7 @@ class TradingActivityController extends Controller
     public function create()
     {
         return view('admin.trading-activities.create', [
-            'bonds' => bond::all()
+            'bonds' => Bond::active()->get()
         ]);
     }
 
@@ -52,19 +52,21 @@ class TradingActivityController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'bond_id' => 'required|exists:bond,id',
+            'bond_id' => 'required|exists:bonds,id',
             'trade_date' => 'required|date',
-            'input_time' => 'required|date_format:H:i',
-            'amount' => 'required|numeric|min:0.01|max:999999999999.99',
-            'price' => 'required|numeric|min:0.0001|max:9999.9999',
-            'yield' => 'required|numeric|min:0.01|max:100.00',
-            'value_date' => 'required|date|after:trade_date',
+            'input_time' => 'nullable|date_format:H:i:s',
+            'amount' => 'nullable|numeric|min:0.01|max:999999999999.99',
+            'price' => 'nullable|numeric|min:0.0001|max:9999.9999',
+            'yield' => 'nullable|numeric|min:0.01|max:100.00',
+            'value_date' => 'nullable|date|after:trade_date',
         ]);
 
-        TradingActivity::create($validated);
-
-        return redirect()->route('trading-activities.index')
-            ->with('success', 'Trading activity recorded successfully');
+        try {
+            $tradingActivity = TradingActivity::create($validated);
+            return redirect()->route('trading-activities.show', $tradingActivity)->with('success', 'Trading activity recorded successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Create failed: ' . $e->getMessage()])->withInput();
+        }
     }
 
 
@@ -95,19 +97,21 @@ class TradingActivityController extends Controller
     public function update(Request $request, TradingActivity $tradingActivity)
     {
         $validated = $request->validate([
-            'bond_id' => 'required|exists:bond,id',
+            'bond_id' => 'required|exists:bonds,id',
             'trade_date' => 'required|date',
-            'input_time' => 'required|date_format:H:i',
-            'amount' => 'required|numeric|min:0.01|max:999999999999.99',
-            'price' => 'required|numeric|min:0.0001|max:9999.9999',
-            'yield' => 'required|numeric|min:0.01|max:100.00',
-            'value_date' => 'required|date|after:trade_date',
+            'input_time' => 'nullable|date_format:H:i',
+            'amount' => 'nullable|numeric|min:0.01|max:999999999999.99',
+            'price' => 'nullable|numeric|min:0.0001|max:9999.9999',
+            'yield' => 'nullable|numeric|min:0.01|max:100.00',
+            'value_date' => 'nullable|date|after:trade_date',
         ]);
 
-        $tradingActivity->update($validated);
-
-        return redirect()->route('trading-activities.index')
-            ->with('success', 'Trading activity updated successfully');
+        try {
+            $tradingActivity->update($validated);
+            return redirect()->route('trading-activities.show', $tradingActivity)->with('success', 'Trading activity updated successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()])->withInput();
+        }
     }
 
     /**
@@ -115,9 +119,11 @@ class TradingActivityController extends Controller
      */
     public function destroy(TradingActivity $tradingActivity)
     {
-        $tradingActivity->delete();
-
-        return redirect()->route('trading-activities.index')
-            ->with('success', 'Trading activity deleted successfully');
+        try {
+            $tradingActivity->delete();
+            return redirect()->route('trading-activities.index')->with('success', 'Trading activity deleted successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Delete failed: ' . $e->getMessage()])->withInput();
+        }
     }
 }

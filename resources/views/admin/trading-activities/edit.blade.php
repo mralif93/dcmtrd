@@ -7,6 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
                     <div class="flex">
@@ -30,76 +31,101 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <form action="{{ route('trading-activities.update', $activity) }}" method="POST" class="space-y-8 p-6">
+                <form action="{{ route('trading-activities.update', $activity) }}" method="POST" class="p-6">
                     @csrf @method('PUT')
 
-                    <div class="space-y-6">
+                    <div class="space-y-6 pb-6">
+                        <!-- Row 1: Bond -->
+                        <div>
+                            <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
+                            <select name="bond_id" id="bond_id" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                           {{ $errors->has('bond_id') ? 'border-red-300' : '' }}">
+                                <option value="">Select a Bond</option>
+                                @foreach($bonds as $bond)
+                                    <option value="{{ $bond->id }}" 
+                                        @selected(old('bond_id', $activity->bond_id) == $bond->id)>
+                                        {{ $bond->bond_sukuk_name }} - {{ $bond->sub_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('bond_id')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Row 2: Trade Date & Time -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Bond Selection -->
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
-                                    <select name="bond_id" id="bond_id" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Select a Bond</option>
-                                        @foreach($bonds as $bond)
-                                            <option value="{{ $bond->id }}" @selected($activity->bond_id == $bond->id)>
-                                                {{ $bond->isin_code }} - {{ $bond->stock_code }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                            <div>
+                                <label for="trade_date" class="block text-sm font-medium text-gray-700">Trade Date *</label>
+                                <input type="date" name="trade_date" id="trade_date" 
+                                    value="{{ old('trade_date', $activity->trade_date->format('Y-m-d')) }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                           {{ $errors->has('trade_date') ? 'border-red-300' : '' }}">
+                                @error('trade_date')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
-
-                            <!-- Trade Date/Time -->
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="trade_date" class="block text-sm font-medium text-gray-700">Trade Date *</label>
-                                    <input type="date" name="trade_date" id="trade_date" 
-                                        value="{{ $activity->trade_date->format('Y-m-d') }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <div>
-                                    <label for="input_time" class="block text-sm font-medium text-gray-700">Trade Time *</label>
-                                    <input type="time" name="input_time" id="input_time" 
-                                        value="{{ $activity->input_time->format('H:i') }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
+                            <div>
+                                <label for="input_time" class="block text-sm font-medium text-gray-700">Trade Time *</label>
+                                <input type="time" name="input_time" id="input_time" 
+                                    value="{{ old('input_time', $activity->input_time->format('H:i')) }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                           {{ $errors->has('input_time') ? 'border-red-300' : '' }}">
+                                @error('input_time')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
-                        <!-- Pricing Information -->
-                        <div class="border-t border-gray-200 pt-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Pricing Details</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label for="amount" class="block text-sm font-medium text-gray-700">Amount (RM million) *</label>
-                                    <input type="number" step="0.01" name="amount" id="amount" 
-                                        value="{{ old('amount', $activity->amount) }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <div>
-                                    <label for="price" class="block text-sm font-medium text-gray-700">Price *</label>
-                                    <input type="number" step="0.0001" name="price" id="price" 
-                                        value="{{ old('price', $activity->price) }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <div>
-                                    <label for="yield" class="block text-sm font-medium text-gray-700">Yield (%) *</label>
-                                    <input type="number" step="0.01" name="yield" id="yield" 
-                                        value="{{ old('yield', $activity->yield) }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
+                        <!-- Row 3: Amount & Price -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="amount" class="block text-sm font-medium text-gray-700">Amount (RM million) *</label>
+                                <input type="number" step="0.01" name="amount" id="amount" 
+                                    value="{{ old('amount', $activity->amount) }}" required
+                                    placeholder="Enter amount in millions"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                           {{ $errors->has('amount') ? 'border-red-300' : '' }}">
+                                @error('amount')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="price" class="block text-sm font-medium text-gray-700">Price *</label>
+                                <input type="number" step="0.0001" name="price" id="price" 
+                                    value="{{ old('price', $activity->price) }}" required
+                                    placeholder="Enter price per unit"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                           {{ $errors->has('price') ? 'border-red-300' : '' }}">
+                                @error('price')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
-                        <!-- Value Date -->
-                        <div class="border-t border-gray-200 pt-6">
+                        <!-- Row 4: Yield & Value Date -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="yield" class="block text-sm font-medium text-gray-700">Yield (%) *</label>
+                                <input type="number" step="0.01" name="yield" id="yield" 
+                                    value="{{ old('yield', $activity->yield) }}" required
+                                    placeholder="Enter yield percentage"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                           {{ $errors->has('yield') ? 'border-red-300' : '' }}">
+                                @error('yield')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
                             <div>
                                 <label for="value_date" class="block text-sm font-medium text-gray-700">Value Date *</label>
                                 <input type="date" name="value_date" id="value_date" 
                                     value="{{ old('value_date', $activity->value_date->format('Y-m-d')) }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                           {{ $errors->has('value_date') ? 'border-red-300' : '' }}">
+                                @error('value_date')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                     </div>

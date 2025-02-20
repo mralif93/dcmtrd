@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('trading_activities', function (Blueprint $table) {
             $table->id();
             $table->date('trade_date');
-            $table->time('input_time');
-            $table->decimal('amount', 15, 2);
-            $table->decimal('price', 10, 2);
-            $table->decimal('yield', 5, 2);
-            $table->date('value_date');
+            $table->time('input_time')->nullable();
+            $table->decimal('amount', 15, 2)->nullable();
+            $table->decimal('price', 10, 2)->nullable();
+            $table->decimal('yield', 5, 2)->nullable();
+            $table->date('value_date')->nullable();
             $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
         });

@@ -7,103 +7,95 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-6">
-                <p class="mt-2 text-lg text-gray-600">Detailed information for {{ $activity->bond->isin_code }} trade</p>
-            </div>
-
+            
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
-                    <!-- Success message display same as bond template -->
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+                        </div>
+                    </div>
                 </div>
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <!-- Core Information Section -->
-                <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg font-medium text-gray-900">Core Trading Information</h3>
-                </div>
-
                 <div class="border-t border-gray-200">
-                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 px-4 py-5 sm:p-6">
-                        <!-- Left Column -->
-                        <div class="space-y-4">
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Bond Information</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $activity->bond->isin_code }} - 
-                                    {{ $activity->bond->stock_code }}
-                                </dd>
-                            </div>
-                            
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Trade Date/Time</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $activity->trade_date->format('d/m/Y') }} at 
-                                    {{ $activity->input_time->format('H:i') }}
-                                </dd>
-                            </div>
+                    <dl class="space-y-6 px-4 py-5 sm:p-6">
+                        <!-- Row 1: Bond Information -->
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Bond Information</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                <div class="font-medium">{{ $activity->bond->bond_sukuk_name }} - {{ $activity->bond->sub_name }}</div>
+                            </dd>
                         </div>
 
-                        <!-- Right Column -->
-                        <div class="space-y-4">
+                        <!-- Row 2: Trade Details -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Value Date</dt>
+                                <dt class="text-sm font-medium text-gray-500">Trade Date</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $activity->value_date->format('d/m/Y') }}
+                                    {{ $activity->trade_date->format('d M Y') }}
                                 </dd>
                             </div>
-                            
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Transaction Status</dt>
+                                <dt class="text-sm font-medium text-gray-500">Input Time</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    <span class="px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                                        Completed
-                                    </span>
+                                {{ $activity->input_time->format('h:i A') }}
                                 </dd>
                             </div>
                         </div>
                     </dl>
                 </div>
 
-                <!-- Pricing Details Section -->
+                <!-- Pricing Details -->
                 <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Pricing Details</h3>
-                    <dl class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Amount (RM)</dt>
+                            <dt class="text-sm font-medium text-gray-500">Amount (RM'mil)</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                RM{{ number_format($activity->amount * 1000000, 2) }}
+                                RM {{ number_format($activity->amount, 2) }} million
                             </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Price</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ number_format($activity->price, 4) }}
+                                {{ number_format($activity->price, 2) }}
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Yield</dt>
+                            <dt class="text-sm font-medium text-gray-500">Yield (%)</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ number_format($activity->yield, 2) }}%
+                                {{ number_format($activity->yield, 2) }}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Value Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $activity->value_date->format('d/m/Y') }}
                             </dd>
                         </div>
                     </dl>
                 </div>
 
-                <!-- System Information Section -->
+                <!-- System Information -->
                 <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
                     <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $activity->created_at->format('d/m/Y H:i') }}
+                                {{ $activity->created_at->format('d M Y H:i') }}
                             </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $activity->updated_at->format('d/m/Y H:i') }}
+                                {{ $activity->updated_at->format('d M Y H:i') }}
                             </dd>
                         </div>
                     </dl>

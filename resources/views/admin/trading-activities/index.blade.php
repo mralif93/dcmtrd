@@ -7,10 +7,18 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
             @if(session('success'))
-                <div class="mb-4">
-                    <div class="bg-green-500 text-white p-4 rounded-lg">
-                        {{ session('success') }}
+                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+                        </div>
                     </div>
                 </div>
             @endif
@@ -52,8 +60,12 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Bond</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Trade Details</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Pricing</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Trade Date</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Input Time</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Amount (RM'mil)</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Price</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Yield (%)</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Value Date</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
                         </thead>
@@ -61,25 +73,39 @@
                             @forelse($activities as $activity)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4">
-                                        <div class="font-medium text-indigo-600">{{ $activity->bond->isin_code }}</div>
-                                        <div class="text-sm text-gray-500">{{ $activity->bond->stock_code }}</div>
+                                        <div class="font-medium text-indigo-600">{{ $activity->bond->bond_sukuk_name }}</div>
+                                        <div class="text-sm text-gray-500">{{ $activity->bond->sub_name }}</div>
                                     </td>
-                                    
                                     <td class="px-6 py-4">
                                         <div class="text-sm text-gray-900">
                                             <div>{{ $activity->trade_date->format('d/m/Y') }}</div>
-                                            <div class="text-gray-500">{{ $activity->input_time }}</div>
                                         </div>
                                     </td>
-                                    
                                     <td class="px-6 py-4">
-                                        <div class="text-sm space-y-1">
-                                            <div>Price: {{ number_format($activity->price, 4) }}</div>
-                                            <div>Yield: {{ number_format($activity->yield, 2) }}%</div>
-                                            <div>Amount: RM{{ number_format($activity->amount, 2) }}M</div>
+                                        <div class="text-sm text-gray-900">
+                                            <div>{{ $activity->input_time->format('h:i A') }}</div>
                                         </div>
                                     </td>
-                                    
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">
+                                            <div>{{ number_format($activity->amount, 2) }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">
+                                            <div>{{ number_format($activity->price, 2) }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">
+                                            <div>{{ number_format($activity->yield, 2) }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">
+                                            <div>{{ $activity->value_date->format('d/m/Y') }}</div>
+                                        </div>
+                                    </td>
                                     <td class="px-6 py-4 space-x-2">
                                         <a href="{{ route('trading-activities.show', $activity) }}" 
                                         class="px-3 py-1 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors">
@@ -101,7 +127,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                                    <td colspan="8" class="px-6 py-4 text-center text-gray-500">
                                         No trading activities found {{ $searchTerm ? 'matching your search' : '' }}
                                     </td>
                                 </tr>
