@@ -340,6 +340,32 @@
                         </div>
                     </div>
 
+                    <!-- Section: System Information -->
+                    <div class="space-y-6 pb-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
+
+                        <!-- Row 1: Status, Approval Date/Time -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">Status *</label>
+                                <select name="status" id="status" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Select Status</option>
+                                    <option value="Active" @selected(old('status') == 'Active')>Active</option>
+                                    <option value="Inactive" @selected(old('status') == 'Inactive')>Inactive</option>
+                                    <option value="Pending" @selected(old('status') == 'Pending')>Pending</option>
+                                    <option value="Matured" @selected(old('status') == 'Matured')>Matured</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="approval_date_time" class="block text-sm font-medium text-gray-700">Approval Date/Time *</label>
+                                <input type="datetime-local" name="approval_date_time" id="approval_date_time"
+                                    value="{{ old('approval_date_time') }}"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
                         <a href="{{ route('bonds.index') }}"

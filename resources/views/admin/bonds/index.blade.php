@@ -92,7 +92,7 @@
                                                 {{ ucfirst($bond->status) }}
                                             </span>
                                             <div class="text-xs text-gray-500">
-                                                O/S: RM {{ number_format($bond->o_s_amount, 2) }}
+                                                O/S: (RM'mil) {{ number_format($bond->amount_outstanding, 2) }}
                                             </div>
                                         </div>
                                     </td>

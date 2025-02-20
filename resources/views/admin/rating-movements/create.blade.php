@@ -31,106 +31,103 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <form action="{{ route('rating-movements.store') }}" method="POST" class="space-y-8 p-6">
+                <form action="{{ route('rating-movements.store') }}" method="POST" class="p-6">
                     @csrf
 
-                    <div class="space-y-6">
-                        <!-- Core Information -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
-                                    <select name="bond_id" id="bond_id" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Select a Bond</option>
-                                        @foreach($bonds as $bond)
-                                            <option value="{{ $bond->id }}" @selected(old('bond_id') == $bond->id)>
-                                                {{ $bond->isin_code }} - {{ $bond->bond_sukuk_name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                    <div class="space-y-6 pb-6">
+                        <!-- Row 1: Bond -->
+                        <div>
+                            <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
+                            <select name="bond_id" id="bond_id" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Select a Bond</option>
+                                @foreach($bonds as $bond)
+                                    <option value="{{ $bond->id }}" @selected(old('bond_id') == $bond->id)>
+                                        {{ $bond->isin_code }} - {{ $bond->bond_sukuk_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                                <div>
-                                    <label for="rating_agency" class="block text-sm font-medium text-gray-700">Agency *</label>
-                                    <select name="rating_agency" id="rating_agency" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Select Rating Agency</option>
-                                        @foreach($agencies as $agency)
-                                            <option value="{{ $agency }}" @selected(old('rating_agency') == $agency)>
-                                                {{ $agency }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        <!-- Row 2: Rating Agency & Rating Tenure -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="rating_agency" class="block text-sm font-medium text-gray-700">Agency *</label>
+                                <select name="rating_agency" id="rating_agency" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Select Rating Agency</option>
+                                    @foreach($agencies as $agency)
+                                        <option value="{{ $agency }}" @selected(old('rating_agency') == $agency)>
+                                            {{ $agency }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
 
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="effective_date" class="block text-sm font-medium text-gray-700">Effective Date *</label>
-                                    <input type="date" name="effective_date" id="effective_date" 
-                                        value="{{ old('effective_date') }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-
-                                <div>
-                                    <label for="rating_tenure" class="block text-sm font-medium text-gray-700">Rating Tenure *</label>
-                                    <input type="text" name="rating_tenure" id="rating_tenure" 
-                                        value="{{ old('rating_tenure') }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        placeholder="e.g., 5 years">
-                                </div>
+                            <div>
+                                <label for="rating_tenure" class="block text-sm font-medium text-gray-700">Rating Tenure *</label>
+                                <input type="text" name="rating_tenure" id="rating_tenure" 
+                                    value="{{ old('rating_tenure') }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    placeholder="e.g., 5 years">
                             </div>
                         </div>
 
-                        <!-- Rating Details -->
-                        <div class="border-t border-gray-200 pt-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Rating Details</h3>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <div>
-                                    <label for="rating" class="block text-sm font-medium text-gray-700">Rating *</label>
-                                    <input type="text" name="rating" id="rating" 
-                                        value="{{ old('rating') }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        placeholder="e.g., AA+">
-                                </div>
-
-                                <div>
-                                    <label for="rating_action" class="block text-sm font-medium text-gray-700">Action *</label>
-                                    <select name="rating_action" id="rating_action" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @foreach($ratingActions as $action)
-                                            <option value="{{ $action }}" @selected(old('rating_action') == $action)>
-                                                {{ $action }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label for="rating_outlook" class="block text-sm font-medium text-gray-700">Outlook *</label>
-                                    <select name="rating_outlook" id="rating_outlook" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @foreach($outlooks as $outlook)
-                                            <option value="{{ $outlook }}" @selected(old('rating_outlook') == $outlook)>
-                                                {{ $outlook }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label for="rating_watch" class="block text-sm font-medium text-gray-700">Watch</label>
-                                    <select name="rating_watch" id="rating_watch"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">None</option>
-                                        <option value="Positive" @selected(old('rating_watch') == 'Positive')>Positive</option>
-                                        <option value="Negative" @selected(old('rating_watch') == 'Negative')>Negative</option>
-                                        <option value="Evolving" @selected(old('rating_watch') == 'Evolving')>Evolving</option>
-                                    </select>
-                                </div>
+                        <!-- Row 3: Effective Date & Rating -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="effective_date" class="block text-sm font-medium text-gray-700">Effective Date *</label>
+                                <input type="date" name="effective_date" id="effective_date" 
+                                    value="{{ old('effective_date') }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
+
+                            <div>
+                                <label for="rating" class="block text-sm font-medium text-gray-700">Rating *</label>
+                                <input type="text" name="rating" id="rating" 
+                                    value="{{ old('rating') }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    placeholder="e.g., AA+">
+                            </div>
+                        </div>
+
+                        <!-- Row 4: Rating Action & Rating Outlook -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="rating_action" class="block text-sm font-medium text-gray-700">Action *</label>
+                                <select name="rating_action" id="rating_action" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @foreach($ratingActions as $action)
+                                        <option value="{{ $action }}" @selected(old('rating_action') == $action)>
+                                            {{ $action }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="rating_outlook" class="block text-sm font-medium text-gray-700">Outlook *</label>
+                                <select name="rating_outlook" id="rating_outlook" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @foreach($outlooks as $outlook)
+                                        <option value="{{ $outlook }}" @selected(old('rating_outlook') == $outlook)>
+                                            {{ $outlook }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 5: Rating Watch -->
+                        <div>
+                            <label for="rating_watch" class="block text-sm font-medium text-gray-700">Watch</label>
+                            <select name="rating_watch" id="rating_watch"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">None</option>
+                                <option value="Positive" @selected(old('rating_watch') == 'Positive')>Positive</option>
+                                <option value="Negative" @selected(old('rating_watch') == 'Negative')>Negative</option>
+                                <option value="Evolving" @selected(old('rating_watch') == 'Evolving')>Evolving</option>
+                            </select>
                         </div>
                     </div>
 

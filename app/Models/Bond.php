@@ -50,8 +50,8 @@ class Bond extends Model
     ];
 
     protected $casts = [
-        'issue_date' => 'date:Y-m-d',
-        'maturity_date' => 'date:Y-m-d',
+        'issue_date' => 'date',
+        'maturity_date' => 'date',
         'coupon_rate'=> 'decimal:2',
         'issue_tenure_years' => 'decimal:4',
         'residual_tenure_years' => 'decimal:4',

@@ -32,18 +32,18 @@
                         <!-- Left Column -->
                         <div class="space-y-4">
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Bond Name</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->bond_sukuk_name }}</dd>
+                                <dt class="text-sm font-medium text-gray-500">Bond/Sukuk Name</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->bond_sukuk_name ?? 'N/A' }}</dd>
                             </div>
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Issuer</dt>
+                                <dt class="text-sm font-medium text-gray-500">Issuer Name</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $bond->issuer->issuer_short_name }} - {{ $bond->issuer->issuer_name }}
+                                    {{ $bond->issuer->issuer_short_name ?? 'N/A' }} - {{ $bond->issuer->issuer_name ?? 'N/A' }}
                                 </dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">ISIN Code</dt>
-                                <dd class="mt-1 text-sm text-gray-900 font-mono">{{ $bond->isin_code }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->isin_code ?? 'N/A' }}</dd>
                             </div>
                         </div>
 
@@ -59,7 +59,7 @@
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Instrument Code</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->instrument_code }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->instrument_code ?? 'N/A' }}</dd>
                             </div>
                         </div>
                     </div>
@@ -82,11 +82,11 @@
                         <div class="space-y-4">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Issue Tenure</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->issue_tenure_years }} years</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->issue_tenure_years ?? 'N/A' }} years</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Residual Tenure</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->residual_tenure_years }} years</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->residual_tenure_years ?? 'N/A' }} years</dd>
                             </div>
                         </div>
                     </div>
@@ -99,21 +99,21 @@
                         <div class="space-y-4">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Coupon Rate</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->coupon_rate }}%</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->coupon_rate ?? 'N/A' }}%</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Coupon Type</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->coupon_type }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->coupon_type ?? 'N/A' }}</dd>
                             </div>
                         </div>
                         <div class="space-y-4">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Frequency</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->coupon_frequency }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->coupon_frequency ?? 'N/A' }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Day Count</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->day_count }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->day_count ?? 'N/A' }}</dd>
                             </div>
                         </div>
                     </div>
@@ -125,22 +125,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-4">
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Principal Amount</dt>
-                                <dd class="mt-1 text-sm text-gray-900">RM{{ $bond->principal ?? 'N/A' }}</dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Amount Issued</dt>
-                                <dd class="mt-1 text-sm text-gray-900">RM{{ number_format($bond->amount_issued, 2) }}</dd>
+                                <dt class="text-sm font-medium text-gray-500">Amount Issued (RM'mil)</dt>
+                                <dd class="mt-1 text-sm text-gray-900"> {{ number_format($bond->amount_issued, 2) }}</dd>
                             </div>
                         </div>
                         <div class="space-y-4">
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Outstanding Amount</dt>
-                                <dd class="mt-1 text-sm text-gray-900">RM{{ number_format($bond->amount_outstanding, 2) }}</dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">OS Amount</dt>
-                                <dd class="mt-1 text-sm text-gray-900">RM{{ number_format($bond->o_s_amount, 2) }}</dd>
+                                <dt class="text-sm font-medium text-gray-500">Outstanding Amount (RM'mil)</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ number_format($bond->amount_outstanding, 2) }}</dd>
                             </div>
                         </div>
                     </div>
@@ -203,14 +195,26 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-4">
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->created_at->format('d/m/Y H:i') }}</dd>
+                                <dt class="text-sm font-medium text-gray-500">Status</dt>
+                                <dd class="mt-1 text-sm text-gray-900">
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                        {{ $bond->status ?? 'N/A' }}
+                                    </span>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Approval Date/Time</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->approval_date_time->format('d/m/Y H:i A') }}</dd>
                             </div>
                         </div>
                         <div class="space-y-4">
                             <div>
+                                <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->created_at->format('d/m/Y H:i A') }}</dd>
+                            </div>
+                            <div>
                                 <dt class="text-sm font-medium text-gray-500">Updated At</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->updated_at->format('d/m/Y H:i') }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->updated_at->format('d/m/Y H:i A') }}</dd>
                             </div>
                         </div>
                     </div>

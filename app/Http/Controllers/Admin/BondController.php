@@ -41,12 +41,13 @@ class BondController extends Controller
 
     public function store(Request $request)
     {
+        // validate request data
         $validated = $this->validateBond($request);
 
-        // dd($validated);
-
+        // create request data
         $bond = Bond::create($validated);
 
+        // redirect to show page
         return redirect()->route('bonds.show', $bond)->with('success', 'Bond created successfully');
     }
 
@@ -80,8 +81,6 @@ class BondController extends Controller
             DB::beginTransaction();
             
             $bond->update($validated);
-            $bond->updateOutstandingAmount();
-            $bond->markAsMatured();
             
             DB::commit();
 
@@ -166,7 +165,7 @@ class BondController extends Controller
                 'max:50',
                 Rule::unique('bonds')->ignore($bond?->id)
             ],
-            'status' => 'nullable|in:Active,Matured,Called',
+            'status' => 'nullable|in:Active,Inactive,Matured,Pending',
             'approval_date_time' => 'nullable|date',
             'issuer_id' => 'required|exists:issuers,id',
         ], [
