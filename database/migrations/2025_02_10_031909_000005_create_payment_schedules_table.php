@@ -13,8 +13,8 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->date('payment_date');
-            $table->date('ex_date');
-            $table->decimal('coupon_rate', 5, 2);
+            $table->date('ex_date')->nullable();
+            $table->decimal('coupon_rate', 5, 2)->nullable();
             $table->date('adjustment_date')->nullable();
             $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
