@@ -99,7 +99,7 @@ class TradingActivityController extends Controller
         $validated = $request->validate([
             'bond_id' => 'required|exists:bonds,id',
             'trade_date' => 'required|date',
-            'input_time' => 'nullable|date_format:H:i',
+            'input_time' => 'nullable|date_format:H:i:s',
             'amount' => 'nullable|numeric|min:0.01|max:999999999999.99',
             'price' => 'nullable|numeric|min:0.0001|max:9999.9999',
             'yield' => 'nullable|numeric|min:0.01|max:100.00',
