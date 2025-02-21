@@ -276,7 +276,7 @@
 
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
-                        <a href="{{ route('bonds.index') }}"
+                        <a href="{{ route('bonds-info.index') }}"
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>
