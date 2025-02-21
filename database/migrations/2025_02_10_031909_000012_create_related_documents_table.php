@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('document_name');
             $table->string('document_type');
             $table->date('upload_date');
-            $table->string('file_path');
+            $table->string('file_path')->nullable();;
             $table->foreignId('facility_id')->constrained('facility_informations')->onDelete('cascade');
             $table->timestamps();
         });

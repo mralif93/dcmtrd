@@ -42,9 +42,8 @@ class RelatedDocumentController extends Controller
      */
     public function create()
     {
-        return view('admin.related-documents.create', [
-            'facilities' => FacilityInformation::all()
-        ]);
+        $facilities = FacilityInformation::all();
+        return view('admin.related-documents.create', compact('facilities'));
     }
 
     /**
@@ -57,16 +56,18 @@ class RelatedDocumentController extends Controller
             'document_name' => 'required|max:200',
             'document_type' => 'required|max:50',
             'upload_date' => 'required|date',
-            'document_file' => 'required|file|mimes:pdf,xls,xlsx,doc,docx|max:2048'
+            'file_path' => 'required|file|mimes:pdf|max:2048'
         ]);
 
-        $file = $request->file('document_file');
+        $file = $request->file('file_path');
         $validated['file_path'] = $file->store('documents');
 
-        RelatedDocument::create($validated);
-
-        return redirect()->route('related-documents.index')
-            ->with('success', 'Document uploaded successfully');
+        try {
+            $relatedDocument = RelatedDocument::create($validated);
+            return redirect()->route('related-documents.show', $relatedDocument)->with('success', 'Document uploaded successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -100,20 +101,24 @@ class RelatedDocumentController extends Controller
             'document_name' => 'required|max:200',
             'document_type' => 'required|max:50',
             'upload_date' => 'required|date',
-            'document_file' => 'nullable|file|mimes:pdf,xls,xlsx,doc,docx|max:2048'
+            'file_path' => 'nullable|file|mimes:pdf|max:2048'
         ]);
 
-        if ($request->hasFile('document_file')) {
+        if ($request->hasFile('file_path')) {
             // Delete old file
-            Storage::delete($relatedDocument->file_path);
+            if ($relatedDocument->file_path) {
+                Storage::delete($relatedDocument->file_path);
+            }
             // Store new file
-            $validated['file_path'] = $request->file('document_file')->store('documents');
+            $validated['file_path'] = $request->file('file_path')->store('documents');
         }
 
-        $relatedDocument->update($validated);
-
-        return redirect()->route('related-documents.index')
-            ->with('success', 'Document updated successfully');
+        try {
+            $relatedDocument->update($validated);
+            return redirect()->route('related-documents.show', $relatedDocument)->with('success', 'Document updated successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Updating failed: ' . $e->getMessage()])->withInput();
+        }
     }
 
     /**
