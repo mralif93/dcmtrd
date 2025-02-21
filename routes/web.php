@@ -27,6 +27,19 @@ use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\RelatedDocumentController;
 use App\Http\Controllers\Admin\ChartController;
 
+use App\Http\Controllers\User\UserIssuerController;
+use App\Http\Controllers\User\UserBondController;
+use App\Http\Controllers\User\UserRatingMovementController;
+use App\Http\Controllers\User\UserPaymentScheduleController;
+use App\Http\Controllers\User\UserRedemptionController;
+use App\Http\Controllers\User\UserCallScheduleController;
+use App\Http\Controllers\User\UserLockoutPeriodController;
+use App\Http\Controllers\User\UserTradingActivityController;
+use App\Http\Controllers\User\UserFacilityInformationController;
+use App\Http\Controllers\User\UserAnnouncementController;
+use App\Http\Controllers\User\UserRelatedDocumentController;
+use App\Http\Controllers\User\UserChartController;
+
 // Main
 Route::get('/', function () {
     return view('welcome');
@@ -76,6 +89,25 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::resource('/admin/charts', ChartController::class);
 });
 
+// Default user route
+Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
+    Route::get('/dashboard', [UserController::class, 'index'])
+        ->name('dashboard');
+
+    Route::resource('/user/issuers-info', UserIssuerController::class);
+    Route::resource('/user/bonds-info', UserBondController::class);
+    Route::resource('/user/rating-movements-info', UserRatingMovementController::class);
+    Route::resource('/user/payment-schedules-info', UserPaymentScheduleController::class);
+    Route::resource('/user/redemptions-info', UserRedemptionController::class);
+    Route::resource('/user/call-schedules-info', UserCallScheduleController::class);
+    Route::resource('/user/lockout-periods-info', UserLockoutPeriodController::class);
+    Route::resource('/user/trading-activities-info', UserTradingActivityController::class);
+    Route::resource('/user/announcements-info', UserAnnouncementController::class);
+    Route::resource('/user/facility-informations-info', UserFacilityInformationController::class);
+    Route::resource('/user/related-documents-info', UserRelatedDocumentController::class);
+    Route::resource('/user/charts-info', UserChartController::class);
+});
+
 // Legal routes
 Route::middleware(['auth', 'two-factor', 'role:legal'])->group(function () {
     Route::get('/legal/dashboard', [LegalController::class, 'index'])
@@ -98,10 +130,4 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
 Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('/approver/dashboard', [ApproverController::class, 'index'])
         ->name('approver.dashboard');
-});
-
-// Default user route
-Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
-    Route::get('/dashboard', [UserController::class, 'index'])
-        ->name('dashboard');
 });

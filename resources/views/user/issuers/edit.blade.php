@@ -47,7 +47,7 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <form action="{{ route('issuers.update', $issuer) }}" method="POST" class="p-6">
+                <form action="{{ route('issuers-info.update', $issuer) }}" method="POST" class="p-6">
                     @csrf
                     @method('PUT')
 

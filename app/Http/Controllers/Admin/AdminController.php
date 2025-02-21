@@ -42,7 +42,7 @@ class AdminController extends Controller
             ");
             return (array) $result[0];
         });
-    
+
         return view('admin.dashboard', [
             'usersCount' => $counts['users_count'],
             'issuersCount' => $counts['issuers_count'],

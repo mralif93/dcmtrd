@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bond;
@@ -8,10 +8,10 @@ use App\Models\RatingMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
-class RatingMovementController extends Controller
+class UserRatingMovementController extends Controller
 {
     /**
-     * Display a listing of the resource with search/filter.
+     * Display a listing of the resource.
      */
     public function index(Request $request)
     {
@@ -33,7 +33,7 @@ class RatingMovementController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.rating-movements.index', compact('ratingMovements', 'searchTerm'));
+        return view('user.rating-movements.index', compact('ratingMovements', 'searchTerm'));
     }
 
     /**
@@ -42,7 +42,7 @@ class RatingMovementController extends Controller
     public function create()
     {
         $bonds = Bond::active()->get();
-        return view('admin.rating-movements.create', compact('bonds'));
+        return view('user.rating-movements.create', compact('bonds'));
     }
 
     /**
@@ -63,7 +63,7 @@ class RatingMovementController extends Controller
 
         try {
             $ratingMovement = RatingMovement::create($validated);
-            return redirect()->route('rating-movements.show', $ratingMovement)->with('success', 'Rating movement created successfully');
+            return redirect()->route('rating-movements-info.show', $ratingMovement)->with('success', 'Rating movement created successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
         }
@@ -72,26 +72,29 @@ class RatingMovementController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(RatingMovement $ratingMovement)
+    public function show(RatingMovement $rating_movements_info)
     {
+        $ratingMovement = $rating_movements_info;
         $ratingMovement->load('bond.issuer');
-        return view('admin.rating-movements.show', compact('ratingMovement'));
+        return view('user.rating-movements.show', compact('ratingMovement'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(RatingMovement $ratingMovement)
+    public function edit(RatingMovement $rating_movements_info)
     {
+        $ratingMovement = $rating_movements_info;
         $bonds = Bond::active()->get();
-        return view('admin.rating-movements.edit', compact('ratingMovement', 'bonds'));
+        return view('user.rating-movements.edit', compact('ratingMovement', 'bonds'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, RatingMovement $ratingMovement)
+    public function update(Request $request, RatingMovement $rating_movements_info)
     {
+        $ratingMovement = $rating_movements_info;
         $validated = $request->validate([
             'bond_id' => 'required|exists:bonds,id',
             'rating_agency' => 'required|string|max:100',
@@ -105,7 +108,7 @@ class RatingMovementController extends Controller
 
         try {
             $ratingMovement->update($validated);
-            return redirect()->route('rating-movements.show', $ratingMovement)->with('success', 'Rating movement updated successfully');
+            return redirect()->route('rating-movements-info.show', $ratingMovement)->with('success', 'Rating movement updated successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
         }
@@ -114,11 +117,13 @@ class RatingMovementController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RatingMovement $ratingMovement)
+    public function destroy(RatingMovement $rating_movements_info)
     {
+        $ratingMovement = $rating_movements_info;
+
         try {
             $ratingMovement->delete();
-            return redirect()->route('rating-movements.index')->with('success', 'Rating movement deleted successfully');
+            return redirect()->route('rating-movements-info.index')->with('success', 'Rating movement deleted successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
         }

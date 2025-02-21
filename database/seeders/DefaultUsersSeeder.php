@@ -34,7 +34,7 @@ class DefaultUsersSeeder extends Seeder
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => true,
+                'two_factor_enabled' => false,
                 'remember_token' => null,
                 'created_at' => now(),
                 'updated_at' => now(),

@@ -25,10 +25,10 @@ class Issuer extends Model
     ];
 
     protected $casts = [
-        'reminder_1' => 'datetime',
-        'reminder_2' => 'datetime',
-        'reminder_3' => 'datetime',
-        'trust_deed_date' => 'datetime',
+        'reminder_1' => 'date',
+        'reminder_2' => 'date',
+        'reminder_3' => 'date',
+        'trust_deed_date' => 'date',
     ];
 
     public function bonds()

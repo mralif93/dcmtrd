@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Issuer;
 
-class IssuerController extends Controller
+class UserIssuerController extends Controller
 {
     /**
-     * Display a listing of the resource (with search).
+     * Display a listing of the resource.
      */
     public function index(Request $request)
     {
@@ -23,7 +23,7 @@ class IssuerController extends Controller
         ->paginate(10)
         ->appends(['search' => $search]); // Preserve search in pagination
 
-        return view('admin.issuers.index', compact('issuers'));
+        return view('user.issuers.index', compact('issuers'));
     }
 
     /**
@@ -31,11 +31,11 @@ class IssuerController extends Controller
      */
     public function create()
     {
-        return view('admin.issuers.create');
+        return view('user.issuers.create');
     }
 
     /**
-     * Store a newly created resource (with explicit fields and validation fixes).
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
@@ -54,35 +54,34 @@ class IssuerController extends Controller
             'trust_deed_date' => 'required|date',
         ]);
 
-        try {
-            Issuer::create($validated);
-            return redirect()->route('issuers.show', $issuer)->with('success', 'Issuer created successfully.');
-        } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
-        }
+        $issuer = Issuer::create($validated);
+        return redirect()->route('issuers-info.show', $issuer)->with('success', 'Issuer created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Issuer $issuer)
+    public function show(Issuer $issuers_info)
     {
-        return view('admin.issuers.show', compact('issuer'));
+        $issuer = $issuers_info;
+        return view('user.issuers.show', compact('issuer'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Issuer $issuer)
+    public function edit(Issuer $issuers_info)
     {
-        return view('admin.issuers.edit', compact('issuer'));
+        $issuer = $issuers_info;
+        return view('user.issuers.edit', compact('issuer'));
     }
 
     /**
-     * Update the specified resource (with validation fixes).
+     * Update the specified resource in storage.
      */
-    public function update(Request $request, Issuer $issuer)
+    public function update(Request $request, Issuer $issuers_info)
     {
+        $issuer = $issuers_info;
         $validated = $request->validate([
             'issuer_short_name' => 'required|string|max:50|unique:issuers,issuer_short_name,' . $issuer->id,
             'issuer_name' => 'required|string|max:100',
@@ -98,24 +97,20 @@ class IssuerController extends Controller
             'trust_deed_date' => 'required|date',
         ]);
 
-        try {
-            $issuer->update($validated);
-            return redirect()->route('issuers.show', $issuer)->with('success', 'Issuer updated successfully.');
-        } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
-        }
+        $issuer->update($validated);
+        return redirect()->route('issuers-info.show', $issuer)->with('success', 'Issuer updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Issuer $issuer)
+    public function destroy(IssuerInfo $issuerInfo)
     {
         try {
             $issuer->delete();
             return redirect()->route('issuers.index')->with('success', 'Issuer deleted successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Error updating bond: ' . $e->getMessage());
         }
     }
 }

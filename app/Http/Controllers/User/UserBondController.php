@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bond;
@@ -8,8 +8,11 @@ use App\Models\Issuer;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class BondController extends Controller
+class UserBondController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
         $searchTerm = $request->input('search');
@@ -29,15 +32,21 @@ class BondController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.bonds.index', compact('bonds', 'searchTerm'));
+        return view('user.bonds.index', compact('bonds', 'searchTerm'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
         $issuers = Issuer::orderBy('issuer_name')->get();
-        return view('admin.bonds.create', compact('issuers'));
+        return view('user.bonds.create', compact('issuers'));
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         // validate request data
@@ -45,14 +54,18 @@ class BondController extends Controller
 
         try {
             $bond = Bond::create($validated);
-            return redirect()->route('bonds.show', $bond)->with('success', 'Bond created successfully');
+            return redirect()->route('bonds-info.show', $bond)->with('success', 'Bond created successfully');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error deleting bond: ' . $e->getMessage());
+            return back()->with('error', 'Error creating: ' . $e->getMessage());
         }
     }
 
-    public function show(Bond $bond)
+    /**
+     * Display the specified resource.
+     */
+    public function show(Bond $bonds_info)
     {
+        $bond = $bonds_info;
         $bond->load([
             'issuer',
             'ratingMovements',
@@ -63,29 +76,42 @@ class BondController extends Controller
             'charts'
         ]);
 
-        return view('admin.bonds.show', compact('bond'));
+        return view('user.bonds.show', compact('bond'));
     }
 
-    public function edit(Bond $bond)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Bond $bonds_info)
     {
+        $bond = $bonds_info;
         $issuers = Issuer::orderBy('issuer_name')->get();
-        return view('admin.bonds.edit', compact('bond', 'issuers'));
+        return view('user.bonds.edit', compact('bond', 'issuers'));
     }
 
-    public function update(Request $request, Bond $bond)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Bond $bonds_info)
     {
+        $bond = $bonds_info;
         $validated = $this->validateBond($request, $bond);
 
         try {
             $bond->update($validated);
-            return redirect()->route('bonds.show', $bond)->with('success', 'Bond updated successfully');            
+            return redirect()->route('bonds-info.show', $bond)->with('success', 'Bond updated successfully');            
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
         }
     }
 
-    public function destroy(Bond $bond)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Bond $bonds_info)
     {
+        $bond = $bonds_info;
+
         try {
             $bond->delete();
             return redirect()->route('bonds.index')->with('success', 'Bond deleted successfully');
