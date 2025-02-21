@@ -41,10 +41,8 @@ class FacilityInformationController extends Controller
      */
     public function create()
     {
-        return view('admin.facility-informations.create', [
-            'issuers' => Issuer::all(),
-            'instrumentTypes' => ['Sukuk', 'Conventional', 'Hybrid']
-        ]);
+        $issuers = Issuer::all();
+        return view('admin.facility-informations.create', compact('issuers'));
     }
 
     /**
@@ -57,28 +55,34 @@ class FacilityInformationController extends Controller
             'facility_code' => 'required|unique:facility_informations|max:50',
             'facility_number' => 'required|unique:facility_informations|max:50',
             'facility_name' => 'required|max:100',
-            'principal_type' => 'required|max:50',
+            'principle_type' => 'required|max:50',
             'islamic_concept' => 'nullable|max:100',
-            'maturity_date' => 'required|date',
-            'instrument' => 'required|max:50',
-            'instrument_type' => 'required|in:Sukuk,Conventional,Hybrid',
-            'guaranteed' => 'boolean',
-            'total_guaranteed' => 'required_if:guaranteed,true|numeric|min:0',
-            'indicator' => 'required|max:50',
-            'facility_rating' => 'required|max:10',
-            'facility_amount' => 'required|numeric|min:0',
-            'available_limit' => 'required|numeric|min:0',
-            'outstanding_amount' => 'required|numeric|min:0',
-            'trustee_security_agent' => 'required|max:100',
-            'lead_arranger' => 'required|max:100',
-            'facility_agent' => 'required|max:100',
-            'availability_date' => 'required|date',
+            'maturity_date' => 'nullable|date',
+            'instrument' => 'nullable|max:50',
+            'instrument_type' => 'nullable|max:50',
+            'guaranteed' => 'nullable|boolean',
+            'total_guaranteed' => 'nullable|numeric|min:0',
+            'indicator' => 'nullable|max:50',
+            'facility_rating' => 'nullable|max:50',
+            'facility_amount' => 'nullable|numeric|min:0',
+            'available_limit' => 'nullable|numeric|min:0',
+            'outstanding_amount' => 'nullable|numeric|min:0',
+            'trustee_security_agent' => 'nullable|max:100',
+            'lead_arranger' => 'nullable|max:100',
+            'facility_agent' => 'nullable|max:100',
+            'availability_date' => 'nullable|date',
         ]);
 
-        FacilityInformation::create($validated);
+        // Set guaranteed to false if not present
+        $validated['guaranteed'] = $request->has('guaranteed') ? true : false;
 
-        return redirect()->route('facility-informations.index')
-            ->with('success', 'Facility created successfully');
+        try {
+            $facilityInformation = FacilityInformation::create($validated);
+            return redirect()->route('facility-informations.show', $facilityInformation)->with('success', 'Facility created successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
+        }
     }
 
 
@@ -118,28 +122,34 @@ class FacilityInformationController extends Controller
             'facility_code' => 'required|max:50|unique:facility_informations,facility_code,'.$facilityInformation->id,
             'facility_number' => 'required|max:50|unique:facility_informations,facility_number,'.$facilityInformation->id,
             'facility_name' => 'required|max:100',
-            'principal_type' => 'required|max:50',
+            'principle_type' => 'required|max:50',
             'islamic_concept' => 'nullable|max:100',
-            'maturity_date' => 'required|date',
-            'instrument' => 'required|max:50',
-            'instrument_type' => 'required|in:Sukuk,Conventional,Hybrid',
-            'guaranteed' => 'boolean',
-            'total_guaranteed' => 'required_if:guaranteed,true|numeric|min:0',
-            'indicator' => 'required|max:50',
-            'facility_rating' => 'required|max:10',
-            'facility_amount' => 'required|numeric|min:0',
-            'available_limit' => 'required|numeric|min:0',
-            'outstanding_amount' => 'required|numeric|min:0',
-            'trustee_security_agent' => 'required|max:100',
-            'lead_arranger' => 'required|max:100',
-            'facility_agent' => 'required|max:100',
-            'availability_date' => 'required|date',
+            'maturity_date' => 'nullable|date',
+            'instrument' => 'nullable|max:50',
+            'instrument_type' => 'nullable|max:50',
+            'guaranteed' => 'nullable|boolean',
+            'total_guaranteed' => 'nullable|numeric|min:0',
+            'indicator' => 'nullable|max:50',
+            'facility_rating' => 'nullable|max:50',
+            'facility_amount' => 'nullable|numeric|min:0',
+            'available_limit' => 'nullable|numeric|min:0',
+            'outstanding_amount' => 'nullable|numeric|min:0',
+            'trustee_security_agent' => 'nullable|max:100',
+            'lead_arranger' => 'nullable|max:100',
+            'facility_agent' => 'nullable|max:100',
+            'availability_date' => 'nullable|date',
         ]);
 
-        $facilityInformation->update($validated);
+        // Set guaranteed to false if not present
+        $validated['guaranteed'] = $request->has('guaranteed') ? true : false;
 
-        return redirect()->route('facility-informations.index')
-            ->with('success', 'Facility updated successfully');
+        try {
+            $facilityInformation->update($validated);
+            return redirect()->route('facility-informations.show', $facilityInformation)->with('success', 'Facility updated successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -147,9 +157,12 @@ class FacilityInformationController extends Controller
      */
     public function destroy(FacilityInformation $facilityInformation)
     {
-        $facilityInformation->delete();
-
-        return redirect()->route('facility-informations.index')
-            ->with('success', 'Facility deleted successfully');
+        try {
+            $facilityInformation->delete();
+            return redirect()->route('facility-informations.index')->with('success', 'Facility deleted successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()->with('error', 'Error delete: ' . $e->getMessage());
+        }
     }
 }
