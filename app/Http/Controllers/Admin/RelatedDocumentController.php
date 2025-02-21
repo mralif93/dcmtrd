@@ -56,10 +56,10 @@ class RelatedDocumentController extends Controller
             'document_name' => 'required|max:200',
             'document_type' => 'required|max:50',
             'upload_date' => 'required|date',
-            'file_path' => 'required|file|mimes:pdf|max:2048'
+            'document_file' => 'required|file|mimes:pdf|max:2048'
         ]);
 
-        $file = $request->file('file_path');
+        $file = $request->file('document_file');
         $validated['file_path'] = $file->store('documents');
 
         try {
@@ -101,10 +101,10 @@ class RelatedDocumentController extends Controller
             'document_name' => 'required|max:200',
             'document_type' => 'required|max:50',
             'upload_date' => 'required|date',
-            'file_path' => 'nullable|file|mimes:pdf|max:2048'
+            'document_file' => 'nullable|file|mimes:pdf|max:2048'
         ]);
 
-        if ($request->hasFile('file_path')) {
+        if ($request->hasFile('document_file')) {
             // Delete old file
             if ($relatedDocument->file_path) {
                 Storage::delete($relatedDocument->file_path);

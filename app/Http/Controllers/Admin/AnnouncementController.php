@@ -72,7 +72,7 @@ class AnnouncementController extends Controller
             $announcement = Announcement::create($validated);
             return redirect()->route('announcements.show', $announcement)->with('success', 'Announcement created successfully');
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Create failed: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['error' => 'Error creating: ' . $e->getMessage()])->withInput();
         }
     }
 
@@ -126,7 +126,7 @@ class AnnouncementController extends Controller
             $announcement->update($validated);
             return redirect()->route('announcements.show', $announcement)->with('success', 'Announcement updated successfully');
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Create failed: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
         }
     }
 
@@ -135,13 +135,14 @@ class AnnouncementController extends Controller
      */
     public function destroy(Announcement $announcement)
     {
-        if ($announcement->attachment) {
-            Storage::delete($announcement->attachment);
+        try {
+            if ($announcement->attachment) {
+                Storage::delete($announcement->attachment);
+            }
+            $announcement->delete();
+            return redirect()->route('announcements.index')->with('success', 'Announcement deleted successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error deleting: ' . $e->getMessage()])->withInput();
         }
-        
-        $announcement->delete();
-
-        return redirect()->route('announcements.index')
-            ->with('success', 'Announcement deleted successfully');
     }
 }
