@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('category');
             $table->string('sub_category');
             $table->string('title');
-            $table->text('description');
-            $table->text('content');
+            $table->text('description')->nullable();
+            $table->text('content')->nullable();
             $table->string('attachment')->nullable();
-            $table->string('source');
+            $table->string('source')->nullable();
             $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->timestamps();
         });
