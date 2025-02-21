@@ -103,7 +103,7 @@ class LockoutPeriodController extends Controller
             $lockoutPeriod->update($validated);
             return redirect()->route('lockout-periods.show', $lockoutPeriod)->with('success', 'Lockout period updated successfully');
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()])->withInput();
+            return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
         }
     }
 
@@ -113,8 +113,11 @@ class LockoutPeriodController extends Controller
     public function destroy(LockoutPeriod $lockoutPeriod)
     {
         $lockoutPeriod->delete();
-
-        return redirect()->route('lockout-periods.index')
-            ->with('success', 'Lockout period deleted successfully');
+        try {
+            $lockoutPeriod->delete();
+            return redirect()->route('lockout-periods.index')->with('success', 'Lockout period deleted successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error deleting: ' . $e->getMessage()])->withInput();
+        }
     }
 }
