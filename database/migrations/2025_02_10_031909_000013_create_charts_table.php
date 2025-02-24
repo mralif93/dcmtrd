@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('period_to');
             $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

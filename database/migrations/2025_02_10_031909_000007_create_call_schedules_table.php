@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('call_price', 10, 2);
             $table->foreignId('redemption_id')->constrained('redemptions')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

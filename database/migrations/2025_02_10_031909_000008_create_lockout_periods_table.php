@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->foreignId('redemption_id')->constrained('redemptions')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

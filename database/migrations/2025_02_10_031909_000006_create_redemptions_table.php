@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('redeem_nearest_denomination')->nullable()->default('false');
             $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
