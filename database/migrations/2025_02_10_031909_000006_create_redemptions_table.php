@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('redemptions', function (Blueprint $table) {
             $table->id();
             $table->date('last_call_date');
-            $table->boolean('allow_partial_call')->nullable()->default('false');
-            $table->boolean('redeem_nearest_denomination')->nullable()->default('false');
+            $table->boolean('allow_partial_call')->nullable()->default(0);
+            $table->boolean('redeem_nearest_denomination')->nullable()->default(0);
             $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
         });
