@@ -143,7 +143,104 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                
+                <!-- Portfolios -->
+                <x-dashboard-card
+                    title="Portfolios"
+                    icon="briefcase"
+                    :count="$portfoliosCount"
+                    :href="route('portfolios.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Properties -->
+                <x-dashboard-card
+                    title="Properties"
+                    icon="home-modern"
+                    :count="$propertiesCount"
+                    :href="route('properties.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Units -->
+                <x-dashboard-card
+                    title="Units"
+                    icon="cube"
+                    :count="$unitsCount"
+                    :href="route('units.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Tenants -->
+                <x-dashboard-card
+                    title="Tenants"
+                    icon="users"
+                    :count="$tenantsCount"
+                    :href="route('tenants.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Leases -->
+                <x-dashboard-card
+                    title="Leases"
+                    icon="document-text"
+                    :count="$leasesCount"
+                    :href="route('leases.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Maintenance Records -->
+                <x-dashboard-card
+                    title="Maintenance Records"
+                    icon="wrench-screwdriver"
+                    :count="$maintenanceRecordsCount"
+                    :href="route('maintenance-records.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Financial Reports -->
+                <x-dashboard-card
+                    title="Financial Reports"
+                    icon="document-chart-bar"
+                    :count="$financialReportsCount"
+                    :href="route('financial-reports.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Checklists -->
+                <x-dashboard-card
+                    title="Checklists"
+                    icon="clipboard-document-list"
+                    :count="$checklistsCount"
+                    :href="route('checklists.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Checklist Items -->
+                <x-dashboard-card
+                    title="Checklist Items"
+                    icon="clipboard-document-check"
+                    :count="$checklistItemsCount"
+                    :href="route('checklist-items.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Checklist Responses -->
+                <x-dashboard-card
+                    title="Checklist Responses"
+                    icon="clipboard-document"
+                    :count="$checklistResponsesCount"
+                    :href="route('checklist-responses.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Site Visits -->
+                <x-dashboard-card
+                    title="Site Visits"
+                    icon="map-pin"
+                    :count="$siteVisitsCount"
+                    :href="route('site-visits.index')"
+                    color="bg-green-100"
+                />
             </div>
         </div>
     </div>

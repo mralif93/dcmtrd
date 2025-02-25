@@ -27,6 +27,19 @@ use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\RelatedDocumentController;
 use App\Http\Controllers\Admin\ChartController;
 
+// REITs
+use App\Http\Controllers\Admin\PortfolioController;
+use App\Http\Controllers\Admin\PropertyController;
+use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\TenantController;
+use App\Http\Controllers\Admin\LeaseController;
+use App\Http\Controllers\Admin\MaintenanceReportController;
+use App\Http\Controllers\Admin\FinancialReportController;
+use App\Http\Controllers\Admin\CheckList;
+use App\Http\Controllers\Admin\ChecklistItemController;
+use App\Http\Controllers\Admin\ChecklistResponseController;
+use App\Http\Controllers\Admin\SiteVisitController;
+
 use App\Http\Controllers\User\UserIssuerController;
 use App\Http\Controllers\User\UserBondController;
 use App\Http\Controllers\User\UserRatingMovementController;
@@ -87,6 +100,22 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::resource('/admin/facility-informations', FacilityInformationController::class);
     Route::resource('/admin/related-documents', RelatedDocumentController::class);
     Route::resource('/admin/charts', ChartController::class);
+
+    Route::resource('/admin/portfolios', PortfolioController::class);
+    Route::get('/admin/portfolios/{portfolio}/analytics', [PortfolioController::class, 'analytics'])->name('portfolios.analytics');
+    Route::resource('/admin/properties', PropertyController::class);
+    Route::get('/properties/{property}/export', [PropertyController::class, 'vacancyReport'])->name('properties.export');
+    Route::get('/properties/{property}/financial-report', [PropertyController::class, 'vacancyReport'])->name('properties.financial-report');
+    Route::get('/properties/{property}/vacancy-report', [PropertyController::class, 'vacancyReport'])->name('properties.vacancy-report');
+    Route::resource('/admin/units', UnitController::class);
+    Route::resource('/admin/tenants', TenantController::class);
+    Route::resource('/admin/leases', LeaseController::class);
+    Route::resource('/admin/maintenance-records', MaintenanceRecordController::class);
+    Route::resource('/admin/checklists', ChecklistResponseController::class);
+    Route::resource('/admin/checklist-items', ChecklistItemController::class);
+    Route::resource('/admin/checklist-responses', SiteVisitController::class);
+    Route::resource('/admin/financial-reports', FinancialReportController::class);
+    Route::resource('/admin/site-visits', SiteVisitController::class);
 });
 
 // Default user route

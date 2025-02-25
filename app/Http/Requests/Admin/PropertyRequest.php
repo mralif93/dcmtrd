@@ -46,6 +46,7 @@ class PropertyRequest extends FormRequest
             'property_manager' => 'required|string|max:255',
             'insurance_details' => 'required|string',
             'tax_parcel_id' => 'required|string|max:255|unique:properties,tax_parcel_id,' . $this->property?->id,
+            'last_renovation_date' => 'nullable|date',
             'status' => 'required|string|in:Active,Under Renovation,For Sale',
             'annual_property_tax' => 'required|numeric|min:0',
             'insurance_cost' => 'required|numeric|min:0'
