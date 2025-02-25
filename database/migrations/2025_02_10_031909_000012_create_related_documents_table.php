@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('file_path')->nullable();;
             $table->foreignId('facility_id')->constrained('facility_informations')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('source')->nullable();
             $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

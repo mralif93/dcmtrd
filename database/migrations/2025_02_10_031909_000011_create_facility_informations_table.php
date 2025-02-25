@@ -34,6 +34,7 @@ return new class extends Migration
             $table->date('availability_date')->nullable();
             $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
