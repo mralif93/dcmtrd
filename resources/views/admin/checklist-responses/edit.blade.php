@@ -232,6 +232,7 @@
         </div>
     </div>
 
+    @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize response data
@@ -363,4 +364,5 @@
             });
         });
     </script>
+    @endpush
 </x-app-layout>
