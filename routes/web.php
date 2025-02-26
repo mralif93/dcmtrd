@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+require __DIR__.'/api.php';
 
 // 2FA
 Route::middleware(['auth', 'two-factor'])->group(function() {
@@ -103,15 +104,20 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
 
     Route::resource('/admin/portfolios', PortfolioController::class);
     Route::get('/admin/portfolios/{portfolio}/analytics', [PortfolioController::class, 'analytics'])->name('portfolios.analytics');
+
     Route::resource('/admin/properties', PropertyController::class);
     Route::get('/properties/{property}/export', [PropertyController::class, 'vacancyReport'])->name('properties.export');
     Route::get('/properties/{property}/financial-report', [PropertyController::class, 'vacancyReport'])->name('properties.financial-report');
     Route::get('/properties/{property}/vacancy-report', [PropertyController::class, 'vacancyReport'])->name('properties.vacancy-report');
+
     Route::resource('/admin/units', UnitController::class);
     Route::resource('/admin/tenants', TenantController::class);
     Route::resource('/admin/leases', LeaseController::class);
     Route::resource('/admin/maintenance-records', MaintenanceRecordController::class);
+
     Route::resource('/admin/checklists', ChecklistController::class);
+    Route::get('checklists/{checklist}/create-response', [ChecklistController::class, 'createResponse'])->name('checklists.create-response');
+
     Route::resource('/admin/checklist-items', ChecklistItemController::class);
     Route::resource('/admin/checklist-responses', ChecklistResponseController::class);
     Route::resource('/admin/financial-reports', FinancialReportController::class);
