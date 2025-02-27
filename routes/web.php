@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\FacilityInformationController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\RelatedDocumentController;
 use App\Http\Controllers\Admin\ChartController;
+use App\Http\Controllers\Admin\TrusteeFeeController;
 
 use App\Http\Controllers\User\UserIssuerController;
 use App\Http\Controllers\User\UserBondController;
@@ -87,6 +88,18 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::resource('/admin/facility-informations', FacilityInformationController::class);
     Route::resource('/admin/related-documents', RelatedDocumentController::class);
     Route::resource('/admin/charts', ChartController::class);
+    Route::resource('/admin/trustee-fees', TrusteeFeeController::class);
+
+    // Search route
+    Route::get('trustee-fees-search', [TrusteeFeeController::class, 'search'])->name('trustee-fees.search');
+
+    // Report route
+    Route::get('trustee-fees-report', [TrusteeFeeController::class, 'report'])->name('trustee-fees.report');
+    
+    // Soft Delete routes
+    Route::get('trustee-fees-trashed', [TrusteeFeeController::class, 'trashed'])->name('trustee-fees.trashed');
+    Route::patch('trustee-fees/{id}/restore', [TrusteeFeeController::class, 'restore'])->name('trustee-fees.restore');
+    Route::delete('trustee-fees/{id}/force-delete', [TrusteeFeeController::class, 'forceDelete'])->name('trustee-fees.force-delete');
 });
 
 // Default user route
