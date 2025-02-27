@@ -40,7 +40,19 @@ class AdminController extends Controller
                     (SELECT COUNT(*) FROM announcements) AS announcements_count,
                     (SELECT COUNT(*) FROM facility_informations) AS facility_informations_count,
                     (SELECT COUNT(*) FROM related_documents) AS related_documents_count,
-                    (SELECT COUNT(*) FROM charts) AS charts_count
+                    (SELECT COUNT(*) FROM charts) AS charts_count,
+                    (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
+                    (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
+                    (SELECT COUNT(*) FROM properties) AS properties_count,
+                    (SELECT COUNT(*) FROM units) AS units_count,
+                    (SELECT COUNT(*) FROM tenants) AS tenants_count,
+                    (SELECT COUNT(*) FROM leases) AS leases_count,
+                    (SELECT COUNT(*) FROM maintenance_records) AS maintenance_records_count,
+                    (SELECT COUNT(*) FROM financial_reports) AS financial_reports_count,
+                    (SELECT COUNT(*) FROM checklists) AS checklists_count,
+                    (SELECT COUNT(*) FROM checklist_items) AS checklist_items_count,
+                    (SELECT COUNT(*) FROM checklist_responses) AS checklist_responses_count,
+                    (SELECT COUNT(*) FROM site_visits) AS site_visits_count
             ");
             return (array) $result[0];
         });
