@@ -31,7 +31,7 @@
             @endif
 
             <!-- Summary Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="text-sm text-gray-500">Total Records</div>
@@ -72,7 +72,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
                     <form action="{{ route('maintenance-records.index') }}" method="GET" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
                                 <input type="text" name="search" id="search" value="{{ request('search') }}" 
@@ -113,9 +113,7 @@
                                     <option value="Emergency" {{ request('priority') == 'Emergency' ? 'selected' : '' }}>Emergency</option>
                                 </select>
                             </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
                             <div>
                                 <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
                                 <select name="category" id="category" class="mt-1 block w-full rounded-md border-gray-300">
@@ -142,11 +140,16 @@
                                 <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}" 
                                     class="mt-1 block w-full rounded-md border-gray-300">
                             </div>
-                            
-                            <div class="flex items-end">
+                        </div>
+
+                        <div class="w-full md:w-1/3 md:self-end">
+                            <div class="flex space-x-2">
                                 <button type="submit" class="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                    Apply Filters
+                                    Search
                                 </button>
+                                <a href="{{ route('maintenance-records.index') }}" class="w-full text-center bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                                    Reset
+                                </a>
                             </div>
                         </div>
                     </form>

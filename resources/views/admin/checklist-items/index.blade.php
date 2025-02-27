@@ -9,7 +9,7 @@
                 @if(request('checklist_id'))
                     <a href="{{ route('checklist-items.create', ['checklist_id' => request('checklist_id')]) }}" 
                         class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                        Add Item
+                        Create Item
                     </a>
                 @endif
                 <a href="{{ route('checklists.index') }}" 

@@ -6,7 +6,7 @@
                 {{ __('Site Visits') }}
             </h2>
             <a href="{{ route('site-visits.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Add Site Visit
+                Create Site Visit
             </a>
         </div>
     </x-slot>

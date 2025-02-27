@@ -5,7 +5,7 @@
                 {{ __('Tenant Management') }}
             </h2>
             <a href="{{ route('tenants.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Add Tenant
+                Create Tenant
             </a>
         </div>
     </x-slot>

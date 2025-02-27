@@ -6,7 +6,7 @@
                 {{ __('Lease Management') }}
             </h2>
             <a href="{{ route('leases.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Add Lease
+                Create Lease
             </a>
         </div>
     </x-slot>

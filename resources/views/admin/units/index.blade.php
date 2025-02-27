@@ -5,7 +5,7 @@
                 {{ __('Units Management') }}
             </h2>
             <a href="{{ route('units.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Add Unit
+                Create Unit
             </a>
         </div>
     </x-slot>

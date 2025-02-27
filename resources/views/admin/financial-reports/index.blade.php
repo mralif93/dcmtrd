@@ -6,7 +6,7 @@
                 {{ __('Financial Reports') }}
             </h2>
             <a href="{{ route('financial-reports.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                New Report
+                Create Report
             </a>
         </div>
     </x-slot>
@@ -33,8 +33,8 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
                     <form action="{{ route('financial-reports.index') }}" method="GET" class="space-y-4">
-                        <div class="flex flex-col md:flex-row md:space-x-4">
-                            <div class="w-full md:w-1/3">
+                        <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+                            <div>
                                 <label for="portfolio_id" class="block text-sm font-medium text-gray-700">Portfolio</label>
                                 <select name="portfolio_id" id="portfolio_id" class="mt-1 block w-full rounded-md border-gray-300">
                                     <option value="">All Portfolios</option>
@@ -46,7 +46,7 @@
                                 </select>
                             </div>
                             
-                            <div class="w-full md:w-1/4">
+                            <div>
                                 <label for="report_type" class="block text-sm font-medium text-gray-700">Report Type</label>
                                 <select name="report_type" id="report_type" class="mt-1 block w-full rounded-md border-gray-300">
                                     <option value="">All Types</option>
@@ -56,7 +56,7 @@
                                 </select>
                             </div>
                             
-                            <div class="w-full md:w-1/4">
+                            <div>
                                 <label for="year" class="block text-sm font-medium text-gray-700">Year</label>
                                 <select name="year" id="year" class="mt-1 block w-full rounded-md border-gray-300">
                                     <option value="">All Years</option>
@@ -67,30 +67,28 @@
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
-                        
-                        <div class="flex flex-col md:flex-row md:space-x-4">
-                            <div class="w-full md:w-1/3">
+                            
+                            <div>
                                 <label for="start_date" class="block text-sm font-medium text-gray-700">From Date</label>
                                 <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}" 
                                     class="mt-1 block w-full rounded-md border-gray-300">
                             </div>
                             
-                            <div class="w-full md:w-1/3">
+                            <div>
                                 <label for="end_date" class="block text-sm font-medium text-gray-700">To Date</label>
                                 <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}" 
                                     class="mt-1 block w-full rounded-md border-gray-300">
                             </div>
-                            
-                            <div class="w-full md:w-1/3 md:self-end">
-                                <div class="flex space-x-2">
-                                    <button type="submit" class="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                        Filter
-                                    </button>
-                                    <a href="{{ route('financial-reports.index') }}" class="w-full text-center bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
-                                        Reset
-                                    </a>
-                                </div>
+                        </div>
+
+                        <div class="w-full md:w-1/3 md:self-end">
+                            <div class="flex space-x-2">
+                                <button type="submit" class="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                                    Search
+                                </button>
+                                <a href="{{ route('financial-reports.index') }}" class="w-full text-center bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded">
+                                    Reset
+                                </a>
                             </div>
                         </div>
                     </form>
