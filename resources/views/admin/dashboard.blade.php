@@ -130,6 +130,15 @@
                     :href="route('charts.index')"
                     color="bg-blue-100"
                 />
+
+                <!-- Trustee Fees -->
+                <x-dashboard-card
+                    title="Trustee Fees"
+                    icon="receipt-refund"
+                    :count="$trusteeFeesCount"
+                    :href="route('trustee-fees.index')"
+                    color="bg-blue-100"
+                />
             </div>
         </div>
     </div>
