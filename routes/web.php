@@ -40,6 +40,9 @@ use App\Http\Controllers\Admin\ChecklistItemController;
 use App\Http\Controllers\Admin\ChecklistResponseController;
 use App\Http\Controllers\Admin\SiteVisitController;
 
+// APIs
+use App\Http\Controllers\API\ChecklistAPIController;
+
 use App\Http\Controllers\User\UserIssuerController;
 use App\Http\Controllers\User\UserBondController;
 use App\Http\Controllers\User\UserRatingMovementController;
@@ -72,7 +75,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-require __DIR__.'/api.php';
 
 // 2FA
 Route::middleware(['auth', 'two-factor'])->group(function() {
@@ -117,6 +119,9 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
 
     Route::resource('/admin/checklists', ChecklistController::class);
     Route::get('checklists/{checklist}/create-response', [ChecklistController::class, 'createResponse'])->name('checklists.create-response');
+
+    // Add this to your routes/api.php
+    Route::get('/api/checklists/{checklist}', [ChecklistAPIController::class, 'show']);
 
     Route::resource('/admin/checklist-items', ChecklistItemController::class);
     Route::resource('/admin/checklist-responses', ChecklistResponseController::class);

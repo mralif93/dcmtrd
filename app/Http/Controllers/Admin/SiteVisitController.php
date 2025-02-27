@@ -3,112 +3,152 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\SiteVisitRequest;
 use App\Models\SiteVisit;
+use App\Models\Unit;
+use App\Models\Property;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 
 class SiteVisitController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
     {
-        $query = SiteVisit::query();
-
-        if ($request->has('property_id')) {
-            $query->where('property_id', $request->property_id);
-        }
-
-        if ($request->has('unit_id')) {
-            $query->where('unit_id', $request->unit_id);
-        }
-
-        if ($request->has('visit_status')) {
-            $query->where('visit_status', $request->visit_status);
-        }
-
-        $visits = $query->with(['property', 'unit', 'tenant'])
-            ->latest()
-            ->paginate(10);
-
-        return response()->json($visits);
+        $siteVisits = SiteVisit::with(['property', 'unit', 'tenant'])->latest()->paginate(10);
+        return view('admin.site-visits.index', compact('siteVisits'));
     }
 
-    public function store(SiteVisitRequest $request)
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-        $visit = SiteVisit::create($request->validated());
-
-        return response()->json([
-            'message' => 'Site visit scheduled successfully',
-            'data' => $visit
-        ], 201);
+        $properties = Property::all();
+        $units = Unit::all();
+        $tenants = Tenant::all();
+        
+        $visitTypes = ['First Visit', 'Second Visit', 'Final Visit'];
+        $visitStatuses = ['Scheduled', 'Completed', 'Cancelled', 'No-Show'];
+        $sources = ['Website', 'Referral', 'Agent', 'Social Media', 'Other'];
+        
+        return view('admin.site-visits.create', compact(
+            'properties', 
+            'units', 
+            'tenants', 
+            'visitTypes', 
+            'visitStatuses', 
+            'sources'
+        ));
     }
 
-    public function show(SiteVisit $visit)
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
-        return response()->json([
-            'data' => $visit->load(['property', 'unit', 'tenant'])
+        $validated = $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'unit_id' => 'required|exists:units,id',
+            'tenant_id' => 'nullable|exists:tenants,id',
+            'visitor_name' => 'required|string|max:255',
+            'visitor_email' => 'required|email|max:255',
+            'visitor_phone' => 'required|string|max:255',
+            'visit_date' => 'required|date',
+            'visit_type' => 'required|string|max:255',
+            'visit_status' => 'required|string|max:255',
+            'conducted_by' => 'required|string|max:255',
+            'visitor_feedback' => 'nullable|string',
+            'agent_notes' => 'nullable|string',
+            'interested' => 'boolean',
+            'quoted_price' => 'nullable|numeric',
+            'requirements' => 'nullable|json',
+            'source' => 'required|string|max:255',
+            'follow_up_required' => 'boolean',
+            'follow_up_date' => 'nullable|date|after_or_equal:visit_date',
         ]);
+        
+        SiteVisit::create($validated);
+        
+        return redirect()->route('site-visits.index')
+            ->with('success', 'Site visit created successfully.');
     }
 
-    public function update(SiteVisitRequest $request, SiteVisit $visit)
+    /**
+     * Display the specified resource.
+     */
+    public function show(SiteVisit $siteVisit)
     {
-        $visit->update($request->validated());
-
-        return response()->json([
-            'message' => 'Site visit updated successfully',
-            'data' => $visit
-        ]);
+        return view('admin.site-visits.show', compact('siteVisit'));
     }
 
-    public function destroy(SiteVisit $visit)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(SiteVisit $siteVisit)
     {
-        $visit->delete();
-
-        return response()->json([
-            'message' => 'Site visit deleted successfully'
-        ]);
+        $properties = Property::all();
+        $units = Unit::all();
+        $tenants = Tenant::all();
+        
+        $visitTypes = ['First Visit', 'Second Visit', 'Final Visit'];
+        $visitStatuses = ['Scheduled', 'Completed', 'Cancelled', 'No-Show'];
+        $sources = ['Website', 'Referral', 'Agent', 'Social Media', 'Other'];
+        
+        return view('admin.site-visits.edit', compact(
+            'siteVisit',
+            'properties', 
+            'units', 
+            'tenants', 
+            'visitTypes', 
+            'visitStatuses', 
+            'sources'
+        ));
     }
 
-    public function recordVisit(Request $request, SiteVisit $visit)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, SiteVisit $siteVisit)
     {
-        $visit->update([
-            'actual_visit_start' => $request->start_time,
-            'actual_visit_end' => $request->end_time,
-            'visitor_feedback' => $request->feedback,
-            'agent_notes' => $request->notes,
-            'interested' => $request->interested,
-            'visit_status' => 'Completed'
+        $validated = $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'unit_id' => 'required|exists:units,id',
+            'tenant_id' => 'nullable|exists:tenants,id',
+            'visitor_name' => 'required|string|max:255',
+            'visitor_email' => 'required|email|max:255',
+            'visitor_phone' => 'required|string|max:255',
+            'visit_date' => 'required|date',
+            'actual_visit_start' => 'nullable|date',
+            'actual_visit_end' => 'nullable|date|after_or_equal:actual_visit_start',
+            'visit_type' => 'required|string|max:255',
+            'visit_status' => 'required|string|max:255',
+            'conducted_by' => 'required|string|max:255',
+            'visitor_feedback' => 'nullable|string',
+            'agent_notes' => 'nullable|string',
+            'interested' => 'boolean',
+            'quoted_price' => 'nullable|numeric',
+            'requirements' => 'nullable|json',
+            'source' => 'required|string|max:255',
+            'follow_up_required' => 'boolean',
+            'follow_up_date' => 'nullable|date|after_or_equal:visit_date',
         ]);
-
-        return response()->json([
-            'message' => 'Visit details recorded successfully',
-            'data' => $visit
-        ]);
+        
+        $siteVisit->update($validated);
+        
+        return redirect()->route('site-visits.index')
+            ->with('success', 'Site visit updated successfully.');
     }
 
-    public function cancel(Request $request, SiteVisit $visit)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(SiteVisit $siteVisit)
     {
-        $visit->update([
-            'visit_status' => 'Cancelled',
-            'agent_notes' => $request->cancellation_reason
-        ]);
-
-        return response()->json([
-            'message' => 'Site visit cancelled successfully',
-            'data' => $visit
-        ]);
-    }
-
-    public function reschedule(Request $request, SiteVisit $visit)
-    {
-        $visit->update([
-            'visit_date' => $request->new_date,
-            'visit_status' => 'Rescheduled',
-            'agent_notes' => $request->reschedule_reason
-        ]);
-
-        return response()->json([
-            'message' => 'Site visit rescheduled successfully',
-            'data' => $visit
-        ]);
+        $siteVisit->delete();
+        
+        return redirect()->route('site-visits.index')
+            ->with('success', 'Site visit deleted successfully.');
     }
 }
