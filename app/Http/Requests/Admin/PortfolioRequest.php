@@ -38,7 +38,13 @@ class PortfolioRequest extends FormRequest
             'investment_strategy' => 'required|string|max:255',
             'portfolio_manager' => 'required|string|max:255',
             'fiscal_year_end' => 'required|date',
-            'active_status' => 'boolean'
+            'active_status' => 'boolean',
+            
+            // Document upload validation rules - PDF only
+            'annual_report' => 'nullable|file|mimes:pdf|max:10240',
+            'trust_deed_document' => 'nullable|file|mimes:pdf|max:10240',
+            'insurance_document' => 'nullable|file|mimes:pdf|max:10240',
+            'valuation_report' => 'nullable|file|mimes:pdf|max:10240',
         ];
     }
 }

@@ -30,6 +30,13 @@ return new class extends Migration
             $table->string('portfolio_manager');
             $table->date('fiscal_year_end');
             $table->boolean('active_status')->default(true);
+            
+            // Document fields
+            $table->string('annual_report')->nullable();
+            $table->string('trust_deed_document')->nullable();
+            $table->string('insurance_document')->nullable();
+            $table->string('valuation_report')->nullable();
+            
             $table->timestamps();
             $table->softDeletes();
         });

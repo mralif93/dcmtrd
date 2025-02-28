@@ -69,10 +69,29 @@ class PortfolioController extends Controller
      */
     public function store(PortfolioRequest $request)
     {
-        $portfolio = Portfolio::create($request->validated());
-
+        $data = $request->validated();
+        
+        // Handle file uploads
+        if ($request->hasFile('annual_report')) {
+            $data['annual_report'] = $request->file('annual_report')->store('portfolio/annual_reports', 'public');
+        }
+        
+        if ($request->hasFile('trust_deed_document')) {
+            $data['trust_deed_document'] = $request->file('trust_deed_document')->store('portfolio/trust_deeds', 'public');
+        }
+        
+        if ($request->hasFile('insurance_document')) {
+            $data['insurance_document'] = $request->file('insurance_document')->store('portfolio/insurance', 'public');
+        }
+        
+        if ($request->hasFile('valuation_report')) {
+            $data['valuation_report'] = $request->file('valuation_report')->store('portfolio/valuations', 'public');
+        }
+        
+        $portfolio = Portfolio::create($data);
+    
         return redirect()
-            ->route('portfolios.show', $portfolio)
+            ->route('admin.portfolios.show', $portfolio)
             ->with('success', 'Portfolio created successfully');
     }
 
@@ -140,7 +159,26 @@ class PortfolioController extends Controller
      */
     public function update(PortfolioRequest $request, Portfolio $portfolio)
     {
-        $portfolio->update($request->validated());
+        $data = $request->validated();
+        
+        // Handle file uploads
+        if ($request->hasFile('annual_report')) {
+            $data['annual_report'] = $request->file('annual_report')->store('portfolio/annual_reports', 'public');
+        }
+        
+        if ($request->hasFile('trust_deed_document')) {
+            $data['trust_deed_document'] = $request->file('trust_deed_document')->store('portfolio/trust_deeds', 'public');
+        }
+        
+        if ($request->hasFile('insurance_document')) {
+            $data['insurance_document'] = $request->file('insurance_document')->store('portfolio/insurance', 'public');
+        }
+        
+        if ($request->hasFile('valuation_report')) {
+            $data['valuation_report'] = $request->file('valuation_report')->store('portfolio/valuations', 'public');
+        }
+        
+        $portfolio->update($data);
         
         return redirect()
             ->route('portfolios.show', $portfolio)

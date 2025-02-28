@@ -39,7 +39,7 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <form action="{{ route('portfolios.update', $portfolio) }}" method="POST" class="space-y-6">
+                    <form action="{{ route('portfolios.update', $portfolio) }}" method="POST" class="space-y-6" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -93,6 +93,96 @@
                                         value="{{ old('fiscal_year_end', $portfolio->fiscal_year_end->format('Y-m-d')) }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300">
                                     @error('fiscal_year_end')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Document Uploads -->
+                        <div class="border-b pb-6">
+                            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Document Uploads</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="annual_report" class="block text-sm font-medium text-gray-700">Annual Report (PDF)</label>
+                                    <input type="file" id="annual_report" name="annual_report" accept="application/pdf"
+                                        class="mt-1 block w-full text-sm text-gray-500
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:rounded-full file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-blue-50 file:text-blue-700
+                                        hover:file:bg-blue-100">
+                                    @if($portfolio->annual_report)
+                                        <div class="mt-2">
+                                            <a href="{{ $portfolio->annual_report_url }}" target="_blank" class="text-sm text-blue-600 hover:underline">
+                                                View current document
+                                            </a>
+                                        </div>
+                                    @endif
+                                    @error('annual_report')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="trust_deed_document" class="block text-sm font-medium text-gray-700">Trust Deed Document (PDF)</label>
+                                    <input type="file" id="trust_deed_document" name="trust_deed_document" accept="application/pdf"
+                                        class="mt-1 block w-full text-sm text-gray-500
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:rounded-full file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-blue-50 file:text-blue-700
+                                        hover:file:bg-blue-100">
+                                    @if($portfolio->trust_deed_document)
+                                        <div class="mt-2">
+                                            <a href="{{ $portfolio->trust_deed_document_url }}" target="_blank" class="text-sm text-blue-600 hover:underline">
+                                                View current document
+                                            </a>
+                                        </div>
+                                    @endif
+                                    @error('trust_deed_document')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="insurance_document" class="block text-sm font-medium text-gray-700">Insurance Document (PDF)</label>
+                                    <input type="file" id="insurance_document" name="insurance_document" accept="application/pdf"
+                                        class="mt-1 block w-full text-sm text-gray-500
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:rounded-full file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-blue-50 file:text-blue-700
+                                        hover:file:bg-blue-100">
+                                    @if($portfolio->insurance_document)
+                                        <div class="mt-2">
+                                            <a href="{{ $portfolio->insurance_document_url }}" target="_blank" class="text-sm text-blue-600 hover:underline">
+                                                View current document
+                                            </a>
+                                        </div>
+                                    @endif
+                                    @error('insurance_document')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="valuation_report" class="block text-sm font-medium text-gray-700">Valuation Report (PDF)</label>
+                                    <input type="file" id="valuation_report" name="valuation_report" accept="application/pdf"
+                                        class="mt-1 block w-full text-sm text-gray-500
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:rounded-full file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-blue-50 file:text-blue-700
+                                        hover:file:bg-blue-100">
+                                    @if($portfolio->valuation_report)
+                                        <div class="mt-2">
+                                            <a href="{{ $portfolio->valuation_report_url }}" target="_blank" class="text-sm text-blue-600 hover:underline">
+                                                View current document
+                                            </a>
+                                        </div>
+                                    @endif
+                                    @error('valuation_report')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>

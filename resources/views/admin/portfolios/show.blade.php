@@ -140,6 +140,71 @@
                 </div>
             </div>
 
+            <!-- Document Section -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-4">Portfolio Documents</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="text-sm text-gray-500 mb-2">Annual Report</div>
+                            @if($portfolio->annual_report)
+                                <a href="{{ $portfolio->annual_report_url }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
+                                    </svg>
+                                    View Annual Report
+                                </a>
+                            @else
+                                <span class="text-gray-400">No document uploaded</span>
+                            @endif
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-500 mb-2">Trust Deed Document</div>
+                            @if($portfolio->trust_deed_document)
+                                <a href="{{ $portfolio->trust_deed_document_url }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
+                                    </svg>
+                                    View Trust Deed Document
+                                </a>
+                            @else
+                                <span class="text-gray-400">No document uploaded</span>
+                            @endif
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-500 mb-2">Insurance Document</div>
+                            @if($portfolio->insurance_document)
+                                <a href="{{ $portfolio->insurance_document_url }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
+                                    </svg>
+                                    View Insurance Document
+                                </a>
+                            @else
+                                <span class="text-gray-400">No document uploaded</span>
+                            @endif
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-500 mb-2">Valuation Report</div>
+                            @if($portfolio->valuation_report)
+                                <a href="{{ $portfolio->valuation_report_url }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
+                                    </svg>
+                                    View Valuation Report
+                                </a>
+                            @else
+                                <span class="text-gray-400">No document uploaded</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Properties List -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">

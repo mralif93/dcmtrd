@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="pb-6">
                 <h2 class="font-bold text-xl text-gray-800 leading-tight">
-                    {{ __('DCMTRD') }}
+                    {{ __('Debt Capital Market Trust Real Estate Department (DCMTRD)') }}
                 </h2>
             </div>
 

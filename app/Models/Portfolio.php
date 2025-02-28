@@ -22,6 +22,38 @@ class Portfolio extends Model
         'target_return' => 'decimal:2'
     ];
 
+    /**
+     * Get the full URL for the annual report.
+     */
+    public function getAnnualReportUrlAttribute()
+    {
+        return $this->annual_report ? asset('storage/' . $this->annual_report) : null;
+    }
+
+    /**
+     * Get the full URL for the trust deed document.
+     */
+    public function getTrustDeedDocumentUrlAttribute()
+    {
+        return $this->trust_deed_document ? asset('storage/' . $this->trust_deed_document) : null;
+    }
+
+    /**
+     * Get the full URL for the insurance document.
+     */
+    public function getInsuranceDocumentUrlAttribute()
+    {
+        return $this->insurance_document ? asset('storage/' . $this->insurance_document) : null;
+    }
+
+    /**
+     * Get the full URL for the valuation report.
+     */
+    public function getValuationReportUrlAttribute()
+    {
+        return $this->valuation_report ? asset('storage/' . $this->valuation_report) : null;
+    }
+
     public function properties()
     {
         return $this->hasMany(Property::class);
