@@ -139,6 +139,16 @@
                     :href="route('trustee-fees.index')"
                     color="bg-blue-100"
                 />
+
+                <!-- Compliance Covenants -->
+                <x-dashboard-card
+                    title="Compliance Covenants"
+                    icon="document-check"
+                    :count="$complianceCovenantCount"
+                    :href="route('compliance-covenants.index')"
+                    color="bg-blue-100"
+                />
+                
             </div>
         </div>
     </div>

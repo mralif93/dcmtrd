@@ -20,6 +20,7 @@ use App\Models\FacilityInformation;
 use App\Models\RelatedDocument;
 use App\Models\Chart;
 use App\Models\TrusteeFee;
+use App\Models\ComplianceCovenant;
 
 class AdminController extends Controller
 {
@@ -42,6 +43,7 @@ class AdminController extends Controller
                     (SELECT COUNT(*) FROM related_documents) AS related_documents_count,
                     (SELECT COUNT(*) FROM charts) AS charts_count,
                     (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
+                    (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
                     (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
                     (SELECT COUNT(*) FROM properties) AS properties_count,
                     (SELECT COUNT(*) FROM units) AS units_count,
@@ -58,7 +60,7 @@ class AdminController extends Controller
         });
     
         return view('admin.dashboard', [
-            // Original counts
+            // Bond counts
             'usersCount' => $counts['users_count'],
             'issuersCount' => $counts['issuers_count'],
             'bondsCount' => $counts['bonds_count'],
@@ -73,8 +75,9 @@ class AdminController extends Controller
             'relatedDocumentsCount' => $counts['related_documents_count'],
             'chartsCount' => $counts['charts_count'],
             'trusteeFeesCount' => $counts['trustee_fees_count'],
+            'complianceCovenantCount' => $counts['compliance_covenants_count'],
             
-            // New REIT counts
+            // REITs counts
             'portfoliosCount' => $counts['portfolios_count'],
             'propertiesCount' => $counts['properties_count'],
             'unitsCount' => $counts['units_count'],
