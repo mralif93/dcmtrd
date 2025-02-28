@@ -148,7 +148,6 @@
                     :href="route('compliance-covenants.index')"
                     color="bg-blue-100"
                 />
-                
             </div>
         </div>
     </div>

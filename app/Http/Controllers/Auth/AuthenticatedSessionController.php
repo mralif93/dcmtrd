@@ -77,12 +77,12 @@ class AuthenticatedSessionController extends Controller
         switch ($role) {
             case 'admin':
                 return 'admin.dashboard';
-            case 'compliance':
-                return 'compliance.dashboard'; // Define this route in your routes file
             case 'legal':
-                return 'legal.dashboard'; // Define this route in your routes file
+                return 'legal.dashboard';
+            case 'compliance':
+                return 'compliance.dashboard';
             default:
-                return 'dashboard'; // Default route for regular users
+                return 'dashboard';
         }
     }
 

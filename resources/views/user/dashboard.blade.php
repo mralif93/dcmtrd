@@ -5,11 +5,12 @@
         </h2>
     </x-slot>
 
+    @if(Auth::user()->permission == 'DCMTRD')
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="pb-6">
                 <h2 class="font-bold text-xl text-gray-800 leading-tight">
-                    {{ __('DCMTRD') }}
+                    {{ __('Debt Capital Market Trust Real Estate Department (DCMTRD)') }}
                 </h2>
             </div>
 
@@ -121,10 +122,30 @@
                     :href="route('charts-info.index')"
                     color="bg-blue-100"
                 />
+
+                <!-- Trustee Fees -->
+                <x-dashboard-card
+                    title="Trustee Fees"
+                    icon="receipt-refund"
+                    :count="$trusteeFeesCount"
+                    :href="route('trustee-fees-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Compliance Covenants -->
+                <x-dashboard-card
+                    title="Compliance Covenants"
+                    icon="document-check"
+                    :count="$complianceCovenantCount"
+                    :href="route('compliance-covenants-info.index')"
+                    color="bg-blue-100"
+                />
             </div>
         </div>
     </div>
+    @endif
 
+    @if(Auth::user()->permission == 'REITS')
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="pb-6">
@@ -138,4 +159,5 @@
             </div>
         </div>
     </div>
+    @endif
 </x-app-layout>

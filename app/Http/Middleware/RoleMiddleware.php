@@ -35,10 +35,6 @@ class RoleMiddleware
                     return redirect()->route('legal.dashboard')->withErrors(['access' => 'You do not have access to this page.']);
                 case 'compliance':
                     return redirect()->route('compliance.dashboard')->withErrors(['access' => 'You do not have access to this page.']);
-                case 'maker':
-                    return redirect()->route('maker.dashboard')->withErrors(['access' => 'You do not have access to this page.']);
-                case 'approver':
-                    return redirect()->route('approver.dashboard')->withErrors(['access' => 'You do not have access to this page.']);
                 default:
                     return redirect()->route('dashboard')->withErrors(['access' => 'You do not have access to this page.']);
             }

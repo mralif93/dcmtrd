@@ -57,6 +57,8 @@ use App\Http\Controllers\User\UserFacilityInformationController;
 use App\Http\Controllers\User\UserAnnouncementController;
 use App\Http\Controllers\User\UserRelatedDocumentController;
 use App\Http\Controllers\User\UserChartController;
+use App\Http\Controllers\User\UserTrusteeFeeController;
+use App\Http\Controllers\User\UserComplianceCovenantController;
 
 // Main
 Route::get('/', function () {
@@ -162,6 +164,8 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::resource('/user/facility-informations-info', UserFacilityInformationController::class);
     Route::resource('/user/related-documents-info', UserRelatedDocumentController::class);
     Route::resource('/user/charts-info', UserChartController::class);
+    Route::resource('/user/trustee-fees-info', UserTrusteeFeeController::class);
+    Route::resource('/user/compliance-covenants-info', UserComplianceCovenantController::class);
 });
 
 // Legal routes
