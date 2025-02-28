@@ -27,6 +27,23 @@ use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\RelatedDocumentController;
 use App\Http\Controllers\Admin\ChartController;
 use App\Http\Controllers\Admin\TrusteeFeeController;
+use App\Http\Controllers\Admin\ComplianceCovenantController;
+
+// REITs
+use App\Http\Controllers\Admin\PortfolioController;
+use App\Http\Controllers\Admin\PropertyController;
+use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\TenantController;
+use App\Http\Controllers\Admin\LeaseController;
+use App\Http\Controllers\Admin\MaintenanceRecordController;
+use App\Http\Controllers\Admin\FinancialReportController;
+use App\Http\Controllers\Admin\ChecklistController;
+use App\Http\Controllers\Admin\ChecklistItemController;
+use App\Http\Controllers\Admin\ChecklistResponseController;
+use App\Http\Controllers\Admin\SiteVisitController;
+
+// APIs
+use App\Http\Controllers\API\ChecklistAPIController;
 
 use App\Http\Controllers\User\UserIssuerController;
 use App\Http\Controllers\User\UserBondController;
@@ -75,6 +92,7 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])
         ->name('admin.dashboard');
 
+        // Bond
     Route::resource('/admin/users', UserAdminController::class);
     Route::resource('/admin/issuers', IssuerController::class);
     Route::resource('/admin/bonds', BondController::class);
@@ -88,18 +106,43 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::resource('/admin/facility-informations', FacilityInformationController::class);
     Route::resource('/admin/related-documents', RelatedDocumentController::class);
     Route::resource('/admin/charts', ChartController::class);
+
     Route::resource('/admin/trustee-fees', TrusteeFeeController::class);
+    Route::get('/admin/trustee-fees-search', [TrusteeFeeController::class, 'search'])->name('trustee-fees.search');
+    Route::get('/admin/trustee-fees-report', [TrusteeFeeController::class, 'report'])->name('trustee-fees.report');
+    Route::get('/admin/trustee-fees-trashed', [TrusteeFeeController::class, 'trashed'])->name('trustee-fees.trashed');
+    Route::patch('/admin/trustee-fees/{id}/restore', [TrusteeFeeController::class, 'restore'])->name('trustee-fees.restore');
+    Route::delete('/admin/trustee-fees/{id}/force-delete', [TrusteeFeeController::class, 'forceDelete'])->name('trustee-fees.force-delete');
 
-    // Search route
-    Route::get('trustee-fees-search', [TrusteeFeeController::class, 'search'])->name('trustee-fees.search');
+    Route::resource('/admin/compliance-covenants', ComplianceCovenantController::class);
+    Route::get('/admin/compliance-covenants-trashed', [ComplianceCovenantController::class, 'trashed'])->name('compliance-covenants.trashed');
+    Route::patch('/admin/compliance-covenants/{id}/restore', [ComplianceCovenantController::class, 'restore'])->name('compliance-covenants.restore');
+    Route::delete('/admin/compliance-covenants/{id}/force-delete', [ComplianceCovenantController::class, 'forceDelete'])->name('compliance-covenants.force-delete');
 
-    // Report route
-    Route::get('trustee-fees-report', [TrusteeFeeController::class, 'report'])->name('trustee-fees.report');
-    
-    // Soft Delete routes
-    Route::get('trustee-fees-trashed', [TrusteeFeeController::class, 'trashed'])->name('trustee-fees.trashed');
-    Route::patch('trustee-fees/{id}/restore', [TrusteeFeeController::class, 'restore'])->name('trustee-fees.restore');
-    Route::delete('trustee-fees/{id}/force-delete', [TrusteeFeeController::class, 'forceDelete'])->name('trustee-fees.force-delete');
+    //  REITs
+    Route::resource('/admin/portfolios', PortfolioController::class);
+    Route::get('/admin/portfolios/{portfolio}/analytics', [PortfolioController::class, 'analytics'])->name('portfolios.analytics');
+
+    Route::resource('/admin/properties', PropertyController::class);
+    Route::get('/properties/{property}/export', [PropertyController::class, 'vacancyReport'])->name('properties.export');
+    Route::get('/properties/{property}/financial-report', [PropertyController::class, 'vacancyReport'])->name('properties.financial-report');
+    Route::get('/properties/{property}/vacancy-report', [PropertyController::class, 'vacancyReport'])->name('properties.vacancy-report');
+
+    Route::resource('/admin/units', UnitController::class);
+    Route::resource('/admin/tenants', TenantController::class);
+    Route::resource('/admin/leases', LeaseController::class);
+    Route::resource('/admin/maintenance-records', MaintenanceRecordController::class);
+
+    Route::resource('/admin/checklists', ChecklistController::class);
+    Route::get('checklists/{checklist}/create-response', [ChecklistController::class, 'createResponse'])->name('checklists.create-response');
+
+    // Add this to your routes/api.php
+    Route::get('/api/checklists/{checklist}', [ChecklistAPIController::class, 'show']);
+
+    Route::resource('/admin/checklist-items', ChecklistItemController::class);
+    Route::resource('/admin/checklist-responses', ChecklistResponseController::class);
+    Route::resource('/admin/financial-reports', FinancialReportController::class);
+    Route::resource('/admin/site-visits', SiteVisitController::class);
 });
 
 // Default user route

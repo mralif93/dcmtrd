@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RatingMovement extends Model
 {
-    use HasFactor, SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'rating_agency',
