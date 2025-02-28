@@ -48,6 +48,7 @@ return new class extends Migration
             $table->dateTime('approval_date_time')->nullable();
             $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

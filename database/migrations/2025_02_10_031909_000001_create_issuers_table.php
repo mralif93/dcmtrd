@@ -26,6 +26,7 @@ return new class extends Migration
             $table->date('reminder_3')->nullable();
             $table->date('trust_deed_date')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

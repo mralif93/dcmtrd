@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('rating_watch')->nullable();
             $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lockout_periods', function (Blueprint $table) {
+        Schema::create('call_schedules', function (Blueprint $table) {
             $table->id();
             $table->date('start_date');
             $table->date('end_date');
+            $table->decimal('call_price', 10, 2);
             $table->foreignId('redemption_id')->constrained('redemptions')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lockout_periods');
+        Schema::dropIfExists('call_schedules');
     }
 };
