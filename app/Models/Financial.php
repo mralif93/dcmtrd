@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Financial extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'portfolio_id',
+        'bank_id',
+        'financial_type_id',
+        'purpose',
+        'tenure',
+        'installment_date',
+        'profit_type',
+        'profit_rate',
+        'process_fee',
+        'total_facility_amount',
+        'utilization_amount',
+        'outstanding_amount',
+        'interest_monthly',
+        'security_value_monthly',
+        'facilities_agent',
+        'agent_contact',
+        'valuer',
+        'status',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'installment_date' => 'date',
+        'profit_rate' => 'decimal:4',
+        'process_fee' => 'decimal:2',
+        'total_facility_amount' => 'decimal:2',
+        'utilization_amount' => 'decimal:2',
+        'outstanding_amount' => 'decimal:2',
+        'interest_monthly' => 'decimal:2',
+        'security_value_monthly' => 'decimal:2',
+    ];
+
+    /**
+     * Get the portfolio that owns the financial.
+     */
+    public function portfolio()
+    {
+        return $this->belongsTo(Portfolio::class);
+    }
+
+    /**
+     * Get the bank that owns the financial.
+     */
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class);
+    }
+
+    /**
+     * Get the financial type that owns the financial.
+     */
+    public function financialType()
+    {
+        return $this->belongsTo(FinancialType::class);
+    }
+}

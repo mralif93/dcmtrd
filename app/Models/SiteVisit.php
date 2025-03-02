@@ -10,29 +10,32 @@ class SiteVisit extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = ['id'];
-    
-    protected $casts = [
-        'visit_date' => 'datetime',
-        'actual_visit_start' => 'datetime',
-        'actual_visit_end' => 'datetime',
-        'interested' => 'boolean',
-        'requirements' => 'json',
-        'follow_up_required' => 'boolean',
-        'follow_up_date' => 'date',
-        'quoted_price' => 'decimal:2'
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'property_id',
+        'date_site_visit',
+        'inspector_name',
+        'notes',
+        'attachment',
+        'status',
     ];
 
-    public function tenant()
-    {
-        return $this->belongsTo(Tenant::class);
-    }
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'date_site_visit' => 'date',
+    ];
 
-    public function unit()
-    {
-        return $this->belongsTo(Unit::class);
-    }
-
+    /**
+     * Get the property that owns the site visit.
+     */
     public function property()
     {
         return $this->belongsTo(Property::class);

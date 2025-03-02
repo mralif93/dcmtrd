@@ -10,42 +10,50 @@ class Lease extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = ['id'];
-    
-    protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'utilities_included' => 'boolean',
-        'renewable' => 'boolean',
-        'guarantor_info' => 'json',
-        'move_in_inspection' => 'date',
-        'move_out_inspection' => 'date',
-        'monthly_rent' => 'decimal:2',
-        'security_deposit' => 'decimal:2',
-        'pet_deposit' => 'decimal:2',
-        'parking_fee' => 'decimal:2',
-        'storage_fee' => 'decimal:2'
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'tenant_id',
+        'lease_name',
+        'demised_premises',
+        'permitted_use',
+        'rental_amount',
+        'rental_frequency',
+        'option_to_renew',
+        'term_years',
+        'start_date',
+        'end_date',
+        'status',
     ];
 
-    public function unit()
-    {
-        return $this->belongsTo(Unit::class);
-    }
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'rental_amount' => 'decimal:2',
+        'option_to_renew' => 'boolean',
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
 
+    /**
+     * Get the tenant that owns the lease.
+     */
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
     }
-
+    
+    /**
+     * Get the property associated with the lease through tenant.
+     */
     public function property()
     {
-        return $this->hasOneThrough(
-            Property::class,
-            Unit::class,
-            'id',
-            'id',
-            'unit_id',
-            'property_id'
-        );
+        return $this->hasOneThrough(Property::class, Tenant::class, 'id', 'id', 'tenant_id', 'property_id');
     }
 }

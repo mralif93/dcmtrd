@@ -10,36 +10,71 @@ class Property extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = ['id'];
-    
-    protected $casts = [
-        'acquisition_date' => 'date',
-        'last_renovation_date' => 'date',
-        'square_footage' => 'decimal:2',
-        'land_area' => 'decimal:2',
-        'purchase_price' => 'decimal:2',
-        'current_value' => 'decimal:2',
-        'expected_roi' => 'decimal:2',
-        'occupancy_rate' => 'decimal:2',
-        'annual_property_tax' => 'decimal:2',
-        'insurance_cost' => 'decimal:2'
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'portfolio_id',
+        'category',
+        'batch_no',
+        'name',
+        'address',
+        'city',
+        'state',
+        'country',
+        'postal_code',
+        'land_size',
+        'gross_floor_area',
+        'usage',
+        'value',
+        'ownership',
+        'share_amount',
+        'market_value',
+        'status',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'land_size' => 'decimal:2',
+        'gross_floor_area' => 'decimal:2',
+        'value' => 'decimal:2',
+        'share_amount' => 'decimal:2',
+        'market_value' => 'decimal:2',
+    ];
+
+    /**
+     * Get the portfolio that owns the property.
+     */
     public function portfolio()
     {
         return $this->belongsTo(Portfolio::class);
     }
 
-    public function units()
+    /**
+     * Get the tenants for the property.
+     */
+    public function tenants()
     {
-        return $this->hasMany(Unit::class);
+        return $this->hasMany(Tenant::class);
     }
 
-    public function maintenanceRecords()
+    /**
+     * Get the checklists for the property.
+     */
+    public function checklists()
     {
-        return $this->hasMany(MaintenanceRecord::class);
+        return $this->hasMany(Checklist::class);
     }
 
+    /**
+     * Get the site visits for the property.
+     */
     public function siteVisits()
     {
         return $this->hasMany(SiteVisit::class);

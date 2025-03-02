@@ -13,14 +13,16 @@ return new class extends Migration
     {
         Schema::create('checklists', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('type'); // Move-in, Move-out, Inspection, Maintenance
-            $table->text('description')->nullable();
-            $table->boolean('is_template')->default(false);
-            $table->json('sections'); // Array of section names
-            $table->boolean('active')->default(true);
+            $table->foreignId('property_id')->constrained()->onDelete('cascade');
+            $table->string('type');
+            $table->text('description');
+            $table->date('approval_date');
+            $table->string('status')->default('pending');
             $table->timestamps();
             $table->softDeletes();
+            
+            // Add index for better performance
+            $table->index('approval_date');
         });
     }
 

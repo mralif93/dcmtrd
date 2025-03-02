@@ -10,53 +10,45 @@ class Tenant extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = ['id'];
-    
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'property_id',
+        'name',
+        'contact_person',
+        'email',
+        'phone',
+        'commencement_date',
+        'expiry_date',
+        'status',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
-        'date_of_birth' => 'date',
-        'background_check_date' => 'date',
-        'pets' => 'boolean',
-        'active_status' => 'boolean',
-        'vehicle_info' => 'json',
-        'bank_details' => 'json',
-        'lease_history' => 'json',
-        'annual_income' => 'decimal:2'
+        'commencement_date' => 'date',
+        'expiry_date' => 'date',
     ];
 
-    protected $hidden = [
-        'ssn',
-        'bank_details'
-    ];
+    /**
+     * Get the property that owns the tenant.
+     */
+    public function property()
+    {
+        return $this->belongsTo(Property::class);
+    }
 
+    /**
+     * Get the leases for the tenant.
+     */
     public function leases()
     {
         return $this->hasMany(Lease::class);
-    }
-
-    public function siteVisits()
-    {
-        return $this->hasMany(SiteVisit::class);
-    }
-
-    public function checklistResponses()
-    {
-        return $this->hasMany(ChecklistResponse::class);
-    }
-
-    public function currentLease()
-    {
-        return $this->hasOne(Lease::class)->where('status', 'active')->latest();
-    }
-
-    public function currentUnit()
-    {
-        return $this->hasOneThrough(
-            Unit::class,
-            Lease::class,
-            'tenant_id',
-            'id',
-            'id',
-            'unit_id'
-        )->where('leases.status', 'active');
     }
 }

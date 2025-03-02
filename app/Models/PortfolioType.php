@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Checklist extends Model
+class PortfolioType extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -16,27 +16,17 @@ class Checklist extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'property_id',
-        'type',
+        'portfolio_id',
+        'name',
         'description',
-        'approval_date',
         'status',
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
+     * Get the portfolio that owns the portfolio type.
      */
-    protected $casts = [
-        'approval_date' => 'date',
-    ];
-
-    /**
-     * Get the property that owns the checklist.
-     */
-    public function property()
+    public function portfolio()
     {
-        return $this->belongsTo(Property::class);
+        return $this->belongsTo(Portfolio::class);
     }
 }
