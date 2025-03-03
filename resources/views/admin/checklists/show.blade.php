@@ -12,10 +12,10 @@
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-lg font-medium text-gray-900">{{ $checklist->type }}</h3>
                         <div class="flex space-x-2">
-                            <a href="{{ route('admin.checklists.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                            <a href="{{ route('checklists.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
                                 {{ __('Back to List') }}
                             </a>
-                            <a href="{{ route('admin.checklists.edit', $checklist) }}" class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 active:bg-yellow-900 focus:outline-none focus:border-yellow-900 focus:ring ring-yellow-300 disabled:opacity-25 transition ease-in-out duration-150">
+                            <a href="{{ route('checklists.edit', $checklist) }}" class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 active:bg-yellow-900 focus:outline-none focus:border-yellow-900 focus:ring ring-yellow-300 disabled:opacity-25 transition ease-in-out duration-150">
                                 {{ __('Edit') }}
                             </a>
                         </div>
@@ -80,7 +80,7 @@
                     </div>
 
                     <div class="mt-6">
-                        <form action="{{ route('admin.checklists.destroy', $checklist) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this checklist?');">
+                        <form action="{{ route('checklists.destroy', $checklist) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this checklist?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">

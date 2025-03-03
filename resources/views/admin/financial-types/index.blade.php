@@ -80,9 +80,12 @@
                         </table>
                     </div>
 
-                    <div class="mt-4">
-                        {{ $financialTypes->links() }}
-                    </div>
+                    <!-- Pagination -->
+                    @if($financialTypes->hasPages())
+                        <div class="mt-6">
+                            {{ $financialTypes->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -46,7 +46,7 @@ class BankController extends Controller
 
         Bank::create($request->all());
         
-        return redirect()->route('admin.banks.index')
+        return redirect()->route('banks.index')
             ->with('status', 'Bank created successfully');
     }
 
@@ -89,7 +89,7 @@ class BankController extends Controller
 
         $bank->update($request->all());
         
-        return redirect()->route('admin.banks.index')
+        return redirect()->route('banks.index')
             ->with('status', 'Bank updated successfully');
     }
 
@@ -103,7 +103,7 @@ class BankController extends Controller
     {
         $bank->delete();
         
-        return redirect()->route('admin.banks.index')
+        return redirect()->route('banks.index')
             ->with('status', 'Bank deleted successfully');
     }
 }

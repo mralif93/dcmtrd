@@ -37,7 +37,7 @@ class SiteVisitController extends Controller
         
         $siteVisits = $query->latest()->paginate(10);
         
-        return view('site-visits.index', compact('siteVisits'));
+        return view('admin.site-visits.index', compact('siteVisits'));
     }
 
     /**
@@ -50,7 +50,7 @@ class SiteVisitController extends Controller
         $properties = Property::where('status', 'active')->get();
         $statuses = ['scheduled', 'completed', 'cancelled', 'postponed'];
         
-        return view('site-visits.create', compact('properties', 'statuses'));
+        return view('admin.site-visits.create', compact('properties', 'statuses'));
     }
 
     /**
@@ -102,7 +102,7 @@ class SiteVisitController extends Controller
     {
         $siteVisit->load('property');
         
-        return view('site-visits.show', compact('siteVisit'));
+        return view('admin.site-visits.show', compact('siteVisit'));
     }
 
     /**
@@ -116,7 +116,7 @@ class SiteVisitController extends Controller
         $properties = Property::where('status', 'active')->get();
         $statuses = ['scheduled', 'completed', 'cancelled', 'postponed'];
         
-        return view('site-visits.edit', compact('siteVisit', 'properties', 'statuses'));
+        return view('admin.site-visits.edit', compact('siteVisit', 'properties', 'statuses'));
     }
 
     /**

@@ -16,7 +16,7 @@ class FinancialTypeController extends Controller
      */
     public function index()
     {
-        $financialTypes = FinancialType::all();
+        $financialTypes = FinancialType::paginate(10);
         
         return view('admin.financial-types.index', compact('financialTypes'));
     }

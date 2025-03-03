@@ -16,56 +16,6 @@
                         </a>
                     </div>
 
-                    <!-- Filters -->
-                    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                        <form action="{{ route('site-visits.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div>
-                                <label for="property_id" class="block mb-1 text-sm font-medium text-gray-700">Property</label>
-                                <select name="property_id" id="property_id" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                    <option value="">All Properties</option>
-                                    @foreach(\App\Models\Property::orderBy('name')->get() as $property)
-                                        <option value="{{ $property->id }}" {{ request('property_id') == $property->id ? 'selected' : '' }}>
-                                            {{ $property->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label for="status" class="block mb-1 text-sm font-medium text-gray-700">Status</label>
-                                <select name="status" id="status" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                    <option value="">All Statuses</option>
-                                    @foreach(['scheduled', 'completed', 'cancelled', 'postponed'] as $status)
-                                        <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                            {{ ucfirst($status) }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label for="date_from" class="block mb-1 text-sm font-medium text-gray-700">Date From</label>
-                                <input type="date" name="date_from" id="date_from" value="{{ request('date_from') }}" 
-                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                            </div>
-                            
-                            <div>
-                                <label for="date_to" class="block mb-1 text-sm font-medium text-gray-700">Date To</label>
-                                <input type="date" name="date_to" id="date_to" value="{{ request('date_to') }}" 
-                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                            </div>
-                            
-                            <div class="md:col-span-4 flex justify-end">
-                                <button type="submit" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
-                                    Apply Filters
-                                </button>
-                                <a href="{{ route('site-visits.index') }}" class="ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-                                    Reset
-                                </a>
-                            </div>
-                        </form>
-                    </div>
-
                     <!-- Site Visits Table -->
                     @if($siteVisits->count() > 0)
                         <div class="overflow-x-auto">
@@ -88,22 +38,31 @@
                                             <td class="px-4 py-3 text-center">{!! $visit->status_badge !!}</td>
                                             <td class="px-4 py-3 text-center">
                                                 <div class="flex justify-center space-x-2">
-                                                    <a href="{{ route('site-visits.show', $visit) }}" class="px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
-                                                        View
+                                                    <a href="{{ route('site-visits.show', $visit) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        </svg>
                                                     </a>
-                                                    <a href="{{ route('site-visits.edit', $visit) }}" class="px-2 py-1 bg-yellow-100 text-yellow-600 rounded hover:bg-yellow-200">
-                                                        Edit
+                                                    <a href="{{ route('site-visits.edit', $visit) }}" class="text-yellow-600 hover:text-yellow-900">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                        </svg>
                                                     </a>
                                                     @if($visit->hasAttachment())
-                                                        <a href="{{ route('site-visits.download', $visit) }}" class="px-2 py-1 bg-green-100 text-green-600 rounded hover:bg-green-200">
-                                                            Download
+                                                        <a href="{{ route('site-visits.download', $visit) }}" class="text-blue-600 hover:text-blue-900">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 17v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 4v12m0 0l-3-3m3 3l3-3"/>
+                                                            </svg>
                                                         </a>
                                                     @endif
                                                     <form action="{{ route('site-visits.destroy', $visit) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this site visit?');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="px-2 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200">
-                                                            Delete
+                                                        <button type="submit" class="text-red-600 hover:text-red-900">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
                                                         </button>
                                                     </form>
                                                 </div>

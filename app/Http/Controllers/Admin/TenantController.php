@@ -54,7 +54,7 @@ class TenantController extends Controller
 
         Tenant::create($request->all());
         
-        return redirect()->route('admin.tenants.index')
+        return redirect()->route('tenants.index')
             ->with('status', 'Tenant created successfully');
     }
 
@@ -106,7 +106,7 @@ class TenantController extends Controller
 
         $tenant->update($request->all());
         
-        return redirect()->route('admin.tenants.index')
+        return redirect()->route('tenants.index')
             ->with('status', 'Tenant updated successfully');
     }
 
@@ -120,13 +120,13 @@ class TenantController extends Controller
     {
         // Check if the tenant has any leases before deleting
         if ($tenant->leases()->count() > 0) {
-            return redirect()->route('admin.tenants.index')
+            return redirect()->route('tenants.index')
                 ->with('error', 'Cannot delete tenant because it has associated leases');
         }
         
         $tenant->delete();
         
-        return redirect()->route('admin.tenants.index')
+        return redirect()->route('tenants.index')
             ->with('status', 'Tenant deleted successfully');
     }
 }

@@ -174,7 +174,7 @@
                 <x-dashboard-card
                     title="Financial Types"
                     icon="wrench-screwdriver"
-                    :count="$financialTypes"
+                    :count="$financialTypesCount"
                     :href="route('financial-types.index')"
                     color="bg-green-100"
                 />
@@ -229,7 +229,7 @@
                     title="Financials"
                     icon="document-chart-bar"
                     :count="$financialsCount"
-                    :href="route('financial-reports.index')"
+                    :href="route('financials.index')"
                     color="bg-green-100"
                 />
 

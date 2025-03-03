@@ -170,14 +170,23 @@
                         </div>
                     </div>
 
-                    <div class="mt-6 border-t pt-6">
-                        <form action="{{ route('financials.destroy', $financial->id) }}" method="POST" class="inline-block">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:shadow-outline-red transition ease-in-out duration-150" onclick="return confirm('Are you sure you want to delete this financial record?')">
-                                Delete Record
-                            </button>
-                        </form>
+                    <div class="border-t border-gray-200 py-4 mt-6">
+                        <div class="flex justify-end gap-4">
+                            <a href="{{ route('financials.index') }}" 
+                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
+                                </svg>
+                                Back to List
+                            </a>
+                            <a href="{{ route('financials.edit', $financial) }}" 
+                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
+                                </svg>
+                                Edit Financial
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

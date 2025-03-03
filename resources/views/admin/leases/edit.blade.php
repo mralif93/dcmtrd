@@ -9,13 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <div class="mb-4">
-                        <a href="{{ route('admin.leases.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
-                            {{ __('Back to List') }}
-                        </a>
-                    </div>
-
-                    <form action="{{ route('admin.leases.update', $lease) }}" method="POST">
+                    <form action="{{ route('leases.update', $lease) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -131,9 +125,14 @@
                             </div>
                         </div>
 
-                        <div class="flex justify-end mt-6">
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                {{ __('Update Lease') }}
+                        <div class="flex justify-end space-x-4 mt-6">
+                            <a href="{{ route('leases.index') }}" 
+                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                Cancel
+                            </a>
+                            <button type="submit" 
+                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Update Lease
                             </button>
                         </div>
                     </form>

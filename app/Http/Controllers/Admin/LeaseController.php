@@ -57,8 +57,8 @@ class LeaseController extends Controller
 
         Lease::create($request->all());
         
-        return redirect()->route('admin.leases.index')
-            ->with('status', 'Lease created successfully');
+        return redirect()->route('leases.index')
+            ->with('success', 'Lease created successfully');
     }
 
     /**
@@ -112,8 +112,8 @@ class LeaseController extends Controller
 
         $lease->update($request->all());
         
-        return redirect()->route('admin.leases.index')
-            ->with('status', 'Lease updated successfully');
+        return redirect()->route('leases.index')
+            ->with('success', 'Lease updated successfully');
     }
 
     /**
@@ -126,7 +126,7 @@ class LeaseController extends Controller
     {
         $lease->delete();
         
-        return redirect()->route('admin.leases.index')
-            ->with('status', 'Lease deleted successfully');
+        return redirect()->route('leases.index')
+            ->with('success', 'Lease deleted successfully');
     }
 }

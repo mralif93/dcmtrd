@@ -51,7 +51,7 @@ class ChecklistController extends Controller
 
         Checklist::create($request->all());
         
-        return redirect()->route('admin.checklists.index')
+        return redirect()->route('checklists.index')
             ->with('status', 'Checklist created successfully');
     }
 
@@ -100,7 +100,7 @@ class ChecklistController extends Controller
 
         $checklist->update($request->all());
         
-        return redirect()->route('admin.checklists.index')
+        return redirect()->route('checklists.index')
             ->with('status', 'Checklist updated successfully');
     }
 
@@ -114,7 +114,7 @@ class ChecklistController extends Controller
     {
         $checklist->delete();
         
-        return redirect()->route('admin.checklists.index')
+        return redirect()->route('checklists.index')
             ->with('status', 'Checklist deleted successfully');
     }
 }

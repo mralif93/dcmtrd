@@ -126,6 +126,28 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::resource('/admin/leases', LeaseController::class);
     Route::resource('/admin/financials', FinancialController::class);
     Route::resource('/admin/site-visits', SiteVisitController::class);
+
+    // Additional Property-specific Routes
+    Route::prefix('/admin/properties')->name('properties.')->group(function () {
+        // Tenants listing for a specific property
+        Route::get('{property}/tenants', [PropertyController::class, 'tenants'])
+            ->name('tenants');
+        
+        // Checklists listing for a specific property
+        Route::get('{property}/checklists', [PropertyController::class, 'checklists'])
+            ->name('checklists');
+        
+        // Site Visits listing for a specific property
+        Route::get('{property}/site-visits', [PropertyController::class, 'siteVisits'])
+            ->name('site-visits');
+    });
+
+    Route::prefix('/admin/site-visits')->name('site-visits.')->group(function () {
+        Route::get('{site_visit}/download', [SiteVisitController::class, 'downloadAttachment'])
+            ->name('download');
+    });
+
+    
 });
 
 // Default user route
