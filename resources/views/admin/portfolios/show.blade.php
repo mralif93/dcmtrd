@@ -1,26 +1,14 @@
 <!-- resources/views/portfolios/show.blade.php -->
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ $portfolio->name }}
-            </h2>
-            <div class="flex space-x-2">
-                <a href="{{ route('properties.create', ['portfolio_id' => $portfolio->id]) }}" 
-                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                    Add Property
-                </a>
-                <a href="{{ route('portfolios.edit', $portfolio) }}" 
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Edit Portfolio
-                </a>
-            </div>
-        </div>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Portfolio Details') }}
+        </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
+
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
                     <div class="flex items-center">
@@ -36,290 +24,124 @@
                 </div>
             @endif
 
-            <!-- Portfolio Summary -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-sm text-gray-500">Total Properties</div>
-                        <div class="text-2xl font-bold">{{ $portfolio->properties_count ?? $portfolio->properties->count() }}</div>
-                    </div>
-                </div>
-                
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-sm text-gray-500">Total Units</div>
-                        <div class="text-2xl font-bold">{{ $totalUnits }}</div>
-                    </div>
-                </div>
-                
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-sm text-gray-500">Occupancy Rate</div>
-                        <div class="text-2xl font-bold">{{ number_format($occupancyRate, 1) }}%</div>
-                    </div>
-                </div>
-                
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="text-sm text-gray-500">Monthly Revenue</div>
-                        <div class="text-2xl font-bold">${{ number_format($monthlyRevenue) }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Portfolio Details -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4">Portfolio Details</h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="text-sm text-gray-500">Portfolio Type</div>
-                                <div>{{ $portfolio->type }}</div>
-                                
-                                <div class="text-sm text-gray-500">Foundation Date</div>
-                                <div>{{ $portfolio->foundation_date->format('M d, Y') }}</div>
-                                
-                                <div class="text-sm text-gray-500">Total Assets</div>
-                                <div>${{ number_format($portfolio->total_assets) }}</div>
-                                
-                                <div class="text-sm text-gray-500">Market Cap</div>
-                                <div>${{ number_format($portfolio->market_cap) }}</div>
-                                
-                                <div class="text-sm text-gray-500">Available Funds</div>
-                                <div>${{ number_format($portfolio->available_funds) }}</div>
-                                
-                                <div class="text-sm text-gray-500">Risk Profile</div>
-                                <div>
-                                    <span class="px-2 py-1 text-xs rounded-full 
-                                        @if($portfolio->risk_profile === 'Low') bg-green-100 text-green-800
-                                        @elseif($portfolio->risk_profile === 'Medium') bg-yellow-100 text-yellow-800
-                                        @else bg-red-100 text-red-800 @endif">
-                                        {{ $portfolio->risk_profile }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="text-sm text-gray-500">Management Company</div>
-                                <div>{{ $portfolio->management_company }}</div>
-                                
-                                <div class="text-sm text-gray-500">Portfolio Manager</div>
-                                <div>{{ $portfolio->portfolio_manager }}</div>
-                                
-                                <div class="text-sm text-gray-500">Legal Entity Type</div>
-                                <div>{{ $portfolio->legal_entity_type }}</div>
-                                
-                                <div class="text-sm text-gray-500">Currency</div>
-                                <div>{{ $portfolio->currency }}</div>
-                                
-                                <div class="text-sm text-gray-500">Investment Strategy</div>
-                                <div>{{ $portfolio->investment_strategy }}</div>
-                                
-                                <div class="text-sm text-gray-500">Target Return</div>
-                                <div>{{ $portfolio->target_return }}%</div>
-                                
-                                <div class="text-sm text-gray-500">Status</div>
-                                <div>
-                                    <span class="px-2 py-1 text-xs rounded-full 
-                                        {{ $portfolio->active_status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $portfolio->active_status ? 'Active' : 'Inactive' }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6">
-                        <div class="text-sm text-gray-500">Description</div>
-                        <div class="mt-1">{{ $portfolio->description }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Document Section -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4">Portfolio Documents</h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <div class="text-sm text-gray-500 mb-2">Annual Report</div>
-                            @if($portfolio->annual_report)
-                                <a href="{{ $portfolio->annual_report_url }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800">
-                                    <svg class="w-5 h-5 mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
-                                    </svg>
-                                    View Annual Report
-                                </a>
-                            @else
-                                <span class="text-gray-400">No document uploaded</span>
-                            @endif
-                        </div>
-                        
-                        <div>
-                            <div class="text-sm text-gray-500 mb-2">Trust Deed Document</div>
-                            @if($portfolio->trust_deed_document)
-                                <a href="{{ $portfolio->trust_deed_document_url }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800">
-                                    <svg class="w-5 h-5 mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
-                                    </svg>
-                                    View Trust Deed Document
-                                </a>
-                            @else
-                                <span class="text-gray-400">No document uploaded</span>
-                            @endif
-                        </div>
-                        
-                        <div>
-                            <div class="text-sm text-gray-500 mb-2">Insurance Document</div>
-                            @if($portfolio->insurance_document)
-                                <a href="{{ $portfolio->insurance_document_url }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800">
-                                    <svg class="w-5 h-5 mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
-                                    </svg>
-                                    View Insurance Document
-                                </a>
-                            @else
-                                <span class="text-gray-400">No document uploaded</span>
-                            @endif
-                        </div>
-                        
-                        <div>
-                            <div class="text-sm text-gray-500 mb-2">Valuation Report</div>
-                            @if($portfolio->valuation_report)
-                                <a href="{{ $portfolio->valuation_report_url }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800">
-                                    <svg class="w-5 h-5 mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
-                                    </svg>
-                                    View Valuation Report
-                                </a>
-                            @else
-                                <span class="text-gray-400">No document uploaded</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Properties List -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold">Properties</h3>
-                        <a href="{{ route('properties.create', ['portfolio_id' => $portfolio->id]) }}" 
-                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            Add Property
-                        </a>
-                    </div>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Occupancy</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($portfolio->properties as $property)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <a href="{{ route('properties.show', $property) }}" class="text-blue-600 hover:text-blue-900">
-                                            {{ $property->name }}
-                                        </a>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ $property->address }}, {{ $property->city }}, {{ $property->state }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $property->property_type }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $property->units_count ?? $property->units->count() }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="w-16 bg-gray-200 rounded-full h-2.5">
-                                                <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ $property->occupancy_rate }}%"></div>
-                                            </div>
-                                            <span class="ml-2">{{ $property->occupancy_rate }}%</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">${{ number_format($property->current_value) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 py-1 text-xs rounded-full 
-                                            @if($property->status === 'Active') bg-green-100 text-green-800
-                                            @elseif($property->status === 'Under Renovation') bg-yellow-100 text-yellow-800
-                                            @else bg-blue-100 text-blue-800 @endif">
-                                            {{ $property->status }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('properties.edit', $property) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                        <a href="{{ route('properties.show', $property) }}" class="text-blue-600 hover:text-blue-900">View</a>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="8" class="px-6 py-4 text-center">No properties found in this portfolio</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Financial Reports -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold">Financial Reports</h3>
-                        <a href="{{ route('portfolios.analytics', $portfolio) }}" 
-                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            View Analytics
-                        </a>
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-medium text-gray-900">{{ $portfolio->portfolio_name }}</h3>
+                        <div class="space-x-2">
+                            <a href="{{ route('portfolios.edit', $portfolio->id) }}" class="inline-flex items-center px-4 py-2 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-600 active:bg-yellow-700 focus:outline-none focus:border-yellow-700 focus:ring ring-yellow-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                Edit
+                            </a>
+                            <a href="{{ route('portfolios.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                Back to List
+                            </a>
+                        </div>
                     </div>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Revenue</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Expenses</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Income</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Occupancy Rate</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($portfolio->financialReports ?? [] as $report)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $report->fiscal_period }} ({{ $report->report_date->format('M Y') }})</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $report->report_type }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">${{ number_format($report->total_revenue) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">${{ number_format($report->operating_expenses) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">${{ number_format($report->net_income) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $report->occupancy_rate }}%</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="#" class="text-blue-600 hover:text-blue-900">View Details</a>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="7" class="px-6 py-4 text-center">No financial reports found</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+
+                    <div class="mb-8">
+                        <h4 class="text-md font-medium text-gray-900 mb-2">Portfolio Information</h4>
+                        <div class="border rounded-md overflow-hidden">
+                            <div class="bg-gray-50 px-4 py-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Portfolio ID</p>
+                                    <p class="text-sm text-gray-900">{{ $portfolio->id }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Portfolio Name</p>
+                                    <p class="text-sm text-gray-900">{{ $portfolio->portfolio_name }}</p>
+                                </div>
+                            </div>
+                            <div class="bg-white px-4 py-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Created At</p>
+                                    <p class="text-sm text-gray-900">{{ $portfolio->created_at->format('Y-m-d H:i:s') }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Last Updated</p>
+                                    <p class="text-sm text-gray-900">{{ $portfolio->updated_at->format('Y-m-d H:i:s') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h4 class="text-md font-medium text-gray-900 mb-2">Documents</h4>
+                        <div class="border rounded-md overflow-hidden">
+                            <div class="bg-gray-50 px-4 py-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Annual Report</p>
+                                    @if($portfolio->annual_report)
+                                        <a href="{{ Storage::url($portfolio->annual_report) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
+                                            View Document
+                                        </a>
+                                    @else
+                                        <p class="text-sm text-gray-400">No document uploaded</p>
+                                    @endif
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Trust Deed Document</p>
+                                    @if($portfolio->trust_deed_document)
+                                        <a href="{{ Storage::url($portfolio->trust_deed_document) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
+                                            View Document
+                                        </a>
+                                    @else
+                                        <p class="text-sm text-gray-400">No document uploaded</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="bg-white px-4 py-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Insurance Document</p>
+                                    @if($portfolio->insurance_document)
+                                        <a href="{{ Storage::url($portfolio->insurance_document) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
+                                            View Document
+                                        </a>
+                                    @else
+                                        <p class="text-sm text-gray-400">No document uploaded</p>
+                                    @endif
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Valuation Report</p>
+                                    @if($portfolio->valuation_report)
+                                        <a href="{{ Storage::url($portfolio->valuation_report) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
+                                            View Document
+                                        </a>
+                                    @else
+                                        <p class="text-sm text-gray-400">No document uploaded</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h4 class="text-md font-medium text-gray-900 mb-2">Associated Records</h4>
+                        <div class="border rounded-md overflow-hidden">
+                            <div class="bg-gray-50 px-4 py-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Properties</p>
+                                    <p class="text-sm text-gray-900">{{ $portfolio->properties->count() }} properties</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Portfolio Types</p>
+                                    <p class="text-sm text-gray-900">{{ $portfolio->portfolioTypes->count() }} types</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Financials</p>
+                                    <p class="text-sm text-gray-900">{{ $portfolio->financials->count() }} financial records</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <form action="{{ route('portfolios.destroy', $portfolio->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this portfolio?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-700 focus:outline-none focus:border-red-700 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                Delete Portfolio
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

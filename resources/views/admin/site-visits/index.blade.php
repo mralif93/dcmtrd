@@ -1,103 +1,126 @@
-<!-- resources/views/site-visits/index.blade.php -->
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Site Visits') }}
-            </h2>
-            <a href="{{ route('site-visits.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Create Site Visit
-            </a>
-        </div>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Site Visits') }}
+        </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            <!-- Site Visits List -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visitor</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visit Date</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($siteVisits as $siteVisit)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ $siteVisit->visitor_name }}
-                                        <div class="text-xs text-gray-500">{{ $siteVisit->visitor_email }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ $siteVisit->property->name ?? 'N/A' }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ $siteVisit->unit->unit_number ?? 'N/A' }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ $siteVisit->visit_date->format('M d, Y h:i A') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ $siteVisit->visit_type }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 py-1 text-xs rounded-full 
-                                            @if($siteVisit->visit_status === 'Completed') bg-green-100 text-green-800
-                                            @elseif($siteVisit->visit_status === 'Scheduled') bg-blue-100 text-blue-800
-                                            @elseif($siteVisit->visit_status === 'Cancelled') bg-red-100 text-red-800
-                                            @else bg-yellow-100 text-yellow-800 @endif">
-                                            {{ $siteVisit->visit_status }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('site-visits.show', $siteVisit) }}" class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-                                        <a href="{{ route('site-visits.edit', $siteVisit) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                        <form action="{{ route('site-visits.destroy', $siteVisit) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900" 
-                                                onclick="return confirm('Are you sure you want to delete this site visit?')">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="7" class="px-6 py-4 text-center">No site visits found</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="flex justify-between mb-6">
+                        <h3 class="text-lg font-semibold">Manage Site Visits</h3>
+                        <a href="{{ route('site-visits.create') }}" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">
+                            Add New Site Visit
+                        </a>
                     </div>
-                    
-                    <div class="mt-4">
-                        {{ $siteVisits->links() }}
+
+                    <!-- Filters -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                        <form action="{{ route('site-visits.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label for="property_id" class="block mb-1 text-sm font-medium text-gray-700">Property</label>
+                                <select name="property_id" id="property_id" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                    <option value="">All Properties</option>
+                                    @foreach(\App\Models\Property::orderBy('name')->get() as $property)
+                                        <option value="{{ $property->id }}" {{ request('property_id') == $property->id ? 'selected' : '' }}>
+                                            {{ $property->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="status" class="block mb-1 text-sm font-medium text-gray-700">Status</label>
+                                <select name="status" id="status" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                    <option value="">All Statuses</option>
+                                    @foreach(['scheduled', 'completed', 'cancelled', 'postponed'] as $status)
+                                        <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                            {{ ucfirst($status) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="date_from" class="block mb-1 text-sm font-medium text-gray-700">Date From</label>
+                                <input type="date" name="date_from" id="date_from" value="{{ request('date_from') }}" 
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </div>
+                            
+                            <div>
+                                <label for="date_to" class="block mb-1 text-sm font-medium text-gray-700">Date To</label>
+                                <input type="date" name="date_to" id="date_to" value="{{ request('date_to') }}" 
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </div>
+                            
+                            <div class="md:col-span-4 flex justify-end">
+                                <button type="submit" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                                    Apply Filters
+                                </button>
+                                <a href="{{ route('site-visits.index') }}" class="ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                                    Reset
+                                </a>
+                            </div>
+                        </form>
                     </div>
+
+                    <!-- Site Visits Table -->
+                    @if($siteVisits->count() > 0)
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full border-collapse table-auto">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="px-4 py-2 text-left">Property</th>
+                                        <th class="px-4 py-2 text-left">Visit Date</th>
+                                        <th class="px-4 py-2 text-left">Inspector</th>
+                                        <th class="px-4 py-2 text-center">Status</th>
+                                        <th class="px-4 py-2 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($siteVisits as $visit)
+                                        <tr class="border-t hover:bg-gray-50">
+                                            <td class="px-4 py-3">{{ $visit->property->name }}</td>
+                                            <td class="px-4 py-3">{{ $visit->date_site_visit->format('M d, Y') }}</td>
+                                            <td class="px-4 py-3">{{ $visit->inspector_name ?? 'Not Assigned' }}</td>
+                                            <td class="px-4 py-3 text-center">{!! $visit->status_badge !!}</td>
+                                            <td class="px-4 py-3 text-center">
+                                                <div class="flex justify-center space-x-2">
+                                                    <a href="{{ route('site-visits.show', $visit) }}" class="px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
+                                                        View
+                                                    </a>
+                                                    <a href="{{ route('site-visits.edit', $visit) }}" class="px-2 py-1 bg-yellow-100 text-yellow-600 rounded hover:bg-yellow-200">
+                                                        Edit
+                                                    </a>
+                                                    @if($visit->hasAttachment())
+                                                        <a href="{{ route('site-visits.download', $visit) }}" class="px-2 py-1 bg-green-100 text-green-600 rounded hover:bg-green-200">
+                                                            Download
+                                                        </a>
+                                                    @endif
+                                                    <form action="{{ route('site-visits.destroy', $visit) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this site visit?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="px-2 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200">
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4">
+                            {{ $siteVisits->links() }}
+                        </div>
+                    @else
+                        <div class="bg-gray-50 p-4 rounded-md text-center">
+                            No site visits found. <a href="{{ route('site-visits.create') }}" class="text-blue-500 hover:underline">Create your first site visit</a>.
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

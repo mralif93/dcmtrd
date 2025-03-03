@@ -13,27 +13,27 @@ class Checklist extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array
      */
     protected $fillable = [
         'property_id',
         'type',
         'description',
         'approval_date',
-        'status',
+        'status'
     ];
 
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array
      */
     protected $casts = [
-        'approval_date' => 'date',
+        'approval_date' => 'date'
     ];
 
     /**
-     * Get the property that owns the checklist.
+     * Get the property that the checklist belongs to.
      */
     public function property()
     {

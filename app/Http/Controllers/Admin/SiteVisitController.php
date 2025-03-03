@@ -3,152 +3,198 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\SiteVisit;
-use App\Models\Unit;
 use App\Models\Property;
-use App\Models\Tenant;
+use App\Models\SiteVisit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class SiteVisitController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the site visits.
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $siteVisits = SiteVisit::with(['property', 'unit', 'tenant'])->latest()->paginate(10);
-        return view('admin.site-visits.index', compact('siteVisits'));
+        $query = SiteVisit::with('property');
+        
+        // Filter by property if provided
+        if ($request->has('property_id')) {
+            $query->where('property_id', $request->property_id);
+        }
+        
+        // Filter by status if provided
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter by date range if provided
+        if ($request->has('date_from') && $request->has('date_to')) {
+            $query->whereBetween('date_site_visit', [$request->date_from, $request->date_to]);
+        }
+        
+        $siteVisits = $query->latest()->paginate(10);
+        
+        return view('site-visits.index', compact('siteVisits'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new site visit.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        $properties = Property::all();
-        $units = Unit::all();
-        $tenants = Tenant::all();
+        $properties = Property::where('status', 'active')->get();
+        $statuses = ['scheduled', 'completed', 'cancelled', 'postponed'];
         
-        $visitTypes = ['First Visit', 'Second Visit', 'Final Visit'];
-        $visitStatuses = ['Scheduled', 'Completed', 'Cancelled', 'No-Show'];
-        $sources = ['Website', 'Referral', 'Agent', 'Social Media', 'Other'];
-        
-        return view('admin.site-visits.create', compact(
-            'properties', 
-            'units', 
-            'tenants', 
-            'visitTypes', 
-            'visitStatuses', 
-            'sources'
-        ));
+        return view('site-visits.create', compact('properties', 'statuses'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created site visit in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'property_id' => 'required|exists:properties,id',
-            'unit_id' => 'required|exists:units,id',
-            'tenant_id' => 'nullable|exists:tenants,id',
-            'visitor_name' => 'required|string|max:255',
-            'visitor_email' => 'required|email|max:255',
-            'visitor_phone' => 'required|string|max:255',
-            'visit_date' => 'required|date',
-            'visit_type' => 'required|string|max:255',
-            'visit_status' => 'required|string|max:255',
-            'conducted_by' => 'required|string|max:255',
-            'visitor_feedback' => 'nullable|string',
-            'agent_notes' => 'nullable|string',
-            'interested' => 'boolean',
-            'quoted_price' => 'nullable|numeric',
-            'requirements' => 'nullable|json',
-            'source' => 'required|string|max:255',
-            'follow_up_required' => 'boolean',
-            'follow_up_date' => 'nullable|date|after_or_equal:visit_date',
+            'date_site_visit' => 'required|date',
+            'inspector_name' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'status' => 'required|string|in:scheduled,completed,cancelled,postponed',
         ]);
         
-        SiteVisit::create($validated);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        
+        $data = $request->except('attachment');
+        
+        // Handle file upload
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('site-visits', $filename, 'public');
+            $data['attachment'] = $filePath;
+        }
+        
+        SiteVisit::create($data);
         
         return redirect()->route('site-visits.index')
-            ->with('success', 'Site visit created successfully.');
+            ->with('success', 'Site visit scheduled successfully');
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified site visit.
+     *
+     * @param  \App\Models\SiteVisit  $siteVisit
+     * @return \Illuminate\Http\Response
      */
     public function show(SiteVisit $siteVisit)
     {
-        return view('admin.site-visits.show', compact('siteVisit'));
+        $siteVisit->load('property');
+        
+        return view('site-visits.show', compact('siteVisit'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified site visit.
+     *
+     * @param  \App\Models\SiteVisit  $siteVisit
+     * @return \Illuminate\Http\Response
      */
     public function edit(SiteVisit $siteVisit)
     {
-        $properties = Property::all();
-        $units = Unit::all();
-        $tenants = Tenant::all();
+        $properties = Property::where('status', 'active')->get();
+        $statuses = ['scheduled', 'completed', 'cancelled', 'postponed'];
         
-        $visitTypes = ['First Visit', 'Second Visit', 'Final Visit'];
-        $visitStatuses = ['Scheduled', 'Completed', 'Cancelled', 'No-Show'];
-        $sources = ['Website', 'Referral', 'Agent', 'Social Media', 'Other'];
-        
-        return view('admin.site-visits.edit', compact(
-            'siteVisit',
-            'properties', 
-            'units', 
-            'tenants', 
-            'visitTypes', 
-            'visitStatuses', 
-            'sources'
-        ));
+        return view('site-visits.edit', compact('siteVisit', 'properties', 'statuses'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified site visit in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\SiteVisit  $siteVisit
+     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, SiteVisit $siteVisit)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'property_id' => 'required|exists:properties,id',
-            'unit_id' => 'required|exists:units,id',
-            'tenant_id' => 'nullable|exists:tenants,id',
-            'visitor_name' => 'required|string|max:255',
-            'visitor_email' => 'required|email|max:255',
-            'visitor_phone' => 'required|string|max:255',
-            'visit_date' => 'required|date',
-            'actual_visit_start' => 'nullable|date',
-            'actual_visit_end' => 'nullable|date|after_or_equal:actual_visit_start',
-            'visit_type' => 'required|string|max:255',
-            'visit_status' => 'required|string|max:255',
-            'conducted_by' => 'required|string|max:255',
-            'visitor_feedback' => 'nullable|string',
-            'agent_notes' => 'nullable|string',
-            'interested' => 'boolean',
-            'quoted_price' => 'nullable|numeric',
-            'requirements' => 'nullable|json',
-            'source' => 'required|string|max:255',
-            'follow_up_required' => 'boolean',
-            'follow_up_date' => 'nullable|date|after_or_equal:visit_date',
+            'date_site_visit' => 'required|date',
+            'inspector_name' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'status' => 'required|string|in:scheduled,completed,cancelled,postponed',
         ]);
         
-        $siteVisit->update($validated);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        
+        $data = $request->except('attachment');
+        
+        // Handle file upload
+        if ($request->hasFile('attachment')) {
+            // Delete old file if exists
+            if ($siteVisit->attachment) {
+                Storage::disk('public')->delete($siteVisit->attachment);
+            }
+            
+            $file = $request->file('attachment');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('site-visits', $filename, 'public');
+            $data['attachment'] = $filePath;
+        }
+        
+        $siteVisit->update($data);
         
         return redirect()->route('site-visits.index')
-            ->with('success', 'Site visit updated successfully.');
+            ->with('success', 'Site visit updated successfully');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified site visit from storage.
+     *
+     * @param  \App\Models\SiteVisit  $siteVisit
+     * @return \Illuminate\Http\Response
      */
     public function destroy(SiteVisit $siteVisit)
     {
+        // Delete the file if exists
+        if ($siteVisit->attachment) {
+            Storage::disk('public')->delete($siteVisit->attachment);
+        }
+        
         $siteVisit->delete();
         
         return redirect()->route('site-visits.index')
-            ->with('success', 'Site visit deleted successfully.');
+            ->with('success', 'Site visit deleted successfully');
+    }
+
+    /**
+     * Download the attachment file.
+     *
+     * @param  \App\Models\SiteVisit  $siteVisit
+     * @return \Illuminate\Http\Response
+     */
+    public function downloadAttachment(SiteVisit $siteVisit)
+    {
+        if (!$siteVisit->attachment) {
+            return redirect()->back()->with('error', 'No attachment found');
+        }
+        
+        return Storage::disk('public')->download($siteVisit->attachment);
     }
 }

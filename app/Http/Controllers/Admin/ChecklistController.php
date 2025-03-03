@@ -3,148 +3,118 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\ChecklistRequest;
 use App\Models\Checklist;
-use App\Models\ChecklistItem;
-use App\Models\ChecklistResponse;
+use App\Models\Property;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ChecklistController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the checklists.
+     *
+     * @return \Illuminate\View\View
      */
-    public function index(Request $request)
+    public function index()
     {
-        $query = Checklist::withCount(['items', 'responses']);
-
-        // Apply filters
-        if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
-        if ($request->has('type') && $request->type !== '') {
-            $query->where('type', $request->type);
-        }
-
-        if ($request->has('is_template') && $request->is_template !== '') {
-            $query->where('is_template', $request->is_template);
-        }
-
-        $checklists = $query->latest()->paginate(10);
+        $checklists = Checklist::with('property')->paginate(10);
         
-        // Get stats
-        $templateCount = Checklist::where('is_template', true)->count();
-        $itemCount = ChecklistItem::count();
-        $responseCount = ChecklistResponse::count();
-
-        return view('admin.checklists.index', compact('checklists', 'templateCount', 'itemCount', 'responseCount'));
+        return view('admin.checklists.index', compact('checklists'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new checklist.
+     *
+     * @return \Illuminate\View\View
      */
     public function create()
     {
-        return view('admin.checklists.create');
+        $properties = Property::where('status', 'active')->get();
+        
+        return view('admin.checklists.create', compact('properties'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created checklist in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'type' => 'required|string|in:Move-in,Move-out,Inspection,Maintenance',
-            'description' => 'nullable|string',
-            'is_template' => 'sometimes|boolean',
-            'active' => 'sometimes|boolean',
-            'sections' => 'required|array|min:1',
-            'sections.*' => 'required|string|max:255',
+        $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'type' => 'required|string|max:255',
+            'description' => 'required|string',
+            'approval_date' => 'required|date',
+            'status' => 'required|string|in:pending,approved,rejected'
         ]);
 
-        // Set default values for checkboxes if not present
-        $validated['is_template'] = $request->has('is_template') ? true : false;
-        $validated['active'] = $request->has('active') ? true : false;
-
-        $checklist = Checklist::create($validated);
-
-        return redirect()->route('checklists.show', $checklist)
-            ->with('success', 'Checklist created successfully.');
+        Checklist::create($request->all());
+        
+        return redirect()->route('admin.checklists.index')
+            ->with('status', 'Checklist created successfully');
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified checklist.
+     *
+     * @param  \App\Models\Checklist  $checklist
+     * @return \Illuminate\View\View
      */
     public function show(Checklist $checklist)
     {
-        $responses = $checklist->responses()->with(['unit.property', 'tenant'])->latest()->paginate(5);
+        $checklist->load('property');
         
-        return view('admin.checklists.show', compact('checklist', 'responses'));
+        return view('admin.checklists.show', compact('checklist'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified checklist.
+     *
+     * @param  \App\Models\Checklist  $checklist
+     * @return \Illuminate\View\View
      */
     public function edit(Checklist $checklist)
     {
-        return view('admin.checklists.edit', compact('checklist'));
+        $properties = Property::where('status', 'active')->get();
+        
+        return view('admin.checklists.edit', compact('checklist', 'properties'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified checklist in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Checklist  $checklist
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Checklist $checklist)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'type' => 'required|string|in:Move-in,Move-out,Inspection,Maintenance',
-            'description' => 'nullable|string',
-            'is_template' => 'sometimes|boolean',
-            'active' => 'sometimes|boolean',
-            'sections' => 'required|array|min:1',
-            'sections.*' => 'required|string|max:255',
+        $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'type' => 'required|string|max:255',
+            'description' => 'required|string',
+            'approval_date' => 'required|date',
+            'status' => 'required|string|in:pending,approved,rejected'
         ]);
 
-        // Set default values for checkboxes if not present
-        $validated['is_template'] = $request->has('is_template') ? true : false;
-        $validated['active'] = $request->has('active') ? true : false;
-
-        $checklist->update($validated);
-
-        return redirect()->route('checklists.show', $checklist)
-            ->with('success', 'Checklist updated successfully.');
+        $checklist->update($request->all());
+        
+        return redirect()->route('admin.checklists.index')
+            ->with('status', 'Checklist updated successfully');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified checklist from storage.
+     *
+     * @param  \App\Models\Checklist  $checklist
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Checklist $checklist)
     {
-        // Check if the checklist has any responses
-        if ($checklist->responses()->exists()) {
-            return back()->with('error', 'Cannot delete a checklist that has responses.');
-        }
-
-        // Delete associated items
-        $checklist->items()->delete();
-        
-        // Delete the checklist
         $checklist->delete();
-
-        return redirect()->route('checklists.index')
-            ->with('success', 'Checklist deleted successfully.');
-    }
-
-    /**
-     * Show the form for creating a new response.
-     */
-    public function createResponse(Checklist $checklist)
-    {
-        // This is a stub method to match the route in your show.blade.php
-        // The implementation would depend on your ChecklistResponse model and views
-        return redirect()->route('checklists.show', $checklist);
+        
+        return redirect()->route('admin.checklists.index')
+            ->with('status', 'Checklist deleted successfully');
     }
 }

@@ -13,7 +13,7 @@ class Lease extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array
      */
     protected $fillable = [
         'tenant_id',
@@ -26,19 +26,19 @@ class Lease extends Model
         'term_years',
         'start_date',
         'end_date',
-        'status',
+        'status'
     ];
 
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array
      */
     protected $casts = [
         'rental_amount' => 'decimal:2',
         'option_to_renew' => 'boolean',
         'start_date' => 'date',
-        'end_date' => 'date',
+        'end_date' => 'date'
     ];
 
     /**
@@ -48,12 +48,14 @@ class Lease extends Model
     {
         return $this->belongsTo(Tenant::class);
     }
-    
+
     /**
-     * Get the property associated with the lease through tenant.
+     * Check if the lease is expired.
+     *
+     * @return bool
      */
-    public function property()
+    public function isExpired()
     {
-        return $this->hasOneThrough(Property::class, Tenant::class, 'id', 'id', 'tenant_id', 'property_id');
+        return $this->end_date->isPast();
     }
 }

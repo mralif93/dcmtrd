@@ -44,16 +44,14 @@ class AdminController extends Controller
                     (SELECT COUNT(*) FROM charts) AS charts_count,
                     (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
                     (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
+                    (SELECT COUNT(*) FROM banks) AS banks_count,
+                    (SELECT COUNT(*) FROM financial_types) AS financial_types_count,
                     (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
                     (SELECT COUNT(*) FROM properties) AS properties_count,
-                    (SELECT COUNT(*) FROM units) AS units_count,
+                    (SELECT COUNT(*) FROM checklists) AS checklists_count,
                     (SELECT COUNT(*) FROM tenants) AS tenants_count,
                     (SELECT COUNT(*) FROM leases) AS leases_count,
-                    (SELECT COUNT(*) FROM maintenance_records) AS maintenance_records_count,
-                    (SELECT COUNT(*) FROM financial_reports) AS financial_reports_count,
-                    (SELECT COUNT(*) FROM checklists) AS checklists_count,
-                    (SELECT COUNT(*) FROM checklist_items) AS checklist_items_count,
-                    (SELECT COUNT(*) FROM checklist_responses) AS checklist_responses_count,
+                    (SELECT COUNT(*) FROM financials) AS financials_count,
                     (SELECT COUNT(*) FROM site_visits) AS site_visits_count
             ");
             return (array) $result[0];
@@ -78,16 +76,14 @@ class AdminController extends Controller
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
             
             // REITs counts
+            'banksCount' => $counts['banks_count'],
+            'financialTypesCount' => $counts['financial_types_count'],
             'portfoliosCount' => $counts['portfolios_count'],
             'propertiesCount' => $counts['properties_count'],
-            'unitsCount' => $counts['units_count'],
+            'checklistsCount' => $counts['checklists_count'],
             'tenantsCount' => $counts['tenants_count'],
             'leasesCount' => $counts['leases_count'],
-            'maintenanceRecordsCount' => $counts['maintenance_records_count'],
-            'financialReportsCount' => $counts['financial_reports_count'],
-            'checklistsCount' => $counts['checklists_count'],
-            'checklistItemsCount' => $counts['checklist_items_count'],
-            'checklistResponsesCount' => $counts['checklist_responses_count'],
+            'financialsCount' => $counts['financials_count'],
             'siteVisitsCount' => $counts['site_visits_count']
         ]);
     }

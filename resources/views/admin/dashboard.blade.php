@@ -161,6 +161,24 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Banks -->
+                <x-dashboard-card
+                    title="Bank"
+                    icon="wrench-screwdriver"
+                    :count="$banksCount"
+                    :href="route('banks.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Financial Types -->
+                <x-dashboard-card
+                    title="Financial Types"
+                    icon="wrench-screwdriver"
+                    :count="$financialTypes"
+                    :href="route('financial-types.index')"
+                    color="bg-green-100"
+                />
+
                 <!-- Portfolios -->
                 <x-dashboard-card
                     title="Portfolios"
@@ -179,12 +197,12 @@
                     color="bg-green-100"
                 />
 
-                <!-- Units -->
+                <!-- Checklists -->
                 <x-dashboard-card
-                    title="Units"
-                    icon="cube"
-                    :count="$unitsCount"
-                    :href="route('units.index')"
+                    title="Checklists"
+                    icon="clipboard-document-list"
+                    :count="$checklistsCount"
+                    :href="route('checklists.index')"
                     color="bg-green-100"
                 />
 
@@ -206,48 +224,12 @@
                     color="bg-green-100"
                 />
 
-                <!-- Maintenance Records -->
+                <!-- Financials -->
                 <x-dashboard-card
-                    title="Maintenance Records"
-                    icon="wrench-screwdriver"
-                    :count="$maintenanceRecordsCount"
-                    :href="route('maintenance-records.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Financial Reports -->
-                <x-dashboard-card
-                    title="Financial Reports"
+                    title="Financials"
                     icon="document-chart-bar"
-                    :count="$financialReportsCount"
+                    :count="$financialsCount"
                     :href="route('financial-reports.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Checklists -->
-                <x-dashboard-card
-                    title="Checklists"
-                    icon="clipboard-document-list"
-                    :count="$checklistsCount"
-                    :href="route('checklists.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Checklist Items -->
-                <x-dashboard-card
-                    title="Checklist Items"
-                    icon="clipboard-document-check"
-                    :count="$checklistItemsCount"
-                    :href="route('checklist-items.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Checklist Responses -->
-                <x-dashboard-card
-                    title="Checklist Responses"
-                    icon="clipboard-document"
-                    :count="$checklistResponsesCount"
-                    :href="route('checklist-responses.index')"
                     color="bg-green-100"
                 />
 
