@@ -81,7 +81,7 @@ class SiteVisit extends Model
      */
     public function scopeUpcoming($query)
     {
-        return $query->where('date_site_visit', '>=', now())
+        return $query->where('date_visit', '>=', now())
                     ->where('status', 'scheduled');
     }
 

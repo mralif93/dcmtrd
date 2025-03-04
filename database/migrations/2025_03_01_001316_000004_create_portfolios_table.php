@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('portfolios', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('portfolio_types_id')->constrained()->onDelete('cascade');
             $table->string('portfolio_name');
             $table->string('annual_report')->nullable();
             $table->string('trust_deed_document')->nullable();

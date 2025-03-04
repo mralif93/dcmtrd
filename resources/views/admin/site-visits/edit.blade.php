@@ -68,7 +68,7 @@
                             <!-- Visit Date -->
                             <div>
                                 <label for="date_visit" class="block text-sm font-medium text-gray-700 mb-2">Visit Date *</label>
-                                <input type="date" name="date_visit" id="date_site_visit" 
+                                <input type="date" name="date_visit" id="date_visit" 
                                     value="{{ old('date_visit', $siteVisit->date_visit->format('Y-m-d')) }}" required
                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </div>

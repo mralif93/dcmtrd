@@ -24,7 +24,8 @@ return new class extends Migration
             $table->softDeletes();
             
             // Add index for better performance
-            $table->index('date_site_visit');
+            $table->index('date_visit');
+            $table->index('time_visit');
         });
     }
 
