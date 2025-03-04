@@ -33,12 +33,6 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-lg font-medium text-gray-900">{{ $property->name }}</h3>
-                        <div class="space-x-2">
-                            <a href="{{ route('properties.edit', $property->id) }}" class="inline-flex items-center px-4 py-2 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-600 active:bg-yellow-700 focus:outline-none focus:border-yellow-700 focus:ring ring-yellow-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                Edit
-                            </a>
-                            
-                        </div>
                     </div>
 
                     <!-- Basic Information Section -->

@@ -55,7 +55,7 @@ class TenantController extends Controller
         Tenant::create($request->all());
         
         return redirect()->route('tenants.index')
-            ->with('status', 'Tenant created successfully');
+            ->with('success', 'Tenant created successfully');
     }
 
     /**
@@ -107,7 +107,7 @@ class TenantController extends Controller
         $tenant->update($request->all());
         
         return redirect()->route('tenants.index')
-            ->with('status', 'Tenant updated successfully');
+            ->with('success', 'Tenant updated successfully');
     }
 
     /**
@@ -127,6 +127,6 @@ class TenantController extends Controller
         $tenant->delete();
         
         return redirect()->route('tenants.index')
-            ->with('status', 'Tenant deleted successfully');
+            ->with('success', 'Tenant deleted successfully');
     }
 }
