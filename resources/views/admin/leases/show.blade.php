@@ -1,8 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Lease Details') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Lease Details') }}
+            </h2>
+            <a href="{{ route('checklists.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                &larr; Back to List
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-12">
@@ -27,20 +32,12 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-lg font-medium text-gray-900">{{ $lease->lease_name }}</h3>
-                        <div class="flex space-x-2">
-                            <a href="{{ route('leases.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                {{ __('Back to List') }}
-                            </a>
-                            <a href="{{ route('leases.edit', $lease) }}" class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 active:bg-yellow-900 focus:outline-none focus:border-yellow-900 focus:ring ring-yellow-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                {{ __('Edit') }}
-                            </a>
-                        </div>
                     </div>
 
                     <div class="bg-gray-50 overflow-hidden shadow rounded-lg mb-6">
                         <div class="px-4 py-5 sm:p-6">
                             <h4 class="text-md font-medium text-gray-900 mb-4">Tenant & Property Information</h4>
-                            <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                            <dl class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-2">
                                 <div class="sm:col-span-1">
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Tenant Name') }}</dt>
                                     <dd class="mt-1 text-sm text-gray-900">{{ $lease->tenant->name }}</dd>
@@ -61,10 +58,10 @@
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 overflow-hidden shadow rounded-lg">
+                    <div class="bg-gray-50 overflow-hidden shadow rounded-lg mb-6">
                         <div class="px-4 py-5 sm:p-6">
                             <h4 class="text-md font-medium text-gray-900 mb-4">Lease Information</h4>
-                            <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                            <dl class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-2">
                                 <div class="sm:col-span-1">
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Lease Name') }}</dt>
                                     <dd class="mt-1 text-sm text-gray-900">{{ $lease->lease_name }}</dd>
@@ -120,14 +117,40 @@
                         </div>
                     </div>
 
-                    <div class="mt-6">
-                        <form action="{{ route('leases.destroy', $lease) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this lease? This action cannot be undone.');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                {{ __('Delete') }}
-                            </button>
-                        </form>
+                    <div class="bg-gray-50 overflow-hidden shadow rounded-lg mb-6">
+                        <div class="px-4 py-5 sm:p-6">
+                        <h4 class="text-md font-medium text-gray-900 mb-4">System Information</h4>
+                            <dl class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-2">
+                                <div class="sm:col-span-1">
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Created At') }}</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ $lease->created_at->format('d/m/Y h:i A') }}</dd>
+                                </div>
+                                <div class="sm:col-span-1">
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Updated At') }}</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ $lease->updated_at->format('d/m/Y h:i A') }}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                    
+                    <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
+                        <div class="flex justify-end gap-x-4">
+                            <a href="{{ route('leases.index') }}" 
+                            class="inline-flex items-center justify-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-300">
+                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
+                                </svg>
+                                Back to List
+                            </a>
+                            <a href="{{ route('leases.edit', $lease) }}" 
+                            class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300">
+                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                Edit Lease
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

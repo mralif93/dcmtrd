@@ -32,7 +32,7 @@ class SiteVisit extends Model
      */
     protected $casts = [
         'date_visit' => 'date',
-        'time_visit' => 'time',
+        'time_visit' => 'date',
     ];
 
     /**
