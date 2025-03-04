@@ -1,170 +1,111 @@
-<!-- resources/views/site-visits/show.blade.php -->
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('View Site Visit') }}
-            </h2>
-            <div class="flex space-x-2">
-                <a href="{{ route('site-visits.edit', $siteVisit) }}" 
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Edit Site Visit
-                </a>
-                <a href="{{ route('site-visits.index') }}" 
-                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                    Back to Site Visits
-                </a>
-            </div>
-        </div>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Site Visit Details') }}
+        </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-                        </div>
-                    </div>
-                </div>
-            @endif
+            <div class="bg-white overflow-hidden shadow sm:rounded-lg">
 
-            <!-- Site Visit Details -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4">Site Visit Details</h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="text-sm text-gray-500">Visitor Name</div>
-                                <div>{{ $siteVisit->visitor_name }}</div>
-                                
-                                <div class="text-sm text-gray-500">Email</div>
-                                <div>{{ $siteVisit->visitor_email }}</div>
-                                
-                                <div class="text-sm text-gray-500">Phone</div>
-                                <div>{{ $siteVisit->visitor_phone }}</div>
-                                
-                                <div class="text-sm text-gray-500">Property</div>
-                                <div>{{ $siteVisit->property->name ?? 'N/A' }}</div>
-                                
-                                <div class="text-sm text-gray-500">Unit</div>
-                                <div>{{ $siteVisit->unit->unit_number ?? 'N/A' }}</div>
-                                
-                                <div class="text-sm text-gray-500">Visit Date</div>
-                                <div>{{ $siteVisit->visit_date->format('M d, Y h:i A') }}</div>
+                    <!-- Success Message -->
+                    @if(session('success'))
+                        <div class="mb-4 bg-green-50 p-4 rounded-md">
+                            <div class="text-green-600 font-medium">
+                                {{ session('success') }}
                             </div>
+                        </div>
+                    @endif
+
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-700">
+                                Site Visit for {{ $siteVisit->property->name }}
+                            </h3>
+                            <div>{!! $siteVisit->status_badge !!}</div>
                         </div>
                         
-                        <div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="text-sm text-gray-500">Visit Type</div>
-                                <div>{{ $siteVisit->visit_type }}</div>
-                                
-                                <div class="text-sm text-gray-500">Status</div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
                                 <div>
-                                    <span class="px-2 py-1 text-xs rounded-full 
-                                        @if($siteVisit->visit_status === 'Completed') bg-green-100 text-green-800
-                                        @elseif($siteVisit->visit_status === 'Scheduled') bg-blue-100 text-blue-800
-                                        @elseif($siteVisit->visit_status === 'Cancelled') bg-red-100 text-red-800
-                                        @else bg-yellow-100 text-yellow-800 @endif">
-                                        {{ $siteVisit->visit_status }}
-                                    </span>
+                                    <h4 class="text-sm font-medium text-gray-500">Property Details</h4>
+                                    <div class="mt-1 text-sm text-gray-900">
+                                        <p class="font-semibold">{{ $siteVisit->property->name }}</p>
+                                        <p>{{ $siteVisit->property->address }}</p>
+                                        <p>{{ $siteVisit->property->city }}, {{ $siteVisit->property->state }} {{ $siteVisit->property->postal_code }}</p>
+                                        <p>{{ $siteVisit->property->country }}</p>
+                                    </div>
                                 </div>
                                 
-                                <div class="text-sm text-gray-500">Conducted By</div>
-                                <div>{{ $siteVisit->conducted_by }}</div>
-                                
-                                <div class="text-sm text-gray-500">Source</div>
-                                <div>{{ $siteVisit->source }}</div>
-                                
-                                <div class="text-sm text-gray-500">Interested</div>
-                                <div>{{ $siteVisit->interested ? 'Yes' : 'No' }}</div>
-                                
-                                @if($siteVisit->quoted_price)
-                                <div class="text-sm text-gray-500">Quoted Price</div>
-                                <div>${{ number_format($siteVisit->quoted_price, 2) }}</div>
-                                @endif
+                                <div>
+                                    <h4 class="text-sm font-medium text-gray-500">Visit Information</h4>
+                                    <div class="mt-1 text-sm">
+                                        <div class="flex justify-between py-1 border-b">
+                                            <span class="font-medium">Date:</span>
+                                            <span>{{ $siteVisit->date_visit->format('F d, Y') }}</span>
+                                        </div>
+                                        <div class="flex justify-between py-1 border-b">
+                                            <span class="font-medium">Time:</span>
+                                            <span>{{ $siteVisit->time_visit->format('h:i A') }}</span>
+                                        </div>
+                                        <div class="flex justify-between py-1 border-b">
+                                            <span class="font-medium">Inspector:</span>
+                                            <span>{{ $siteVisit->inspector_name ?? 'Not Assigned' }}</span>
+                                        </div>
+                                        <div class="flex justify-between py-1 border-b">
+                                            <span class="font-medium">Status:</span>
+                                            <span>{!! $siteVisit->status_badge !!}</span>
+                                        </div>
+                                        <div class="flex justify-between py-1 border-b">
+                                            <span class="font-medium">Created:</span>
+                                            <span>{{ $siteVisit->created_at->format('M d, Y H:i') }}</span>
+                                        </div>
+                                        <div class="flex justify-between py-1 border-b">
+                                            <span class="font-medium">Last Updated:</span>
+                                            <span>{{ $siteVisit->updated_at->format('M d, Y H:i') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
+                            @if($siteVisit->notes)
+                                <div class="mt-6">
+                                    <h4 class="text-sm font-medium text-gray-500">Notes</h4>
+                                    <div class="mt-2 p-4 bg-gray-50 rounded text-sm">
+                                        {!! nl2br(e($siteVisit->notes)) !!}
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($siteVisit->attachment)
+                                <div class="mt-6">
+                                    <h4 class="text-sm font-medium text-gray-500">Attachment</h4>
+                                    <div class="mt-2">
+                                        <a href="{{ route('site-visits.download', $siteVisit) }}" class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded hover:bg-blue-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Download Attachment
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-2">
+                            <a href="{{ route('site-visits.edit', $siteVisit) }}" class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200">
+                                Edit Site Visit
+                            </a>
+                            <form action="{{ route('site-visits.destroy', $siteVisit) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this site visit?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="px-4 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200">
+                                    Delete Site Visit
+                                </button>
+                            </form>
                         </div>
                     </div>
-                    
-                    @if($siteVisit->actual_visit_start || $siteVisit->actual_visit_end)
-                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <div class="text-sm text-gray-500">Actual Visit Start</div>
-                            <div>{{ $siteVisit->actual_visit_start ? $siteVisit->actual_visit_start->format('M d, Y h:i A') : 'N/A' }}</div>
-                        </div>
-                        <div>
-                            <div class="text-sm text-gray-500">Actual Visit End</div>
-                            <div>{{ $siteVisit->actual_visit_end ? $siteVisit->actual_visit_end->format('M d, Y h:i A') : 'N/A' }}</div>
-                        </div>
-                    </div>
-                    @endif
-                    
-                    @if($siteVisit->follow_up_required)
-                    <div class="mt-6">
-                        <div class="text-sm text-gray-500">Follow Up Required</div>
-                        <div>Yes - {{ $siteVisit->follow_up_date ? $siteVisit->follow_up_date->format('M d, Y') : 'No date set' }}</div>
-                    </div>
-                    @endif
-                    
-                    @if($siteVisit->visitor_feedback)
-                    <div class="mt-6">
-                        <div class="text-sm text-gray-500">Visitor Feedback</div>
-                        <div class="mt-1 p-3 border rounded bg-gray-50">{{ $siteVisit->visitor_feedback }}</div>
-                    </div>
-                    @endif
-                    
-                    @if($siteVisit->agent_notes)
-                    <div class="mt-6">
-                        <div class="text-sm text-gray-500">Agent Notes</div>
-                        <div class="mt-1 p-3 border rounded bg-gray-50">{{ $siteVisit->agent_notes }}</div>
-                    </div>
-                    @endif
-                    
-                    @if($siteVisit->requirements)
-                    <div class="mt-6">
-                        <div class="text-sm text-gray-500">Requirements</div>
-                        <div class="mt-1 p-3 border rounded bg-gray-50">
-                            <pre class="text-sm">{{ json_encode(json_decode($siteVisit->requirements), JSON_PRETTY_PRINT) }}</pre>
-                        </div>
-                    </div>
-                    @endif
-                </div>
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="flex justify-between">
-                <div>
-                    <a href="{{ route('site-visits.index') }}" 
-                        class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                        Back to Site Visits
-                    </a>
-                </div>
-                <div class="flex space-x-2">
-                    <a href="{{ route('site-visits.edit', $siteVisit) }}" 
-                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Edit
-                    </a>
-                    <form action="{{ route('site-visits.destroy', $siteVisit) }}" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" 
-                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                            onclick="return confirm('Are you sure you want to delete this site visit?')">
-                            Delete
-                        </button>
-                    </form>
-                </div>
             </div>
         </div>
     </div>

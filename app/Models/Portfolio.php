@@ -10,25 +10,41 @@ class Portfolio extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = ['id'];
-    
-    protected $casts = [
-        'foundation_date' => 'date',
-        'fiscal_year_end' => 'date',
-        'active_status' => 'boolean',
-        'total_assets' => 'decimal:2',
-        'market_cap' => 'decimal:2',
-        'available_funds' => 'decimal:2',
-        'target_return' => 'decimal:2'
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'portfolio_name',
+        'annual_report',
+        'trust_deed_document',
+        'insurance_document',
+        'valuation_report',
+        'status',
     ];
 
+    /**
+     * Get the properties for the portfolio.
+     */
     public function properties()
     {
         return $this->hasMany(Property::class);
     }
 
-    public function financialReports()
+    /**
+     * Get the portfolio types for the portfolio.
+     */
+    public function portfolioTypes()
     {
-        return $this->hasMany(FinancialReport::class);
+        return $this->hasMany(PortfolioType::class);
+    }
+
+    /**
+     * Get the financials for the portfolio.
+     */
+    public function financials()
+    {
+        return $this->hasMany(Financial::class);
     }
 }

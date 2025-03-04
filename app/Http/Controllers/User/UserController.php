@@ -37,7 +37,9 @@ class UserController extends Controller
                     (SELECT COUNT(*) FROM announcements) AS announcements_count,
                     (SELECT COUNT(*) FROM facility_informations) AS facility_informations_count,
                     (SELECT COUNT(*) FROM related_documents) AS related_documents_count,
-                    (SELECT COUNT(*) FROM charts) AS charts_count
+                    (SELECT COUNT(*) FROM charts) AS charts_count,
+                    (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
+                    (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count
             ");
             return (array) $result[0];
         });
@@ -55,6 +57,8 @@ class UserController extends Controller
             'facilityInformationsCount' => $counts['facility_informations_count'],
             'relatedDocumentsCount' => $counts['related_documents_count'],
             'chartsCount' => $counts['charts_count'],
+            'trusteeFeesCount' => $counts['trustee_fees_count'],
+            'complianceCovenantCount' => $counts['compliance_covenants_count'],
         ]);
     }
 }

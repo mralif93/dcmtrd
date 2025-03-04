@@ -64,6 +64,18 @@
                                     <option value="compliance" @selected(old('role', $user->role) == 'compliance')>Compliance</option>
                                 </select>
                             </div>
+                            <div>
+                                <label for="position" class="block text-sm font-medium text-gray-700">Position *</label>
+                                <input type="text" name="position" id="position" 
+                                    value="{{ old('position', $user->position) }}" required autocomplete="position"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label for="permission" class="block text-sm font-medium text-gray-700">Permission *</label>
+                                <input type="text" name="permission" id="permission" 
+                                    value="{{ old('permission', $user->permission) }}" required autocomplete="permission"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
                         </div>
 
                         <!-- Row 3: Password & Confirm Password -->

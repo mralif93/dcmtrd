@@ -10,53 +10,80 @@ class Tenant extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = ['id'];
-    
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'property_id',
+        'name',
+        'contact_person',
+        'email',
+        'phone',
+        'commencement_date',
+        'expiry_date',
+        'status'
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
     protected $casts = [
-        'date_of_birth' => 'date',
-        'background_check_date' => 'date',
-        'pets' => 'boolean',
-        'active_status' => 'boolean',
-        'vehicle_info' => 'json',
-        'bank_details' => 'json',
-        'lease_history' => 'json',
-        'annual_income' => 'decimal:2'
+        'commencement_date' => 'date',
+        'expiry_date' => 'date'
     ];
 
-    protected $hidden = [
-        'ssn',
-        'bank_details'
-    ];
+    /**
+     * Get the property that the tenant belongs to.
+     */
+    public function property()
+    {
+        return $this->belongsTo(Property::class);
+    }
 
+    /**
+     * Get the leases for the tenant.
+     */
     public function leases()
     {
         return $this->hasMany(Lease::class);
     }
 
-    public function siteVisits()
+    /**
+     * Scope a query to only include active tenants.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeActive($query)
     {
-        return $this->hasMany(SiteVisit::class);
+        return $query->where('status', 'active');
     }
 
-    public function checklistResponses()
+    /**
+     * Check if tenant's lease is expired.
+     *
+     * @return bool
+     */
+    public function isExpired()
     {
-        return $this->hasMany(ChecklistResponse::class);
+        return $this->expiry_date->isPast();
     }
 
-    public function currentLease()
+    /**
+     * Get the remaining days until expiry.
+     *
+     * @return int
+     */
+    public function daysUntilExpiry()
     {
-        return $this->hasOne(Lease::class)->where('status', 'active')->latest();
-    }
-
-    public function currentUnit()
-    {
-        return $this->hasOneThrough(
-            Unit::class,
-            Lease::class,
-            'tenant_id',
-            'id',
-            'id',
-            'unit_id'
-        )->where('leases.status', 'active');
+        if ($this->isExpired()) {
+            return 0;
+        }
+        
+        return now()->diffInDays($this->expiry_date);
     }
 }

@@ -30,20 +30,15 @@ use App\Http\Controllers\Admin\TrusteeFeeController;
 use App\Http\Controllers\Admin\ComplianceCovenantController;
 
 // REITs
+use App\Http\Controllers\Admin\FinancialTypeController;
+use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\PortfolioController;
 use App\Http\Controllers\Admin\PropertyController;
-use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\ChecklistController;
 use App\Http\Controllers\Admin\TenantController;
 use App\Http\Controllers\Admin\LeaseController;
-use App\Http\Controllers\Admin\MaintenanceRecordController;
-use App\Http\Controllers\Admin\FinancialReportController;
-use App\Http\Controllers\Admin\ChecklistController;
-use App\Http\Controllers\Admin\ChecklistItemController;
-use App\Http\Controllers\Admin\ChecklistResponseController;
+use App\Http\Controllers\Admin\FinancialController;
 use App\Http\Controllers\Admin\SiteVisitController;
-
-// APIs
-use App\Http\Controllers\API\ChecklistAPIController;
 
 use App\Http\Controllers\User\UserIssuerController;
 use App\Http\Controllers\User\UserBondController;
@@ -57,6 +52,8 @@ use App\Http\Controllers\User\UserFacilityInformationController;
 use App\Http\Controllers\User\UserAnnouncementController;
 use App\Http\Controllers\User\UserRelatedDocumentController;
 use App\Http\Controllers\User\UserChartController;
+use App\Http\Controllers\User\UserTrusteeFeeController;
+use App\Http\Controllers\User\UserComplianceCovenantController;
 
 // Main
 Route::get('/', function () {
@@ -120,29 +117,37 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::delete('/admin/compliance-covenants/{id}/force-delete', [ComplianceCovenantController::class, 'forceDelete'])->name('compliance-covenants.force-delete');
 
     //  REITs
+    Route::resource('/admin/banks', BankController::class);
+    Route::resource('/admin/financial-types', FinancialTypeController::class);
     Route::resource('/admin/portfolios', PortfolioController::class);
-    Route::get('/admin/portfolios/{portfolio}/analytics', [PortfolioController::class, 'analytics'])->name('portfolios.analytics');
-
     Route::resource('/admin/properties', PropertyController::class);
-    Route::get('/properties/{property}/export', [PropertyController::class, 'vacancyReport'])->name('properties.export');
-    Route::get('/properties/{property}/financial-report', [PropertyController::class, 'vacancyReport'])->name('properties.financial-report');
-    Route::get('/properties/{property}/vacancy-report', [PropertyController::class, 'vacancyReport'])->name('properties.vacancy-report');
-
-    Route::resource('/admin/units', UnitController::class);
+    Route::resource('/admin/checklists', ChecklistController::class);
     Route::resource('/admin/tenants', TenantController::class);
     Route::resource('/admin/leases', LeaseController::class);
-    Route::resource('/admin/maintenance-records', MaintenanceRecordController::class);
-
-    Route::resource('/admin/checklists', ChecklistController::class);
-    Route::get('checklists/{checklist}/create-response', [ChecklistController::class, 'createResponse'])->name('checklists.create-response');
-
-    // Add this to your routes/api.php
-    Route::get('/api/checklists/{checklist}', [ChecklistAPIController::class, 'show']);
-
-    Route::resource('/admin/checklist-items', ChecklistItemController::class);
-    Route::resource('/admin/checklist-responses', ChecklistResponseController::class);
-    Route::resource('/admin/financial-reports', FinancialReportController::class);
+    Route::resource('/admin/financials', FinancialController::class);
     Route::resource('/admin/site-visits', SiteVisitController::class);
+
+    // Additional Property-specific Routes
+    Route::prefix('/admin/properties')->name('properties.')->group(function () {
+        // Tenants listing for a specific property
+        Route::get('{property}/tenants', [PropertyController::class, 'tenants'])
+            ->name('tenants');
+        
+        // Checklists listing for a specific property
+        Route::get('{property}/checklists', [PropertyController::class, 'checklists'])
+            ->name('checklists');
+        
+        // Site Visits listing for a specific property
+        Route::get('{property}/site-visits', [PropertyController::class, 'siteVisits'])
+            ->name('site-visits');
+    });
+
+    Route::prefix('/admin/site-visits')->name('site-visits.')->group(function () {
+        Route::get('{site_visit}/download', [SiteVisitController::class, 'downloadAttachment'])
+            ->name('download');
+    });
+
+    
 });
 
 // Default user route
@@ -162,6 +167,8 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::resource('/user/facility-informations-info', UserFacilityInformationController::class);
     Route::resource('/user/related-documents-info', UserRelatedDocumentController::class);
     Route::resource('/user/charts-info', UserChartController::class);
+    Route::resource('/user/trustee-fees-info', UserTrusteeFeeController::class);
+    Route::resource('/user/compliance-covenants-info', UserComplianceCovenantController::class);
 });
 
 // Legal routes

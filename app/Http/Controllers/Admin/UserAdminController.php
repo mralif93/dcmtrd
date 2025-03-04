@@ -58,7 +58,9 @@ class UserAdminController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', Rule::unique('users')],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:admin,user'],
+            'role' => ['required', 'string'],
+            'position' => ['required', 'string'],
+            'permission' => ['required', 'string'],
             'two_factor_enabled' => ['nullable', 'boolean'],
         ]);
 
@@ -102,7 +104,9 @@ class UserAdminController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:admin,user'],
+            'role' => ['required', 'string'],
+            'position' => ['required', 'string'],
+            'permission' => ['required', 'string'],
             'two_factor_enabled' => ['nullable', 'boolean'],
         ]);
 

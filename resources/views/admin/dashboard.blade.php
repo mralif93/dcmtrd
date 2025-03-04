@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="pb-6">
                 <h2 class="font-bold text-xl text-gray-800 leading-tight">
-                    {{ __('DCMTRD') }}
+                    {{ __('Debt Capital Market Trust Real Estate Department (DCMTRD)') }}
                 </h2>
             </div>
 
@@ -148,7 +148,6 @@
                     :href="route('compliance-covenants.index')"
                     color="bg-blue-100"
                 />
-                
             </div>
         </div>
     </div>
@@ -162,6 +161,24 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Banks -->
+                <x-dashboard-card
+                    title="Bank"
+                    icon="wrench-screwdriver"
+                    :count="$banksCount"
+                    :href="route('banks.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Financial Types -->
+                <x-dashboard-card
+                    title="Financial Types"
+                    icon="wrench-screwdriver"
+                    :count="$financialTypesCount"
+                    :href="route('financial-types.index')"
+                    color="bg-green-100"
+                />
+
                 <!-- Portfolios -->
                 <x-dashboard-card
                     title="Portfolios"
@@ -180,12 +197,12 @@
                     color="bg-green-100"
                 />
 
-                <!-- Units -->
+                <!-- Checklists -->
                 <x-dashboard-card
-                    title="Units"
-                    icon="cube"
-                    :count="$unitsCount"
-                    :href="route('units.index')"
+                    title="Checklists"
+                    icon="clipboard-document-list"
+                    :count="$checklistsCount"
+                    :href="route('checklists.index')"
                     color="bg-green-100"
                 />
 
@@ -207,48 +224,12 @@
                     color="bg-green-100"
                 />
 
-                <!-- Maintenance Records -->
+                <!-- Financials -->
                 <x-dashboard-card
-                    title="Maintenance Records"
-                    icon="wrench-screwdriver"
-                    :count="$maintenanceRecordsCount"
-                    :href="route('maintenance-records.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Financial Reports -->
-                <x-dashboard-card
-                    title="Financial Reports"
+                    title="Financials"
                     icon="document-chart-bar"
-                    :count="$financialReportsCount"
-                    :href="route('financial-reports.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Checklists -->
-                <x-dashboard-card
-                    title="Checklists"
-                    icon="clipboard-document-list"
-                    :count="$checklistsCount"
-                    :href="route('checklists.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Checklist Items -->
-                <x-dashboard-card
-                    title="Checklist Items"
-                    icon="clipboard-document-check"
-                    :count="$checklistItemsCount"
-                    :href="route('checklist-items.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Checklist Responses -->
-                <x-dashboard-card
-                    title="Checklist Responses"
-                    icon="clipboard-document"
-                    :count="$checklistResponsesCount"
-                    :href="route('checklist-responses.index')"
+                    :count="$financialsCount"
+                    :href="route('financials.index')"
                     color="bg-green-100"
                 />
 
