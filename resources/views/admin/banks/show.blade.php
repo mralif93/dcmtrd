@@ -5,11 +5,11 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             @if(session('success'))
-                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
+                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400 rounded shadow-sm transition-all duration-300">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
@@ -23,56 +23,68 @@
                 </div>
             @endif
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <div class="bg-gray-50 overflow-hidden shadow rounded-lg">
-                        <div class="px-4 py-5 sm:p-6">
-                            <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                                <div class="sm:col-span-1">
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('ID') }}</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $bank->id }}</dd>
-                                </div>
-                                <div class="sm:col-span-1">
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Name') }}</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $bank->name }}</dd>
-                                </div>
-                                <div class="sm:col-span-1">
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Status') }}</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $bank->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                            {{ ucfirst($bank->status) }}
-                                        </span>
-                                    </dd>
-                                </div>
-                                <div class="sm:col-span-1">
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Created At') }}</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $bank->created_at->format('Y-m-d H:i:s') }}</dd>
-                                </div>
-                                <div class="sm:col-span-2">
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Description') }}</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $bank->description ?? 'No description provided' }}</dd>
-                                </div>
-                            </dl>
-                        </div>
-                    </div>
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg font-medium text-gray-900">Bank Information</h3>
+                </div>
 
-                    <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
-                        <div class="flex justify-end gap-x-4">
-                            <a href="{{ route('banks.index') }}" 
-                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
-                                </svg>
-                                Back to List
-                            </a>
-                            <a href="{{ route('banks.edit', $bank) }}" 
-                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                                </svg>
-                                Edit Bank
-                            </a>
+                <div class="border-t border-gray-200">
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 px-4 py-5 sm:p-6">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Name</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ $bank->name }}</dd>
                         </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Status</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $bank->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ ucfirst($bank->status) }}
+                                </span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Description</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ $bank->description ?? 'No description provided' }}</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- System Information Section -->
+                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Account Created</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $bank->created_at->format('M j, Y H:i') }}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $bank->updated_at->format('M j, Y H:i') }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
+                    <div class="flex justify-end gap-x-4">
+                        <a href="{{ route('banks.index') }}" 
+                        class="inline-flex items-center justify-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-300">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
+                            </svg>
+                            Back to List
+                        </a>
+                        <a href="{{ route('banks.edit', $bank) }}" 
+                        class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                            Edit Bank
+                        </a>
                     </div>
                 </div>
             </div>

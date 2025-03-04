@@ -25,123 +25,133 @@
             @endif
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-medium text-gray-900">{{ $portfolio->portfolio_name }}</h3>
-                        <div class="space-x-2">
-                            <a href="{{ route('portfolios.edit', $portfolio->id) }}" class="inline-flex items-center px-4 py-2 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-600 active:bg-yellow-700 focus:outline-none focus:border-yellow-700 focus:ring ring-yellow-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                Edit
-                            </a>
-                            <a href="{{ route('portfolios.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                Back to List
-                            </a>
-                        </div>
-                    </div>
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg font-medium text-gray-900">Portfolio Information</h3>
+                </div>
 
-                    <div class="mb-8">
-                        <h4 class="text-md font-medium text-gray-900 mb-2">Portfolio Information</h4>
-                        <div class="border rounded-md overflow-hidden">
-                            <div class="bg-gray-50 px-4 py-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Portfolio ID</p>
-                                    <p class="text-sm text-gray-900">{{ $portfolio->id }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Portfolio Name</p>
-                                    <p class="text-sm text-gray-900">{{ $portfolio->portfolio_name }}</p>
-                                </div>
-                            </div>
-                            <div class="bg-white px-4 py-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Created At</p>
-                                    <p class="text-sm text-gray-900">{{ $portfolio->created_at->format('Y-m-d H:i:s') }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Last Updated</p>
-                                    <p class="text-sm text-gray-900">{{ $portfolio->updated_at->format('Y-m-d H:i:s') }}</p>
-                                </div>
-                            </div>
+                <div class="border-t border-gray-200">
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 px-4 py-5 sm:p-6">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Name</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ $portfolio->portfolio_name }}</dd>
                         </div>
-                    </div>
+                    </dl>
+                </div>
 
-                    <div class="mb-8">
-                        <h4 class="text-md font-medium text-gray-900 mb-2">Documents</h4>
-                        <div class="border rounded-md overflow-hidden">
-                            <div class="bg-gray-50 px-4 py-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Annual Report</p>
-                                    @if($portfolio->annual_report)
-                                        <a href="{{ Storage::url($portfolio->annual_report) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
-                                            View Document
-                                        </a>
-                                    @else
-                                        <p class="text-sm text-gray-400">No document uploaded</p>
-                                    @endif
-                                </div>
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Trust Deed Document</p>
-                                    @if($portfolio->trust_deed_document)
-                                        <a href="{{ Storage::url($portfolio->trust_deed_document) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
-                                            View Document
-                                        </a>
-                                    @else
-                                        <p class="text-sm text-gray-400">No document uploaded</p>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="bg-white px-4 py-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Insurance Document</p>
-                                    @if($portfolio->insurance_document)
-                                        <a href="{{ Storage::url($portfolio->insurance_document) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
-                                            View Document
-                                        </a>
-                                    @else
-                                        <p class="text-sm text-gray-400">No document uploaded</p>
-                                    @endif
-                                </div>
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Valuation Report</p>
-                                    @if($portfolio->valuation_report)
-                                        <a href="{{ Storage::url($portfolio->valuation_report) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
-                                            View Document
-                                        </a>
-                                    @else
-                                        <p class="text-sm text-gray-400">No document uploaded</p>
-                                    @endif
-                                </div>
-                            </div>
+                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Documents</h3>
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Annual Report</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                @if($portfolio->annual_report)
+                                    <a href="{{ Storage::url($portfolio->annual_report) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
+                                        View Document
+                                    </a>
+                                @else
+                                    <p class="text-sm text-gray-400">No document uploaded</p>
+                                @endif
+                            </dd>
                         </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h4 class="text-md font-medium text-gray-900 mb-2">Associated Records</h4>
-                        <div class="border rounded-md overflow-hidden">
-                            <div class="bg-gray-50 px-4 py-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Properties</p>
-                                    <p class="text-sm text-gray-900">{{ $portfolio->properties->count() }} properties</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Portfolio Types</p>
-                                    <p class="text-sm text-gray-900">{{ $portfolio->portfolioTypes->count() }} types</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-medium text-gray-500">Financials</p>
-                                    <p class="text-sm text-gray-900">{{ $portfolio->financials->count() }} financial records</p>
-                                </div>
-                            </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Trust Deed Document</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                @if($portfolio->trust_deed_document)
+                                    <a href="{{ Storage::url($portfolio->trust_deed_document) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
+                                        View Document
+                                    </a>
+                                @else
+                                    <p class="text-sm text-gray-400">No document uploaded</p>
+                                @endif
+                            </dd>
                         </div>
-                    </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Insurance Document</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                @if($portfolio->insurance_document)
+                                    <a href="{{ Storage::url($portfolio->insurance_document) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
+                                        View Document
+                                    </a>
+                                @else
+                                    <p class="text-sm text-gray-400">No document uploaded</p>
+                                @endif
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Valuation Report</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                @if($portfolio->valuation_report)
+                                    <a href="{{ Storage::url($portfolio->valuation_report) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
+                                        View Document
+                                    </a>
+                                @else
+                                    <p class="text-sm text-gray-400">No document uploaded</p>
+                                @endif
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
 
-                    <div class="mt-6">
-                        <form action="{{ route('portfolios.destroy', $portfolio->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this portfolio?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-700 focus:outline-none focus:border-red-700 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                Delete Portfolio
-                            </button>
-                        </form>
+                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Associated Records</h3>
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Properties</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                <p class="text-sm text-gray-900">{{ $portfolio->properties->count() }} properties</p>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Portfolio Types</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                <p class="text-sm text-gray-900">{{ $portfolio->portfolioTypes->count() }} types</p>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Financials</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                            <p class="text-sm text-gray-900">{{ $portfolio->financials->count() }} financial records</p>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- System Information Section -->
+                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Account Created</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $portfolio->created_at->format('M j, Y h:i A') }}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $portfolio->updated_at->format('M j, Y h:i A') }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
+                    <div class="flex justify-end gap-x-4">
+                        <a href="{{ route('portfolios.index') }}" 
+                        class="inline-flex items-center justify-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-300">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
+                            </svg>
+                            Back to List
+                        </a>
+                        <a href="{{ route('portfolios.edit', $portfolio) }}" 
+                        class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                            Edit Portfolio
+                        </a>
                     </div>
                 </div>
             </div>

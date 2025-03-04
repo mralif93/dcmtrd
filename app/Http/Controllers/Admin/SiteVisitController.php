@@ -19,22 +19,6 @@ class SiteVisitController extends Controller
     public function index(Request $request)
     {
         $query = SiteVisit::with('property');
-        
-        // Filter by property if provided
-        if ($request->has('property_id')) {
-            $query->where('property_id', $request->property_id);
-        }
-        
-        // Filter by status if provided
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-        
-        // Filter by date range if provided
-        if ($request->has('date_from') && $request->has('date_to')) {
-            $query->whereBetween('date_site_visit', [$request->date_from, $request->date_to]);
-        }
-        
         $siteVisits = $query->latest()->paginate(10);
         
         return view('admin.site-visits.index', compact('siteVisits'));
@@ -63,7 +47,8 @@ class SiteVisitController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'property_id' => 'required|exists:properties,id',
-            'date_site_visit' => 'required|date',
+            'date_visit' => 'required|date',
+            'time_visit' => 'required|time',
             'inspector_name' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
@@ -130,7 +115,8 @@ class SiteVisitController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'property_id' => 'required|exists:properties,id',
-            'date_site_visit' => 'required|date',
+            'date_visit' => 'required|date',
+            'time_visit' => 'required|time',
             'inspector_name' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',

@@ -17,7 +17,8 @@ class SiteVisit extends Model
      */
     protected $fillable = [
         'property_id',
-        'date_site_visit',
+        'date_visit',
+        'time_visit',
         'inspector_name',
         'notes',
         'attachment',
@@ -30,7 +31,8 @@ class SiteVisit extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'date_site_visit' => 'date',
+        'date_visit' => 'date',
+        'time_visit' => 'time',
     ];
 
     /**

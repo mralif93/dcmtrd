@@ -1,33 +1,42 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create Site Visit') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Create Site Visit') }}
+            </h2>
+            <a href="{{ route('site-visits.index') }}" class="bg-indigo-500 hover:bg-indigo-700 rounded-lg text-white font-bold py-2 px-4">
+                &larr; Back to List
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            @if($errors->any())
+                <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">There were {{ $errors->count() }} errors with your submission</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul class="list-disc pl-5 space-y-1">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <div class="mb-6">
-                        <a href="{{ route('site-visits.index') }}" class="text-blue-500 hover:underline">
-                            &larr; Back to Site Visits
-                        </a>
-                    </div>
-
-                    @if($errors->any())
-                        <div class="mb-4 bg-red-50 p-4 rounded-md">
-                            <div class="text-red-600 font-medium mb-2">
-                                There were errors with your submission:
-                            </div>
-                            <ul class="list-disc pl-5 text-red-600">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
                     <form action="{{ route('site-visits.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         
@@ -48,8 +57,15 @@
 
                             <!-- Visit Date -->
                             <div>
-                                <label for="date_site_visit" class="block text-sm font-medium text-gray-700 mb-1">Visit Date *</label>
-                                <input type="date" name="date_site_visit" id="date_site_visit" value="{{ old('date_site_visit') }}" required
+                                <label for="date_visit" class="block text-sm font-medium text-gray-700 mb-1">Visit Date *</label>
+                                <input type="date" name="date_visit" id="date_visit" value="{{ old('date_visit') }}" required
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </div>
+
+                            <!-- Visit Time -->
+                            <div>
+                                <label for="time_visit" class="block text-sm font-medium text-gray-700 mb-1">Visit Time *</label>
+                                <input type="time" name="time_visit" id="time_visit" value="{{ old('time_visit') }}" required
                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </div>
 
@@ -93,11 +109,13 @@
                             </div>
                         </div>
 
-                        <div class="mt-6 flex justify-end">
-                            <a href="{{ route('site-visits.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 mr-2">
+                        <div class="flex justify-end gap-4 border-t border-gray-200 mt-6 pt-6">
+                            <a href="{{ route('site-visits.index') }}" 
+                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                 Cancel
                             </a>
-                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                            <button type="submit" 
+                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 Create Site Visit
                             </button>
                         </div>

@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('site_visits', function (Blueprint $table) {
             $table->id();
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
-            $table->date('date_site_visit');
+            $table->date('date_visit');
+            $table->time('time_visit');
             $table->string('inspector_name')->nullable();
             $table->text('notes')->nullable();
             $table->string('attachment')->nullable();
