@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\ComplianceCovenantController;
 // REITs
 use App\Http\Controllers\Admin\FinancialTypeController;
 use App\Http\Controllers\Admin\BankController;
+use App\Http\Controllers\Admin\PortfolioTypeController;
 use App\Http\Controllers\Admin\PortfolioController;
 use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\Admin\ChecklistController;
@@ -128,6 +129,7 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     //  REITs
     Route::resource('/admin/banks', BankController::class);
     Route::resource('/admin/financial-types', FinancialTypeController::class);
+    Route::resource('/admin/portfolio-types', PortfolioTypeController::class);
     Route::resource('/admin/portfolios', PortfolioController::class);
     Route::resource('/admin/properties', PropertyController::class);
     Route::resource('/admin/checklists', ChecklistController::class);

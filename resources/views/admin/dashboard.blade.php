@@ -161,10 +161,19 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Portfolio Types -->
+                <x-dashboard-card
+                    title="Portfolio Types"
+                    icon="collection"
+                    :count="$portfolioTypesCount"
+                    :href="route('portfolio-types.index')"
+                    color="bg-green-100"
+                />
+
                 <!-- Banks -->
                 <x-dashboard-card
-                    title="Bank"
-                    icon="wrench-screwdriver"
+                    title="Banks"
+                    icon="bank"
                     :count="$banksCount"
                     :href="route('banks.index')"
                     color="bg-green-100"
@@ -173,7 +182,7 @@
                 <!-- Financial Types -->
                 <x-dashboard-card
                     title="Financial Types"
-                    icon="wrench-screwdriver"
+                    icon="chart-pie"
                     :count="$financialTypesCount"
                     :href="route('financial-types.index')"
                     color="bg-green-100"
@@ -191,7 +200,7 @@
                 <!-- Properties -->
                 <x-dashboard-card
                     title="Properties"
-                    icon="home-modern"
+                    icon="home"
                     :count="$propertiesCount"
                     :href="route('properties.index')"
                     color="bg-green-100"
@@ -200,7 +209,7 @@
                 <!-- Checklists -->
                 <x-dashboard-card
                     title="Checklists"
-                    icon="clipboard-document-list"
+                    icon="clipboard-check"
                     :count="$checklistsCount"
                     :href="route('checklists.index')"
                     color="bg-green-100"
@@ -227,7 +236,7 @@
                 <!-- Financials -->
                 <x-dashboard-card
                     title="Financials"
-                    icon="document-chart-bar"
+                    icon="currency-dollar"
                     :count="$financialsCount"
                     :href="route('financials.index')"
                     color="bg-green-100"
@@ -236,7 +245,7 @@
                 <!-- Site Visits -->
                 <x-dashboard-card
                     title="Site Visits"
-                    icon="map-pin"
+                    icon="location-marker"
                     :count="$siteVisitsCount"
                     :href="route('site-visits.index')"
                     color="bg-green-100"

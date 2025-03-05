@@ -95,7 +95,7 @@
             </div>
             
             <!-- Two Cards Only -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto">
                 <!-- Card 1: Bond Monitoring -->
                 <a href="{{ route('issuer-search.index') }}" class="card bond-card shadow-lg">
                     <div class="p-8">
