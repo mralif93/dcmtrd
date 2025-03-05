@@ -59,17 +59,24 @@ class UserAdminController extends Controller
             'email' => ['required', 'email', Rule::unique('users')],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string'],
-            'position' => ['required', 'string'],
+            'job_title' => ['required', 'string'],
+            'department' => ['required', 'string'],
+            'office_location' => ['required', 'string'],
             'permission' => ['required', 'string'],
             'two_factor_enabled' => ['nullable', 'boolean'],
-        ]);
+        ]);        
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'job_title' => $request->job_title,
+            'department' => $request->department,
+            'office_location' => $request->office_location,
+            'permission' => $request->permission,
         ]);
+        
 
         return redirect()->route('users.index')
             ->with('success', 'User created successfully');
@@ -105,7 +112,9 @@ class UserAdminController extends Controller
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string'],
-            'position' => ['required', 'string'],
+            'job_title' => ['required', 'string'], 
+            'department' => ['required', 'string'],
+            'office_location' => ['required', 'string'],
             'permission' => ['required', 'string'],
             'two_factor_enabled' => ['nullable', 'boolean'],
         ]);
@@ -115,7 +124,11 @@ class UserAdminController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'two_factor_enabled' => $request->two_factor_enabled ?? false, // Default to false if not provided
+            'job_title' => $request->job_title, 
+            'department' => $request->department, 
+            'office_location' => $request->office_location, 
+            'permission' => $request->permission, 
+            'two_factor_enabled' => $request->two_factor_enabled ?? false, 
         ];
 
         if ($request->filled('password')) {
