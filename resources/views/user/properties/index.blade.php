@@ -214,6 +214,11 @@
                             @endforelse
                     </table>
                 </div>
+
+                <!-- Pagination -->
+                <div class="mt-4">
+                    {{ $properties->links() }}
+                </div>
             </div>
         </div>
     </div>

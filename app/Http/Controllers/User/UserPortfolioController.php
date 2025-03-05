@@ -12,15 +12,37 @@ use Illuminate\Support\Facades\Validator;
 class UserPortfolioController extends Controller
 {
     /**
-     * Display a listing of the portfolios.
+     * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $portfolios = Portfolio::with('portfolioType')->get();
+        // Get search query parameters
+        $search = $request->input('search');
+        $status = $request->input('status');
         
-        return view('user.portfolios.index', compact('portfolios'));
+        // Start with a base query
+        $query = Portfolio::query();
+        
+        // Apply search filters if provided
+        if ($search) {
+            $query->where('portfolio_name', 'LIKE', "%{$search}%");
+        }
+        
+        // Apply status filter if provided
+        if ($status && $status !== 'all') {
+            $query->where('status', $status);
+        }
+        
+        // Paginate the results (10 items per page)
+        $portfolios = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        
+        // Get all possible statuses for the filter dropdown
+        $statuses = Portfolio::distinct('status')->pluck('status')->filter()->toArray();
+        
+        return view('user.portfolios.index', compact('portfolios', 'statuses', 'search', 'status'));
     }
 
     /**

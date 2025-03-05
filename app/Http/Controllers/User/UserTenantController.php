@@ -13,10 +13,54 @@ class UserTenantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tenants = Tenant::with('property')->get();
-        return view('user.tenants.index', compact('tenants'));
+        // Get search and filter parameters
+        $search = $request->input('search');
+        $status = $request->input('status');
+        $property = $request->input('property_id');
+        $expiringSoon = $request->has('expiring_soon');
+        
+        // Start with a base query
+        $query = Tenant::with('property');
+        
+        // Apply search filter if provided
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('contact_person', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%")
+                  ->orWhereHas('property', function($q) use ($search) {
+                      $q->where('name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+        
+        // Apply status filter if provided
+        if ($status && $status !== 'all') {
+            $query->where('status', $status);
+        }
+        
+        // Apply property filter if provided
+        if ($property) {
+            $query->where('property_id', $property);
+        }
+        
+        // Apply expiring soon filter if selected
+        if ($expiringSoon) {
+            $threeMonthsFromNow = now()->addMonths(3);
+            $query->where('expiry_date', '<=', $threeMonthsFromNow)
+                  ->where('expiry_date', '>=', now())
+                  ->where('status', 'active');
+        }
+        
+        // Paginate the results (10 items per page)
+        $tenants = $query->orderBy('name')->paginate(10)->withQueryString();
+        
+        // Get all properties for the filter dropdown
+        $properties = Property::where('status', 'active')->get();
+        
+        return view('user.tenants.index', compact('tenants', 'properties', 'search', 'status', 'property', 'expiringSoon'));
     }
 
     /**
