@@ -155,7 +155,68 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                
+                <!-- Portfolios -->
+                <x-dashboard-card
+                    title="Portfolios"
+                    icon="briefcase"
+                    :count="$portfoliosCount"
+                    :href="route('portfolios-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Properties -->
+                <x-dashboard-card
+                    title="Properties"
+                    icon="home"
+                    :count="$propertiesCount"
+                    :href="route('properties-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Tenants -->
+                <x-dashboard-card
+                    title="Tenants"
+                    icon="users"
+                    :count="$tenantsCount"
+                    :href="route('tenants-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Leases -->
+                <x-dashboard-card
+                    title="Leases"
+                    icon="document-text"
+                    :count="$leasesCount"
+                    :href="route('leases-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Checklists -->
+                <x-dashboard-card
+                    title="Checklists"
+                    icon="clipboard-check"
+                    :count="$checklistsCount"
+                    :href="route('checklists-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Financials -->
+                <x-dashboard-card
+                    title="Financials"
+                    icon="currency-dollar"
+                    :count="$financialsCount"
+                    :href="route('financials-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Site Visits -->
+                <x-dashboard-card
+                    title="Site Visits"
+                    icon="location-marker"
+                    :count="$siteVisitsCount"
+                    :href="route('site-visits-info.index')"
+                    color="bg-blue-100"
+                />
             </div>
         </div>
     </div>

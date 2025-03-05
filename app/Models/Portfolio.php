@@ -25,19 +25,19 @@ class Portfolio extends Model
     ];
 
     /**
+     * Get the portfolio type that owns the portfolio.
+     */
+    public function portfolioType()
+    {
+        return $this->belongsTo(PortfolioType::class, 'portfolio_types_id');
+    }
+
+    /**
      * Get the properties for the portfolio.
      */
     public function properties()
     {
         return $this->hasMany(Property::class);
-    }
-
-    /**
-     * Get the portfolio types for the portfolio.
-     */
-    public function portfolioTypes()
-    {
-        return $this->hasMany(PortfolioType::class);
     }
 
     /**

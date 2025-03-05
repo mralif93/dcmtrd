@@ -39,7 +39,17 @@ class UserController extends Controller
                     (SELECT COUNT(*) FROM related_documents) AS related_documents_count,
                     (SELECT COUNT(*) FROM charts) AS charts_count,
                     (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
-                    (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count
+                    (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
+                    (SELECT COUNT(*) FROM financial_types) AS financial_types_count,
+                    (SELECT COUNT(*) FROM banks) AS banks_count,
+                    (SELECT COUNT(*) FROM portfolio_types) AS portfolio_types_count,
+                    (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
+                    (SELECT COUNT(*) FROM properties) AS properties_count,
+                    (SELECT COUNT(*) FROM checklists) AS checklists_count,
+                    (SELECT COUNT(*) FROM tenants) AS tenants_count,
+                    (SELECT COUNT(*) FROM leases) AS leases_count,
+                    (SELECT COUNT(*) FROM financials) AS financials_count,
+                    (SELECT COUNT(*) FROM site_visits) AS site_visits_count
             ");
             return (array) $result[0];
         });
@@ -59,6 +69,16 @@ class UserController extends Controller
             'chartsCount' => $counts['charts_count'],
             'trusteeFeesCount' => $counts['trustee_fees_count'],
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
+            'financialTypesCount' => $counts['financial_types_count'],
+            'banksCount' => $counts['banks_count'],
+            'portfolioTypesCount' => $counts['portfolio_types_count'],
+            'portfoliosCount' => $counts['portfolios_count'],
+            'propertiesCount' => $counts['properties_count'],
+            'checklistsCount' => $counts['checklists_count'],
+            'tenantsCount' => $counts['tenants_count'],
+            'leasesCount' => $counts['leases_count'],
+            'financialsCount' => $counts['financials_count'],
+            'siteVisitsCount' => $counts['site_visits_count'],
         ]);
     }
 }

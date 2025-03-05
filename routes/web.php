@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\ComplianceCovenantController;
 // REITs
 use App\Http\Controllers\Admin\FinancialTypeController;
 use App\Http\Controllers\Admin\BankController;
+use App\Http\Controllers\Admin\PortfolioTypeController;
 use App\Http\Controllers\Admin\PortfolioController;
 use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\Admin\ChecklistController;
@@ -54,6 +55,15 @@ use App\Http\Controllers\User\UserRelatedDocumentController;
 use App\Http\Controllers\User\UserChartController;
 use App\Http\Controllers\User\UserTrusteeFeeController;
 use App\Http\Controllers\User\UserComplianceCovenantController;
+
+// REITs
+use App\Http\Controllers\User\UserPortfolioController;
+use App\Http\Controllers\User\UserPropertyController;
+use App\Http\Controllers\User\UserTenantController;
+use App\Http\Controllers\User\UserLeaseController;
+use App\Http\Controllers\User\UserChecklistController;
+use App\Http\Controllers\User\UserFinancialController;
+use App\Http\Controllers\User\UserSiteVisitController;
 
 // Main
 Route::get('/', function () {
@@ -119,6 +129,7 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     //  REITs
     Route::resource('/admin/banks', BankController::class);
     Route::resource('/admin/financial-types', FinancialTypeController::class);
+    Route::resource('/admin/portfolio-types', PortfolioTypeController::class);
     Route::resource('/admin/portfolios', PortfolioController::class);
     Route::resource('/admin/properties', PropertyController::class);
     Route::resource('/admin/checklists', ChecklistController::class);
@@ -169,6 +180,21 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::resource('/user/charts-info', UserChartController::class);
     Route::resource('/user/trustee-fees-info', UserTrusteeFeeController::class);
     Route::resource('/user/compliance-covenants-info', UserComplianceCovenantController::class);
+
+    // REITs
+    Route::resource('/user/portfolios-info', UserPortfolioController::class);
+    Route::resource('/user/properties-info', UserPropertyController::class);
+    Route::resource('/user/tenants-info', UserTenantController::class);
+    Route::resource('/user/leases-info', UserLeaseController::class);
+    Route::resource('/user/checklists-info', UserChecklistController::class);
+    Route::resource('/user/financials-info', UserFinancialController::class);
+    Route::resource('/user/site-visits-info', UserSiteVisitController::class);
+
+    // Additional custom routes
+    Route::prefix('/user/leases-info')->name('leases-info.')->group(function () {
+        Route::get('expiring/soon', [UserLeaseController::class, 'expiringLeases'])->name('expiring');
+        Route::patch('{lease}/status', [UserLeaseController::class, 'updateStatus'])->name('update-status');
+    });
 });
 
 // Legal routes

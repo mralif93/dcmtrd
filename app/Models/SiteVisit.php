@@ -13,7 +13,7 @@ class SiteVisit extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array
      */
     protected $fillable = [
         'property_id',
@@ -28,70 +28,49 @@ class SiteVisit extends Model
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array
      */
     protected $casts = [
         'date_visit' => 'date',
-        'time_visit' => 'date',
     ];
 
     /**
-     * Get the property that the site visit belongs to.
+     * Get the property that owns the site visit.
      */
     public function property()
     {
         return $this->belongsTo(Property::class);
     }
-
+    
     /**
-     * Get the status badge HTML.
-     * 
-     * @return string
+     * Get the site visit's status badge class.
      */
-    public function getStatusBadgeAttribute()
+    public function getStatusBadgeClassAttribute()
     {
-        $badges = [
-            'scheduled' => 'bg-primary',
-            'completed' => 'bg-success',
-            'cancelled' => 'bg-danger',
-            'postponed' => 'bg-warning',
-        ];
-
-        $badgeClass = $badges[$this->status] ?? 'bg-secondary';
-
-        return '<span class="badge ' . $badgeClass . '">' . ucfirst($this->status) . '</span>';
+        return match($this->status) {
+            'completed' => 'bg-green-100 text-green-800',
+            'cancelled' => 'bg-red-100 text-red-800',
+            default => 'bg-yellow-100 text-yellow-800',
+        };
     }
-
+    
     /**
-     * Scope a query to only include scheduled site visits.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Get the formatted visit time.
      */
-    public function scopeScheduled($query)
+    public function getFormattedTimeAttribute()
     {
-        return $query->where('status', 'scheduled');
+        return date('h:i A', strtotime($this->time_visit));
     }
-
+    
     /**
-     * Scope a query to only include upcoming site visits.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Get the attachment URL.
      */
-    public function scopeUpcoming($query)
+    public function getAttachmentUrlAttribute()
     {
-        return $query->where('date_visit', '>=', now())
-                    ->where('status', 'scheduled');
-    }
-
-    /**
-     * Check if this site visit has an attachment.
-     *
-     * @return bool
-     */
-    public function hasAttachment()
-    {
-        return !empty($this->attachment);
+        if (!$this->attachment) {
+            return null;
+        }
+        
+        return asset('storage/' . $this->attachment);
     }
 }
