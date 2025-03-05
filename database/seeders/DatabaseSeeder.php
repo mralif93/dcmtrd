@@ -3,6 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Database\Seeders\PropertySeeder;
+use Database\Seeders\PortfolioSeeder;
+use Database\Seeders\DefaultUsersSeeder;
+use Database\Seeders\PortfolioTypeSeeder;
+use Database\Seeders\TenantSeeder;
+use Database\Seeders\LeaseSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,20 +19,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             DefaultUsersSeeder::class,
-            ReitsSeeder::class,
-            // AllSeeder::class,
-            // IssuerSeeder::class,
-            // BondSeeder::class,
-            // RatingMovementSeeder::class,
-            // PaymentScheduleSeeder::class,
-            // RedemptionSeeder::class,
-            // CallScheduleSeeder::class,
-            // LockoutPeriodSeeder::class,
-            // TradingActivitySeeder::class,
-            // ChartSeeder::class,
-            // AnnouncementSeeder::class,
-            // FacilityInformationSeeder::class,
-            // RelatedDocumentSeeder::class,
+            PortfolioTypeSeeder::class,
+            PortfolioSeeder::class,
+            PropertySeeder::class,
+            TenantSeeder::class,
+            LeaseSeeder::class,
         ]);
     }
 }
