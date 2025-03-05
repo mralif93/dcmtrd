@@ -31,6 +31,192 @@
                 </div>
             @endif
 
+            <!-- Filter Panel -->
+            <div class="p-6 mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <h3 class="mb-4 text-lg font-medium text-gray-900">Search & Filters</h3>
+                <form action="{{ route('properties-info.index') }}" method="GET">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        <!-- Search Input -->
+                        <div>
+                            <label for="search" class="block mb-1 text-sm font-medium text-gray-700">Search</label>
+                            <input type="text" name="search" id="search" value="{{ request('search') }}" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" 
+                                placeholder="Name, address, city...">
+                        </div>
+                        
+                        <!-- Batch Number Filter -->
+                        <div>
+                            <label for="batch_no" class="block mb-1 text-sm font-medium text-gray-700">Batch Number</label>
+                            <select name="batch_no" id="batch_no" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="">All Batches</option>
+                                @foreach($batchNumbers as $batch)
+                                    <option value="{{ $batch }}" {{ request('batch_no') == $batch ? 'selected' : '' }}>
+                                        {{ $batch }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- Category Filter -->
+                        <div>
+                            <label for="category" class="block mb-1 text-sm font-medium text-gray-700">Category</label>
+                            <select name="category" id="category" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="">All Categories</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
+                                        {{ $category }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- City Filter -->
+                        <div>
+                            <label for="city" class="block mb-1 text-sm font-medium text-gray-700">City</label>
+                            <select name="city" id="city" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="">All Cities</option>
+                                @foreach($cities as $city)
+                                    <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>
+                                        {{ $city }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- Portfolio Filter -->
+                        <div>
+                            <label for="portfolio_id" class="block mb-1 text-sm font-medium text-gray-700">Portfolio</label>
+                            <select name="portfolio_id" id="portfolio_id" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="">All Portfolios</option>
+                                @foreach($portfolios as $portfolio)
+                                    <option value="{{ $portfolio->id }}" {{ request('portfolio_id') == $portfolio->id ? 'selected' : '' }}>
+                                        {{ $portfolio->portfolio_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- Status Filter -->
+                        <div>
+                            <label for="status" class="block mb-1 text-sm font-medium text-gray-700">Status</label>
+                            <select name="status" id="status" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="">All Status</option>
+                                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Filter Buttons -->
+                        <div class="flex items-end space-x-2">
+                            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-indigo-500">
+                                Apply Filters
+                            </button>
+                            <a href="{{ route('properties-info.index') }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:bg-gray-300">
+                                Reset
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Filter Panel -->
+            <div class="p-6 mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <h3 class="mb-4 text-lg font-medium text-gray-900">Search & Filters</h3>
+                <form action="{{ route('properties-info.index') }}" method="GET">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        <!-- Search Input -->
+                        <div>
+                            <label for="search" class="block mb-1 text-sm font-medium text-gray-700">Search</label>
+                            <input type="text" name="search" id="search" value="{{ request('search') }}" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" 
+                                placeholder="Name, address, city...">
+                        </div>
+                        
+                        <!-- Batch Number Filter -->
+                        <div>
+                            <label for="batch_no" class="block mb-1 text-sm font-medium text-gray-700">Batch Number</label>
+                            <select name="batch_no" id="batch_no" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="">All Batches</option>
+                                @foreach($batchNumbers as $batch)
+                                    <option value="{{ $batch }}" {{ request('batch_no') == $batch ? 'selected' : '' }}>
+                                        {{ $batch }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- Category Filter -->
+                        <div>
+                            <label for="category" class="block mb-1 text-sm font-medium text-gray-700">Category</label>
+                            <select name="category" id="category" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="">All Categories</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
+                                        {{ $category }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- City Filter -->
+                        <div>
+                            <label for="city" class="block mb-1 text-sm font-medium text-gray-700">City</label>
+                            <select name="city" id="city" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="">All Cities</option>
+                                @foreach($cities as $city)
+                                    <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>
+                                        {{ $city }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- Portfolio Filter -->
+                        <div>
+                            <label for="portfolio_id" class="block mb-1 text-sm font-medium text-gray-700">Portfolio</label>
+                            <select name="portfolio_id" id="portfolio_id" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="">All Portfolios</option>
+                                @foreach($portfolios as $portfolio)
+                                    <option value="{{ $portfolio->id }}" {{ request('portfolio_id') == $portfolio->id ? 'selected' : '' }}>
+                                        {{ $portfolio->portfolio_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- Status Filter -->
+                        <div>
+                            <label for="status" class="block mb-1 text-sm font-medium text-gray-700">Status</label>
+                            <select name="status" id="status" 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="">All Status</option>
+                                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Filter Buttons -->
+                        <div class="flex items-end space-x-2">
+                            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-indigo-500">
+                                Apply Filters
+                            </button>
+                            <a href="{{ route('properties-info.index') }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:bg-gray-300">
+                                Reset
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
             <div class="p-6 overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="overflow-auto border rounded-lg">
                     <table class="w-full text-sm text-left">

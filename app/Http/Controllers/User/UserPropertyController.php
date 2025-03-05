@@ -13,11 +13,64 @@ class UserPropertyController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $properties = Property::with('portfolio')->get();
-
-        return view('user.properties.index', compact('properties'));
+        // Start with a base query
+        $query = Property::with('portfolio');
+        
+        // Filter by batch_no if provided
+        if ($request->filled('batch_no')) {
+            $query->where('batch_no', $request->batch_no);
+        }
+        
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('address', 'LIKE', "%{$search}%")
+                  ->orWhere('city', 'LIKE', "%{$search}%")
+                  ->orWhere('state', 'LIKE', "%{$search}%")
+                  ->orWhere('country', 'LIKE', "%{$search}%")
+                  ->orWhere('postal_code', 'LIKE', "%{$search}%")
+                  ->orWhere('usage', 'LIKE', "%{$search}%")
+                  ->orWhere('category', 'LIKE', "%{$search}%");
+            });
+        }
+        
+        // Additional filters
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+        
+        if ($request->filled('city')) {
+            $query->where('city', $request->city);
+        }
+        
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        if ($request->filled('portfolio_id')) {
+            $query->where('portfolio_id', $request->portfolio_id);
+        }
+        
+        // Execute the query with pagination
+        $properties = $query->paginate(10);
+        
+        // Get unique values for filters dropdowns
+        $batchNumbers = Property::select('batch_no')->distinct()->pluck('batch_no');
+        $categories = Property::select('category')->distinct()->pluck('category');
+        $cities = Property::select('city')->distinct()->pluck('city');
+        $portfolios = Portfolio::where('status', 'active')->get();
+        
+        return view('user.properties.index', compact(
+            'properties', 
+            'batchNumbers', 
+            'categories', 
+            'cities', 
+            'portfolios'
+        ));
     }
 
     /**
