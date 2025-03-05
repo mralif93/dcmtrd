@@ -158,8 +158,8 @@
                 <!-- Portfolios -->
                 <x-dashboard-card
                     title="Portfolios"
-                    icon="office-building"
-                    :count="$issuersCount"
+                    icon="briefcase"
+                    :count="$portfoliosCount"
                     :href="route('portfolios-info.index')"
                     color="bg-blue-100"
                 />
@@ -167,8 +167,8 @@
                 <!-- Properties -->
                 <x-dashboard-card
                     title="Properties"
-                    icon="office-building"
-                    :count="$issuersCount"
+                    icon="home"
+                    :count="$propertiesCount"
                     :href="route('properties-info.index')"
                     color="bg-blue-100"
                 />
@@ -176,8 +176,8 @@
                 <!-- Tenants -->
                 <x-dashboard-card
                     title="Tenants"
-                    icon="office-building"
-                    :count="$issuersCount"
+                    icon="users"
+                    :count="$tenantsCount"
                     :href="route('tenants-info.index')"
                     color="bg-blue-100"
                 />
@@ -185,8 +185,8 @@
                 <!-- Leases -->
                 <x-dashboard-card
                     title="Leases"
-                    icon="office-building"
-                    :count="$issuersCount"
+                    icon="document-text"
+                    :count="$leasesCount"
                     :href="route('leases-info.index')"
                     color="bg-blue-100"
                 />
@@ -194,8 +194,8 @@
                 <!-- Checklists -->
                 <x-dashboard-card
                     title="Checklists"
-                    icon="office-building"
-                    :count="$issuersCount"
+                    icon="clipboard-check"
+                    :count="$checklistsCount"
                     :href="route('checklists-info.index')"
                     color="bg-blue-100"
                 />
@@ -203,8 +203,8 @@
                 <!-- Financials -->
                 <x-dashboard-card
                     title="Financials"
-                    icon="office-building"
-                    :count="$issuersCount"
+                    icon="currency-dollar"
+                    :count="$financialsCount"
                     :href="route('financials-info.index')"
                     color="bg-blue-100"
                 />
@@ -212,8 +212,8 @@
                 <!-- Site Visits -->
                 <x-dashboard-card
                     title="Site Visits"
-                    icon="office-building"
-                    :count="$issuersCount"
+                    icon="location-marker"
+                    :count="$siteVisitsCount"
                     :href="route('site-visits-info.index')"
                     color="bg-blue-100"
                 />

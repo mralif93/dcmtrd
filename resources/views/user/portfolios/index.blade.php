@@ -29,8 +29,7 @@
             @endif
 
             <div class="bg-white shadow rounded-lg p-6">
-                <!-- Table Container -->
-                <div class="border rounded-lg overflow-hidden">
+                <div class="border rounded-lg overflow-x-auto">
                     <table class="w-full text-sm text-left">
                         <thead class="bg-gray-50">
                             <tr>
