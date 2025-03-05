@@ -34,7 +34,50 @@
             @endif
 
             <div class="bg-white shadow rounded-lg p-6">
-                <div class="overflow-x-auto">
+                <!-- Search and Filter Form -->
+                <div class="mb-6">
+                    <form method="GET" action="{{ route('leases-info.index') }}" class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-grow">
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    name="search"
+                                    value="{{ $search ?? '' }}"
+                                    placeholder="Search by lease name, tenant, or property..."
+                                    class="block w-full pr-10 sm:text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                />
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full md:w-48">
+                            <select name="status" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="all" {{ ($status ?? '') == 'all' ? 'selected' : '' }}>All Statuses</option>
+                                @foreach($statuses as $statusOption)
+                                    <option value="{{ $statusOption }}" {{ ($status ?? '') == $statusOption ? 'selected' : '' }}>{{ ucfirst($statusOption) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                Filter
+                            </button>
+                            @if($search || ($status ?? '') != 'all')
+                                <a href="{{ route('leases-info.index') }}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Clear
+                                </a>
+                            @endif
+                        </div>
+                    </form>
+                </div>
+
+                <div class="border rounded-lg overflow-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
@@ -106,6 +149,11 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="mt-4">
+                    {{ $leases->links() }}
                 </div>
             </div>
         </div>

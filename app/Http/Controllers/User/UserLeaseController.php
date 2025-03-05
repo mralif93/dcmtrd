@@ -13,10 +13,40 @@ class UserLeaseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $leases = Lease::with(['tenant', 'tenant.property'])->get();
-        return view('user.leases.index', compact('leases'));
+        // Get search query parameters
+        $search = $request->input('search');
+        $status = $request->input('status');
+        
+        // Start with a base query
+        $query = Lease::with(['tenant', 'tenant.property']);
+        
+        // Apply search filters if provided
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('lease_name', 'LIKE', "%{$search}%")
+                  ->orWhereHas('tenant', function($q) use ($search) {
+                      $q->where('name', 'LIKE', "%{$search}%");
+                  })
+                  ->orWhereHas('tenant.property', function($q) use ($search) {
+                      $q->where('name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+        
+        // Apply status filter if provided
+        if ($status && $status !== 'all') {
+            $query->where('status', $status);
+        }
+        
+        // Paginate the results (10 items per page)
+        $leases = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        
+        // Get all possible statuses for the filter dropdown
+        $statuses = ['active', 'inactive', 'terminated', 'expired'];
+        
+        return view('user.leases.index', compact('leases', 'statuses', 'search', 'status'));
     }
 
     /**
@@ -123,7 +153,7 @@ class UserLeaseController extends Controller
             ->with('success', 'Lease deleted successfully.');
     }
 
-        /**
+    /**
      * Update the lease status.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -155,16 +185,30 @@ class UserLeaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function expiringLeases()
+    public function expiringLeases(Request $request)
     {
-        $nearExpiry = now()->addMonths(3); // Leases expiring in the next 3 months
-        $expiringLeases = Lease::with(['tenant', 'tenant.property'])
+        $search = $request->input('search');
+        
+        $query = Lease::with(['tenant', 'tenant.property'])
             ->where('status', 'active')
-            ->where('end_date', '<=', $nearExpiry)
-            ->where('end_date', '>=', now())
-            ->orderBy('end_date')
-            ->get();
+            ->where('end_date', '<=', now()->addMonths(3))
+            ->where('end_date', '>=', now());
+            
+        // Apply search if provided
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('lease_name', 'LIKE', "%{$search}%")
+                  ->orWhereHas('tenant', function($q) use ($search) {
+                      $q->where('name', 'LIKE', "%{$search}%");
+                  })
+                  ->orWhereHas('tenant.property', function($q) use ($search) {
+                      $q->where('name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+        
+        $expiringLeases = $query->orderBy('end_date')->paginate(10)->withQueryString();
 
-        return view('user.leases.expiring', compact('expiringLeases'));
+        return view('user.leases.expiring', compact('expiringLeases', 'search'));
     }
 }
