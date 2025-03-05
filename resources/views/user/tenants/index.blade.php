@@ -29,83 +29,40 @@
             @endif
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <!-- Search and Filter Form -->
+                <!-- Search Form -->
                 <div class="mb-6">
-                    <form method="GET" action="{{ route('tenants-info.index') }}" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <!-- Search -->
-                            <div class="col-span-1 md:col-span-2">
-                                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                                <div class="relative">
-                                    <input
-                                        type="text"
-                                        id="search"
-                                        name="search"
-                                        value="{{ $search ?? '' }}"
-                                        placeholder="Search by tenant name, contact person, or property..."
-                                        class="block w-full pr-10 sm:text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                    />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                        </svg>
-                                    </div>
+                    <form method="GET" action="{{ route('tenants-info.index') }}" class="flex items-center gap-2">
+                        <!-- Search -->
+                        <div class="flex-1 min-w-[200px]">
+                            <div class="relative rounded-md shadow-sm">
+                                <input
+                                    type="text"
+                                    name="search"
+                                    value="{{ $search ?? '' }}"
+                                    placeholder="Search by name, property, status, contact..."
+                                    class="block w-full pr-10 border-gray-300 rounded-md focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                />
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
                                 </div>
-                            </div>
-                            
-                            <!-- Status Filter -->
-                            <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                <select id="status" name="status" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                    <option value="all" {{ ($status ?? '') == 'all' ? 'selected' : '' }}>All Statuses</option>
-                                    <option value="active" {{ ($status ?? '') == 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="inactive" {{ ($status ?? '') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                </select>
-                            </div>
-                            
-                            <!-- Property Filter -->
-                            <div>
-                                <label for="property_id" class="block text-sm font-medium text-gray-700 mb-1">Property</label>
-                                <select id="property_id" name="property_id" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                    <option value="">All Properties</option>
-                                    @foreach($properties as $propertyOption)
-                                        <option value="{{ $propertyOption->id }}" {{ ($property ?? '') == $propertyOption->id ? 'selected' : '' }}>
-                                            {{ $propertyOption->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
                             </div>
                         </div>
                         
-                        <div class="flex items-center justify-between">
-                            <!-- Expiring Soon Toggle -->
-                            <div class="flex items-center">
-                                <input 
-                                    id="expiring_soon" 
-                                    name="expiring_soon" 
-                                    type="checkbox" 
-                                    {{ $expiringSoon ?? false ? 'checked' : '' }}
-                                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                                >
-                                <label for="expiring_soon" class="ml-2 block text-sm text-gray-700">
-                                    Show only tenants expiring within 3 months
-                                </label>
-                            </div>
-                            
-                            <!-- Filter Buttons -->
-                            <div class="flex space-x-2">
-                                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                                    </svg>
-                                    Apply Filters
-                                </button>
-                                @if($search || ($status ?? '') != 'all' || $property || ($expiringSoon ?? false))
-                                    <a href="{{ route('tenants-info.index') }}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        Clear Filters
-                                    </a>
-                                @endif
-                            </div>
+                        <!-- Buttons -->
+                        <div class="flex space-x-2">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                Search
+                            </button>
+                            @if($search)
+                                <a href="{{ route('tenants-info.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Clear
+                                </a>
+                            @endif
                         </div>
                     </form>
                 </div>
