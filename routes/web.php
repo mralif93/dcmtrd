@@ -40,6 +40,10 @@ use App\Http\Controllers\Admin\TenantController;
 use App\Http\Controllers\Admin\LeaseController;
 use App\Http\Controllers\Admin\FinancialController;
 use App\Http\Controllers\Admin\SiteVisitController;
+use App\Http\Controllers\Admin\DocumentationItemController;
+use App\Http\Controllers\Admin\TenantApprovalController;
+use App\Http\Controllers\Admin\ConditionCheckController;
+use App\Http\Controllers\Admin\PropertyImprovementController;
 
 use App\Http\Controllers\User\UserIssuerController;
 use App\Http\Controllers\User\UserBondController;
@@ -125,6 +129,18 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::get('/admin/compliance-covenants-trashed', [ComplianceCovenantController::class, 'trashed'])->name('compliance-covenants.trashed');
     Route::patch('/admin/compliance-covenants/{id}/restore', [ComplianceCovenantController::class, 'restore'])->name('compliance-covenants.restore');
     Route::delete('/admin/compliance-covenants/{id}/force-delete', [ComplianceCovenantController::class, 'forceDelete'])->name('compliance-covenants.force-delete');
+
+    Route::resource('/admin/documentation-items', DocumentationItemController::class);
+    Route::resource('/admin/tenant-approvals', TenantApprovalController::class);
+    Route::resource('/admin/condition-checks', ConditionCheckController::class);
+    Route::resource('/admin/property-improvements', PropertyImprovementController::class);
+
+    // Additional
+    Route::prefix('/admin/tenant-approvals')->name('tenant-approvals.')->group(function () {
+        Route::post('{tenantApproval}/approve-by-od', [TenantApprovalController::class, 'approveByOD'])->name('approve-by-od');
+        Route::post('{tenantApproval}/verify-by-ld', [TenantApprovalController::class, 'verifyByLD'])->name('verify-by-ld');
+        Route::post('{tenantApproval}/submit-to-ld', [TenantApprovalController::class, 'submitToLD'])->name('submit-to-ld');
+    });
 
     //  REITs
     Route::resource('/admin/banks', BankController::class);

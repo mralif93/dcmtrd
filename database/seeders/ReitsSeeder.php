@@ -161,28 +161,49 @@ class ReitsSeeder extends Seeder
             ]));
         }
 
-        // Seed Checklists
+        // Seed Updated Checklists with new fields
         $checklists = [
             [
                 'property_id' => 1,
-                'type' => 'Safety Inspection',
-                'description' => 'Annual fire safety check',
+                'type' => 'documentation',
+                'description' => 'Legal documentation verification',
                 'approval_date' => Carbon::now()->subMonths(2),
-                'status' => 'approved'
+                'status' => 'completed',
+                'assigned_department' => 'LD',
+                'verifying_department' => 'OD',
+                'response_time_days' => 3,
+                'prepared_by' => 'Dang Fathihah binti Ibrahim',
+                'prepared_date' => Carbon::now()->subMonths(2)->subDays(5),
+                'confirmed_by' => 'Roslim Syah bin Idris',
+                'confirmed_date' => Carbon::now()->subMonths(2)
             ],
             [
                 'property_id' => 2,
-                'type' => 'Electrical Inspection',
-                'description' => 'Wiring and electrical systems check',
+                'type' => 'tenant',
+                'description' => 'Tenant renewal verification',
                 'approval_date' => Carbon::now()->subMonths(1),
-                'status' => 'approved'
+                'status' => 'completed',
+                'assigned_department' => 'OD',
+                'verifying_department' => 'LD',
+                'response_time_days' => 3,
+                'prepared_by' => 'Ahmad Rizal bin Hassan',
+                'prepared_date' => Carbon::now()->subMonths(1)->subDays(7),
+                'confirmed_by' => 'Lim Wei Ling',
+                'confirmed_date' => Carbon::now()->subMonths(1)
             ],
             [
                 'property_id' => 3,
-                'type' => 'Structural Assessment',
-                'description' => 'Building structure evaluation',
-                'approval_date' => Carbon::now()->addMonths(1),
-                'status' => 'pending'
+                'type' => 'condition',
+                'description' => 'Property condition assessment',
+                'approval_date' => null,
+                'status' => 'pending',
+                'assigned_department' => 'OD',
+                'verifying_department' => null,
+                'response_time_days' => null,
+                'prepared_by' => null,
+                'prepared_date' => null,
+                'confirmed_by' => null,
+                'confirmed_date' => null
             ]
         ];
         
@@ -193,7 +214,7 @@ class ReitsSeeder extends Seeder
             ]));
         }
 
-        // Seed Tenants
+        // Seed Tenants with approval fields
         $tenants = [
             [
                 'property_id' => 1,
@@ -202,8 +223,11 @@ class ReitsSeeder extends Seeder
                 'email' => 'john.smith@example.com',
                 'phone' => '123-456-7890',
                 'commencement_date' => Carbon::now()->subYears(1),
+                'approval_date' => Carbon::now()->subYears(1)->subDays(15),
                 'expiry_date' => Carbon::now()->addYears(1),
-                'status' => 'active'
+                'status' => 'active',
+                'approval_status' => 'approved',
+                'last_approval_date' => Carbon::now()->subYears(1)->subDays(15)
             ],
             [
                 'property_id' => 2,
@@ -212,8 +236,11 @@ class ReitsSeeder extends Seeder
                 'email' => 'jane.doe@techinnovations.com',
                 'phone' => '987-654-3210',
                 'commencement_date' => Carbon::now()->subMonths(6),
+                'approval_date' => Carbon::now()->subMonths(6)->subDays(10),
                 'expiry_date' => Carbon::now()->addYears(2),
-                'status' => 'active'
+                'status' => 'active',
+                'approval_status' => 'approved',
+                'last_approval_date' => Carbon::now()->subMonths(6)->subDays(10)
             ],
             [
                 'property_id' => 3,
@@ -222,8 +249,11 @@ class ReitsSeeder extends Seeder
                 'email' => 'michael@urbanliving.co',
                 'phone' => '555-123-4567',
                 'commencement_date' => Carbon::now()->subMonths(3),
+                'approval_date' => Carbon::now()->subMonths(3)->subDays(7),
                 'expiry_date' => Carbon::now()->addYears(3),
-                'status' => 'active'
+                'status' => 'active',
+                'approval_status' => 'approved',
+                'last_approval_date' => Carbon::now()->subMonths(3)->subDays(7)
             ]
         ];
         
@@ -355,32 +385,35 @@ class ReitsSeeder extends Seeder
             ]));
         }
 
-        // Seed Site Visits
+        // Seed Site Visits (updated with checklist_id)
         $siteVisits = [
             [
                 'property_id' => 1,
-                'date_visit' => Carbon::now()->addDays(7),
+                'checklist_id' => 1,
+                'date_visit' => Carbon::now()->subMonths(2)->subDays(5),
                 'time_visit' => '10:00:00',
                 'inspector_name' => 'Robert Brown',
-                'notes' => 'Regular annual inspection',
+                'notes' => 'Documentation verification visit',
                 'attachment' => null,
-                'status' => 'scheduled'
+                'status' => 'completed'
             ],
             [
                 'property_id' => 2,
-                'date_visit' => Carbon::now()->subDays(14),
+                'checklist_id' => 2,
+                'date_visit' => Carbon::now()->subMonths(1)->subDays(7),
                 'time_visit' => '14:30:00',
                 'inspector_name' => 'Sarah Johnson',
-                'notes' => 'Post-renovation inspection completed',
+                'notes' => 'Tenant renewal verification completed',
                 'attachment' => 'visits/tech_tower_inspection.pdf',
                 'status' => 'completed'
             ],
             [
                 'property_id' => 3,
-                'date_visit' => Carbon::now()->addDays(21),
+                'checklist_id' => 3,
+                'date_visit' => Carbon::now()->addDays(7),
                 'time_visit' => '09:15:00',
                 'inspector_name' => 'David Wilson',
-                'notes' => 'Structural assessment follow-up',
+                'notes' => 'Upcoming property condition assessment',
                 'attachment' => null,
                 'status' => 'scheduled'
             ]
@@ -388,6 +421,208 @@ class ReitsSeeder extends Seeder
         
         foreach ($siteVisits as $visit) {
             DB::table('site_visits')->insert(array_merge($visit, [
+                'created_at' => now(),
+                'updated_at' => now()
+            ]));
+        }
+        
+        // NEW SEEDS FOR CHECKLIST-RELATED TABLES
+        
+        // Seed Documentation Items
+        $documentationItems = [
+            [
+                'checklist_id' => 1,
+                'item_number' => '1.1',
+                'document_type' => 'Title',
+                'description' => 'H.S (D) 221754 Lot PT 254356 Bandar Ipoh, Daerah Kinta, Negeri Perak',
+                'validity_date' => null,
+                'location' => 'Title with Maybank Investment Berhad',
+                'is_prefilled' => true
+            ],
+            [
+                'checklist_id' => 1,
+                'item_number' => '1.2',
+                'document_type' => 'Trust Deed',
+                'description' => 'Second Restated Trust Deed dated 25/11/2019 & the supplemental to the second restated trust deed dated 29/12/2022',
+                'validity_date' => Carbon::parse('2022-12-29'),
+                'location' => 'LD\'s room',
+                'is_prefilled' => true
+            ],
+            [
+                'checklist_id' => 1,
+                'item_number' => '1.4',
+                'document_type' => 'Lease Agreement',
+                'description' => 'Lease Agreement dated 22/06/2021',
+                'validity_date' => Carbon::parse('2021-06-22'),
+                'location' => 'LD\'s room',
+                'is_prefilled' => true
+            ],
+            [
+                'checklist_id' => 1,
+                'item_number' => '1.6',
+                'document_type' => 'Maintenance Manager Agreement',
+                'description' => 'Maintanece Management Agreement dated 11/03/2013, Supplemental to the Maintenance Management dated 30/03/2018 & Renewed by Extension Maintenance Management Agreement dated 15/12/2021',
+                'validity_date' => Carbon::parse('2021-12-15'),
+                'location' => 'LD\'s room',
+                'is_prefilled' => true
+            ],
+        ];
+        
+        foreach ($documentationItems as $item) {
+            DB::table('documentation_items')->insert(array_merge($item, [
+                'created_at' => now(),
+                'updated_at' => now()
+            ]));
+        }
+        
+        // Seed Tenant Approvals
+        $tenantApprovals = [
+            [
+                'checklist_id' => 2,
+                'tenant_id' => 2,
+                'lease_id' => 2,
+                'approval_type' => 'renewal',
+                'od_approved' => true,
+                'ld_verified' => true,
+                'od_approval_date' => Carbon::now()->subMonths(1)->subDays(10),
+                'ld_verification_date' => Carbon::now()->subMonths(1)->subDays(7),
+                'notes' => 'Tenant renewal approved for Tech Innovations Inc.',
+                'submitted_to_ld_date' => Carbon::now()->subMonths(1)->subDays(10),
+                'ld_response_date' => Carbon::now()->subMonths(1)->subDays(7)
+            ],
+            [
+                'checklist_id' => 3,
+                'tenant_id' => 3,
+                'lease_id' => 3,
+                'approval_type' => 'new',
+                'od_approved' => true,
+                'ld_verified' => false,
+                'od_approval_date' => Carbon::now()->subDays(5),
+                'ld_verification_date' => null,
+                'notes' => 'Awaiting LD verification for Urban Living Co.',
+                'submitted_to_ld_date' => Carbon::now()->subDays(5),
+                'ld_response_date' => null
+            ]
+        ];
+        
+        foreach ($tenantApprovals as $approval) {
+            DB::table('tenant_approvals')->insert(array_merge($approval, [
+                'created_at' => now(),
+                'updated_at' => now()
+            ]));
+        }
+        
+        // Seed Condition Checks
+        $conditionChecks = [
+            // External Area checks for checklist 3
+            [
+                'checklist_id' => 3,
+                'section' => 'External Area',
+                'item_number' => '3.1',
+                'item_name' => 'General Cleanliness',
+                'is_satisfied' => true,
+                'remarks' => null
+            ],
+            [
+                'checklist_id' => 3,
+                'section' => 'External Area',
+                'item_number' => '3.2',
+                'item_name' => 'Fencing & Main Gate',
+                'is_satisfied' => true,
+                'remarks' => null
+            ],
+            [
+                'checklist_id' => 3,
+                'section' => 'External Area',
+                'item_number' => '3.3',
+                'item_name' => 'External Facade',
+                'is_satisfied' => true,
+                'remarks' => null
+            ],
+            [
+                'checklist_id' => 3,
+                'section' => 'External Area',
+                'item_number' => '3.4',
+                'item_name' => 'Car park',
+                'is_satisfied' => true,
+                'remarks' => null
+            ],
+            [
+                'checklist_id' => 3,
+                'section' => 'External Area',
+                'item_number' => '3.5',
+                'item_name' => 'Land settlement',
+                'is_satisfied' => false,
+                'remarks' => 'N/A'
+            ],
+            
+            // Internal Area checks for checklist 3
+            [
+                'checklist_id' => 3,
+                'section' => 'Internal Area',
+                'item_number' => '4.1',
+                'item_name' => 'Door & window',
+                'is_satisfied' => true,
+                'remarks' => null
+            ],
+            [
+                'checklist_id' => 3,
+                'section' => 'Internal Area',
+                'item_number' => '4.2',
+                'item_name' => 'Staircase',
+                'is_satisfied' => true,
+                'remarks' => null
+            ],
+            [
+                'checklist_id' => 3,
+                'section' => 'Internal Area',
+                'item_number' => '4.3',
+                'item_name' => 'Toilet',
+                'is_satisfied' => true,
+                'remarks' => null
+            ],
+        ];
+        
+        foreach ($conditionChecks as $check) {
+            DB::table('condition_checks')->insert(array_merge($check, [
+                'created_at' => now(),
+                'updated_at' => now()
+            ]));
+        }
+        
+        // Seed Property Improvements
+        $propertyImprovements = [
+            [
+                'checklist_id' => 3,
+                'item_number' => '5.4',
+                'improvement_type' => 'Equipment Replacement',
+                'sub_type' => 'Air condition/Chiller System/Air Handling Unit ("AHU")',
+                'approval_date' => Carbon::parse('2022-12-14'),
+                'scope_of_work' => 'Proposed Total Replacement and Disposal of one (1) unit of Air Handling Unit (AHU) for Cardiac Operation Theatre at 1st floor Block B',
+                'status' => 'completed'
+            ],
+            [
+                'checklist_id' => 3,
+                'item_number' => '5.1',
+                'improvement_type' => 'Development',
+                'sub_type' => null,
+                'approval_date' => null,
+                'scope_of_work' => null,
+                'status' => 'not_applicable'
+            ],
+            [
+                'checklist_id' => 3,
+                'item_number' => '5.2',
+                'improvement_type' => 'Renovation',
+                'sub_type' => null,
+                'approval_date' => null,
+                'scope_of_work' => null,
+                'status' => 'not_applicable'
+            ],
+        ];
+        
+        foreach ($propertyImprovements as $improvement) {
+            DB::table('property_improvements')->insert(array_merge($improvement, [
                 'created_at' => now(),
                 'updated_at' => now()
             ]));

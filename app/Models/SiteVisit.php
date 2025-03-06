@@ -17,12 +17,13 @@ class SiteVisit extends Model
      */
     protected $fillable = [
         'property_id',
+        'checklist_id',
         'date_visit',
         'time_visit',
         'inspector_name',
         'notes',
         'attachment',
-        'status',
+        'status'
     ];
 
     /**
@@ -32,6 +33,7 @@ class SiteVisit extends Model
      */
     protected $casts = [
         'date_visit' => 'date',
+        'time_visit' => 'datetime',
     ];
 
     /**
@@ -40,6 +42,14 @@ class SiteVisit extends Model
     public function property()
     {
         return $this->belongsTo(Property::class);
+    }
+
+    /**
+     * Get the checklist associated with this site visit.
+     */
+    public function checklist()
+    {
+        return $this->belongsTo(Checklist::class);
     }
     
     /**
@@ -72,5 +82,98 @@ class SiteVisit extends Model
         }
         
         return asset('storage/' . $this->attachment);
+    }
+
+    /**
+     * Check if the site visit is scheduled.
+     */
+    public function isScheduled()
+    {
+        return $this->status === 'scheduled';
+    }
+    
+    /**
+     * Check if the site visit is completed.
+     */
+    public function isCompleted()
+    {
+        return $this->status === 'completed';
+    }
+    
+    /**
+     * Check if the site visit is cancelled.
+     */
+    public function isCancelled()
+    {
+        return $this->status === 'cancelled';
+    }
+    
+    /**
+     * Check if the site visit is in the past.
+     */
+    public function isPast()
+    {
+        return $this->date_visit->isPast();
+    }
+    
+    /**
+     * Check if the site visit is in the future.
+     */
+    public function isFuture()
+    {
+        return $this->date_visit->isFuture();
+    }
+    
+    /**
+     * Check if the site visit is today.
+     */
+    public function isToday()
+    {
+        return $this->date_visit->isToday();
+    }
+    
+    /**
+     * Scope a query to only include scheduled site visits.
+     */
+    public function scopeScheduled($query)
+    {
+        return $query->where('status', 'scheduled');
+    }
+    
+    /**
+     * Scope a query to only include completed site visits.
+     */
+    public function scopeCompleted($query)
+    {
+        return $query->where('status', 'completed');
+    }
+    
+    /**
+     * Scope a query to only include upcoming site visits.
+     */
+    public function scopeUpcoming($query)
+    {
+        return $query->where('date_visit', '>=', now()->toDateString())
+                    ->where('status', 'scheduled')
+                    ->orderBy('date_visit', 'asc');
+    }
+    
+    /**
+     * Get formatted visit date and time.
+     */
+    public function getFormattedVisitDateTimeAttribute()
+    {
+        return $this->date_visit->format('d/m/Y') . ' at ' . 
+               date('h:i A', strtotime($this->time_visit));
+    }
+
+    /**
+     * Check if this site visit has an attachment.
+     *
+     * @return bool
+     */
+    public function hasAttachment()
+    {
+        return !empty($this->attachment);
     }
 }

@@ -250,6 +250,42 @@
                     :href="route('site-visits.index')"
                     color="bg-green-100"
                 />
+
+                <!-- NEW MODULE 1: Documentation Items -->
+                <x-dashboard-card
+                    title="Documentation Items"
+                    icon="document"
+                    :count="$documentationItemsCount ?? 0"
+                    :href="route('documentation-items.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- NEW MODULE 2: Tenant Approvals -->
+                <x-dashboard-card
+                    title="Tenant Approvals"
+                    icon="check-circle"
+                    :count="$tenantApprovalsCount ?? 0"
+                    :href="route('tenant-approvals.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- NEW MODULE 3: Condition Checks -->
+                <x-dashboard-card
+                    title="Condition Checks"
+                    icon="clipboard-list"
+                    :count="$conditionChecksCount ?? 0"
+                    :href="route('condition-checks.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- NEW MODULE 4: Property Improvements -->
+                <x-dashboard-card
+                    title="Property Improvements"
+                    icon="sparkles"
+                    :count="$propertyImprovementsCount ?? 0"
+                    :href="route('property-improvements.index')"
+                    color="bg-green-100"
+                />
             </div>
         </div>
     </div>

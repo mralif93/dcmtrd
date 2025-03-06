@@ -51,7 +51,7 @@
 
                         <div class="mb-4">
                             <label for="approval_date" class="block text-sm font-medium text-gray-700">{{ __('Approval Date') }}</label>
-                            <input type="date" name="approval_date" id="approval_date" value="{{ old('approval_date', $checklist->approval_date->format('Y-m-d')) }}" class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
+                            <input type="date" name="approval_date" id="approval_date" value="{{ old('approval_date', $checklist->approval_date ? $checklist->approval_date->format('Y-m-d') : '') }}" class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
                             @error('approval_date')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
