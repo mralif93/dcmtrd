@@ -217,6 +217,42 @@
                     :href="route('site-visits-info.index')"
                     color="bg-blue-100"
                 />
+
+                <!-- Documentation Items -->
+                <x-dashboard-card
+                    title="Documentation Items"
+                    icon="document-duplicate"
+                    :count="$documentationItemsCount"
+                    :href="route('documentation-items-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Tenant Approvals -->
+                <x-dashboard-card
+                    title="Tenant Approvals"
+                    icon="shield-check"
+                    :count="$tenantApprovalsCount"
+                    :href="route('tenant-approvals-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Condition Checks -->
+                <x-dashboard-card
+                    title="Condition Checks"
+                    icon="clipboard-check"
+                    :count="$conditionChecksCount"
+                    :href="route('condition-checks-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Property Improvements -->
+                <x-dashboard-card
+                    title="Property Improvements"
+                    icon="home-modern"
+                    :count="$propertyImprovementsCount"
+                    :href="route('property-improvements-info.index')"
+                    color="bg-blue-100"
+                />
             </div>
         </div>
     </div>

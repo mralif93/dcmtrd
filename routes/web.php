@@ -68,6 +68,10 @@ use App\Http\Controllers\User\UserLeaseController;
 use App\Http\Controllers\User\UserChecklistController;
 use App\Http\Controllers\User\UserFinancialController;
 use App\Http\Controllers\User\UserSiteVisitController;
+use App\Http\Controllers\User\UserDocumentationItemController;
+use App\Http\Controllers\User\UserTenantApprovalController;
+use App\Http\Controllers\User\UserConditionCheckController;
+use App\Http\Controllers\User\UserPropertyImprovementController;
 
 // Main
 Route::get('/', function () {
@@ -130,18 +134,6 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::patch('/admin/compliance-covenants/{id}/restore', [ComplianceCovenantController::class, 'restore'])->name('compliance-covenants.restore');
     Route::delete('/admin/compliance-covenants/{id}/force-delete', [ComplianceCovenantController::class, 'forceDelete'])->name('compliance-covenants.force-delete');
 
-    Route::resource('/admin/documentation-items', DocumentationItemController::class);
-    Route::resource('/admin/tenant-approvals', TenantApprovalController::class);
-    Route::resource('/admin/condition-checks', ConditionCheckController::class);
-    Route::resource('/admin/property-improvements', PropertyImprovementController::class);
-
-    // Additional
-    Route::prefix('/admin/tenant-approvals')->name('tenant-approvals.')->group(function () {
-        Route::post('{tenantApproval}/approve-by-od', [TenantApprovalController::class, 'approveByOD'])->name('approve-by-od');
-        Route::post('{tenantApproval}/verify-by-ld', [TenantApprovalController::class, 'verifyByLD'])->name('verify-by-ld');
-        Route::post('{tenantApproval}/submit-to-ld', [TenantApprovalController::class, 'submitToLD'])->name('submit-to-ld');
-    });
-
     //  REITs
     Route::resource('/admin/banks', BankController::class);
     Route::resource('/admin/financial-types', FinancialTypeController::class);
@@ -153,28 +145,29 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::resource('/admin/leases', LeaseController::class);
     Route::resource('/admin/financials', FinancialController::class);
     Route::resource('/admin/site-visits', SiteVisitController::class);
+    Route::resource('/admin/documentation-items', DocumentationItemController::class);
+    Route::resource('/admin/tenant-approvals', TenantApprovalController::class);
+    Route::resource('/admin/condition-checks', ConditionCheckController::class);
+    Route::resource('/admin/property-improvements', PropertyImprovementController::class);
 
-    // Additional Property-specific Routes
+    // Additional
     Route::prefix('/admin/properties')->name('properties.')->group(function () {
-        // Tenants listing for a specific property
-        Route::get('{property}/tenants', [PropertyController::class, 'tenants'])
-            ->name('tenants');
-        
-        // Checklists listing for a specific property
-        Route::get('{property}/checklists', [PropertyController::class, 'checklists'])
-            ->name('checklists');
-        
-        // Site Visits listing for a specific property
-        Route::get('{property}/site-visits', [PropertyController::class, 'siteVisits'])
-            ->name('site-visits');
+        Route::get('{property}/tenants', [PropertyController::class, 'tenants'])->name('tenants');
+        Route::get('{property}/checklists', [PropertyController::class, 'checklists'])->name('checklists');
+        Route::get('{property}/site-visits', [PropertyController::class, 'siteVisits'])->name('site-visits');
     });
 
+    // Additional
     Route::prefix('/admin/site-visits')->name('site-visits.')->group(function () {
-        Route::get('{site_visit}/download', [SiteVisitController::class, 'downloadAttachment'])
-            ->name('download');
+        Route::get('{site_visit}/download', [SiteVisitController::class, 'downloadAttachment'])->name('download');
     });
 
-    
+    // Additional
+    Route::prefix('/admin/tenant-approvals')->name('tenant-approvals.')->group(function () {
+        Route::post('{tenantApproval}/approve-by-od', [TenantApprovalController::class, 'approveByOD'])->name('approve-by-od');
+        Route::post('{tenantApproval}/verify-by-ld', [TenantApprovalController::class, 'verifyByLD'])->name('verify-by-ld');
+        Route::post('{tenantApproval}/submit-to-ld', [TenantApprovalController::class, 'submitToLD'])->name('submit-to-ld');
+    });
 });
 
 // Default user route
@@ -205,6 +198,10 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::resource('/user/checklists-info', UserChecklistController::class);
     Route::resource('/user/financials-info', UserFinancialController::class);
     Route::resource('/user/site-visits-info', UserSiteVisitController::class);
+    Route::resource('/user/documentation-items-info', UserDocumentationItemController::class);
+    Route::resource('/user/tenant-approvals-info', UserTenantApprovalController::class);
+    Route::resource('/user/condition-checks-info', UserConditionCheckController::class);
+    Route::resource('/user/property-improvements-info', UserPropertyImprovementController::class);
 
     // Additional custom routes
     Route::prefix('/user/leases-info')->name('leases-info.')->group(function () {
