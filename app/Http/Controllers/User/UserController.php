@@ -49,7 +49,11 @@ class UserController extends Controller
                     (SELECT COUNT(*) FROM tenants) AS tenants_count,
                     (SELECT COUNT(*) FROM leases) AS leases_count,
                     (SELECT COUNT(*) FROM financials) AS financials_count,
-                    (SELECT COUNT(*) FROM site_visits) AS site_visits_count
+                    (SELECT COUNT(*) FROM site_visits) AS site_visits_count,
+                    (SELECT COUNT(*) FROM documentation_items) AS documentation_items_count,
+                    (SELECT COUNT(*) FROM tenant_approvals) AS tenant_approvals_count,
+                    (SELECT COUNT(*) FROM condition_checks) AS condition_checks_count,
+                    (SELECT COUNT(*) FROM property_improvements) AS property_improvements_count
             ");
             return (array) $result[0];
         });
@@ -79,6 +83,10 @@ class UserController extends Controller
             'leasesCount' => $counts['leases_count'],
             'financialsCount' => $counts['financials_count'],
             'siteVisitsCount' => $counts['site_visits_count'],
+            'documentationItemsCount' => $counts['documentation_items_count'],
+            'tenantApprovalsCount' => $counts['tenant_approvals_count'],
+            'conditionChecksCount' => $counts['condition_checks_count'],
+            'propertyImprovementsCount' => $counts['property_improvements_count'],
         ]);
     }
 }

@@ -79,4 +79,96 @@ class Property extends Model
     {
         return $this->hasMany(SiteVisit::class);
     }
+
+    /**
+     * Get active tenants for this property.
+     */
+    public function activeTenantsWithLeases()
+    {
+        return $this->tenants()
+            ->where('status', 'active')
+            ->with(['leases' => function($query) {
+                $query->where('start_date', '<=', now())
+                      ->where('end_date', '>=', now())
+                      ->where('status', 'active');
+            }]);
+    }
+    
+    /**
+     * Get latest checklist by type.
+     */
+    public function latestChecklistByType($type)
+    {
+        return $this->checklists()
+            ->where('type', $type)
+            ->latest('approval_date')
+            ->first();
+    }
+    
+    /**
+     * Get documentation checklist.
+     */
+    public function documentationChecklist()
+    {
+        return $this->latestChecklistByType('documentation');
+    }
+    
+    /**
+     * Get tenant checklist.
+     */
+    public function tenantChecklist()
+    {
+        return $this->latestChecklistByType('tenant');
+    }
+    
+    /**
+     * Get condition checklist.
+     */
+    public function conditionChecklist()
+    {
+        return $this->latestChecklistByType('condition');
+    }
+    
+    /**
+     * Get improvement checklist.
+     */
+    public function improvementChecklist()
+    {
+        return $this->latestChecklistByType('improvement');
+    }
+    
+    /**
+     * Get all documentation items through checklists.
+     */
+    public function getAllDocumentationItems()
+    {
+        return DocumentationItem::whereIn('checklist_id', $this->checklists()->pluck('id'));
+    }
+    
+    /**
+     * Get upcoming site visits.
+     */
+    public function upcomingSiteVisits()
+    {
+        return $this->siteVisits()
+            ->where('date_visit', '>=', now())
+            ->where('status', 'scheduled')
+            ->orderBy('date_visit', 'asc');
+    }
+    
+    /**
+     * Get the full address of the property.
+     */
+    public function getFullAddressAttribute()
+    {
+        return "{$this->address}, {$this->city}, {$this->state}, {$this->country}, {$this->postal_code}";
+    }
+    
+    /**
+     * Check if property has active tenants.
+     */
+    public function hasActiveTenants()
+    {
+        return $this->tenants()->where('status', 'active')->exists();
+    }
 }
