@@ -1,8 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create Documentation Item') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Create Documentation Item') }}
+            </h2>
+            <a href="{{ route('documentation-items-info.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                &larr; Back to List
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-12">
@@ -30,95 +35,93 @@
                 </div>
             @endif
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <form method="POST" action="{{ route('documentation-items-info.store') }}">
-                        @csrf
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <form action="{{ route('documentation-items-info.store') }}" method="POST">
+                    @csrf
 
-                        <!-- Checklist ID -->
-                        <div class="mb-4">
-                            <label for="checklist_id" class="block font-medium text-sm text-gray-700">{{ __('Checklist') }}</label>
-                            <select id="checklist_id" name="checklist_id" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full" required>
-                                <option value="">Select Checklist</option>
-                                @foreach ($checklists as $checklist)
-                                    <option value="{{ $checklist->id }}" {{ old('checklist_id') == $checklist->id ? 'selected' : '' }}>
-                                        ID: {{ $checklist->id }} - {{ $checklist->description ?? 'No description' }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('checklist_id')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <div class="mb-4">
+                        <label for="checklist_id" class="block text-sm font-medium text-gray-700">Checklist</label>
+                        <select id="checklist_id" name="checklist_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option value="">Select Checklist</option>
+                            @foreach ($checklists as $checklist)
+                                <option value="{{ $checklist->id }}" {{ old('checklist_id') == $checklist->id ? 'selected' : '' }}>
+                                    ID: {{ $checklist->id }} - {{ Str::limit($checklist->description ?? 'No description', 50) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('checklist_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- Item Number -->
-                        <div class="mb-4">
-                            <label for="item_number" class="block font-medium text-sm text-gray-700">{{ __('Item Number') }}</label>
-                            <input id="item_number" type="text" name="item_number" value="{{ old('item_number') }}" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full" required>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="item_number" class="block text-sm font-medium text-gray-700">Item Number</label>
+                            <input type="text" id="item_number" name="item_number" value="{{ old('item_number') }}" placeholder="e.g., 1.1, 1.2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             @error('item_number')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Document Type -->
-                        <div class="mb-4">
-                            <label for="document_type" class="block font-medium text-sm text-gray-700">{{ __('Document Type') }}</label>
-                            <input id="document_type" type="text" name="document_type" value="{{ old('document_type') }}" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full" required>
+                        <div>
+                            <label for="document_type" class="block text-sm font-medium text-gray-700">Document Type</label>
+                            <input type="text" id="document_type" name="document_type" value="{{ old('document_type') }}" placeholder="e.g., Title Deed, Trust Agreement" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             @error('document_type')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+                    </div>
 
-                        <!-- Description -->
-                        <div class="mb-4">
-                            <label for="description" class="block font-medium text-sm text-gray-700">{{ __('Description') }}</label>
-                            <textarea id="description" name="description" rows="3" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full">{{ old('description') }}</textarea>
-                            @error('description')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <div class="mb-4">
+                        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea id="description" name="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">{{ old('description') }}</textarea>
+                        @error('description')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- Validity Date -->
-                        <div class="mb-4">
-                            <label for="validity_date" class="block font-medium text-sm text-gray-700">{{ __('Validity Date') }}</label>
-                            <input id="validity_date" type="date" name="validity_date" value="{{ old('validity_date') }}" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="validity_date" class="block text-sm font-medium text-gray-700">Validity Date</label>
+                            <input type="date" id="validity_date" name="validity_date" value="{{ old('validity_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             @error('validity_date')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Location -->
-                        <div class="mb-4">
-                            <label for="location" class="block font-medium text-sm text-gray-700">{{ __('Location') }}</label>
-                            <input id="location" type="text" name="location" value="{{ old('location') }}" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full">
+                        <div>
+                            <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+                            <input type="text" id="location" name="location" value="{{ old('location') }}" placeholder="e.g., LD's room" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             @error('location')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+                    </div>
 
-                        <!-- Is Prefilled -->
-                        <div class="mb-4">
-                            <div class="flex items-center">
-                                <input id="is_prefilled" name="is_prefilled" type="checkbox" value="1" {{ old('is_prefilled') ? 'checked' : '' }} class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                                <label for="is_prefilled" class="ml-2 block text-sm text-gray-900">
-                                    {{ __('Prefilled by Legal Department') }}
-                                </label>
-                            </div>
-                            @error('is_prefilled')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                    <div class="mb-4 pt-2">
+                        <div class="flex items-center">
+                            <input id="is_prefilled" name="is_prefilled" type="checkbox" value="1" {{ old('is_prefilled') ? 'checked' : '' }} class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="is_prefilled" class="ml-2 block text-sm text-gray-900">
+                                Prefilled by Legal Department
+                            </label>
                         </div>
+                        <p class="text-gray-500 text-xs mt-1">Check this if the document details have been prefilled by the Legal Department before the site visit.</p>
+                        @error('is_prefilled')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <div class="flex items-center justify-end mt-4">
-                            <a href="{{ route('documentation-items-info.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-black uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150 mr-2">
-                                {{ __('Cancel') }}
-                            </a>
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                {{ __('Create') }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
+                        <a href="{{ route('documentation-items-info.index') }}" 
+                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            Cancel
+                        </a>
+                        <button type="submit" 
+                        class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                            Create
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

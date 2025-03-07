@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DocumentationItem;
 use App\Models\Checklist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class UserDocumentationItemController extends Controller
@@ -13,11 +14,36 @@ class UserDocumentationItemController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $documentationItems = DocumentationItem::with('checklist')->get();
+        $query = DocumentationItem::with(['checklist']);
         
-        return view('user.documentation-items.index', compact('documentationItems'));
+        // Search functionality
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where('document_type', 'like', "%{$search}%")
+                  ->orWhere('item_number', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%");
+        }
+        
+        // Filter by checklist
+        if ($request->has('checklist_id') && !empty($request->checklist_id)) {
+            $query->where('checklist_id', $request->checklist_id);
+        }
+        
+        // Filter by prefilled status
+        if ($request->has('is_prefilled') && $request->is_prefilled != 'all') {
+            $isPrefilled = $request->is_prefilled === 'yes';
+            $query->where('is_prefilled', $isPrefilled);
+        }
+        
+        $documentationItems = $query->orderBy('checklist_id')->orderBy('item_number')->paginate(10);
+        
+        // Get all checklists for the filter dropdown
+        $checklists = Checklist::where('type', 'documentation')->orderBy('id')->get();
+        
+        return view('user.documentation-items.index', compact('documentationItems', 'checklists'));
     }
 
     /**
@@ -25,7 +51,8 @@ class UserDocumentationItemController extends Controller
      */
     public function create()
     {
-        $checklists = Checklist::where('type', 'documentation')->get();
+        // Only show documentation type checklists
+        $checklists = Checklist::where('type', 'documentation')->orderBy('id')->get();
         
         return view('user.documentation-items.create', compact('checklists'));
     }
@@ -42,7 +69,7 @@ class UserDocumentationItemController extends Controller
             'description' => 'nullable|string',
             'validity_date' => 'nullable|date',
             'location' => 'nullable|string|max:255',
-            'is_prefilled' => 'boolean',
+            'is_prefilled' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -51,10 +78,23 @@ class UserDocumentationItemController extends Controller
                 ->withInput();
         }
 
-        $documentationItem = DocumentationItem::create($request->all());
-
-        return redirect()->route('documentation-items-info.show', $documentationItem)
-            ->with('success', 'Documentation item created successfully.');
+        // Adjust the is_prefilled value (checkboxes come in as "on" or null)
+        $data = $request->all();
+        $data['is_prefilled'] = isset($data['is_prefilled']) ? true : false;
+        
+        try {
+            DB::beginTransaction();
+            
+            $documentationItem = DocumentationItem::create($data);
+            
+            DB::commit();
+            
+            return redirect()->route('documentation-items-info.show', $documentationItem)
+                ->with('success', 'Documentation item created successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()->withErrors(['error' => 'Failed to create documentation item: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -63,6 +103,8 @@ class UserDocumentationItemController extends Controller
     public function show(DocumentationItem $documentation_items_info)
     {
         $documentationItem = $documentation_items_info;
+        $documentationItem->load('checklist.property');
+        
         return view('user.documentation-items.show', compact('documentationItem'));
     }
 
@@ -72,7 +114,8 @@ class UserDocumentationItemController extends Controller
     public function edit(DocumentationItem $documentation_items_info)
     {
         $documentationItem = $documentation_items_info;
-        $checklists = Checklist::where('type', 'documentation')->get();
+        $checklists = Checklist::where('type', 'documentation')->orderBy('id')->get();
+        
         return view('user.documentation-items.edit', compact('documentationItem', 'checklists'));
     }
 
@@ -89,7 +132,7 @@ class UserDocumentationItemController extends Controller
             'description' => 'nullable|string',
             'validity_date' => 'nullable|date',
             'location' => 'nullable|string|max:255',
-            'is_prefilled' => 'boolean',
+            'is_prefilled' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -98,10 +141,23 @@ class UserDocumentationItemController extends Controller
                 ->withInput();
         }
 
-        $documentationItem->update($request->all());
-
-        return redirect()->route('documentation-items-info.show', $documentationItem)
-            ->with('success', 'Documentation item updated successfully.');
+        // Adjust the is_prefilled value (checkboxes come in as "on" or null)
+        $data = $request->all();
+        $data['is_prefilled'] = isset($data['is_prefilled']) ? true : false;
+        
+        try {
+            DB::beginTransaction();
+            
+            $documentationItem->update($data);
+            
+            DB::commit();
+            
+            return redirect()->route('documentation-items-info.show', $documentationItem)
+                ->with('success', 'Documentation item updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()->withErrors(['error' => 'Failed to update documentation item: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -110,9 +166,19 @@ class UserDocumentationItemController extends Controller
     public function destroy(DocumentationItem $documentation_items_info)
     {
         $documentationItem = $documentation_items_info;
-        $documentationItem->delete();
-
-        return redirect()->route('documentation-items-info.index')
-            ->with('success', 'Documentation item deleted successfully.');
+        
+        try {
+            DB::beginTransaction();
+            
+            $documentationItem->delete();
+            
+            DB::commit();
+            
+            return redirect()->route('documentation-items-info.index')
+                ->with('success', 'Documentation item deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Failed to delete documentation item: ' . $e->getMessage()]);
+        }
     }
 }
