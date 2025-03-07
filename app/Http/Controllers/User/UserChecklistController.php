@@ -6,128 +6,159 @@ use App\Http\Controllers\Controller;
 use App\Models\Checklist;
 use App\Models\Property;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class UserChecklistController extends Controller
 {
     /**
-     * Display a listing of the checklists.
-     *
-     * @return \Illuminate\Http\Response
+     * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $checklists = Checklist::with('property')->get();
-        return view('user.checklists.index', compact('checklists'));
+        $query = Checklist::with(['property']);
+        
+        // Search and filter functionality
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->whereHas('property', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })->orWhere('type', 'like', "%{$search}%")
+              ->orWhere('description', 'like', "%{$search}%");
+        }
+        
+        if ($request->has('status') && $request->status != 'all') {
+            $query->where('status', $request->status);
+        }
+        
+        if ($request->has('type') && $request->type != 'all') {
+            $query->where('type', $request->type);
+        }
+        
+        $checklists = $query->orderBy('created_at', 'desc')->paginate(10);
+        
+        // Get all unique statuses and types for filter dropdowns
+        $statuses = Checklist::distinct()->pluck('status')->toArray();
+        $types = Checklist::distinct()->pluck('type')->toArray();
+        
+        return view('user.checklists.index', compact('checklists', 'statuses', 'types'));
     }
 
     /**
-     * Show the form for creating a new checklist.
-     *
-     * @return \Illuminate\Http\Response
+     * Show the form for creating a new resource.
      */
     public function create()
     {
         $properties = Property::where('status', 'active')->get();
-        return view('user.checklists.create', compact('properties'));
+        $departments = ['LD', 'OD', 'FM', 'CS']; // Example departments
+        
+        return view('user.checklists.create', compact('properties', 'departments'));
     }
 
     /**
-     * Store a newly created checklist in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'property_id' => 'required|exists:properties,id',
-            'type' => 'required|string|max:255',
-            'description' => 'required|string',
-            'approval_date' => 'required|date',
-            'status' => 'required|in:pending,approved,rejected',
+            'type' => 'required|string',
+            'description' => 'nullable|string',
+            'approval_date' => 'nullable|date',
+            'status' => 'required|string',
+            'assigned_department' => 'required|string',
+            'verifying_department' => 'nullable|string',
+            'response_time_days' => 'nullable|integer',
+            'prepared_by' => 'nullable|string',
+            'prepared_date' => 'nullable|date',
         ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+        
+        try {
+            DB::beginTransaction();
+            
+            $checklist = Checklist::create($validated);
+            
+            DB::commit();
+            
+            return redirect()->route('checklists.index')
+                ->with('success', 'Checklist created successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()->withErrors(['error' => 'Failed to create checklist: ' . $e->getMessage()]);
         }
-
-        $checklist = Checklist::create($request->all());
-
-        return redirect()->route('checklists-info.show', $checklist)
-            ->with('success', 'Checklist created successfully.');
     }
 
     /**
-     * Display the specified checklist.
-     *
-     * @param  \App\Models\Checklist  $checklist
-     * @return \Illuminate\Http\Response
+     * Display the specified resource.
      */
     public function show(Checklist $checklists_info)
     {
         $checklist = $checklists_info;
-        $checklist->load('property');
+        $checklist->load(['property', 'documentationItems', 'tenantApprovals', 'conditionChecks', 'propertyImprovements']);
+        
         return view('user.checklists.show', compact('checklist'));
     }
 
     /**
-     * Show the form for editing the specified checklist.
-     *
-     * @param  \App\Models\Checklist  $checklist
-     * @return \Illuminate\Http\Response
+     * Show the form for editing the specified resource.
      */
     public function edit(Checklist $checklists_info)
     {
         $checklist = $checklists_info;
         $properties = Property::where('status', 'active')->get();
-        return view('user.checklists.edit', compact('checklist', 'properties'));
+        $departments = ['LD', 'OD', 'FM', 'CS']; // Example departments
+        
+        return view('user.checklists.edit', compact('checklist', 'properties', 'departments'));
     }
 
     /**
-     * Update the specified checklist in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Checklist  $checklist
-     * @return \Illuminate\Http\Response
+     * Update the specified resource in storage.
      */
     public function update(Request $request, Checklist $checklists_info)
     {
         $checklist = $checklists_info;
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'property_id' => 'required|exists:properties,id',
-            'type' => 'required|string|max:255',
-            'description' => 'required|string',
-            'approval_date' => 'required|date',
-            'status' => 'required|in:pending,approved,rejected',
+            'type' => 'required|string',
+            'description' => 'nullable|string',
+            'approval_date' => 'nullable|date',
+            'status' => 'required|string',
+            'assigned_department' => 'required|string',
+            'verifying_department' => 'nullable|string',
+            'response_time_days' => 'nullable|integer',
+            'prepared_by' => 'nullable|string',
+            'prepared_date' => 'nullable|date',
+            'confirmed_by' => 'nullable|string',
+            'confirmed_date' => 'nullable|date',
         ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+        
+        try {
+            DB::beginTransaction();
+            
+            $checklist->update($validated);
+            
+            DB::commit();
+            
+            return redirect()->route('checklists.index')
+                ->with('success', 'Checklist updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()->withErrors(['error' => 'Failed to update checklist: ' . $e->getMessage()]);
         }
-
-        $checklist->update($request->all());
-
-        return redirect()->route('checklists-info.show', $checklist)
-            ->with('success', 'Checklist updated successfully.');
     }
 
     /**
-     * Remove the specified checklist from storage.
-     *
-     * @param  \App\Models\Checklist  $checklist
-     * @return \Illuminate\Http\Response
+     * Remove the specified resource from storage.
      */
     public function destroy(Checklist $checklists_info)
     {
         $checklist = $checklists_info;
-        $checklist->delete();
 
-        return redirect()->route('checklists-info.index')
-            ->with('success', 'Checklist deleted successfully.');
+        try {
+            $checklist->delete();
+            return redirect()->route('checklists.index')
+                ->with('success', 'Checklist deleted successfully.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Failed to delete checklist: ' . $e->getMessage()]);
+        }
     }
 }

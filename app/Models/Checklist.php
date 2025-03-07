@@ -10,6 +10,11 @@ class Checklist extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'property_id',
         'type',
@@ -22,9 +27,14 @@ class Checklist extends Model
         'prepared_by',
         'prepared_date',
         'confirmed_by',
-        'confirmed_date'
+        'confirmed_date',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
     protected $casts = [
         'approval_date' => 'date',
         'prepared_date' => 'date',
@@ -32,7 +42,7 @@ class Checklist extends Model
     ];
 
     /**
-     * Get the property that this checklist belongs to.
+     * Get the property that owns the checklist.
      */
     public function property()
     {
@@ -40,7 +50,7 @@ class Checklist extends Model
     }
 
     /**
-     * Get the documentation items for this checklist.
+     * Get the documentation items for the checklist.
      */
     public function documentationItems()
     {
@@ -48,7 +58,7 @@ class Checklist extends Model
     }
 
     /**
-     * Get the tenant approvals for this checklist.
+     * Get the tenant approvals for the checklist.
      */
     public function tenantApprovals()
     {
@@ -56,7 +66,7 @@ class Checklist extends Model
     }
 
     /**
-     * Get the condition checks for this checklist.
+     * Get the condition checks for the checklist.
      */
     public function conditionChecks()
     {
@@ -64,82 +74,18 @@ class Checklist extends Model
     }
 
     /**
-     * Get the property improvements for this checklist.
+     * Get the property improvements for the checklist.
      */
     public function propertyImprovements()
     {
         return $this->hasMany(PropertyImprovement::class);
     }
-    
+
     /**
-     * Get the site visits associated with this checklist.
+     * Get the site visits for the checklist.
      */
     public function siteVisits()
     {
         return $this->hasMany(SiteVisit::class);
-    }
-    
-    /**
-     * Get external area condition checks.
-     */
-    public function externalConditionChecks()
-    {
-        return $this->conditionChecks()->where('section', 'External Area');
-    }
-    
-    /**
-     * Get internal area condition checks.
-     */
-    public function internalConditionChecks()
-    {
-        return $this->conditionChecks()->where('section', 'Internal Area');
-    }
-    
-    /**
-     * Check if the checklist has been prepared.
-     */
-    public function isPrepared()
-    {
-        return !is_null($this->prepared_by) && !is_null($this->prepared_date);
-    }
-    
-    /**
-     * Check if the checklist has been confirmed.
-     */
-    public function isConfirmed()
-    {
-        return !is_null($this->confirmed_by) && !is_null($this->confirmed_date);
-    }
-    
-    /**
-     * Check if the checklist is a documentation checklist.
-     */
-    public function isDocumentationChecklist()
-    {
-        return $this->type === 'documentation';
-    }
-    
-    /**
-     * Check if the checklist is a tenant checklist.
-     */
-    public function isTenantChecklist()
-    {
-        return $this->type === 'tenant';
-    }
-    
-    /**
-     * Check if the checklist is a condition checklist.
-     */
-    public function isConditionChecklist()
-    {
-        return $this->type === 'condition';
-    }
-    
-    /**
-     * Check if the checklist is an improvement checklist.
-     */
-    public function isImprovementChecklist()
-    {
-        return $this->type === 'improvement';
     }
 }

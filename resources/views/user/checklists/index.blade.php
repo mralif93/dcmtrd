@@ -2,9 +2,9 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Checklists List') }}
+                {{ __('Checklists') }}
             </h2>
-            <a href="{{ route('checklists-info.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <a href="{{ route('checklists-info.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
                 Add New Checklist
             </a>
         </div>
@@ -12,7 +12,8 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
+
+            @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -35,7 +36,7 @@
                     Search & Filters
                 </h3>
 
-                <form method="GET" action="{{ route('checklists-info.index') }}">
+                <form method="GET" action="{{ route('checklists.index') }}">
                     <div class="space-y-4">
                         <div class="relative">
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -46,22 +47,36 @@
                             <input 
                                 type="text" 
                                 name="search" 
-                                value="{{ $search ?? '' }}" 
-                                placeholder="Search by property, type, status..." 
+                                value="{{ request('search') }}" 
+                                placeholder="Search by property, type or description..." 
                                 class="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out" 
                             />
                         </div>
                         
-                        <div class="relative">
-                            <select 
-                                name="status" 
-                                class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md transition duration-150 ease-in-out"
-                            >
-                                <option value="all" {{ ($status ?? '') == 'all' ? 'selected' : '' }}>All Statuses</option>
-                                <option value="approved" {{ ($status ?? '') == 'approved' ? 'selected' : '' }}>Approved</option>
-                                <option value="pending" {{ ($status ?? '') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="rejected" {{ ($status ?? '') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                            </select>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="relative">
+                                <select 
+                                    name="status" 
+                                    class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md transition duration-150 ease-in-out"
+                                >
+                                    <option value="all">All Statuses</option>
+                                    @foreach($statuses as $statusOption)
+                                        <option value="{{ $statusOption }}" {{ request('status') == $statusOption ? 'selected' : '' }}>{{ ucfirst($statusOption) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+                            <div class="relative">
+                                <select 
+                                    name="type" 
+                                    class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md transition duration-150 ease-in-out"
+                                >
+                                    <option value="all">All Types</option>
+                                    @foreach($types as $typeOption)
+                                        <option value="{{ $typeOption }}" {{ request('type') == $typeOption ? 'selected' : '' }}>{{ ucfirst($typeOption) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                         
                         <div class="flex justify-end items-center pt-2 space-x-3">
@@ -75,9 +90,9 @@
                                 Apply Filters
                             </button>
                             
-                            @if(isset($search) || ($status ?? '') != 'all')
+                            @if(request('search') || request('status') != 'all' || request('type') != 'all')
                                 <a 
-                                    href="{{ route('checklists-info.index') }}" 
+                                    href="{{ route('checklists.index') }}" 
                                     class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -94,7 +109,7 @@
             <div class="bg-white shadow rounded-lg p-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                     Checklists List
                 </h3>
@@ -104,45 +119,51 @@
                             <tr>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Property</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Type</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Description</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Approval Date</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Department</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Approval Date</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            @forelse ($checklists as $checklist)
+                            @forelse($checklists as $checklist)
                                 <tr>
-                                    <td class="px-6 py-4 font-medium text-gray-900">{{ $checklist->property->name }}</td>
-                                    <td class="px-6 py-4">{{ $checklist->type }}</td>
-                                    <td class="px-6 py-4">
-                                        {{ \Illuminate\Support\Str::limit($checklist->description, 50) }}
+                                    <td class="px-6 py-4 font-medium text-gray-900">
+                                        {{ $checklist->property->name ?? 'N/A' }}
                                     </td>
-                                    <td class="px-6 py-4">{{ $checklist->approval_date->format('M d, Y') }}</td>
+                                    <td class="px-6 py-4">
+                                        {{ ucfirst($checklist->type) }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {{ $checklist->assigned_department }}
+                                    </td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            {{ $checklist->status === 'approved' ? 'bg-green-100 text-green-800' : 
-                                               ($checklist->status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                            {{ $checklist->status == 'completed' ? 'bg-green-100 text-green-800' : 
+                                               ($checklist->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
                                             {{ ucfirst($checklist->status) }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
+                                        {{ $checklist->approval_date ? $checklist->approval_date->format('M d, Y') : 'N/A' }}
+                                    </td>
+                                    <td class="px-6 py-4">
                                         <div class="flex space-x-2">
-                                            <a href="{{ route('checklists-info.show', $checklist) }}" class="text-indigo-600 hover:text-indigo-900">
+                                            <a href="{{ route('checklists-info.show', $checklist->id) }}" class="text-indigo-600 hover:text-indigo-900">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                 </svg>
                                             </a>
-                                            <a href="{{ route('checklists-info.edit', $checklist) }}" class="text-yellow-600 hover:text-yellow-900">
+                                            <a href="{{ route('checklists-info.edit', $checklist->id) }}" class="text-yellow-600 hover:text-yellow-900">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 </svg>
                                             </a>
-                                            <form method="POST" action="{{ route('checklists-info.destroy', $checklist) }}" class="inline">
+                                            <form action="{{ route('checklists-info.destroy', $checklist->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this checklist?');" class="inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this checklist?')">
+                                                <button type="submit" class="text-red-600 hover:text-red-900">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                     </svg>
@@ -153,7 +174,9 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No checklists found {{ request('search') ? 'matching your search' : '' }}</td>
+                                    <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                        No checklists found {{ request('search') ? 'matching your search' : '' }}
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -161,7 +184,6 @@
                 </div>
                 
                 <!-- Pagination -->
-                @if(isset($checklists) && method_exists($checklists, 'links'))
                 <div class="mt-4">
                     {{ $checklists->links() }}
                 </div>
@@ -170,7 +192,6 @@
                 <div class="mt-2 text-sm text-gray-500">
                     Showing {{ $checklists->firstItem() ?? 0 }} to {{ $checklists->lastItem() ?? 0 }} of {{ $checklists->total() }} checklists
                 </div>
-                @endif
             </div>
         </div>
     </div>
