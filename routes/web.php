@@ -2,85 +2,86 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\User\UserController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Legal\LegalController;
-use App\Http\Controllers\Compliance\ComplianceController;
-use App\Http\Controllers\Maker\MakerController;
-use App\Http\Controllers\Approver\ApproverController;
-use App\Http\Controllers\TwoFactorController;
-
 use App\Http\Controllers\MainController;
-
-use App\Http\Controllers\Admin\UserAdminController;
-use App\Http\Controllers\Admin\IssuerController;
-use App\Http\Controllers\Admin\BondController;
-use App\Http\Controllers\Admin\RatingMovementController;
-use App\Http\Controllers\Admin\PaymentScheduleController;
-use App\Http\Controllers\Admin\RedemptionController;
-use App\Http\Controllers\Admin\CallScheduleController;
-use App\Http\Controllers\Admin\LockoutPeriodController;
-use App\Http\Controllers\Admin\TradingActivityController;
-use App\Http\Controllers\Admin\FacilityInformationController;
-use App\Http\Controllers\Admin\AnnouncementController;
-use App\Http\Controllers\Admin\RelatedDocumentController;
-use App\Http\Controllers\Admin\ChartController;
-use App\Http\Controllers\Admin\TrusteeFeeController;
-use App\Http\Controllers\Admin\ComplianceCovenantController;
-
-// REITs
-use App\Http\Controllers\Admin\FinancialTypeController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TwoFactorController;
+use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\BankController;
-use App\Http\Controllers\Admin\PortfolioTypeController;
-use App\Http\Controllers\Admin\PortfolioController;
-use App\Http\Controllers\Admin\PropertyController;
-use App\Http\Controllers\Admin\ChecklistController;
-use App\Http\Controllers\Admin\TenantController;
-use App\Http\Controllers\Admin\LeaseController;
-use App\Http\Controllers\Admin\FinancialController;
-use App\Http\Controllers\Admin\SiteVisitController;
-use App\Http\Controllers\Admin\DocumentationItemController;
-use App\Http\Controllers\Admin\TenantApprovalController;
-use App\Http\Controllers\Admin\ConditionCheckController;
-use App\Http\Controllers\Admin\PropertyImprovementController;
+use App\Http\Controllers\Admin\BondController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ChartController;
 
-use App\Http\Controllers\User\UserIssuerController;
+use App\Http\Controllers\Admin\LeaseController;
+
+use App\Http\Controllers\Legal\LegalController;
+use App\Http\Controllers\Maker\MakerController;
+use App\Http\Controllers\Admin\IssuerController;
+use App\Http\Controllers\Admin\TenantController;
+use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\User\UserBondController;
-use App\Http\Controllers\User\UserRatingMovementController;
-use App\Http\Controllers\User\UserPaymentScheduleController;
-use App\Http\Controllers\User\UserRedemptionController;
-use App\Http\Controllers\User\UserCallScheduleController;
-use App\Http\Controllers\User\UserLockoutPeriodController;
-use App\Http\Controllers\User\UserTradingActivityController;
-use App\Http\Controllers\User\UserFacilityInformationController;
-use App\Http\Controllers\User\UserAnnouncementController;
-use App\Http\Controllers\User\UserRelatedDocumentController;
+use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\User\UserChartController;
-use App\Http\Controllers\User\UserTrusteeFeeController;
-use App\Http\Controllers\User\UserComplianceCovenantController;
+use App\Http\Controllers\User\UserLeaseController;
+use App\Http\Controllers\Admin\ChecklistController;
+use App\Http\Controllers\Admin\FinancialController;
+use App\Http\Controllers\Admin\PortfolioController;
+use App\Http\Controllers\Admin\SiteVisitController;
+use App\Http\Controllers\Admin\UserAdminController;
+use App\Http\Controllers\User\UserIssuerController;
 
 // REITs
-use App\Http\Controllers\User\UserPortfolioController;
-use App\Http\Controllers\User\UserPropertyController;
 use App\Http\Controllers\User\UserTenantController;
-use App\Http\Controllers\User\UserLeaseController;
+use App\Http\Controllers\Admin\RedemptionController;
+use App\Http\Controllers\Admin\TrusteeFeeController;
+use App\Http\Controllers\Approver\ApproverController;
+use App\Http\Controllers\User\UserPropertyController;
+use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\CallScheduleController;
 use App\Http\Controllers\User\UserChecklistController;
 use App\Http\Controllers\User\UserFinancialController;
+use App\Http\Controllers\User\UserPortfolioController;
 use App\Http\Controllers\User\UserSiteVisitController;
-use App\Http\Controllers\User\UserDocumentationItemController;
-use App\Http\Controllers\User\UserTenantApprovalController;
+use App\Http\Controllers\Admin\FinancialTypeController;
+use App\Http\Controllers\Admin\LockoutPeriodController;
+use App\Http\Controllers\Admin\PortfolioTypeController;
+
+use App\Http\Controllers\User\UserRedemptionController;
+use App\Http\Controllers\User\UserTrusteeFeeController;
+use App\Http\Controllers\Admin\ConditionCheckController;
+use App\Http\Controllers\Admin\RatingMovementController;
+use App\Http\Controllers\Admin\TenantApprovalController;
+use App\Http\Controllers\Admin\PaymentScheduleController;
+use App\Http\Controllers\Admin\RelatedDocumentController;
+use App\Http\Controllers\Admin\TradingActivityController;
+use App\Http\Controllers\Compliance\ComplianceController;
+use App\Http\Controllers\User\UserAnnouncementController;
+use App\Http\Controllers\User\UserCallScheduleController;
+use App\Http\Controllers\User\UserLockoutPeriodController;
+use App\Http\Controllers\Admin\DocumentationItemController;
 use App\Http\Controllers\User\UserConditionCheckController;
+
+// REITs
+use App\Http\Controllers\User\UserRatingMovementController;
+use App\Http\Controllers\User\UserTenantApprovalController;
+use App\Http\Controllers\Admin\ComplianceCovenantController;
+use App\Http\Controllers\User\UserPaymentScheduleController;
+use App\Http\Controllers\User\UserRelatedDocumentController;
+use App\Http\Controllers\User\UserTradingActivityController;
+use App\Http\Controllers\Admin\FacilityInformationController;
+use App\Http\Controllers\Admin\PropertyImprovementController;
+use App\Http\Controllers\User\UserDocumentationItemController;
+use App\Http\Controllers\User\UserComplianceCovenantController;
+use App\Http\Controllers\User\UserFacilityInformationController;
 use App\Http\Controllers\User\UserPropertyImprovementController;
 
 // Main
-Route::get('/', function () {
-    return view('welcome');
+Route::get("/", function () {
+    return redirect()->route('login');
 });
 
 // Frontend routes
 Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
-Route::get('issuer-info/{issuer}', [MainController::class, 'info'])->name('issuer-search.show');
+// Route::get('issuer-info/{issuer}', [MainController::class, 'info'])->name('issuer-search.show');
 Route::get('security-info/{bond}', [MainController::class, 'bondInfo'])->name('security-info.show');
 Route::get('announcement/{announcement}', [MainController::class, 'announcement'])->name('announcement.show');
 Route::get('facility-info/{facilityInformation}', [MainController::class, 'facility'])->name('facility.show');
@@ -91,10 +92,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 // 2FA
-Route::middleware(['auth', 'two-factor'])->group(function() {
+Route::middleware(['auth', 'two-factor'])->group(function () {
     Route::get('/two-factor/verify', [TwoFactorController::class, 'show'])
         ->name('two-factor.show');
     Route::post('/two-factor/verify', [TwoFactorController::class, 'verify'])
@@ -107,7 +108,22 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])
         ->name('admin.dashboard');
 
-        // Bond
+    Route::get('/admin/upload', [UploadController::class, 'index'])->name('upload.index');
+    Route::post('/admin/upload/issuer', [UploadController::class, 'storeIssuer'])->name('upload.issuer');
+    // upload bond
+    Route::get('/admin/upload/bond', [UploadController::class, 'bondUploadForm'])->name('upload.bond');
+    Route::post('/admin/upload/bond', [UploadController::class, 'storeBond'])->name('store.bond');
+    // upload rating movement
+    Route::get('/admin/upload/rating-movement', [UploadController::class, 'ratingMovementUploadForm'])->name('upload.rating-movement');
+    Route::post('/admin/upload/rating-movement', [UploadController::class, 'storeRatingMovement'])->name('store.rating-movement');
+     // upload payment schedule
+     Route::get('/admin/upload/payment-schedule', [UploadController::class, 'paymentScheduleUploadForm'])->name('upload.payment-schedule');
+     Route::post('/admin/upload/payment-schedule', [UploadController::class, 'storePaymentSchedule'])->name('store.payment-schedule');
+     // upload trading activity
+     Route::get('/admin/upload/trading-activity', [UploadController::class, 'tradingActivityUploadForm'])->name('upload.trading-activity');
+     Route::post('/admin/upload/trading-activity', [UploadController::class, 'storeTradingActivity'])->name('store.trading-activity');
+
+    // Bond
     Route::resource('/admin/users', UserAdminController::class);
     Route::resource('/admin/issuers', IssuerController::class);
     Route::resource('/admin/bonds', BondController::class);
@@ -176,6 +192,11 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
         ->name('dashboard');
 
     Route::resource('/user/issuers-info', UserIssuerController::class);
+    Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
+    Route::get('issuer-info/{issuer}', [MainController::class, 'info'])->name('issuer-search.show');
+    Route::get('security-info/{bond}', [MainController::class, 'bondInfo'])->name('security-info.show');
+    Route::get('announcement/{announcement}', [MainController::class, 'announcement'])->name('announcement.show');
+    Route::get('facility-info/{facilityInformation}', [MainController::class, 'facility'])->name('facility.show');
     Route::resource('/user/bonds-info', UserBondController::class);
     Route::resource('/user/rating-movements-info', UserRatingMovementController::class);
     Route::resource('/user/payment-schedules-info', UserPaymentScheduleController::class);

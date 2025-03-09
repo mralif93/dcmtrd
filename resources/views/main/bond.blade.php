@@ -1,26 +1,26 @@
 <x-main-layout>
 	<x-slot name="header">
-		<h2 class="font-semibold text-xl text-gray-800 leading-tight">
+		<h2 class="text-xl font-semibold leading-tight text-gray-800">
 			{{ __('Security Information') }}
 		</h2>
 	</x-slot>
 
 	<div class="py-8">
-		<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
-			<h1 class="font-bold text-xl">{{ $bond->bond_sukuk_name }} - {{ $bond->sub_name }}</h1>
+		<div class="mx-auto space-y-4 max-w-7xl sm:px-6 lg:px-8">
+			<h1 class="text-xl font-bold">{{ $bond->bond_sukuk_name }} - {{ $bond->sub_name }}</h1>
 			<p class="text-grey-800 leading-light">Issuer Name: {{ $bond->issuer->issuer_name }}</p>
 		</div>
 	</div>
 
-	<div x-data="{ openSection: 'bonds' }">
-		<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4 pb-6">
+	<div x-data="{ openSection: null }">
+		<div class="pb-6 mx-auto space-y-4 max-w-7xl sm:px-6 lg:px-8">
 			<!-- Bond + Sukuk Information -->
 			<div class="bg-white shadow-sm sm:rounded-lg">
 					<button @click="openSection = openSection === 'bonds' ? null : 'bonds'" 
 						class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-						<div class="flex justify-between items-center">
+						<div class="flex items-center justify-between">
 							<h3 class="text-xl font-semibold">Bond + Sukuk Information</h3>
-							<svg class="w-6 h-6 transform transition-transform" 
+							<svg class="w-6 h-6 transition-transform transform" 
 								:class="{ 'rotate-180': openSection === 'bonds' }" 
 								fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -31,12 +31,12 @@
 						<div class="p-6 space-y-6 divide-y divide-gray-200">
 							<!-- 1. Security Information -->
 							<div class="pb-6">
-									<h4 class="text-lg font-semibold mb-4">Security Information</h4>
+									<h4 class="mb-4 text-lg font-semibold">Security Information</h4>
 									<div class="grid grid-cols-2 gap-4">
 											<div>
 													<p class="text-sm text-gray-500">Principal</p>
 													<p class="font-medium">
-															{{ optional($bond)->principal ? number_format(optional($bond)->principal, 2) : 'N/A' }}
+														{{ optional($bond)->category ?? 'N/A' }}
 													</p>
 											</div>
 											<div>
@@ -45,7 +45,7 @@
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Islamic Concept</p>
-													<p class="font-medium">{{ optional($bond)->islamic_concept ?? 'N/A' }}</p>
+													<p class="font-medium">{{ optional($bond)->principal ?? 'N/A' }}</p>
 											</div>
 											<div>
 													<p class="text-sm text-gray-500">Stock Code</p>
@@ -101,7 +101,7 @@
 
 							<!-- 2. Coupon Payment Details -->
 							<div class="pt-6 pb-6">
-								<h4 class="text-lg font-semibold mb-4">Coupon Payment Details</h4>
+								<h4 class="mb-4 text-lg font-semibold">Coupon Payment Details</h4>
 								<div class="grid grid-cols-2 gap-4">
 									<div>
 										<p class="text-sm text-gray-500">Coupon Accrual</p>
@@ -128,7 +128,7 @@
 
 							<!-- 3. Latest Trading -->
 							<div class="pt-6 pb-6">
-									<h4 class="text-lg font-semibold mb-4">Latest Trading</h4>
+									<h4 class="mb-4 text-lg font-semibold">Latest Trading</h4>
 									<div class="grid grid-cols-2 gap-4">
 											<div>
 													<p class="text-sm text-gray-500">Last Traded Yield (%)</p>
@@ -159,27 +159,15 @@
 
 							<!-- 4. Ratings -->
 							<div class="pt-6 pb-6">
-									<h4 class="text-lg font-semibold mb-4">Ratings</h4>
+									<h4 class="mb-4 text-lg font-semibold">Ratings</h4>
 									<div class="space-y-2">
-											@forelse($ratingMovements as $rating)
-											<div class="flex items-center space-x-4">
-													<span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-															{{ $rating->rating ?? 'N/A' }}
-													</span>
-													<span class="text-sm">{{ $rating->rating_agency ?? 'N/A' }}</span>
-													<span class="text-sm text-gray-500">
-															{{ optional($rating->effective_date)->format('M Y') ?? 'N/A' }}
-													</span>
-											</div>
-											@empty
-												<p class="text-gray-500">No ratings available</p>
-											@endforelse
+										{{ $bond->rating ?? 'N/A' }}
 									</div>
 							</div>
 
 							<!-- 5. Issuance -->
 							<div class="pt-6 pb-6">
-									<h4 class="text-lg font-semibold mb-4">Issuance</h4>
+									<h4 class="mb-4 text-lg font-semibold">Issuance</h4>
 									<div class="grid grid-cols-2 gap-4">
 											<div>
 													<p class="text-sm text-gray-500">Amount Issued (RM'mil)</p>
@@ -198,7 +186,7 @@
 
 							<!-- 6. Additional Info -->
 							<div class="pt-6 pb-6">
-									<h4 class="text-lg font-semibold mb-4">Additional Info</h4>
+									<h4 class="mb-4 text-lg font-semibold">Additional Info</h4>
 									<div class="grid grid-cols-2 gap-4">
 											<div>
 													<p class="text-sm text-gray-500">Lead Arranger</p>
@@ -207,6 +195,13 @@
 											<div>
 													<p class="text-sm text-gray-500">Facility Agent</p>
 													<p class="font-medium">{{ optional($bond)->facility_agent ?? 'N/A' }}</p>
+											</div>
+
+											<div>
+												<button x-on:click="$dispatch('open-modal', 'facility-modal')" 
+													class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg">
+													Show Facility Code
+												</button>
 											</div>
 									</div>
 							</div>
@@ -218,9 +213,9 @@
 			<div class="bg-white shadow-sm sm:rounded-lg">
 					<button @click="openSection = openSection === 'documents' ? null : 'documents'" 
 									class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-							<div class="flex justify-between items-center">
+							<div class="flex items-center justify-between">
 									<h3 class="text-xl font-semibold">Related Documentations</h3>
-									<svg class="w-6 h-6 transform transition-transform" 
+									<svg class="w-6 h-6 transition-transform transform" 
 												:class="{ 'rotate-180': openSection === 'documents' }" 
 												fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -232,19 +227,19 @@
 							<table class="min-w-full divide-y divide-gray-200">
 								<thead class="bg-gray-50">
 									<tr>
-										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Document Type') }}</th>
-										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Document Name') }}</th>
+										<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">{{ __('Document Type') }}</th>
+										<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">{{ __('Document Name') }}</th>
 									</tr>
 								</thead>
 								<tbody class="bg-white divide-y divide-gray-200">
 									@forelse($documents as $document)
 									<tr class="hover:bg-gray-50">
 										<td class="px-6 py-4 whitespace-nowrap">
-											<span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs">
+											<span class="px-2 py-1 text-xs text-indigo-800 bg-indigo-100 rounded-full">
 												{{ $document->document_type }}
 											</span>
 										</td>
-										<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+										<td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
 											<a href="{{ asset($document->file_path) }}" 
 											class="text-indigo-600 hover:text-indigo-900"
 											target="_blank"
@@ -276,9 +271,9 @@
 			<div class="bg-white shadow-sm sm:rounded-lg">
 					<button @click="openSection = openSection === 'ratings' ? null : 'ratings'" 
 									class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-							<div class="flex justify-between items-center">
+							<div class="flex items-center justify-between">
 									<h3 class="text-xl font-semibold">Rating Movements</h3>
-									<svg class="w-6 h-6 transform transition-transform" 
+									<svg class="w-6 h-6 transition-transform transform" 
 											:class="{ 'rotate-180': openSection === 'ratings' }" 
 											fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -290,37 +285,37 @@
 							<table class="min-w-full divide-y divide-gray-200">
 									<thead class="bg-gray-50">
 										<tr>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating Agency</th>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Effective Date</th>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating Tenure</th>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating Action</th>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating Outlook</th>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating Watch</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Rating Agency</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Effective Date</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Rating Tenure</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Rating</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Rating Action</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Rating Outlook</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Rating Watch</th>
 										</tr>
 									</thead>
 									<tbody class="bg-white divide-y divide-gray-200">
 											@forelse($ratingMovements as $rating)
 											<tr class="hover:bg-gray-50">
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+												<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 													{{ $rating->rating_agency ?? N/A }}
 												</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+												<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 													{{ $rating->effective_date->format('d-M-Y') }}
 												</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"">
+												<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"">
 													{{ $rating->rating_tenure }}
 												</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+												<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 													{{ $rating->rating }}
 												</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+												<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 													{{ $rating->rating_action }}
 												</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+												<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 													{{ $rating->rating_outlook }}
 												</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+												<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 													{{ $rating->rating_watch }}
 												</td>
 											</tr>
@@ -347,9 +342,9 @@
 			<div class="bg-white shadow-sm sm:rounded-lg">
 					<button @click="openSection = openSection === 'payments' ? null : 'payments'" 
 									class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-							<div class="flex justify-between items-center">
+							<div class="flex items-center justify-between">
 									<h3 class="text-xl font-semibold">Payment Schedules</h3>
-									<svg class="w-6 h-6 transform transition-transform" 
+									<svg class="w-6 h-6 transition-transform transform" 
 											:class="{ 'rotate-180': openSection === 'payments' }" 
 											fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -361,33 +356,33 @@
 							<table class="min-w-full divide-y divide-gray-200">
 									<thead class="bg-gray-50">
 											<tr>
-												<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start Date</th>
-												<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">End Date</th>
-												<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment Date</th>
-												<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ed-Date</th>
-												<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Coupon Rate</th>
-												<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Adjustment Date</th>
+												<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Start Date</th>
+												<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">End Date</th>
+												<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Payment Date</th>
+												<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Ed-Date</th>
+												<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Coupon Rate</th>
+												<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Adjustment Date</th>
 											</tr>
 									</thead>
 									<tbody class="bg-white divide-y divide-gray-200">
 											@forelse($paymentSchedules as $schedule)
 											<tr class="hover:bg-gray-50">
-													<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+													<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 														{{ $schedule->start_date->format('d-M-Y') }}
 													</td>
-													<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+													<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 														{{ $schedule->end_date->format('d-M-Y') }}
 													</td>
-													<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+													<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 														N/A
 													</td>
-													<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+													<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 														{{ $schedule->ex_date->format('d-M-Y') }}
 													</td>
-													<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+													<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 														{{ $schedule->coupon_rate }}
 													</td>
-													<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+													<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 														{{ $schedule->adjustment_date ?? 'N/A' }}
 													</td>
 											</tr>
@@ -414,9 +409,9 @@
 			<div class="bg-white shadow-sm sm:rounded-lg">
 				<button @click="openSection = openSection === 'redemption' ? null : 'redemption'" 
 								class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-						<div class="flex justify-between items-center">
+						<div class="flex items-center justify-between">
 								<h3 class="text-xl font-semibold">Redemption</h3>
-								<svg class="w-6 h-6 transform transition-transform" 
+								<svg class="w-6 h-6 transition-transform transform" 
 										:class="{ 'rotate-180': openSection === 'redemption' }" 
 										fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -425,31 +420,31 @@
 				</button>
 				<div x-show="openSection === 'redemption'" x-collapse class="border-t border-gray-200">
 					<div class="p-6 space-y-6">
-						<h4 class="text-lg font-semibold mb-4">Redemption</h4>
+						<h4 class="mb-4 text-lg font-semibold">Redemption</h4>
 						<div class="grid grid-cols-3 gap-4">
 							<div>
 								<p class="text-sm text-gray-500">Allow Partial Call</p>
-								<p class="font-medium">{{ $redemptions->allow_partial_call ?? 'N/A' }}</p>
+								{{-- <p class="font-medium">{{ $redemptions->allow_partial_call ?? 'N/A' }}</p> --}}
 							</div>
 							<div>
 								<p class="text-sm text-gray-500">Last Call Date</p>
-								<p class="font-medium">{{ $redemptions->last_call_date->format('d-M-Y') ?? 'N/A' }}</p>
+								{{-- <p class="font-medium">{{ $redemptions->last_call_date->format('d-M-Y') ?? 'N/A' }}</p> --}}
 							</div>
 							<div>
 								<p class="text-sm text-gray-500">Redeem to Nearest Denomination</p>
-								<p class="font-medium">{{ $redemptions->redeem_nearest_denomination ?? 'N/A' }}</p>
+								{{-- <p class="font-medium">{{ $redemptions->redeem_nearest_denomination ?? 'N/A' }}</p> --}}
 							</div>
 						</div>
 
-						<div class="border-t pt-6">
-							<h4 class="text-lg font-semibold mb-4">Call Schedule</h4>
-							<div class="overflow-x-auto rounded-lg border">
+						<div class="pt-6 border-t">
+							<h4 class="mb-4 text-lg font-semibold">Call Schedule</h4>
+							<div class="overflow-x-auto border rounded-lg">
 								<table class="min-w-full divide-y divide-gray-200">
 									<thead class="bg-gray-50">
 										<tr>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start Date</th>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">End Date</th>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Call Price</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Start Date</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">End Date</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Call Price</th>
 										</tr>
 									</thead>
 									<tbody class="bg-white divide-y divide-gray-200">
@@ -483,14 +478,14 @@
 							</div>
 						</div>
 						
-						<div class="border-t pt-6">
-							<h4 class="text-lg font-semibold mb-4">Lockout Periods</h4>
-								<div class="overflow-x-auto rounded-lg border">
+						<div class="pt-6 border-t">
+							<h4 class="mb-4 text-lg font-semibold">Lockout Periods</h4>
+								<div class="overflow-x-auto border rounded-lg">
 								<table class="min-w-full divide-y divide-gray-200">
 									<thead class="bg-gray-50">
 										<tr>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start Date</th>
-											<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">End Date</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Start Date</th>
+											<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">End Date</th>
 										</tr>
 									</thead>
 									<tbody class="bg-white divide-y divide-gray-200">
@@ -524,9 +519,9 @@
 			<div class="bg-white shadow-sm sm:rounded-lg">
 				<button @click="openSection = openSection === 'trading' ? null : 'trading'" 
 								class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-						<div class="flex justify-between items-center">
+						<div class="flex items-center justify-between">
 								<h3 class="text-xl font-semibold">Trading Activities</h3>
-								<svg class="w-6 h-6 transform transition-transform" 
+								<svg class="w-6 h-6 transition-transform transform" 
 										:class="{ 'rotate-180': openSection === 'trading' }" 
 										fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -538,33 +533,33 @@
 						<table class="min-w-full divide-y divide-gray-200">
 								<thead class="bg-gray-50">
 									<tr>
-										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trade Date</th>
-										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Input Time</th>
-										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount (RM'mil)</th>
-										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Yield(%)</th>
-										<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Value Date</th>
+										<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Trade Date</th>
+										<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Input Time</th>
+										<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Amount (RM'mil)</th>
+										<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Price</th>
+										<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Yield(%)</th>
+										<th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Value Date</th>
 									</tr>
 								</thead>
 								<tbody class="bg-white divide-y divide-gray-200">
 									@forelse($tradingActivities as $activity)
 									<tr class="hover:bg-gray-50">
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 												{{ $activity->trade_date->format('d-M-Y') }}
 											</td>
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 												{{ $activity->input_time->format('h:m:s A') }}
 											</td>
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 												{{ number_format($activity->amount, 0) }}
 											</td>
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 												{{ number_format($activity->price, 2) }}
 											</td>
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 												{{ number_format($activity->yield, 2) }}%
 											</td>
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
 												{{ $activity->value_date->format('d-m-Y') }}M
 											</td>
 									</tr>
@@ -591,9 +586,9 @@
 			<div class="bg-white shadow-sm sm:rounded-lg">
 					<button @click="openSection = openSection === 'charts' ? null : 'charts'" 
 									class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-							<div class="flex justify-between items-center">
+							<div class="flex items-center justify-between">
 									<h3 class="text-xl font-semibold">Charts</h3>
-									<svg class="w-6 h-6 transform transition-transform" 
+									<svg class="w-6 h-6 transition-transform transform" 
 											:class="{ 'rotate-180': openSection === 'charts' }" 
 											fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -617,4 +612,96 @@
 			</div>
 		</div>
 	</div>
+
+	<x-modal name="facility-modal">
+		<div class="p-6">
+			<h2 class="text-lg font-semibold">General Information</h2>
+	
+			<div class="mt-4 space-y-2">
+				<div>
+					<p class="text-sm text-gray-500">Facility Code</p>
+					<p class="font-medium">{{ optional($bond)->facility_code ?? 'N/A' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Facility Number</p>
+					<p class="font-medium">{{ optional($bond)->facility_number ?? 'N/A' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Principle</p>
+					<p class="font-medium">{{ optional($bond)->principle ?? 'N/A' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Islamic Concept</p>
+					<p class="font-medium">{{ optional($bond)->islamic_concept ?? 'N/A' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Maturity Date</p>
+					<p class="font-medium">{{ optional($bond)->maturity_date ?? 'N/A' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Instrument</p>
+					<p class="font-medium">{{ optional($bond)->instrument ?? 'N/A' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Instrument Type</p>
+					<p class="font-medium">{{ optional($bond)->instrument_type ?? 'N/A' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Guaranteed</p>
+					<p class="font-medium">{{ optional($bond)->guaranteed ? 'True' : 'False' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Total Guaranteed (RM)</p>
+					<p class="font-medium">{{ number_format(optional($bond)->total_guaranteed, 2) ?? '0.00' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Indicator</p>
+					<p class="font-medium">{{ optional($bond)->indicator ?? 'N/A' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Facility Rating</p>
+					<p class="font-medium">{{ optional($bond)->facility_rating ?? 'N/A' }}</p>
+				</div>
+			</div>
+	
+			<h2 class="mt-6 text-lg font-semibold">Facility Information</h2>
+	
+			<div class="mt-4 space-y-2">
+				<div>
+					<p class="text-sm text-gray-500">Facility Amount (RM)</p>
+					<p class="font-medium">{{ number_format(optional($bond)->facility_amount, 2) ?? '0.00' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Available Limit (RM)</p>
+					<p class="font-medium">{{ number_format(optional($bond)->available_limit, 2) ?? '0.00' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Trustee/Security Agent</p>
+					<p class="font-medium">{{ optional($bond)->trustee_security_agent ?? 'N/A' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Lead Arranger (LA)</p>
+					<p class="font-medium">{{ optional($bond)->lead_arranger ?? 'N/A' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Availability</p>
+					<p class="font-medium">{{ optional($bond)->availability ?? 'N/A' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Outstanding (RM)</p>
+					<p class="font-medium">{{ number_format(optional($bond)->outstanding, 2) ?? '0.00' }}</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">Facility Agent (FA)</p>
+					<p class="font-medium">{{ optional($bond)->facility_agent ?? 'N/A' }}</p>
+				</div>
+			</div>
+	
+			<!-- Close Button -->
+			<button x-on:click="$dispatch('close-modal', 'facility-modal')" 
+					class="px-4 py-2 mt-4 text-sm bg-gray-200 rounded-lg">
+				Close
+			</button>
+		</div>
+	</x-modal>
 </x-main-layout>

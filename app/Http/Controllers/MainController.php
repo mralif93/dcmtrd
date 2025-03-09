@@ -17,19 +17,19 @@ class MainController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        
+
         $issuers = Issuer::query()
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('issuer_name', 'like', "%{$search}%")
-                      ->orWhere('issuer_short_name', 'like', "%{$search}%")
-                      ->orWhere('registration_number', 'like', "%{$search}%");
+                        ->orWhere('issuer_short_name', 'like', "%{$search}%")
+                        ->orWhere('registration_number', 'like', "%{$search}%");
                 });
             })
             ->orderBy('issuer_name')
             ->paginate(10)
             ->appends(['search' => $search]); // Preserve search in pagination links
-    
+
         return view('main.index', [
             'issuers' => $issuers,
             'searchTerm' => $search
@@ -38,35 +38,17 @@ class MainController extends Controller
 
     public function info(Issuer $issuer)
     {
-        // items per page
         $perPage = 10;
-    
-        // Bonds with empty state handling
-        $bonds = $issuer->bonds()
-            ->paginate($perPage, ['*'], 'bondsPage');
-    
-        // Announcements with empty handling
-        $announcements = $issuer->announcements()
-            ->latest()
-            ->paginate($perPage, ['*'], 'announcementsPage');
-    
-        // Documents with empty handling
-        $documents = $issuer->documents()
-            ->paginate($perPage, ['*'], 'documentsPage');
-    
-        // Facilities with empty handling
-        $facilities = $issuer->facilities()
-            ->paginate($perPage, ['*'], 'facilitiesPage');
-    
-        // dd($bonds->toArray());
+
         return view('main.info', [
             'issuer' => $issuer,
-            'bonds' => $bonds->isEmpty() ? null : $bonds,
-            'announcements' => $announcements->isEmpty() ? null : $announcements,
-            'documents' => $documents->isEmpty() ? null : $documents,
-            'facilities' => $facilities->isEmpty() ? null : $facilities,
+            'bonds' => $issuer->bonds()->paginate($perPage, ['*'], 'bondsPage'),
+            'announcements' => $issuer->announcements()->latest()->paginate($perPage, ['*'], 'announcementsPage') ?? collect(),
+            'documents' => $issuer->documents()->paginate($perPage, ['*'], 'documentsPage') ?? collect(),
+            'facilities' => $issuer->facilities()->paginate($perPage, ['*'], 'facilitiesPage') ?? collect(),
         ]);
     }
+
 
     public function bondInfo(Bond $bond)
     {
@@ -97,19 +79,19 @@ class MainController extends Controller
         // Call Schedules Pagination
         $callSchedules = $bond && $bond->redemption
             ? CallSchedule::whereIn('redemption_id', $bond->redemption->pluck('id'))
-                ->paginate($perPage, ['*'], 'callSchedulesPage')
+            ->paginate($perPage, ['*'], 'callSchedulesPage')
             : $emptyPaginator;
 
         // Lockout Periods Pagination
         $lockoutPeriods = $bond && $bond->redemption
             ? LockoutPeriod::whereIn('redemption_id', $bond->redemption->pluck('id'))
-                ->paginate($perPage, ['*'], 'lockoutPeriodsPage')
+            ->paginate($perPage, ['*'], 'lockoutPeriodsPage')
             : $emptyPaginator;
 
         // Trading Activities Pagination
         $tradingActivities = $bond->tradingActivities()
-                ->orderBy('trade_date', 'desc')
-                ->paginate($perPage, ['*'], 'tradingActivitiesPage')
+            ->orderBy('trade_date', 'desc')
+            ->paginate($perPage, ['*'], 'tradingActivitiesPage')
             ?? $emptyPaginator;
 
         // dd($tradingActivities->toArray());
@@ -125,7 +107,7 @@ class MainController extends Controller
             'charts' => $bond->charts ?? collect()
         ]);
     }
-    
+
     public function announcement(Announcement $announcement)
     {
         // dd($announcement->toArray());
@@ -136,17 +118,17 @@ class MainController extends Controller
     {
         // Items per page
         $perPage = 10;
-    
+
         // Fetch bonds with pagination
         $bonds = $facilityInformation->issuer->bonds()
             ? $facilityInformation->issuer->bonds()->paginate($perPage, ['*'], 'bondsPage')
             : collect(); // Use an empty collection instead of $emptyPaginator
-    
+
         // Documents Pagination
         $documents = $facilityInformation->documents()
             ? $facilityInformation->documents()->paginate($perPage, ['*'], 'documentsPage')
             : collect(); // Use an empty collection instead of $emptyPaginator
-    
+
         // Load all rating movements across all bonds
         $allRatingMovements = $facilityInformation->issuer->bonds->flatMap(function ($bond) {
             return $bond->ratingMovements; // Collect rating movements from each bond
@@ -161,7 +143,7 @@ class MainController extends Controller
         ]);
 
         // dd($bonds->toArray());
-    
+
         return view('main.facility', [
             'issuer' => $facilityInformation->issuer,
             'facility' => $facilityInformation,

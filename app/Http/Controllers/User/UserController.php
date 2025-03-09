@@ -22,7 +22,8 @@ use App\Models\Chart;
 
 class UserController extends Controller
 {
-    public function index() {
+    public function index(Request $request)
+    {
         $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
             $result = DB::select("
                 SELECT 
@@ -57,7 +58,21 @@ class UserController extends Controller
             ");
             return (array) $result[0];
         });
-    
+
+        $search = $request->input('search');
+
+        $issuers = Issuer::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('issuer_name', 'like', "%{$search}%")
+                        ->orWhere('issuer_short_name', 'like', "%{$search}%")
+                        ->orWhere('registration_number', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('issuer_name')
+            ->paginate(10)
+            ->appends(['search' => $search]);
+
         return view('user.dashboard', [
             'issuersCount' => $counts['issuers_count'],
             'bondsCount' => $counts['bonds_count'],
@@ -87,6 +102,8 @@ class UserController extends Controller
             'tenantApprovalsCount' => $counts['tenant_approvals_count'],
             'conditionChecksCount' => $counts['condition_checks_count'],
             'propertyImprovementsCount' => $counts['property_improvements_count'],
+            'issuers' => $issuers,
+            'searchTerm' => $search
         ]);
     }
 }

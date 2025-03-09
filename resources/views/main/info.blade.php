@@ -1,27 +1,27 @@
 <x-main-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="text-xl font-semibold leading-tight text-gray-800">
             {{ __('Issuer Information') }}
         </h2>
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
-            <h1 class="font-bold text-xl">{{ $issuer->issuer_name }}</h1>
+        <div class="mx-auto space-y-4 max-w-7xl sm:px-6 lg:px-8">
+            <h1 class="text-xl font-bold">{{ $issuer->issuer_name }}</h1>
             <p class="text-grey-800 leading-light">Issuer Short Name: {{ $issuer->issuer_short_name }}</p>
             <p class="text-grey-800 leading-light">Registration Number: {{ $issuer->registration_number }}</p>
         </div>
     </div>
 
     <div x-data="{ openSection: 'bonds' }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4 pb-6">
+        <div class="pb-6 mx-auto space-y-4 max-w-7xl sm:px-6 lg:px-8">
             <!-- Bonds Accordion -->
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <button @click="openSection = openSection === 'bonds' ? null : 'bonds'" 
                         class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                    <div class="flex justify-between items-center">
+                    <div class="flex items-center justify-between">
                         <h3 class="text-xl font-semibold">Active Bond + Sukuk</h3>
-                        <svg class="w-6 h-6 transform transition-transform" 
+                        <svg class="w-6 h-6 transition-transform transform" 
                              :class="{ 'rotate-180': openSection === 'bonds' }" 
                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -32,15 +32,15 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Bond/Sukuk Name') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Rating') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Category') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Last Traded Date') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Yield (%)') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Price (RM)') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Traded Amt (RM mil)') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('O/S Amt (RM mil)') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Residual Tenure') }}</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">{{ __('Bond/Sukuk Name') }}</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">{{ __('Rating') }}</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">{{ __('Category') }}</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">{{ __('Last Traded Date') }}</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">{{ __('Yield (%)') }}</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">{{ __('Price (RM)') }}</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">{{ __('Traded Amt (RM mil)') }}</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">{{ __('O/S Amt (RM mil)') }}</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">{{ __('Residual Tenure') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -53,39 +53,39 @@
                                         </a>
                                     </div>
                                     @if($bond->sub_name)
-                                        <div class="text-sm text-gray-500 mt-1">{{ $bond->sub_name }}</div>
+                                        <div class="mt-1 text-sm text-gray-500">{{ $bond->sub_name }}</div>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
                                         {{ $bond->rating ?? __('N/A') }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs">
+                                    <span class="px-2 py-1 text-xs text-indigo-800 bg-indigo-100 rounded-full">
                                         {{ $bond->category }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $bond->last_traded_date?->format('d M Y') ?? __('N/A') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $bond->last_traded_yield ? number_format($bond->last_traded_yield, 2) : __('N/A') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $bond->last_traded_price ? number_format($bond->last_traded_price, 2) : __('N/A') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $bond->last_traded_amount ? number_format($bond->last_traded_amount, 2) : __('N/A') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ number_format($bond->o_s_amount, 2) }}
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    {{ number_format($bond->amount_outstanding, 2) }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full">
-                                        {{ number_format($bond->residual_tenure, 2) }} yrs
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-green-800 bg-green-100 rounded-full">
+                                        {{ intval($bond->residual_tenure_years) }} yrs
                                     </span>
-                                </td>
+                                </td>                                
                             </tr>
                             @empty
                             <tr>
@@ -109,9 +109,9 @@
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <button @click="openSection = openSection === 'announcements' ? null : 'announcements'" 
                         class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                    <div class="flex justify-between items-center">
+                    <div class="flex items-center justify-between">
                         <h3 class="text-xl font-semibold">Announcements</h3>
-                        <svg class="w-6 h-6 transform transition-transform" 
+                        <svg class="w-6 h-6 transition-transform transform" 
                              :class="{ 'rotate-180': openSection === 'announcements' }" 
                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -122,23 +122,23 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Announce Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Announcement Title</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Announce Date</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Category</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Announcement Title</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($announcements as $announcement)
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <td class="px-6 py-4 text-sm whitespace-nowrap">
                                     {{ $announcement->announcement_date->format('d/m/Y') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                <td class="px-6 py-4 text-sm whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
                                         {{ $announcement->category }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-sm max-w-md">
+                                <td class="max-w-md px-6 py-4 text-sm">
                                     <a href="{{ route('announcement.show', $announcement) }}">
                                         <div class="font-medium text-gray-500">{{ $announcement->title }}</div>
                                     </a>
@@ -166,9 +166,9 @@
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <button @click="openSection = openSection === 'documents' ? null : 'documents'" 
                         class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                    <div class="flex justify-between items-center">
+                    <div class="flex items-center justify-between">
                         <h3 class="text-xl font-semibold">Related Documents</h3>
-                        <svg class="w-6 h-6 transform transition-transform" 
+                        <svg class="w-6 h-6 transition-transform transform" 
                              :class="{ 'rotate-180': openSection === 'documents' }" 
                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -179,19 +179,19 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document Type</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document Name</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Document Type</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Document Name</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($documents as $document)
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <span class="px-2 py-1 bg-gray-100 rounded-full text-xs">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs bg-gray-100 rounded-full">
                                         {{ $document->document_type }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                                <td class="max-w-xs px-6 py-4 text-sm text-gray-900">
                                     <a href="{{ asset($document->file_path) }}"
                                         class="text-indigo-600 hover:text-indigo-900"
                                         target="_blank" download>
@@ -221,9 +221,9 @@
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <button @click="openSection = openSection === 'facilities' ? null : 'facilities'" 
                         class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                    <div class="flex justify-between items-center">
+                    <div class="flex items-center justify-between">
                         <h3 class="text-xl font-semibold">Facility Information</h3>
-                        <svg class="w-6 h-6 transform transition-transform" 
+                        <svg class="w-6 h-6 transition-transform transform" 
                              :class="{ 'rotate-180': openSection === 'facilities' }" 
                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -234,34 +234,34 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Facility Code</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Facility Name</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Facility Number</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Maturity Date</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Facility Code</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Facility Name</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Facility Number</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Type</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Maturity Date</th>
                                 
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($facilities as $facility)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
                                     <a href="{{ route('facility.show', $facility) }}">
                                         {{ $facility->facility_code }}
                                     </a>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $facility->facility_name }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $facility->facility_number }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs text-purple-800 bg-purple-100 rounded-full">
                                         {{ $facility->instrument_type }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $facility->maturity_date->format('d M Y') }}
                                 </td>
                                 

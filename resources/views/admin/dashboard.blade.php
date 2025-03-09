@@ -1,19 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="text-xl font-semibold leading-tight text-gray-800">
             {{ __('Admin Dashboard') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="pb-6">
-                <h2 class="font-bold text-xl text-gray-800 leading-tight">
+                <h2 class="text-xl font-bold leading-tight text-gray-800">
                     {{ __('Debt Capital Market Trust Real Estate Department (DCMTRD)') }}
                 </h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <!-- Users -->
                 <x-dashboard-card
                     title="Users"
@@ -148,19 +148,28 @@
                     :href="route('compliance-covenants.index')"
                     color="bg-blue-100"
                 />
+
+                 <!-- Compliance Covenants -->
+                 <x-dashboard-card
+                    title="Upload Data"
+                    icon="document-check"
+                    :count="0"
+                    :href="route('upload.index')"
+                    color="bg-blue-100"
+             />
             </div>
         </div>
     </div>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="pb-6">
-                <h2 class="font-bold text-xl text-gray-800 leading-tight">
+                <h2 class="text-xl font-bold leading-tight text-gray-800">
                     {{ __('Real Estate Investment Trusts (REITs)') }}
                 </h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <!-- Portfolio Types -->
                 <x-dashboard-card
                     title="Portfolio Types"
