@@ -65,20 +65,67 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="position" class="block text-sm font-medium text-gray-700">Position *</label>
-                                <input type="text" name="position" id="position" 
-                                    value="{{ old('position', $user->position) }}" required autocomplete="position"
+                                <label for="job_title" class="block text-sm font-medium text-gray-700">Job Title *</label>
+                                <select name="job_title" id="job_title" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Select Job Title</option>
+                                    <option value="ceo" @selected(old('job_title', $user->job_title) == 'ceo')>CEO</option>
+                                    <option value="manager" @selected(old('job_title', $user->job_title) == 'manager')>Manager</option>
+                                    <option value="executive" @selected(old('job_title', $user->job_title) == 'executive')>Executive</option>
+                                    <option value="developer" @selected(old('job_title', $user->job_title) == 'developer')>Developer</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Permission *</label>
+                                @php
+                                    $userPermissions = $user->getPermissionsArray();
+                                @endphp
+                                <div class="flex space-x-6">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" name="permissions[]" id="permission_dcmtrd" value="dcmtrd" 
+                                            @checked(is_array(old('permissions')) ? in_array('dcmtrd', old('permissions')) : in_array('dcmtrd', $userPermissions))
+                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                        <label for="permission_dcmtrd" class="ml-2 block text-sm text-gray-900">DCMTRD</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" name="permissions[]" id="permission_reits" value="reits"
+                                            @checked(is_array(old('permissions')) ? in_array('reits', old('permissions')) : in_array('reits', $userPermissions))
+                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                        <label for="permission_reits" class="ml-2 block text-sm text-gray-900">REITS</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" name="permissions[]" id="permission_legal" value="legal" 
+                                            @checked(is_array(old('permissions')) ? in_array('legal', old('permissions')) : in_array('legal', $userPermissions))
+                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                        <label for="permission_legal" class="ml-2 block text-sm text-gray-900">LEGAL</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" name="permissions[]" id="permission_compliance" value="compliance"
+                                            @checked(is_array(old('permissions')) ? in_array('compliance', old('permissions')) : in_array('compliance', $userPermissions))
+                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                        <label for="permission_compliance" class="ml-2 block text-sm text-gray-900">COMPLIANCE</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Department & Office Location -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="department" class="block text-sm font-medium text-gray-700">Department *</label>
+                                <input type="text" name="department" id="department" 
+                                    value="{{ old('department', $user->department) }}" required
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                             <div>
-                                <label for="permission" class="block text-sm font-medium text-gray-700">Permission *</label>
-                                <input type="text" name="permission" id="permission" 
-                                    value="{{ old('permission', $user->permission) }}" required autocomplete="permission"
+                                <label for="office_location" class="block text-sm font-medium text-gray-700">Office Location</label>
+                                <input type="text" name="office_location" id="office_location" 
+                                    value="{{ old('office_location', $user->office_location) }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                         </div>
 
-                        <!-- Row 3: Password & Confirm Password -->
+                        <!-- Row 4: Password & Confirm Password -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label for="password" class="block text-sm font-medium text-gray-700">New Password</label>

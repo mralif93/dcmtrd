@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    @if(Auth::user()->permission == 'DCMTRD')
+    @if(Auth::user()->hasPermission('DCMTRD'))
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="pb-6">
@@ -145,7 +145,7 @@
     </div>
     @endif
 
-    @if(Auth::user()->permission == 'REITS')
+    @if(Auth::user()->hasPermission('REITS'))
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="pb-6">
@@ -161,7 +161,7 @@
                     icon="briefcase"
                     :count="$portfoliosCount"
                     :href="route('portfolios-info.index')"
-                    color="bg-blue-100"
+                    color="bg-green-100"
                 />
 
                 <!-- Properties -->
@@ -170,7 +170,7 @@
                     icon="home"
                     :count="$propertiesCount"
                     :href="route('properties-info.index')"
-                    color="bg-blue-100"
+                    color="bg-green-100"
                 />
 
                 <!-- Tenants -->
@@ -179,7 +179,7 @@
                     icon="users"
                     :count="$tenantsCount"
                     :href="route('tenants-info.index')"
-                    color="bg-blue-100"
+                    color="bg-green-100"
                 />
 
                 <!-- Leases -->
@@ -188,7 +188,7 @@
                     icon="document-text"
                     :count="$leasesCount"
                     :href="route('leases-info.index')"
-                    color="bg-blue-100"
+                    color="bg-green-100"
                 />
 
                 <!-- Checklists -->
@@ -197,7 +197,7 @@
                     icon="clipboard-check"
                     :count="$checklistsCount"
                     :href="route('checklists-info.index')"
-                    color="bg-blue-100"
+                    color="bg-green-100"
                 />
 
                 <!-- Financials -->
@@ -206,7 +206,7 @@
                     icon="currency-dollar"
                     :count="$financialsCount"
                     :href="route('financials-info.index')"
-                    color="bg-blue-100"
+                    color="bg-green-100"
                 />
 
                 <!-- Site Visits -->
@@ -215,7 +215,7 @@
                     icon="location-marker"
                     :count="$siteVisitsCount"
                     :href="route('site-visits-info.index')"
-                    color="bg-blue-100"
+                    color="bg-green-100"
                 />
 
                 <!-- Documentation Items -->
@@ -224,7 +224,7 @@
                     icon="document-duplicate"
                     :count="$documentationItemsCount"
                     :href="route('documentation-items-info.index')"
-                    color="bg-blue-100"
+                    color="bg-green-100"
                 />
 
                 <!-- Tenant Approvals -->
@@ -233,7 +233,7 @@
                     icon="shield-check"
                     :count="$tenantApprovalsCount"
                     :href="route('tenant-approvals-info.index')"
-                    color="bg-blue-100"
+                    color="bg-green-100"
                 />
 
                 <!-- Condition Checks -->
@@ -242,7 +242,7 @@
                     icon="clipboard-check"
                     :count="$conditionChecksCount"
                     :href="route('condition-checks-info.index')"
-                    color="bg-blue-100"
+                    color="bg-green-100"
                 />
 
                 <!-- Property Improvements -->
@@ -251,8 +251,86 @@
                     icon="home-modern"
                     :count="$propertyImprovementsCount"
                     :href="route('property-improvements-info.index')"
-                    color="bg-blue-100"
+                    color="bg-green-100"
                 />
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if(Auth::user()->hasPermission('LEGAL'))
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="pb-6">
+                <h2 class="font-bold text-xl text-gray-800 leading-tight">
+                    {{ __('Legal Department') }}
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Site Visits -->
+                <x-dashboard-card
+                    title="Site Visits"
+                    icon="location-marker"
+                    :count="$siteVisitsCount"
+                    :href="route('site-visits-info.index')"
+                    color="bg-purple-100"
+                />
+
+                <!-- Checklists -->
+                <x-dashboard-card
+                    title="Checklists"
+                    icon="clipboard-check"
+                    :count="$checklistsCount"
+                    :href="route('checklists-info.index')"
+                    color="bg-purple-100"
+                />
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if(Auth::user()->hasPermission('COMPLIANCE'))
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="pb-6">
+                <h2 class="font-bold text-xl text-gray-800 leading-tight">
+                    {{ __('Compliance Management') }}
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Site Visits -->
+                <x-dashboard-card
+                    title="Site Visits"
+                    icon="location-marker"
+                    :count="$siteVisitsCount"
+                    :href="route('site-visits-info.index')"
+                    color="bg-red-100"
+                />
+
+                <!-- Checklists -->
+                <x-dashboard-card
+                    title="Checklists"
+                    icon="clipboard-check"
+                    :count="$checklistsCount"
+                    :href="route('checklists-info.index')"
+                    color="bg-red-100"
+                />
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- If the user has no permissions, show a message -->
+    @if(!Auth::user()->hasPermission('DCMTRD') && !Auth::user()->hasPermission('REITS') && !Auth::user()->hasPermission('LEGAL') && !Auth::user()->hasPermission('COMPLIANCE'))
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+                <div class="text-center">
+                    <h3 class="text-lg font-medium text-gray-900">{{ __('No Access') }}</h3>
+                    <p class="mt-1 text-sm text-gray-500">{{ __('You do not have permission to access any modules.') }}</p>
+                </div>
             </div>
         </div>
     </div>

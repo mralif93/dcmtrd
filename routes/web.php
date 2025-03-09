@@ -28,6 +28,8 @@ use App\Http\Controllers\Admin\RelatedDocumentController;
 use App\Http\Controllers\Admin\ChartController;
 use App\Http\Controllers\Admin\TrusteeFeeController;
 use App\Http\Controllers\Admin\ComplianceCovenantController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\PermissionUserController;
 
 // REITs
 use App\Http\Controllers\Admin\FinancialTypeController;
@@ -73,17 +75,10 @@ use App\Http\Controllers\User\UserTenantApprovalController;
 use App\Http\Controllers\User\UserConditionCheckController;
 use App\Http\Controllers\User\UserPropertyImprovementController;
 
-// Main
+// Main: Login
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
-
-// Frontend routes
-Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
-Route::get('issuer-info/{issuer}', [MainController::class, 'info'])->name('issuer-search.show');
-Route::get('security-info/{bond}', [MainController::class, 'bondInfo'])->name('security-info.show');
-Route::get('announcement/{announcement}', [MainController::class, 'announcement'])->name('announcement.show');
-Route::get('facility-info/{facilityInformation}', [MainController::class, 'facility'])->name('facility.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -93,21 +88,25 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-// 2FA
-Route::middleware(['auth', 'two-factor'])->group(function() {
+// 2FA Routes
+Route::middleware(['auth'])->group(function() {
+    // These routes are available to authenticated users that need to complete 2FA
     Route::get('/two-factor/verify', [TwoFactorController::class, 'show'])
         ->name('two-factor.show');
     Route::post('/two-factor/verify', [TwoFactorController::class, 'verify'])
         ->name('two-factor.verify');
+    Route::post('/two-factor/generate', [TwoFactorController::class, 'generateCode'])
+        ->name('two-factor.generate');
+    Route::post('/two-factor/toggle', [TwoFactorController::class, 'toggle'])
+        ->name('two-factor.toggle');
 });
-
 
 // Admin routes
 Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])
         ->name('admin.dashboard');
 
-        // Bond
+    // Bond
     Route::resource('/admin/users', UserAdminController::class);
     Route::resource('/admin/issuers', IssuerController::class);
     Route::resource('/admin/bonds', BondController::class);
@@ -133,6 +132,14 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::get('/admin/compliance-covenants-trashed', [ComplianceCovenantController::class, 'trashed'])->name('compliance-covenants.trashed');
     Route::patch('/admin/compliance-covenants/{id}/restore', [ComplianceCovenantController::class, 'restore'])->name('compliance-covenants.restore');
     Route::delete('/admin/compliance-covenants/{id}/force-delete', [ComplianceCovenantController::class, 'forceDelete'])->name('compliance-covenants.force-delete');
+
+    Route::resource('permissions', \App\Http\Controllers\Admin\PermissionController::class);
+
+    // Additional
+    Route::prefix('/admin/permissions')->name('permissions.')->group(function () {
+        Route::post('{permission}/assign-users', [\App\Http\Controllers\Admin\PermissionController::class, 'assignUsers'])->name('assign-users');
+        Route::delete('{permission}/users/{user}', [\App\Http\Controllers\Admin\PermissionController::class, 'removeUser'])->name('remove-user');
+    });
 
     //  REITs
     Route::resource('/admin/banks', BankController::class);
@@ -170,11 +177,24 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     });
 });
 
-// Default user route
+// User routes
 Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
-    Route::get('/dashboard', [UserController::class, 'index'])
-        ->name('dashboard');
+    // Welcome
+    Route::get('/welcome', function() {
+        return view('welcome');
+    })->name('main');
 
+    // Dashboard
+    Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
+
+    // Frontend routes
+    Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
+    Route::get('issuer-info/{issuer}', [MainController::class, 'info'])->name('issuer-search.show');
+    Route::get('security-info/{bond}', [MainController::class, 'bondInfo'])->name('security-info.show');
+    Route::get('announcement/{announcement}', [MainController::class, 'announcement'])->name('announcement.show');
+    Route::get('facility-info/{facilityInformation}', [MainController::class, 'facility'])->name('facility.show');
+
+    // Bonds
     Route::resource('/user/issuers-info', UserIssuerController::class);
     Route::resource('/user/bonds-info', UserBondController::class);
     Route::resource('/user/rating-movements-info', UserRatingMovementController::class);
@@ -233,3 +253,28 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('/approver/dashboard', [ApproverController::class, 'index'])
         ->name('approver.dashboard');
 });
+
+// Example Permission-based routes
+// Uncomment and modify these as needed for your application
+
+/*
+// Routes that require specific permissions
+Route::middleware(['auth', 'two-factor', 'permission:manage-users'])->group(function () {
+    // User management routes for anyone with this permission
+    Route::get('/users/manage', [UserController::class, 'manageUsers'])
+        ->name('users.manage');
+});
+
+Route::middleware(['auth', 'two-factor', 'permission:manage-bonds'])->group(function () {
+    // Bond management routes for anyone with this permission
+    Route::get('/bonds/manage', [BondController::class, 'manageBonds'])
+        ->name('bonds.manage');
+});
+
+// Routes that need both role and permission
+Route::middleware(['auth', 'two-factor', 'role:admin', 'permission:view-reports'])->group(function () {
+    // Routes for admins who also have the view-reports permission
+    Route::get('/admin/reports', [AdminController::class, 'reports'])
+        ->name('admin.reports');
+});
+*/

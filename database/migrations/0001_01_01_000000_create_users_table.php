@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('role')->nullable(); // maker/approval/admin/compliance/legal
-            $table->string('position')->nullable(); // ceo/manager/executive/developer
-            $table->string('permission')->nullable(); // dcmtrd/reits
+            $table->string('role')->nullable();
+            $table->string('permission')->nullable();
+            $table->string('job_title')->nullable();
+            $table->string('department')->nullable();
+            $table->string('office_location')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('two_factor_code')->nullable();
