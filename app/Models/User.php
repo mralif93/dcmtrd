@@ -26,11 +26,13 @@ class User extends Authenticatable
         'job_title',
         'department',
         'office_location',
-        'permission',
-        'two_factor_enabled',
+        'email_verified_at',
+        'password',
         'two_factor_code',
         'two_factor_expires_at',
         'two_factor_verified',
+        'two_factor_enabled',
+        'last_login_at',
     ];
 
     /**
@@ -81,15 +83,6 @@ class User extends Authenticatable
         return $this->role === 'user';
     }
 
-    public function scopeSearch($query, $searchTerm)
-    {
-        if ($searchTerm) {
-            return $query->where('name', 'like', "%{$searchTerm}%")
-                        ->orWhere('email', 'like', "%{$searchTerm}%");
-        }
-        return $query;
-    }
-
     public function getTwoFactorEnabledAttribute(): bool
     {
         return $this->attributes['two_factor_enabled'] ?? false;
@@ -100,5 +93,36 @@ class User extends Authenticatable
         return $this->attributes['two_factor_expires_at']
             ? \Carbon\Carbon::parse($this->attributes['two_factor_expires_at'])
             : null;
+    }
+
+    /**
+     * Get all permissions for the user.
+     */
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'permission_users');
+    }
+
+    /**
+     * Check if user has a specific permission.
+     *
+     * @param string $permission
+     * @return bool
+     */
+    public function hasPermission($permission)
+    {
+        return $this->permissions()->where('name', $permission)->exists();
+    }
+
+    /**
+     * Get permissions as an array of permission names.
+     *
+     * @return array
+     */
+    public function getPermissionsArray()
+    {
+        return $this->permissions->pluck('name')->map(function($name) {
+            return strtolower($name);
+        })->toArray();
     }
 }

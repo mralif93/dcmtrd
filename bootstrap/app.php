@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // 'compliance'=> ComplianceMiddleware::class,
             'role' => RoleMiddleware::class,
             'two-factor'=> TwoFactorMiddleware::class,
+            'permission' => PermissionMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

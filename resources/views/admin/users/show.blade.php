@@ -42,6 +42,33 @@
                                 <dt class="text-sm font-medium text-gray-500">Email Address</dt>
                                 <dd class="mt-1 text-sm text-gray-900 break-all">{{ $user->email }}</dd>
                             </div>
+                            
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Job Title</dt>
+                                <dd class="mt-1 text-sm text-gray-900">
+                                    <span class="px-2 py-1 rounded-full bg-gray-100 text-gray-800">
+                                        {{ ucfirst($user->job_title ?? 'N/A') }}
+                                    </span>
+                                </dd>
+                            </div>
+                            
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Department</dt>
+                                <dd class="mt-1 text-sm text-gray-900">
+                                    <span class="px-2 py-1 rounded-full bg-gray-100 text-gray-800">
+                                        {{ ucfirst($user->department ?? 'N/A') }}
+                                    </span>
+                                </dd>
+                            </div>
+                            
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Office Location</dt>
+                                <dd class="mt-1 text-sm text-gray-900">
+                                    <span class="px-2 py-1 rounded-full bg-gray-100 text-gray-800">
+                                        {{ ucfirst($user->office_location ?? 'N/A') }}
+                                    </span>
+                                </dd>
+                            </div>
                         </div>
 
                         <!-- Right Column -->
@@ -50,10 +77,36 @@
                                 <dt class="text-sm font-medium text-gray-500">Account Role</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
                                     <span class="px-2 py-1 rounded-full {{ 
-                                        $user->role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'
+                                        $user->role === 'admin' ? 'bg-purple-100 text-purple-800' : 
+                                        ($user->role === 'maker' ? 'bg-blue-100 text-blue-800' :
+                                        ($user->role === 'approver' ? 'bg-green-100 text-green-800' :
+                                        ($user->role === 'compliance' ? 'bg-yellow-100 text-yellow-800' :
+                                        ($user->role === 'legal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'))))
                                     }}">
                                         {{ ucfirst($user->role) }}
                                     </span>
+                                </dd>
+                            </div>
+                            
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Permissions</dt>
+                                <dd class="mt-1 text-sm text-gray-900 flex flex-wrap gap-2">
+                                    @php
+                                        $userPermissions = $user->getPermissionsArray();
+                                    @endphp
+                                    
+                                    @forelse($user->permissions as $permission)
+                                        <span class="px-2 py-1 rounded-full {{ 
+                                            strtoupper($permission->name) === 'DCMTRD' ? 'bg-orange-100 text-orange-800' : 
+                                            (strtoupper($permission->name) === 'REITS' ? 'bg-teal-100 text-teal-800' : 
+                                            (strtoupper($permission->name) === 'LEGAL' ? 'bg-purple-100 text-purple-800' : 
+                                            (strtoupper($permission->name) === 'COMPLIANCE' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')))
+                                        }}">
+                                            {{ strtoupper($permission->name) }}
+                                        </span>
+                                    @empty
+                                        <span class="px-2 py-1 rounded-full bg-gray-100 text-gray-800">N/A</span>
+                                    @endforelse
                                 </dd>
                             </div>
                             

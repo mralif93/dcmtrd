@@ -59,31 +59,11 @@ class AuthenticatedSessionController extends Controller
 
 
             // Redirect based on user role
-            return redirect()->route($this->getRedirectRoute($user->role));
+            return redirect()->route('main');
         }
     
         // If authentication fails, redirect back with an error message
         return back()->withErrors(['email' => 'The provided credentials do not match our records.']);
-    }
-
-    /**
-     * Get the redirect route based on the user's role.
-     *
-     * @param string $role
-     * @return string
-     */
-    private function getRedirectRoute($role)
-    {
-        switch ($role) {
-            case 'admin':
-                return 'admin.dashboard';
-            case 'legal':
-                return 'legal.dashboard';
-            case 'compliance':
-                return 'compliance.dashboard';
-            default:
-                return 'dashboard';
-        }
     }
 
     /**

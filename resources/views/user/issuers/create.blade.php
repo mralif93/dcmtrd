@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Error Handling -->
+            
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
                     <div class="flex">
