@@ -20,16 +20,24 @@
                     {{-- User-specific Links --}}
                     @if (Auth::user()->role == 'user')
                         <x-nav-link :href="route('upload.user.page') " :active="request()->routeIs('upload.user.page')">
-                            {{ __('Upload Page') }}
+                            {{ __('Upload Data') }}
                         </x-nav-link>
 
                         <x-nav-link :href="route('trustee-fees-info.index') " :active="request()->routeIs('trustee-fees-info.index')">
                             {{ __('Trustee Fees') }}
                         </x-nav-link>
 
-                        {{-- <x-nav-link :href="route('compliance-covenant.index') " :active="request()->routeIs('compliance-covenant.index')">
+                        <x-nav-link>
                             {{ __('Compliance Covenants') }}
-                        </x-nav-link> --}}
+                        </x-nav-link>
+
+                        <x-nav-link>
+                            {{ __('Activity Daily') }}
+                        </x-nav-link>
+
+                        <x-nav-link>
+                            {{ __('Audit Log') }}
+                        </x-nav-link>
 
                         <x-nav-link :href="route('upload.user.page') " :active="request()->routeIs('upload.user.page')">
                             {{ __('Reports') }}

@@ -35,7 +35,8 @@ class SecurityInformationImport implements ToModel, WithHeadingRow
             'issue_tenure_years'      => $this->transformDecimal($row['issue_tenure_years'] ?? null),
             'residual_tenure_years'   => $this->transformDecimal($row['residual_tenure_years'] ?? null),
             'issuer_id'               => $issuer->id,
-            'sub_name'                => $issuer->issuer_name
+            'sub_name'                => $issuer->issuer_name,
+            'status'                  => 'Pending',
         ]);
 
         $bond->save();

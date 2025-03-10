@@ -13,16 +13,16 @@ class BondController extends Controller
     public function index(Request $request)
     {
         $searchTerm = $request->input('search');
-        
+
         $bonds = Bond::with('issuer')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where(function ($q) use ($searchTerm) {
                     $q->where('bond_sukuk_name', 'like', "%$searchTerm%")
-                      ->orWhere('isin_code', 'like', "%$searchTerm%")
-                      ->orWhere('stock_code', 'like', "%$searchTerm%")
-                      ->orWhereHas('issuer', function ($q) use ($searchTerm) {
-                          $q->where('issuer_name', 'like', "%$searchTerm%");
-                      });
+                        ->orWhere('isin_code', 'like', "%$searchTerm%")
+                        ->orWhere('stock_code', 'like', "%$searchTerm%")
+                        ->orWhereHas('issuer', function ($q) use ($searchTerm) {
+                            $q->where('issuer_name', 'like', "%$searchTerm%");
+                        });
                 });
             })
             ->orderBy('created_at', 'desc')
@@ -78,7 +78,7 @@ class BondController extends Controller
 
         try {
             $bond->update($validated);
-            return redirect()->route('bonds.show', $bond)->with('success', 'Bond updated successfully');            
+            return redirect()->route('bonds.show', $bond)->with('success', 'Bond updated successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
         }
@@ -146,7 +146,7 @@ class BondController extends Controller
                 'nullable',
                 'string',
                 'max:50',
-                Rule::unique('bonds')->ignore($bond?->id)
+                // Rule::unique('bonds')->ignore($bond?->id)
             ],
             'status' => 'nullable|in:Active,Inactive,Matured,Pending',
             'approval_date_time' => 'nullable|date',
@@ -157,5 +157,26 @@ class BondController extends Controller
             'issuer_id.exists' => 'The selected issuer is invalid',
             'unique' => 'This :attribute is already in use',
         ]);
+    }
+    public function approve(Bond $bond)
+    {
+        if ($bond->status !== 'Pending') {
+            return redirect()->back()->with('error', 'Bond cannot be approved.');
+        }
+
+        $bond->update(['status' => 'Approved', 'approval_date_time' => now()]);
+
+        return redirect()->back()->with('success', 'Bond approved successfully.');
+    }
+
+    public function reject(Bond $bond)
+    {
+        if ($bond->status !== 'Pending') {
+            return redirect()->back()->with('error', 'Bond cannot be rejected.');
+        }
+
+        $bond->update(['status' => 'Re-Check']);
+
+        return redirect()->back()->with('success', 'Bond re-checked successfully.');
     }
 }
