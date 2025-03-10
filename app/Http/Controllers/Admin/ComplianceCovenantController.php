@@ -207,4 +207,50 @@ class ComplianceCovenantController extends Controller
             ->route('compliance-covenants.trashed')
             ->with('success', 'Compliance covenant permanently deleted.');
     }
+
+    /**
+     * Generate a compliance covenant report with filters and stats.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function report(Request $request)
+    {
+        $query = ComplianceCovenant::query();
+
+        // Search by issuer short name
+        if ($request->has('issuer_short_name') && !empty($request->issuer_short_name)) {
+            $query->where('issuer_short_name', 'LIKE', '%' . $request->issuer_short_name . '%');
+        }
+
+        // Search by financial year end
+        if ($request->has('financial_year_end') && !empty($request->financial_year_end)) {
+            $query->where('financial_year_end', 'LIKE', '%' . $request->financial_year_end . '%');
+        }
+
+        // Filter by compliance status
+        if ($request->has('status')) {
+            if ($request->status === 'compliant') {
+                $query->compliant();
+            } elseif ($request->status === 'non_compliant') {
+                $query->nonCompliant();
+            }
+        }
+
+        // Get results with pagination
+        $covenants = $query->latest()->paginate(10);
+        $covenants->appends($request->all());
+        
+        // Get statistics for the report
+        $total_covenants = ComplianceCovenant::count();
+        $compliant_covenants = ComplianceCovenant::compliant()->count();
+        $non_compliant_covenants = ComplianceCovenant::nonCompliant()->count();
+        
+        return view('admin.compliance-covenants.report', compact(
+            'covenants',
+            'total_covenants',
+            'compliant_covenants',
+            'non_compliant_covenants'
+        ));
+    }
 }

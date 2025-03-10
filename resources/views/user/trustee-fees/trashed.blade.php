@@ -25,7 +25,7 @@
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">Trashed Trustee Fees</h3>
-                    <a href="{{ route('trustee-fees.index') }}" 
+                    <a href="{{ route('trustee-fees-info.index') }}" 
                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
@@ -63,7 +63,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        <form action="{{ route('trustee-fees.restore', $fee->id) }}" method="POST" class="inline">
+                                        <form action="{{ route('trustee-fees-info.restore', $fee->id) }}" method="POST" class="inline">
                                             @csrf
                                             <button type="submit" class="text-green-600 hover:text-green-900">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,7 +71,7 @@
                                                 </svg>
                                             </button>
                                         </form>
-                                        <form action="{{ route('trustee-fees.force-delete', $fee->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this trustee fee? This action cannot be undone.');" class="inline">
+                                        <form action="{{ route('trustee-fees-info.force-delete', $fee->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this trustee fee? This action cannot be undone.');" class="inline">
                                             @csrf
                                             <button type="submit" class="text-red-600 hover:text-red-900">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

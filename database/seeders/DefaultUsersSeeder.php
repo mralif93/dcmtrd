@@ -56,6 +56,7 @@ class DefaultUsersSeeder extends Seeder
 
         // Sample data for users
         $usersData = [
+            // Admin Users
             [
                 'name' => 'Admin User',
                 'email' => 'admin@example.com',
@@ -75,14 +76,14 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'DCMTRD User A',
-                'email' => 'dcmtrd1@example.com',
-                'role' => 'user',
-                'job_title' => 'Executive',
-                'department' => 'Debt Capital Markets',
-                'office_location' => 'Trading Floor',
+                'name' => 'MOHD ASHRAF BIN AZMI',
+                'email' => 'ashraf_azmi@artrustees.com.my',
+                'role' => 'admin',
+                'job_title' => 'ASISSTANT MANAGER',
+                'department' => 'DIGITALIZATION DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
                 'email_verified_at' => now(),
-                'password' => bcrypt('P@ssw0rd123'),
+                'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
@@ -93,14 +94,14 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'DCMTRD User B',
-                'email' => 'dcmtrd2@example.com',
-                'role' => 'user',
-                'job_title' => 'Executive',
-                'department' => 'Debt Capital Markets',
-                'office_location' => 'Trading Floor',
+                'name' => 'MUQRI AMIN BIN MOHD SHAMSUDDIN',
+                'email' => 'muqri.amin@artrustees.com.my',
+                'role' => 'admin',
+                'job_title' => 'SENIOR EXECUTIVE',
+                'department' => 'DIGITALIZATION DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
                 'email_verified_at' => now(),
-                'password' => bcrypt('P@ssw0rd123'),
+                'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
@@ -111,14 +112,34 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'REITS User A',
-                'email' => 'reits1@example.com',
-                'role' => 'user',
-                'job_title' => 'Executive',
-                'department' => 'Real Estate',
-                'office_location' => 'East Wing',
+                'name' => 'NUR FARZANA BINTI ZAIRUL AZMI',
+                'email' => 'nurfarzana@artrustees.com.my',
+                'role' => 'admin',
+                'job_title' => 'EXECUTIVE',
+                'department' => 'DIGITALIZATION DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
                 'email_verified_at' => now(),
-                'password' => bcrypt('P@ssw0rd123'),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+            // DCMT Users
+            [
+                'name' => 'ROSLIM SYAH BIN IDRIS',
+                'email' => 'roslimsyah@artrustees.com.my',
+                'role' => 'user',
+                'job_title' => 'SENIOR MANAGER',
+                'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
@@ -129,14 +150,14 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'REITS User B',
-                'email' => 'reits2@example.com',
+                'name' => 'MOHAMAD AZAHARI BIN AB AZIZ',
+                'email' => 'mohamad.azahari@artrustees.com.my',
                 'role' => 'user',
-                'job_title' => 'Executive',
-                'department' => 'Real Estate',
-                'office_location' => 'East Wing',
+                'job_title' => 'ASSISTANT MANAGER',
+                'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
                 'email_verified_at' => now(),
-                'password' => bcrypt('P@ssw0rd123'),
+                'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
@@ -147,14 +168,14 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Manager',
-                'email' => 'manager@example.com',
+                'name' => 'FARAEDALISMALINA BINTI ZAKARIA',
+                'email' => 'faraedalismalina@artrustees.com.my',
                 'role' => 'user',
-                'job_title' => 'Manager',
-                'department' => 'Executive',
-                'office_location' => 'Headquarters',
+                'job_title' => 'SENIOR EXECUTIVE',
+                'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
                 'email_verified_at' => now(),
-                'password' => bcrypt('P@ssw0rd123'),
+                'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
@@ -165,14 +186,14 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Regular User',
-                'email' => 'user@example.com',
+                'name' => 'NOR IZZAH BINTI MOHAMAD ARIFF',
+                'email' => 'izzahariff@artrustees.com.my',
                 'role' => 'user',
-                'job_title' => 'Executive',
-                'department' => 'Operations',
-                'office_location' => 'Headquarters',
+                'job_title' => 'SENIOR EXECUTIVE',
+                'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
                 'email_verified_at' => now(),
-                'password' => bcrypt('P@ssw0rd123'),
+                'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
@@ -183,14 +204,108 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Compliance Officer',
-                'email' => 'compliance@example.com',
+                'name' => 'NUR SAKIENAH BINTI KHAIRUDDIN',
+                'email' => 'nursakienah@artrustees.com.my',
+                'role' => 'user',
+                'job_title' => 'EXECUTIVE',
+                'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'MUHAMMAD SAYYIDI BIN MOHD BASIL',
+                'email' => 'sayyidi@artrustees.com.my',
+                'role' => 'user',
+                'job_title' => 'EXECUTIVE',
+                'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+            // REITS Users
+            [
+                'name' => 'DANG FATHIHAH BINTI IBRAHIM',
+                'email' => 'fathihah@artrustees.com.my',
+                'role' => 'user',
+                'job_title' => 'ASSISTANT MANAGER',
+                'department' => 'REAL ESTATE INVESTMENT TRUST UNIT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'NURUL SHAHIDAH BINTI RAS TAMAJIS',
+                'email' => 'nurul.shahidah@artrustees.com.my',
+                'role' => 'user',
+                'job_title' => 'SENIOR EXECUTIVE',
+                'department' => 'REAL ESTATE INVESTMENT TRUST UNIT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'MUHAMMAD AFIS BIN AZMAN',
+                'email' => 'afis.azman@artrustees.com.my',
+                'role' => 'user',
+                'job_title' => 'EXECUTIVE',
+                'department' => 'REAL ESTATE INVESTMENT TRUST UNIT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+            // Compliance
+            [
+                'name' => 'RASIDHA BINTI SAKHUDIN @ SALLEHUDIN',
+                'email' => 'rasidha@artrustees.com.my',
                 'role' => 'compliance',
-                'job_title' => 'Executive',
-                'department' => 'Compliance',
-                'office_location' => 'Headquarters',
+                'job_title' => 'SENIOR MANAGER',
+                'department' => 'COMPLIANCE MONITORING DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
                 'email_verified_at' => now(),
-                'password' => bcrypt('P@ssw0rd123'),
+                'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
@@ -201,14 +316,14 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Legal Advisor',
-                'email' => 'legal@example.com',
-                'role' => 'legal',
-                'job_title' => 'Executive',
-                'department' => 'Legal',
-                'office_location' => 'Headquarters',
+                'name' => 'DALILA BINTI ZOBIR',
+                'email' => 'dalila@artrustees.com.my',
+                'role' => 'compliance',
+                'job_title' => 'MANAGER',
+                'department' => 'COMPLIANCE MONITORING DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
                 'email_verified_at' => now(),
-                'password' => bcrypt('P@ssw0rd123'),
+                'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
@@ -217,7 +332,207 @@ class DefaultUsersSeeder extends Seeder
                 'last_login_at' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
+            [
+                'name' => 'SHARIFAH NURAINI BINTI SYED KHALID',
+                'email' => 'nuraini@artrustees.com.my',
+                'role' => 'compliance',
+                'job_title' => 'MANAGER',
+                'department' => 'COMPLIANCE MONITORING DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'DIAN NADIRAH BINTI JASRI',
+                'email' => 'dianjasri@artrustees.com.my',
+                'role' => 'compliance',
+                'job_title' => 'ASSISTANT MANAGER',
+                'department' => 'COMPLIANCE MONITORING DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'NUR EFFA NAJIHAH BINTI ABDUL WAHAB',
+                'email' => 'effanajihah@artrustees.com.my',
+                'role' => 'compliance',
+                'job_title' => 'SENIOR EXECUTIVE',
+                'department' => 'COMPLIANCE MONITORING DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'KHAIRUN NISA BINTI ABD RAZAK',
+                'email' => 'khairunnisa_razak@artrustees.com.my',
+                'role' => 'compliance',
+                'job_title' => 'EXECUTIVE',
+                'department' => 'COMPLIANCE MONITORING DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'NURUL SYAFIQAH BINTI ABD KADIR',
+                'email' => 'nurul.syafiqah@artrustees.com.my',
+                'role' => 'compliance',
+                'job_title' => 'EXECUTIVE',
+                'department' => 'COMPLIANCE MONITORING DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+            // Legal
+            [
+                'name' => 'ZULHIDA BINTI ABD MAURAD',
+                'email' => 'zulhida@artrustees.com.my',
+                'role' => 'legal',
+                'job_title' => 'SENIOR MANAGER',
+                'department' => 'LEGAL DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'NUR FARAH BINTI MOHD KAMAL',
+                'email' => 'nur.farah@artrustees.com.my',
+                'role' => 'legal',
+                'job_title' => 'ASSISTANT MANAGER',
+                'department' => 'LEGAL DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'ASMA NUR QURAISYAH BINTI YUNUS',
+                'email' => 'asma.quraisyah@artrustees.com.my',
+                'role' => 'legal',
+                'job_title' => 'SENIOR EXECUTIVE',
+                'department' => 'LEGAL DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'AMIR AMSYAR BIN MOHD NAZIR',
+                'email' => 'amir.amsyar@artrustees.com.my',
+                'role' => 'legal',
+                'job_title' => 'SENIOR EXECUTIVE',
+                'department' => 'LEGAL DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'MAISARAH HUMAIRA BINTI MEOR YAHAYA',
+                'email' => 'maisarah.humaira@artrustees.com.my',
+                'role' => 'legal',
+                'job_title' => 'EXECUTIVE',
+                'department' => 'LEGAL DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'KHARIESHA BINTI KHALID',
+                'email' => 'khariesha@artrustees.com.my',
+                'role' => 'legal',
+                'job_title' => 'EXECUTIVE',
+                'department' => 'LEGAL DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => now(),
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ];
 
         // Insert data into the users table
@@ -226,80 +541,138 @@ class DefaultUsersSeeder extends Seeder
         // Now we need to create the permission_users relationships
         $permissionUserData = [];
         
-        // Admin gets all permissions
-        $adminId = DB::table('users')->where('email', 'admin@example.com')->value('id');
-        foreach ([$dcmtrdPermissionId, $reitsPermissionId, $legalPermissionId, $compliancePermissionId] as $permissionId) {
+        // Admin users get DCMTRD permission
+        $adminEmails = [
+            'ashraf_azmi@artrustees.com.my',
+            'muqri.amin@artrustees.com.my',
+            'nurfarzana@artrustees.com.my'
+        ];
+        
+        foreach ($adminEmails as $email) {
+            $userId = DB::table('users')->where('email', $email)->value('id');
             $permissionUserData[] = [
-                'user_id' => $adminId,
-                'permission_id' => $permissionId,
+                'user_id' => $userId,
+                'permission_id' => $dcmtrdPermissionId,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
         }
         
         // DCMTRD Users
-        $dcmtrdUser1Id = DB::table('users')->where('email', 'dcmtrd1@example.com')->value('id');
-        $dcmtrdUser2Id = DB::table('users')->where('email', 'dcmtrd2@example.com')->value('id');
-        $permissionUserData[] = [
-            'user_id' => $dcmtrdUser1Id,
-            'permission_id' => $dcmtrdPermissionId,
-            'created_at' => now(),
-            'updated_at' => now(),
+        $dcmtrdEmails = [
+            'roslimsyah@artrustees.com.my',
+            'mohamad.azahari@artrustees.com.my',
+            'faraedalismalina@artrustees.com.my',
+            'izzahariff@artrustees.com.my',
+            'nursakienah@artrustees.com.my',
+            'sayyidi@artrustees.com.my'
         ];
+        
+        foreach ($dcmtrdEmails as $email) {
+            $userId = DB::table('users')->where('email', $email)->value('id');
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $dcmtrdPermissionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        
+        // Special case: ROSLIM SYAH BIN IDRIS has both DCMTRD and REITS
+        $roslimId = DB::table('users')->where('email', 'roslimsyah@artrustees.com.my')->value('id');
         $permissionUserData[] = [
-            'user_id' => $dcmtrdUser2Id,
-            'permission_id' => $dcmtrdPermissionId,
+            'user_id' => $roslimId,
+            'permission_id' => $reitsPermissionId,
             'created_at' => now(),
             'updated_at' => now(),
         ];
         
         // REITS Users
-        $reitsUser1Id = DB::table('users')->where('email', 'reits1@example.com')->value('id');
-        $reitsUser2Id = DB::table('users')->where('email', 'reits2@example.com')->value('id');
-        $permissionUserData[] = [
-            'user_id' => $reitsUser1Id,
-            'permission_id' => $reitsPermissionId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-        $permissionUserData[] = [
-            'user_id' => $reitsUser2Id,
-            'permission_id' => $reitsPermissionId,
-            'created_at' => now(),
-            'updated_at' => now(),
+        $reitsEmails = [
+            'fathihah@artrustees.com.my',
+            'nurul.shahidah@artrustees.com.my',
+            'afis.azman@artrustees.com.my'
         ];
         
-        // Legal Advisor gets LEGAL permission
-        $legalId = DB::table('users')->where('email', 'legal@example.com')->value('id');
-        $permissionUserData[] = [
-            'user_id' => $legalId,
-            'permission_id' => $legalPermissionId,
-            'created_at' => now(),
-            'updated_at' => now(),
+        foreach ($reitsEmails as $email) {
+            $userId = DB::table('users')->where('email', $email)->value('id');
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $reitsPermissionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        
+        // Compliance Officers get both DCMTRD and REITS permissions
+        $complianceEmails = [
+            'rasidha@artrustees.com.my',
+            'dalila@artrustees.com.my',
+            'nuraini@artrustees.com.my',
+            'dianjasri@artrustees.com.my',
+            'effanajihah@artrustees.com.my',
+            'khairunnisa_razak@artrustees.com.my',
+            'nurul.syafiqah@artrustees.com.my'
         ];
         
-        // Compliance Officer gets COMPLIANCE permission
-        $complianceId = DB::table('users')->where('email', 'compliance@example.com')->value('id');
-        $permissionUserData[] = [
-            'user_id' => $complianceId,
-            'permission_id' => $compliancePermissionId,
-            'created_at' => now(),
-            'updated_at' => now(),
+        foreach ($complianceEmails as $email) {
+            $userId = DB::table('users')->where('email', $email)->value('id');
+            // Add COMPLIANCE permission
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $compliancePermissionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+            // Add DCMTRD permission
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $dcmtrdPermissionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+            // Add REITS permission
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $reitsPermissionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        
+        // Legal users get both DCMTRD and REITS permissions
+        $legalEmails = [
+            'zulhida@artrustees.com.my',
+            'nur.farah@artrustees.com.my',
+            'asma.quraisyah@artrustees.com.my',
+            'amir.amsyar@artrustees.com.my',
+            'maisarah.humaira@artrustees.com.my',
+            'khariesha@artrustees.com.my'
         ];
         
-        // Manager and Regular users get all permissions
-        $managerId = DB::table('users')->where('email', 'manager@example.com')->value('id');
-        $regularUserId = DB::table('users')->where('email', 'user@example.com')->value('id');
-        
-        foreach ([$managerId, $regularUserId] as $userId) {
-            foreach ([$dcmtrdPermissionId, $reitsPermissionId, $legalPermissionId, $compliancePermissionId] as $permissionId) {
-                $permissionUserData[] = [
-                    'user_id' => $userId,
-                    'permission_id' => $permissionId,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
+        foreach ($legalEmails as $email) {
+            $userId = DB::table('users')->where('email', $email)->value('id');
+            // Add LEGAL permission
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $legalPermissionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+            // Add DCMTRD permission
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $dcmtrdPermissionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+            // Add REITS permission
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $reitsPermissionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }
         
         // Insert the permission relationships

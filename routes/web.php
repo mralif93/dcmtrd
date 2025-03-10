@@ -122,16 +122,25 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::resource('/admin/charts', ChartController::class);
 
     Route::resource('/admin/trustee-fees', TrusteeFeeController::class);
-    Route::get('/admin/trustee-fees-search', [TrusteeFeeController::class, 'search'])->name('trustee-fees.search');
-    Route::get('/admin/trustee-fees-report', [TrusteeFeeController::class, 'report'])->name('trustee-fees.report');
-    Route::get('/admin/trustee-fees-trashed', [TrusteeFeeController::class, 'trashed'])->name('trustee-fees.trashed');
-    Route::patch('/admin/trustee-fees/{id}/restore', [TrusteeFeeController::class, 'restore'])->name('trustee-fees.restore');
-    Route::delete('/admin/trustee-fees/{id}/force-delete', [TrusteeFeeController::class, 'forceDelete'])->name('trustee-fees.force-delete');
+    
+    // Additional
+    Route::prefix('/admin/trustee-fees')->name('trustee-fees.')->group(function () {
+        Route::get('/trustee-fees-search', [TrusteeFeeController::class, 'search'])->name('search');
+        Route::get('/trustee-fees-report', [TrusteeFeeController::class, 'report'])->name('report');
+        Route::get('/trustee-fees-trashed', [TrusteeFeeController::class, 'trashed'])->name('trashed');
+        Route::patch('/trustee-fees/{id}/restore', [TrusteeFeeController::class, 'restore'])->name('restore');
+        Route::delete('/trustee-fees/{id}/force-delete', [TrusteeFeeController::class, 'forceDelete'])->name('force-delete');
+    });
 
     Route::resource('/admin/compliance-covenants', ComplianceCovenantController::class);
-    Route::get('/admin/compliance-covenants-trashed', [ComplianceCovenantController::class, 'trashed'])->name('compliance-covenants.trashed');
-    Route::patch('/admin/compliance-covenants/{id}/restore', [ComplianceCovenantController::class, 'restore'])->name('compliance-covenants.restore');
-    Route::delete('/admin/compliance-covenants/{id}/force-delete', [ComplianceCovenantController::class, 'forceDelete'])->name('compliance-covenants.force-delete');
+
+    // Additional
+    Route::prefix('/admin/compliance-covenants')->name('compliance-covenants.')->group(function () {
+        Route::get('/compliance-covenants/report', [ComplianceCovenantController::class, 'report'])->name('report');
+        Route::get('/compliance-covenants-trashed', [ComplianceCovenantController::class, 'trashed'])->name('trashed');
+        Route::patch('/compliance-covenants/{id}/restore', [ComplianceCovenantController::class, 'restore'])->name('restore');
+        Route::delete('/compliance-covenants/{id}/force-delete', [ComplianceCovenantController::class, 'forceDelete'])->name('force-delete');
+    });
 
     Route::resource('permissions', \App\Http\Controllers\Admin\PermissionController::class);
 
@@ -207,8 +216,26 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::resource('/user/facility-informations-info', UserFacilityInformationController::class);
     Route::resource('/user/related-documents-info', UserRelatedDocumentController::class);
     Route::resource('/user/charts-info', UserChartController::class);
+    
     Route::resource('/user/trustee-fees-info', UserTrusteeFeeController::class);
+
+    // Additional
+    Route::prefix('/user/trustee-fees-info')->name('trustee-fees-info.')->group(function () {
+        Route::get('/report', [UserTrusteeFeeController::class, 'report'])->name('report');
+        Route::get('/trashed', [UserTrusteeFeeController::class, 'trashed'])->name('trashed');
+        Route::patch('{id}/restore', [UserTrusteeFeeController::class, 'restore'])->name('restore');
+        Route::delete('{id}/force-delete', [UserTrusteeFeeController::class, 'forceDelete'])->name('force-delete');
+    });
+
     Route::resource('/user/compliance-covenants-info', UserComplianceCovenantController::class);
+    
+    // Additional
+    Route::prefix('/user/compliance-covenants-info')->name('compliance-covenants-info.')->group(function () {
+        Route::get('/compliance-covenants/report', [UserComplianceCovenantController::class, 'report'])->name('report');
+        Route::get('/compliance-covenants-trashed', [UserComplianceCovenantController::class, 'trashed'])->name('trashed');
+        Route::patch('/compliance-covenants/{id}/restore', [UserComplianceCovenantController::class, 'restore'])->name('restore');
+        Route::delete('/compliance-covenants/{id}/force-delete', [UserComplianceCovenantController::class, 'forceDelete'])->name('force-delete');
+    });
 
     // REITs
     Route::resource('/user/portfolios-info', UserPortfolioController::class);

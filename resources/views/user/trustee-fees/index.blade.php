@@ -26,14 +26,7 @@
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">Trustee Fees</h3>
                     <div class="flex gap-2">
-                        <a href="{{ route('trustee-fees.trashed') }}" 
-                           class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                            Trash
-                        </a>
-                        <a href="{{ route('trustee-fees.create') }}" 
+                        <a href="{{ route('trustee-fees-info.create') }}" 
                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -45,7 +38,7 @@
 
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
-                    <form method="GET" action="{{ route('trustee-fees.search') }}">
+                    <form method="GET" action="{{ route('trustee-fees-info.index') }}">
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <!-- Issuer Search Field -->
                             <div>
@@ -140,18 +133,18 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        <a href="{{ route('trustee-fees.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('trustee-fees-info.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                             </svg>
                                         </a>
-                                        <a href="{{ route('trustee-fees.edit', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('trustee-fees-info.edit', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                             </svg>
                                         </a>
-                                        <form action="{{ route('trustee-fees.destroy', $fee) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this trustee fee?');" class="inline">
+                                        <form action="{{ route('trustee-fees-info.destroy', $fee) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this trustee fee?');" class="inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-900">

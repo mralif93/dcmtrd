@@ -31,7 +31,7 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <form action="{{ route('trustee-fees.store') }}" method="POST" class="p-6">
+                <form action="{{ route('trustee-fees-info.store') }}" method="POST" class="p-6">
                     @csrf
                     <div class="space-y-6 pb-6">
                         <!-- Basic Information Section -->
@@ -183,7 +183,7 @@
 
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
-                        <a href="{{ route('trustee-fees.index') }}" 
+                        <a href="{{ route('trustee-fees-info.index') }}" 
                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>

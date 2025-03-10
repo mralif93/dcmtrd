@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Trustee Fees Management') }}
+            {{ __('Compliance Covenants Management') }}
         </h2>
     </x-slot>
 
@@ -24,65 +24,46 @@
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg font-medium text-gray-900">Trustee Fees</h3>
+                    <h3 class="text-lg font-medium text-gray-900">Compliance Covenants</h3>
                     <div class="flex gap-2">
-                        <a href="{{ route('trustee-fees.trashed') }}" 
-                           class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                            Trash
-                        </a>
-                        <a href="{{ route('trustee-fees.create') }}" 
+                        <a href="{{ route('compliance-covenants-info.create') }}" 
                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            Add New Fee
+                            Add New Covenant
                         </a>
                     </div>
                 </div>
 
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
-                    <form method="GET" action="{{ route('trustee-fees.search') }}">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <form method="GET" action="{{ route('compliance-covenants-info.index') }}">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <!-- Issuer Search Field -->
                             <div>
-                                <label for="issuer" class="block text-sm font-medium text-gray-700">Issuer</label>
-                                <input type="text" name="issuer" id="issuer" value="{{ request('issuer') }}" 
+                                <label for="issuer_short_name" class="block text-sm font-medium text-gray-700">Issuer</label>
+                                <input type="text" name="issuer_short_name" id="issuer_short_name" value="{{ request('issuer_short_name') }}" 
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
-                                       placeholder="Issuer name...">
+                                       placeholder="Search issuer...">
                             </div>
 
-                            <!-- Invoice Number Filter -->
+                            <!-- Financial Year End Filter -->
                             <div>
-                                <label for="invoice_no" class="block text-sm font-medium text-gray-700">Invoice No</label>
-                                <input type="text" name="invoice_no" id="invoice_no" value="{{ request('invoice_no') }}" 
+                                <label for="financial_year_end" class="block text-sm font-medium text-gray-700">Financial Year End</label>
+                                <input type="text" name="financial_year_end" id="financial_year_end" value="{{ request('financial_year_end') }}" 
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
-                                       placeholder="Invoice number...">
+                                       placeholder="e.g. 31 Dec 2024">
                             </div>
 
-                            <!-- Month Filter -->
+                            <!-- Compliance Status Filter -->
                             <div>
-                                <label for="month" class="block text-sm font-medium text-gray-700">Month</label>
-                                <select name="month" id="month" 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">All Months</option>
-                                    @foreach(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $month)
-                                        <option value="{{ $month }}" @selected(request('month') === $month)>{{ $month }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Payment Status Filter -->
-                            <div>
-                                <label for="payment_status" class="block text-sm font-medium text-gray-700">Payment Status</label>
-                                <select name="payment_status" id="payment_status" 
+                                <label for="status" class="block text-sm font-medium text-gray-700">Compliance Status</label>
+                                <select name="status" id="status" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">All Status</option>
-                                    <option value="paid" @selected(request('payment_status') === 'paid')>Paid</option>
-                                    <option value="unpaid" @selected(request('payment_status') === 'unpaid')>Unpaid</option>
+                                    <option value="compliant" @selected(request('status') === 'compliant')>Compliant</option>
+                                    <option value="non_compliant" @selected(request('status') === 'non_compliant')>Non-Compliant</option>
                                 </select>
                             </div>
 
@@ -100,58 +81,61 @@
                     </form>
                 </div>
 
-                <!-- Trustee Fees Table -->
+                <!-- Compliance Covenants Table -->
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice No</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee Amount</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anniversary Period</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Financial Year End</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Missing Documents</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($trustee_fees as $fee)
+                            @forelse($covenants as $covenant)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $fee->issuer }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $covenant->issuer_short_name }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $fee->invoice_no }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">RM {{ number_format($fee->fees_rm, 2) }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">
-                                        {{ $fee->start_anniversary_date->format('d/m/Y') }} - 
-                                        {{ $fee->end_anniversary_date->format('d/m/Y') }}
-                                    </div>
+                                    <div class="text-sm text-gray-900">{{ $covenant->financial_year_end }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
-                                        $fee->payment_received ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                        $covenant->isCompliant() ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                     }}">
-                                        {{ $fee->payment_received ? 'Paid' : 'Unpaid' }}
+                                        {{ $covenant->isCompliant() ? 'Compliant' : 'Non-Compliant' }}
                                     </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900">
+                                        @if(!$covenant->isCompliant())
+                                            <ul class="list-disc pl-5">
+                                                @foreach($covenant->getMissingDocuments() as $document)
+                                                    <li>{{ $document }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @else
+                                            <span class="text-green-600">All documents submitted</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        <a href="{{ route('trustee-fees.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('compliance-covenants.show', $covenant) }}" class="text-indigo-600 hover:text-indigo-900">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                             </svg>
                                         </a>
-                                        <a href="{{ route('trustee-fees.edit', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('compliance-covenants.edit', $covenant) }}" class="text-indigo-600 hover:text-indigo-900">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                             </svg>
                                         </a>
-                                        <form action="{{ route('trustee-fees.destroy', $fee) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this trustee fee?');" class="inline">
+                                        <form action="{{ route('compliance-covenants.destroy', $covenant) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this compliance covenant?');" class="inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-900">
@@ -163,14 +147,20 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center">
+                                    <div class="text-sm text-gray-500">No compliance covenants found.</div>
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
                 
                 <!-- Pagination Links -->
                 <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
-                    {{ $trustee_fees->links() }}
+                    {{ $covenants->links() }}
                 </div>
             </div>
         </div>

@@ -13,20 +13,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             DefaultUsersSeeder::class,
+            BondsSeeder::class,
             ReitsSeeder::class,
-            // AllSeeder::class,
-            // IssuerSeeder::class,
-            // BondSeeder::class,
-            // RatingMovementSeeder::class,
-            // PaymentScheduleSeeder::class,
-            // RedemptionSeeder::class,
-            // CallScheduleSeeder::class,
-            // LockoutPeriodSeeder::class,
-            // TradingActivitySeeder::class,
-            // ChartSeeder::class,
-            // AnnouncementSeeder::class,
-            // FacilityInformationSeeder::class,
-            // RelatedDocumentSeeder::class,
         ]);
     }
 }

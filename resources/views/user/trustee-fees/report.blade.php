@@ -11,7 +11,7 @@
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">Trustee Fees Report</h3>
                     <div class="flex space-x-2">
-                        <a href="{{ route('trustee-fees.index') }}" 
+                        <a href="{{ route('trustee-fees-info.index') }}" 
                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
@@ -30,7 +30,7 @@
 
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200 print:hidden">
-                    <form method="GET" action="{{ route('trustee-fees.report') }}">
+                    <form method="GET" action="{{ route('trustee-fees-info.report') }}">
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <!-- Date Range Fields -->
                             <div>
@@ -148,7 +148,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium print:hidden">
-                                    <a href="{{ route('trustee-fees.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                    <a href="{{ route('trustee-fees-info.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
                                 </td>
                             </tr>
                             @empty
