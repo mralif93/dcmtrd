@@ -195,18 +195,16 @@ class MainController extends Controller
         ]);
 
         $issuer = Issuer::create($validated);
-        return redirect()->route('issuers-search.index', $issuer)->with('success', 'Issuer created successfully.');
+        return redirect()->route('issuer-search.index', $issuer)->with('success', 'Issuer created successfully.');
     }
 
-    public function IssuerEdit(Issuer $issuers_info)
+    public function IssuerEdit(Issuer $issuer)
     {
-        $issuer = $issuers_info;
         return view('main.issuers.edit', compact('issuer'));
     }
 
-    public function IssuerUpdate(Request $request, Issuer $issuers_info)
+    public function IssuerUpdate(Request $request, Issuer $issuer)
     {
-        $issuer = $issuers_info;
         $validated = $request->validate([
             'issuer_short_name' => 'required|string|max:50|unique:issuers,issuer_short_name,' . $issuer->id,
             'issuer_name' => 'required|string|max:100',
@@ -223,6 +221,6 @@ class MainController extends Controller
         ]);
 
         $issuer->update($validated);
-        return redirect()->route('issuers-search.index', $issuer)->with('success', 'Issuer updated successfully.');
+        return redirect()->route('issuer-search.index', $issuer)->with('success', 'Issuer updated successfully.');
     }
 }
