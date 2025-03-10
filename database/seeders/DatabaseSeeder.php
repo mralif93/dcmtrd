@@ -3,12 +3,13 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Database\Seeders\LeaseSeeder;
+use Database\Seeders\IssuerSeeder;
+use Database\Seeders\TenantSeeder;
 use Database\Seeders\PropertySeeder;
 use Database\Seeders\PortfolioSeeder;
 use Database\Seeders\DefaultUsersSeeder;
 use Database\Seeders\PortfolioTypeSeeder;
-use Database\Seeders\TenantSeeder;
-use Database\Seeders\LeaseSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,6 +25,7 @@ class DatabaseSeeder extends Seeder
             PropertySeeder::class,
             TenantSeeder::class,
             LeaseSeeder::class,
-        ]);
+            IssuerSeeder::class
+        ]); 
     }
 }
