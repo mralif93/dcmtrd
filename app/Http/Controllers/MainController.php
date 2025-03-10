@@ -170,4 +170,59 @@ class MainController extends Controller
             'ratingMovements' => $ratingMovements,
         ]);
     }
+
+    // Issuer Section
+    public function IssuerCreate()
+    {
+        return view('main.issuers.create');
+    }
+
+    public function IssuerStore(Request $request)
+    {
+        $validated = $request->validate([
+            'issuer_short_name' => 'required|string|max:50|unique:issuers',
+            'issuer_name' => 'required|string|max:100',
+            'registration_number' => 'required|unique:issuers',
+            'debenture' => 'nullable|string|max:100',
+            'trustee_fee_amount_1' => 'nullable|numeric',
+            'trustee_fee_amount_2' => 'nullable|numeric',
+            'reminder_1' => 'nullable|date',
+            'reminder_2' => 'nullable|date',
+            'reminder_3' => 'nullable|date',
+            'trustee_role_1' => 'nullable|string|max:100',
+            'trustee_role_2' => 'nullable|string|max:100',
+            'trust_deed_date' => 'required|date',
+        ]);
+
+        $issuer = Issuer::create($validated);
+        return redirect()->route('issuers-search.index', $issuer)->with('success', 'Issuer created successfully.');
+    }
+
+    public function IssuerEdit(Issuer $issuers_info)
+    {
+        $issuer = $issuers_info;
+        return view('main.issuers.edit', compact('issuer'));
+    }
+
+    public function IssuerUpdate(Request $request, Issuer $issuers_info)
+    {
+        $issuer = $issuers_info;
+        $validated = $request->validate([
+            'issuer_short_name' => 'required|string|max:50|unique:issuers,issuer_short_name,' . $issuer->id,
+            'issuer_name' => 'required|string|max:100',
+            'registration_number' => 'required|unique:issuers,registration_number,' . $issuer->id,
+            'debenture' => 'nullable|string|max:100',
+            'trustee_fee_amount_1' => 'nullable|numeric',
+            'trustee_fee_amount_2' => 'nullable|numeric',
+            'reminder_1' => 'nullable|date',
+            'reminder_2' => 'nullable|date',
+            'reminder_3' => 'nullable|date',
+            'trustee_role_1' => 'nullable|string|max:100',
+            'trustee_role_2' => 'nullable|string|max:100',
+            'trust_deed_date' => 'required|date',
+        ]);
+
+        $issuer->update($validated);
+        return redirect()->route('issuers-search.index', $issuer)->with('success', 'Issuer updated successfully.');
+    }
 }

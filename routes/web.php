@@ -203,6 +203,11 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::get('announcement/{announcement}', [MainController::class, 'announcement'])->name('announcement.show');
     Route::get('facility-info/{facilityInformation}', [MainController::class, 'facility'])->name('facility.show');
 
+    Route::get('/issuer-details/create', [MainController::class, 'IssuerCreate'])->name('issuer-details.create');
+    Route::post('/issuer-details/create', [MainController::class, 'IssuerStore'])->name('issuer-details.store');
+    Route::get('/issuer-details/edit', [MainController::class, 'IssuerEdit'])->name('issuer-details.edit');
+    Route::post('/issuer-details/edit', [MainController::class, 'IssuerUpdate'])->name('issuer-details.update');
+
     // Bonds
     Route::resource('/user/issuers-info', UserIssuerController::class);
     Route::resource('/user/bonds-info', UserBondController::class);
@@ -280,28 +285,3 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('/approver/dashboard', [ApproverController::class, 'index'])
         ->name('approver.dashboard');
 });
-
-// Example Permission-based routes
-// Uncomment and modify these as needed for your application
-
-/*
-// Routes that require specific permissions
-Route::middleware(['auth', 'two-factor', 'permission:manage-users'])->group(function () {
-    // User management routes for anyone with this permission
-    Route::get('/users/manage', [UserController::class, 'manageUsers'])
-        ->name('users.manage');
-});
-
-Route::middleware(['auth', 'two-factor', 'permission:manage-bonds'])->group(function () {
-    // Bond management routes for anyone with this permission
-    Route::get('/bonds/manage', [BondController::class, 'manageBonds'])
-        ->name('bonds.manage');
-});
-
-// Routes that need both role and permission
-Route::middleware(['auth', 'two-factor', 'role:admin', 'permission:view-reports'])->group(function () {
-    // Routes for admins who also have the view-reports permission
-    Route::get('/admin/reports', [AdminController::class, 'reports'])
-        ->name('admin.reports');
-});
-*/

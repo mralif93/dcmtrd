@@ -269,7 +269,7 @@
             <div class="{{ $containerClass }}">
                 @if(Auth::user()->hasPermission('DCMTRD'))
                 <!-- Card 1: Bond Monitoring -->
-                <a href="{{ route('dashboard', ['section' => 'dcmtrd']) }}" class="card bond-card shadow-lg">
+                <a href="{{ route('issuer-search.index', ['section' => 'dcmtrd']) }}" class="card bond-card shadow-lg">
                     <div class="p-8">
                         <div class="icon-container blue-bg-light">
                             <i class="fas fa-building blue-icon fa-3x"></i>

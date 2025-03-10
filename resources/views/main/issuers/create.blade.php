@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-main-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Create New Issuer') }}
@@ -31,7 +31,7 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <form action="{{ route('issuers-info.store') }}" method="POST" class="p-6">
+                <form action="{{ route('issuer-details.store') }}" method="POST" class="p-6">
                     @csrf
 
                     <!-- Section: Issuer Details -->
@@ -147,7 +147,7 @@
 
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
-                        <a href="{{ route('issuers-info.index') }}" 
+                        <a href="{{ route('issuer-search.index') }}" 
                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>
@@ -160,4 +160,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-main-layout>
