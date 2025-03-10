@@ -80,11 +80,11 @@ Route::get("/", function () {
 });
 
 // Frontend routes
-Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
+// Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
 // Route::get('issuer-info/{issuer}', [MainController::class, 'info'])->name('issuer-search.show');
-Route::get('security-info/{bond}', [MainController::class, 'bondInfo'])->name('security-info.show');
-Route::get('announcement/{announcement}', [MainController::class, 'announcement'])->name('announcement.show');
-Route::get('facility-info/{facilityInformation}', [MainController::class, 'facility'])->name('facility.show');
+// Route::get('security-info/{bond}', [MainController::class, 'bondInfo'])->name('security-info.show');
+// Route::get('announcement/{announcement}', [MainController::class, 'announcement'])->name('announcement.show');
+// Route::get('facility-info/{facilityInformation}', [MainController::class, 'facility'])->name('facility.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -108,20 +108,7 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])
         ->name('admin.dashboard');
 
-    Route::get('/admin/upload', [UploadController::class, 'index'])->name('upload.index');
     Route::post('/admin/upload/issuer', [UploadController::class, 'storeIssuer'])->name('upload.issuer');
-    // upload bond
-    Route::get('/admin/upload/bond', [UploadController::class, 'bondUploadForm'])->name('upload.bond');
-    Route::post('/admin/upload/bond', [UploadController::class, 'storeBond'])->name('store.bond');
-    // upload rating movement
-    Route::get('/admin/upload/rating-movement', [UploadController::class, 'ratingMovementUploadForm'])->name('upload.rating-movement');
-    Route::post('/admin/upload/rating-movement', [UploadController::class, 'storeRatingMovement'])->name('store.rating-movement');
-     // upload payment schedule
-     Route::get('/admin/upload/payment-schedule', [UploadController::class, 'paymentScheduleUploadForm'])->name('upload.payment-schedule');
-     Route::post('/admin/upload/payment-schedule', [UploadController::class, 'storePaymentSchedule'])->name('store.payment-schedule');
-     // upload trading activity
-     Route::get('/admin/upload/trading-activity', [UploadController::class, 'tradingActivityUploadForm'])->name('upload.trading-activity');
-     Route::post('/admin/upload/trading-activity', [UploadController::class, 'storeTradingActivity'])->name('store.trading-activity');
 
     // Bond
     Route::resource('/admin/users', UserAdminController::class);
@@ -190,6 +177,27 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::get('/dashboard', [UserController::class, 'index'])
         ->name('dashboard');
+
+    Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
+    Route::get('security-info/{bond}', [MainController::class, 'bondInfo'])->name('security-info.show');
+    Route::get('announcement/{announcement}', [MainController::class, 'announcement'])->name('announcement.show');
+    Route::get('facility-info/{facilityInformation}', [MainController::class, 'facility'])->name('facility.show');
+
+    Route::get('/user/upload/page', [UploadController::class, 'userUpload'])->name('upload.user.page');
+    Route::get('/user/upload', [UploadController::class, 'index'])->name('upload.index');
+    Route::post('/user/upload/issuer', [UploadController::class, 'storeIssuer'])->name('upload.issuer');
+    // upload bond
+    Route::get('/user/upload/bond', [UploadController::class, 'bondUploadForm'])->name('upload.bond');
+    Route::post('/user/upload/bond', [UploadController::class, 'storeBond'])->name('store.bond');
+    // upload rating movement
+    Route::get('/user/upload/rating-movement', [UploadController::class, 'ratingMovementUploadForm'])->name('upload.rating-movement');
+    Route::post('/user/upload/rating-movement', [UploadController::class, 'storeRatingMovement'])->name('store.rating-movement');
+    // upload payment schedule
+    Route::get('/user/upload/payment-schedule', [UploadController::class, 'paymentScheduleUploadForm'])->name('upload.payment-schedule');
+    Route::post('/user/upload/payment-schedule', [UploadController::class, 'storePaymentSchedule'])->name('store.payment-schedule');
+    // upload trading activity
+    Route::get('/user/upload/trading-activity', [UploadController::class, 'tradingActivityUploadForm'])->name('upload.trading-activity');
+    Route::post('/user/upload/trading-activity', [UploadController::class, 'storeTradingActivity'])->name('store.trading-activity');
 
     Route::resource('/user/issuers-info', UserIssuerController::class);
     Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');

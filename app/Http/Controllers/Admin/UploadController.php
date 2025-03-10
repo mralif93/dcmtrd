@@ -88,4 +88,9 @@ class UploadController extends Controller
 
         return back()->with('success', 'Trading activity data uploaded successfully!');
     }
+
+    public function userUpload()
+    {
+        return view('user.upload.page');
+    }
 }

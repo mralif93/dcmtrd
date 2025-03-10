@@ -2,33 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use App\Models\Issuer;
-use App\Models\Announcement;
 use App\Models\Bond;
-use App\Models\BondInfo;
+use App\Models\Issuer;
+use Illuminate\View\View;
+use App\Models\Announcement;
 use App\Models\CallSchedule;
+use Illuminate\Http\Request;
 use App\Models\LockoutPeriod;
 use App\Models\FacilityInformation;
+use App\Http\Controllers\Controller;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class MainController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $search = $request->input('search');
+        $search = $request->get('search');
 
         $issuers = Issuer::query()
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('issuer_name', 'like', "%{$search}%")
-                        ->orWhere('issuer_short_name', 'like', "%{$search}%")
-                        ->orWhere('registration_number', 'like', "%{$search}%");
+                    $q->whereRaw('LOWER(issuer_name) LIKE LOWER(?)', ["%{$search}%"])
+                        ->orWhereRaw('LOWER(issuer_short_name) LIKE LOWER(?)', ["%{$search}%"])
+                        ->orWhereRaw('LOWER(registration_number) LIKE LOWER(?)', ["%{$search}%"]);
                 });
             })
             ->orderBy('issuer_name')
             ->paginate(10)
-            ->appends(['search' => $search]); // Preserve search in pagination links
+            ->appends(['search' => $search]);
 
         return view('main.index', [
             'issuers' => $issuers,

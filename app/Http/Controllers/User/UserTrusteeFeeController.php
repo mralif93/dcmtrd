@@ -12,7 +12,7 @@ class UserTrusteeFeeController extends Controller
      */
     public function index()
     {
-        //
+        return view('user.trustee-fee.index');
     }
 
     /**

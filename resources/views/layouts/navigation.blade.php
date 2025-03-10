@@ -9,19 +9,35 @@
                         <x-application-logo class="block w-auto text-gray-800 fill-current h-9" />
                     </a>
                 </div>
-
+            
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="Auth::user()->role == 'admin' ? route('admin.dashboard') : route('dashboard')" :active="request()->routeIs('dashboard')">
+                <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="Auth::user()->role == 'admin' ? route('admin.dashboard') : route('dashboard')" 
+                        :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-
-                    {{-- User Links --}}
+            
+                    {{-- User-specific Links --}}
                     @if (Auth::user()->role == 'user')
-                            <!-- Link -->
+                        <x-nav-link :href="route('upload.user.page') " :active="request()->routeIs('upload.user.page')">
+                            {{ __('Upload Page') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('trustee-fees-info.index') " :active="request()->routeIs('trustee-fees-info.index')">
+                            {{ __('Trustee Fees') }}
+                        </x-nav-link>
+
+                        {{-- <x-nav-link :href="route('compliance-covenant.index') " :active="request()->routeIs('compliance-covenant.index')">
+                            {{ __('Compliance Covenants') }}
+                        </x-nav-link> --}}
+
+                        <x-nav-link :href="route('upload.user.page') " :active="request()->routeIs('upload.user.page')">
+                            {{ __('Reports') }}
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
+            
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
