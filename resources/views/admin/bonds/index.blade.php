@@ -16,15 +16,15 @@
                         class="absolute left-0 z-10 w-48 mt-2 bg-white border rounded-md shadow-md">
                         <a href="{{ route('bonds.create') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Create Bond</a>
-                        <a href="{{ route('bonds.create') }}"
+                        <a href="{{ route('related-documents-info.create') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Create Related Document</a>
-                        <a href="{{ route('bonds.create') }}"
+                        <a href="{{ route('rating-movements-info.create') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Create Rating Movements</a>
-                        <a href="{{ route('bonds.create') }}"
+                        <a href="{{ route('payment-schedules-info.create') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Create Payment Schedules</a>
-                        <a href="{{ route('bonds.create') }}"
+                        <a href="{{ route('redemptions-info.create') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Create Redemptions</a>
-                        <a href="{{ route('bonds.create') }}"
+                        <a href="{{ route('trading-activities-info.create') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Create Trading
                             Activities</a>
                     </div>
@@ -147,7 +147,7 @@
 
                                     <td class="px-6 py-4">
                                         <div class="flex items-center space-x-2">
-                                            @if ($bond->status === 'Re-Check')
+                                            @if ($bond->status === 'Re-Check' && auth()->user()->email !== 'roslimsyah@artrustees.com.my')
                                                 <div x-data="{ open: false }" class="relative">
                                                     <!-- Button to Toggle Dropdown -->
                                                     <button @click="open = !open"
@@ -162,15 +162,15 @@
                                                             class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">
                                                             Update Bond
                                                         </a>
-                                                        <a
+                                                        <a href="{{ route('related-documents.edit', $bond) }}"
                                                             class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">
                                                             Update Related Documents
                                                         </a>
-                                                        <a 
+                                                        <a href="{{ route('rating-movements.edit', $bond) }}"
                                                             class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">
                                                             Update Rating Movements
                                                         </a>
-                                                        <a 
+                                                        <a href="{{ route('payment-schedules.edit', $bond) }}"
                                                             class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200">
                                                             Update Payment Schedule
                                                         </a>

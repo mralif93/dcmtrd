@@ -6,7 +6,7 @@
             </h2>
             <div class="flex items-center gap-2">
 
-                @if ($bond->status === 'Pending')
+                @if ($bond->status === 'Pending' && auth()->user()->email === 'roslimsyah@artrustees.com.my')
                     <form action="{{ route('bonds.approve', $bond->id) }}" method="POST">
                         @csrf
                         <button type="submit"

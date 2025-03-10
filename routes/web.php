@@ -229,6 +229,13 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::post('/user/bonds/{bond}/reject', [BondController::class, 'reject'])->name('bonds.reject');
     Route::resource('/user/announcements', AnnouncementController::class);
 
+    Route::resource('/admin/rating-movements', RatingMovementController::class);
+    Route::resource('/admin/payment-schedules', PaymentScheduleController::class);
+    Route::resource('/admin/redemptions', RedemptionController::class);
+    Route::resource('/admin/call-schedules', CallScheduleController::class);
+    Route::resource('/admin/lockout-periods', LockoutPeriodController::class);
+    Route::resource('/admin/trading-activities', TradingActivityController::class);
+
     Route::resource('/user/issuers-info', UserIssuerController::class);
     Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
     Route::get('issuer-info/{issuer}', [MainController::class, 'info'])->name('issuer-search.show');
