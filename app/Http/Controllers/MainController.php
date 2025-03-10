@@ -228,8 +228,9 @@ class MainController extends Controller
     // Bond Section
     public function BondCreate(Issuer $issuer)
     {
+        $issuerInfo = $issuer;
         $issuers = Issuer::orderBy('issuer_name')->get();
-        return view('main.bonds.create', compact('issuers', 'issuer'));
+        return view('main.bonds.create', compact('issuers', 'issuerInfo'));
     }
 
     public function BondStore(Request $request)
@@ -317,5 +318,75 @@ class MainController extends Controller
             'issuer_id.exists' => 'The selected issuer is invalid',
             'unique' => 'This :attribute is already in use',
         ]);
+    }
+
+    // Announcement
+    public function AnnouncementCreate(Issuer $issuer)
+    {
+        $issuerInfo = $issuer;
+        $issuers = Issuer::all();
+        return view('main.announcements.create', compact('issuers', 'issuerInfo'));
+    }
+
+    public function AnnouncementStore(Request $request)
+    {
+        $validated = $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'category' => 'required|string|max:50',
+            'sub_category' => 'nullable|string|max:50',
+            'source' => 'required|string|max:100',
+            'announcement_date' => 'required|date',
+            'title' => 'required|string|max:200',
+            'description' => 'required|string',
+            'content' => 'required|string',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('attachments');
+        }
+
+        try {
+            $announcement = Announcement::create($validated);
+            return redirect()->route('issuer-search.show', $announcement->issuer)->with('success', 'Announcement created successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error creating: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    public function AnnouncementEdit(Announcement $announcement)
+    {
+        $issuers = Issuer::all();
+        return view('main.announcements.edit', compact('announcement', 'issuers'));
+    }
+
+    public function AnnouncementUpdate(Request $request, Announcement $announcement)
+    {
+        $validated = $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'category' => 'required|string|max:50',
+            'sub_category' => 'nullable|string|max:50',
+            'source' => 'required|string|max:100',
+            'announcement_date' => 'required|date',
+            'title' => 'required|string|max:200',
+            'description' => 'required|string',
+            'content' => 'required|string',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        if ($request->hasFile('attachment')) {
+            // Delete old attachment
+            if ($announcement->attachment) {
+                Storage::delete($announcement->attachment);
+            }
+            $validated['attachment'] = $request->file('attachment')->store('attachments');
+        }
+
+        try {
+            $announcement->update($validated);
+            return redirect()->route('issuer-search.show', $announcement->issuer)->with('success', 'Announcement updated successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
+        }
     }
 }

@@ -45,7 +45,9 @@
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="">Select an Issuer</option>
                                 @foreach($issuers as $issuer)
-                                    <option value="{{ $issuer->id }}">{{ $issuer->issuer_name }}</option>
+                                    <option value="{{ $issuer->id }}" @selected(old('issuer_id', $issuerInfo->id) == $issuer->id)>
+                                        {{ $issuer->issuer_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
