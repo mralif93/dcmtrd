@@ -41,7 +41,7 @@ class UserRatingMovementController extends Controller
      */
     public function create()
     {
-        $bonds = Bond::active()->get();
+        $bonds = Bond::get();
         return view('user.rating-movements.create', compact('bonds'));
     }
 
@@ -85,7 +85,7 @@ class UserRatingMovementController extends Controller
     public function edit(RatingMovement $rating_movements_info)
     {
         $ratingMovement = $rating_movements_info;
-        $bonds = Bond::active()->get();
+        $bonds = Bond::get();
         return view('user.rating-movements.edit', compact('ratingMovement', 'bonds'));
     }
 

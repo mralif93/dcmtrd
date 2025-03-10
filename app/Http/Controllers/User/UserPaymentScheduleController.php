@@ -40,7 +40,7 @@ class UserPaymentScheduleController extends Controller
      */
     public function create()
     {
-        $bonds = Bond::active()->get();
+        $bonds = Bond::get();
         return view('user.payment-schedules.create', compact('bonds'));
     }
 
@@ -84,7 +84,7 @@ class UserPaymentScheduleController extends Controller
     public function edit(PaymentSchedule $payment_schedules_info)
     {
         $paymentSchedule = $payment_schedules_info;
-        $bonds = Bond::active()->get();
+        $bonds = Bond::get();
         return view('user.payment-schedules.edit', compact('paymentSchedule', 'bonds'));
     }
 

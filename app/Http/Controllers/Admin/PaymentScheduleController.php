@@ -17,18 +17,18 @@ class PaymentScheduleController extends Controller
     public function index(Request $request)
     {
         $searchTerm = $request->input('search');
-        
+
         $paymentSchedules = PaymentSchedule::with('bond')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where(function ($q) use ($searchTerm) {
                     $q->where('coupon_rate', 'like', "%{$searchTerm}%")
-                      ->orWhereDate('payment_date', $searchTerm)
-                      ->orWhereDate('start_date', $searchTerm)
-                      ->orWhereDate('end_date', $searchTerm)
-                      ->orWhereHas('bond', function($q) use ($searchTerm) {
-                          $q->where('isin_code', 'like', "%{$searchTerm}%")
-                            ->orWhere('bond_sukuk_name', 'like', "%{$searchTerm}%");
-                      });
+                        ->orWhereDate('payment_date', $searchTerm)
+                        ->orWhereDate('start_date', $searchTerm)
+                        ->orWhereDate('end_date', $searchTerm)
+                        ->orWhereHas('bond', function ($q) use ($searchTerm) {
+                            $q->where('isin_code', 'like', "%{$searchTerm}%")
+                                ->orWhere('bond_sukuk_name', 'like', "%{$searchTerm}%");
+                        });
                 });
             })
             ->latest()
@@ -80,7 +80,7 @@ class PaymentScheduleController extends Controller
      */
     public function edit(PaymentSchedule $paymentSchedule)
     {
-        $bonds = Bond::active()->get();
+        $bonds = Bond::get();
         return view('admin.payment-schedules.edit', compact('paymentSchedule', 'bonds'));
     }
 
@@ -108,6 +108,6 @@ class PaymentScheduleController extends Controller
     public function destroy(PaymentSchedule $paymentSchedule)
     {
         $paymentSchedule->delete();
-        return redirect()->route('payment-schedules.index')>with('success', 'Payment schedule deleted successfully');
+        return redirect()->route('payment-schedules.index') > with('success', 'Payment schedule deleted successfully');
     }
 }

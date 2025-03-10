@@ -41,7 +41,7 @@ class UserTradingActivityController extends Controller
      */
     public function create()
     {
-        $bonds = Bond::active()->get();
+        $bonds = Bond::get();
         return view('user.trading-activities.create', compact('bonds'));
     }
 
@@ -84,7 +84,7 @@ class UserTradingActivityController extends Controller
     public function edit(TradingActivity $trading_activities_info)
     {
         $activity = $trading_activities_info;
-        $bonds = Bond::active()->get();
+        $bonds = Bond::get();
         return view('user.trading-activities.edit', compact('activity', 'bonds'));
     }
 

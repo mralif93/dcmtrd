@@ -16,17 +16,17 @@ class RatingMovementController extends Controller
     public function index(Request $request)
     {
         $searchTerm = $request->input('search');
-        
+
         $ratingMovements = RatingMovement::with('bond')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where(function ($q) use ($searchTerm) {
                     $q->where('rating_agency', 'like', "%{$searchTerm}%")
-                      ->orWhere('rating', 'like', "%{$searchTerm}%")
-                      ->orWhere('rating_action', 'like', "%{$searchTerm}%")
-                      ->orWhereHas('bond', function($q) use ($searchTerm) {
-                          $q->where('bond_sukuk_name', 'like', "%{$searchTerm}%")
-                            ->orWhere('isin_code', 'like', "%{$searchTerm}%");
-                      });
+                        ->orWhere('rating', 'like', "%{$searchTerm}%")
+                        ->orWhere('rating_action', 'like', "%{$searchTerm}%")
+                        ->orWhereHas('bond', function ($q) use ($searchTerm) {
+                            $q->where('bond_sukuk_name', 'like', "%{$searchTerm}%")
+                                ->orWhere('isin_code', 'like', "%{$searchTerm}%");
+                        });
                 });
             })
             ->latest('effective_date')
@@ -41,7 +41,7 @@ class RatingMovementController extends Controller
      */
     public function create()
     {
-        $bonds = Bond::active()->get();
+        $bonds = Bond::get();
         return view('admin.rating-movements.create', compact('bonds'));
     }
 
@@ -83,7 +83,7 @@ class RatingMovementController extends Controller
      */
     public function edit(RatingMovement $ratingMovement)
     {
-        $bonds = Bond::active()->get();
+        $bonds = Bond::get();
         return view('admin.rating-movements.edit', compact('ratingMovement', 'bonds'));
     }
 

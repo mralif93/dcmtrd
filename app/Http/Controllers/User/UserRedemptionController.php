@@ -42,7 +42,7 @@ class UserRedemptionController extends Controller
      */
     public function create()
     {
-        $bonds = Bond::active()->get();
+        $bonds = Bond::get();
         return view('user.redemptions.create', compact('bonds'));
     }
 
@@ -91,7 +91,7 @@ class UserRedemptionController extends Controller
     public function edit(Redemption $redemptions_info)
     {
         $redemption = $redemptions_info;
-        $bonds = Bond::active()->get();
+        $bonds = Bond::get();
         return view('user.redemptions.edit', compact('redemption', 'bonds'));
     }
 
