@@ -269,7 +269,7 @@
             <div class="{{ $containerClass }}">
                 @if(Auth::user()->hasPermission('DCMTRD'))
                 <!-- Card 1: Bond Monitoring -->
-                <a href="{{ route('dashboard') }}" class="card bond-card shadow-lg">
+                <a href="{{ route('dashboard', ['section' => 'dcmtrd']) }}" class="card bond-card shadow-lg">
                     <div class="p-8">
                         <div class="icon-container blue-bg-light">
                             <i class="fas fa-building blue-icon fa-3x"></i>
@@ -287,7 +287,7 @@
 
                 @if(Auth::user()->hasPermission('REITS'))
                 <!-- Card 2: REITs -->
-                <a href="{{ route('dashboard') }}" class="card reit-card shadow-lg">
+                <a href="{{ route('dashboard', ['section' => 'reits']) }}" class="card reit-card shadow-lg">
                     <div class="p-8">
                         <div class="icon-container green-bg-light">
                             <i class="fas fa-home green-icon fa-3x"></i>
@@ -305,7 +305,7 @@
                 
                 @if(Auth::user()->hasPermission('LEGAL'))
                 <!-- Card 3: Legal Department -->
-                <a href="{{ route('dashboard') }}" class="card legal-card shadow-lg">
+                <a href="{{ route('dashboard', ['section' => 'legal']) }}" class="card legal-card shadow-lg">
                     <div class="p-8">
                         <div class="icon-container purple-bg-light">
                             <i class="fas fa-balance-scale purple-icon fa-3x"></i>
@@ -323,7 +323,7 @@
                 
                 @if(Auth::user()->hasPermission('COMPLIANCE'))
                 <!-- Card 4: Compliance -->
-                <a href="{{ route('dashboard') }}" class="card compliance-card shadow-lg">
+                <a href="{{ route('dashboard', ['section' => 'compliance']) }}" class="card compliance-card shadow-lg">
                     <div class="p-8">
                         <div class="icon-container yellow-bg-light">
                             <i class="fas fa-clipboard-check yellow-icon fa-3x"></i>
@@ -339,8 +339,6 @@
                 </a>
                 @endif
             </div>
-            
-            <!-- Removed duplicate user info from bottom of page -->
         </div>
         
         <!-- Logout Confirmation Modal -->
