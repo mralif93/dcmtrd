@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Issuer;
 use App\Models\Announcement;
@@ -222,5 +223,99 @@ class MainController extends Controller
 
         $issuer->update($validated);
         return redirect()->route('issuer-search.index', $issuer)->with('success', 'Issuer updated successfully.');
+    }
+
+    // Bond Section
+    public function BondCreate(Issuer $issuer)
+    {
+        $issuers = Issuer::orderBy('issuer_name')->get();
+        return view('main.bonds.create', compact('issuers', 'issuer'));
+    }
+
+    public function BondStore(Request $request)
+    {
+        $validated = $this->validateBond($request);
+
+        $bond = Bond::create($validated);
+        return redirect()->route('issuer-search.index', $bond->issuer)->with('success', 'Bond created successfully');
+    }
+
+    public function BondEdit(Bond $bond)
+    {
+        $issuers = Issuer::orderBy('issuer_name')->get();
+        return view('main.bonds.edit', compact('bond', 'issuers'));
+    }
+
+    public function BondUpdate(Request $request, Bond $bond)
+    {
+        $validated = $this->validateBond($request, $bond);
+
+        $bond->update($validated);
+        return redirect()->route('issuer-search.show', $bond->issuer)->with('success', 'Bond updated successfully'); 
+    }
+
+    protected function validateBond(Request $request, Bond $bond = null)
+    {
+        return $request->validate([
+            'bond_sukuk_name' => 'required|string|max:255',
+            'sub_name' => 'nullable|string|max:255',
+            'rating' => 'nullable|string|max:50',
+            'category' => 'nullable|string|max:100',
+            'principal' => 'nullable|string|max:100',
+            'isin_code' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('bonds')->ignore($bond?->id)
+            ],
+            'stock_code' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('bonds')->ignore($bond?->id)
+            ],
+            'instrument_code' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('bonds')->ignore($bond?->id)
+            ],
+            'sub_category' => 'nullable|string|max:255',
+            'issue_date' => 'nullable|date',
+            'maturity_date' => 'nullable|date|after:issue_date',
+            'coupon_rate' => 'nullable|numeric|between:0,100',
+            'coupon_type' => 'nullable|in:Fixed,Floating',
+            'coupon_frequency' => 'nullable|in:Monthly,Quarterly,Semi-Annually,Annually',
+            'day_count' => 'nullable|string|max:50',
+            'issue_tenure_years' => 'nullable|numeric|min:0',
+            'residual_tenure_years' => 'nullable|numeric|min:0',
+            'last_traded_yield' => 'nullable|numeric|min:0',
+            'last_traded_price' => 'nullable|numeric|min:0',
+            'last_traded_amount' => 'nullable|numeric|min:0',
+            'last_traded_date' => 'nullable|date',
+            'coupon_accrual' => 'nullable|date',
+            'prev_coupon_payment_date' => 'nullable|date',
+            'first_coupon_payment_date' => 'nullable|date',
+            'next_coupon_payment_date' => 'nullable|date',
+            'last_coupon_payment_date' => 'nullable|date',
+            'amount_issued' => 'nullable|numeric|min:0',
+            'amount_outstanding' => 'nullable|numeric|min:0',
+            'lead_arranger' => 'nullable|string|max:255',
+            'facility_agent' => 'nullable|string|max:255',
+            'facility_code' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('bonds')->ignore($bond?->id)
+            ],
+            'status' => 'nullable|in:Active,Inactive,Matured,Pending',
+            'approval_date_time' => 'nullable|date',
+            'issuer_id' => 'required|exists:issuers,id',
+        ], [
+            'maturity_date.after' => 'Maturity date must be after issue date',
+            'coupon_rate.between' => 'Coupon rate must be between 0 and 100 percent',
+            'issuer_id.exists' => 'The selected issuer is invalid',
+            'unique' => 'This :attribute is already in use',
+        ]);
     }
 }

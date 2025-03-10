@@ -208,6 +208,12 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::get('/issuer-details/{issuer}/edit', [MainController::class, 'IssuerEdit'])->name('issuer-details.edit');
     Route::patch('/issuer-details/{issuer}/edit', [MainController::class, 'IssuerUpdate'])->name('issuer-details.update');
 
+    Route::get('/bond-details/create/{issuer}', [MainController::class, 'BondCreate'])->name('bond-details.create');
+    Route::post('/bond-details/create', [MainController::class, 'BondStore'])->name('bond-details.store');
+    Route::get('/bond-details/{bond}/edit', [MainController::class, 'BondEdit'])->name('bond-details.edit');
+    Route::patch('/bond-details/{bond}/edit', [MainController::class, 'BondUpdate'])->name('bond-details.update');
+
+
     // Bonds
     Route::resource('/user/issuers-info', UserIssuerController::class);
     Route::resource('/user/bonds-info', UserBondController::class);
