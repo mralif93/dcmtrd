@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\TrusteeFeeController;
 use App\Http\Controllers\Admin\ComplianceCovenantController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PermissionUserController;
+use App\Http\Controllers\Admin\UploadController;
 
 // REITs
 use App\Http\Controllers\Admin\FinancialTypeController;
