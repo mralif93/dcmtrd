@@ -37,6 +37,7 @@ class SecurityInformationImport implements ToModel, WithHeadingRow
             'issuer_id'               => $issuer->id,
             'sub_name'                => $issuer->issuer_name,
             'status'                  => 'Pending',
+            'prepared_by'             => auth()->user()->id
         ]);
 
         $bond->save();

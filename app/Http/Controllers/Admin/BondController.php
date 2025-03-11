@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Bond;
 use App\Models\Issuer;
 use Illuminate\Http\Request;
+use App\Jobs\BondApprovalJob;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
 
 class BondController extends Controller
 {
@@ -14,23 +15,30 @@ class BondController extends Controller
     {
         $searchTerm = $request->input('search');
 
-        $bonds = Bond::with('issuer')
-            ->when($searchTerm, function ($query) use ($searchTerm) {
-                $query->where(function ($q) use ($searchTerm) {
+        $bonds = Bond::with(['issuer:id,issuer_name', 'preparedBy:id,name'])
+            ->when(
+                $searchTerm,
+                fn($query) =>
+                $query->where(
+                    fn($q) =>
                     $q->where('bond_sukuk_name', 'like', "%$searchTerm%")
                         ->orWhere('isin_code', 'like', "%$searchTerm%")
                         ->orWhere('stock_code', 'like', "%$searchTerm%")
-                        ->orWhereHas('issuer', function ($q) use ($searchTerm) {
-                            $q->where('issuer_name', 'like', "%$searchTerm%");
-                        });
-                });
-            })
-            ->orderBy('created_at', 'desc')
+                        ->orWhereHas(
+                            'issuer',
+                            fn($q) =>
+                            $q->where('issuer_name', 'like', "%$searchTerm%")
+                        )
+                )
+            )
+            ->orderByDesc('created_at')
             ->paginate(10)
             ->withQueryString();
 
+
         return view('admin.bonds.index', compact('bonds', 'searchTerm'));
     }
+
 
     public function create()
     {
@@ -164,7 +172,14 @@ class BondController extends Controller
             return redirect()->back()->with('error', 'Bond cannot be approved.');
         }
 
-        $bond->update(['status' => 'Approved', 'approval_date_time' => now()]);
+        $bond->update([
+            'status' => 'Approved',
+            'approval_date_time' => now(),
+        ]);
+
+        dd($bond);
+
+        BondApprovalJob::dispatch($bond);
 
         return redirect()->back()->with('success', 'Bond approved successfully.');
     }

@@ -102,6 +102,7 @@
                     <table class="w-full text-sm text-left min-w-max">
                         <thead class="bg-gray-50">
                             <tr class="text-xs font-medium text-gray-600 uppercase">
+                                <th class="px-6 py-3">Prepared By</th>
                                 <th class="px-6 py-3">Status</th>
                                 <th class="px-6 py-3">Status Date</th>
                                 <th class="px-6 py-3">Bond/Sukuk Name</th>
@@ -119,6 +120,7 @@
                         <tbody class="divide-y divide-gray-200">
                             @forelse($bonds as $bond)
                                 <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-600">{{ $bond->preparedBy->name }}</td>
                                     <td class="px-6 py-4">
                                         <span
                                             class="px-3 py-1 text-xs font-medium rounded-lg shadow-sm
@@ -147,7 +149,7 @@
 
                                     <td class="px-6 py-4">
                                         <div class="flex items-center space-x-2">
-                                            @if ($bond->status === 'Re-Check' && auth()->user()->email !== 'roslimsyah@artrustees.com.my')
+                                            @if ($bond->status === 'Re-Check' && auth()->user()->email !== 'roslimsyah@artrustees.com.my' && auth()->id() === $bond->prepared_by)
                                                 <div x-data="{ open: false }" class="relative">
                                                     <!-- Button to Toggle Dropdown -->
                                                     <button @click="open = !open"

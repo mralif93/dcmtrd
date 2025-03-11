@@ -70,7 +70,7 @@ class UserBondController extends Controller
             'issuer',
             'ratingMovements',
             'paymentSchedules',
-            'tradingActivities' => fn($q) => $q->latest()->limit(10),
+            'tradingActivities',
             'redemption.callSchedules',
             'redemption.lockoutPeriods',
             'charts'

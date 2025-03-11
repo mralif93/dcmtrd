@@ -48,6 +48,7 @@ class Bond extends Model
         'status',
         'approval_date_time',
         'issuer_id',
+        'prepared_by',
     ];
 
     protected $casts = [
@@ -101,6 +102,11 @@ class Bond extends Model
         return $this->hasMany(Chart::class)->orderBy('period_from');
     }
 
+    public function preparedBy()
+    {
+        return $this->belongsTo(User::class, 'prepared_by');
+    }
+    
     // Scopes
     public function scopeActive($query)
     {
