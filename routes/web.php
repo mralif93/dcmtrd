@@ -30,7 +30,6 @@ use App\Http\Controllers\Admin\TrusteeFeeController;
 use App\Http\Controllers\Admin\ComplianceCovenantController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PermissionUserController;
-use App\Http\Controllers\Admin\UploadController;
 
 // REITs
 use App\Http\Controllers\Admin\FinancialTypeController;
@@ -62,6 +61,7 @@ use App\Http\Controllers\User\UserRelatedDocumentController;
 use App\Http\Controllers\User\UserChartController;
 use App\Http\Controllers\User\UserTrusteeFeeController;
 use App\Http\Controllers\User\UserComplianceCovenantController;
+use App\Http\Controllers\User\UserUploadController;
 
 // REITs
 use App\Http\Controllers\User\UserPortfolioController;
@@ -229,31 +229,6 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::get('/facility-info-details/{facility}/edit', [MainController::class, 'FacilityInfoEdit'])->name('facility-info-details.edit');
     Route::patch('/facility-info-details/{facility}/edit', [MainController::class, 'FacilityInfoUpdate'])->name('facility-info-details.update');
 
-    // Frontend Dashboard routes
-
-    Route::get('/user/upload/page', [UploadController::class, 'userUpload'])->name('upload.user.page');
-    Route::get('/user/upload', [UploadController::class, 'index'])->name('upload.index');
-    Route::post('/user/upload/issuer', [UploadController::class, 'storeIssuer'])->name('upload.issuer');
-    // upload bond
-    Route::get('/user/upload/bond', [UploadController::class, 'bondUploadForm'])->name('upload.bond');
-    Route::post('/user/upload/bond', [UploadController::class, 'storeBond'])->name('store.bond');
-    // upload rating movement
-    Route::get('/user/upload/rating-movement', [UploadController::class, 'ratingMovementUploadForm'])->name('upload.rating-movement');
-    Route::post('/user/upload/rating-movement', [UploadController::class, 'storeRatingMovement'])->name('store.rating-movement');
-    // upload payment schedule
-    Route::get('/user/upload/payment-schedule', [UploadController::class, 'paymentScheduleUploadForm'])->name('upload.payment-schedule');
-    Route::post('/user/upload/payment-schedule', [UploadController::class, 'storePaymentSchedule'])->name('store.payment-schedule');
-    // upload trading activity
-    Route::get('/user/upload/trading-activity', [UploadController::class, 'tradingActivityUploadForm'])->name('upload.trading-activity');
-    Route::post('/user/upload/trading-activity', [UploadController::class, 'storeTradingActivity'])->name('store.trading-activity');
-
-    // Fix : need to create a flow request insert data
-    Route::resource('/user/bonds', BondController::class);
-    // Routes for Approve and Reject
-    Route::post('/user/bonds/{bond}/approve', [BondController::class, 'approve'])->name('bonds.approve');
-    Route::post('/user/bonds/{bond}/reject', [BondController::class, 'reject'])->name('bonds.reject');
-    Route::resource('/user/announcements', AnnouncementController::class);
-
     // Bonds
     Route::resource('/user/issuers-info', UserIssuerController::class);
     Route::resource('/user/bonds-info', UserBondController::class);
@@ -287,6 +262,36 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
         Route::patch('/compliance-covenants/{id}/restore', [UserComplianceCovenantController::class, 'restore'])->name('restore');
         Route::delete('/compliance-covenants/{id}/force-delete', [UserComplianceCovenantController::class, 'forceDelete'])->name('force-delete');
     });
+
+
+    // Frontend Upload routes
+    Route::prefix('/user/bonds-info')->name('bonds-info.')->group(function () {
+        Route::get('/user/bonds-info/upload', [UserUploadController::class, 'UploadBond'])->name('upload-form');
+        Route::post('/user/bonds-info/upload', [UserUploadController::class, 'StoreBond'])->name('upload-store');
+    });
+
+    Route::prefix('/user/rating-movements-info')->name('rating-movements-info.')->group(function () {
+        Route::get('/user/rating-movements-info/upload', [UserUploadController::class, 'UploadRatingMovement'])->name('upload-form');
+        Route::post('/user/rating-movements-info/upload', [UserUploadController::class, 'StoreRatingMovement'])->name('upload-store');
+    });
+
+    Route::prefix('/user/payment-schedules-info')->name('payment-schedules-info.')->group(function () {
+        Route::get('/user/payment-schedules-info/upload', [UserUploadController::class, 'UploadPaymentSchedule'])->name('upload-form');
+        Route::post('/user/payment-schedules-info/upload', [UserUploadController::class, 'StorePaymentSchedule'])->name('upload-store');
+    });
+
+    Route::prefix('/user/trading-activities-info')->name('trading-activities-info.')->group(function () {
+        Route::get('/user/trading-activities-info/upload', [UserUploadController::class, 'UploadTradingActivity'])->name('upload-form');
+        Route::post('/user/trading-activities-info/upload', [UserUploadController::class, 'StoreTradingActivity'])->name('upload-store');
+    });
+
+    // Fix : need to create a flow request insert data
+    Route::resource('/user/bonds', BondController::class);
+    // Routes for Approve and Reject
+    Route::post('/user/bonds/{bond}/approve', [BondController::class, 'approve'])->name('bonds.approve');
+    Route::post('/user/bonds/{bond}/reject', [BondController::class, 'reject'])->name('bonds.reject');
+    Route::resource('/user/announcements', AnnouncementController::class);
+
 
     // REITs
     Route::resource('/user/portfolios-info', UserPortfolioController::class);

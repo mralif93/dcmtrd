@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 {{ __('Dashboard') }}
             </h2>
             
             <!-- Back Button -->
-            <a href="{{ route('main') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <a href="{{ route('main') }}" class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-gray-700 uppercase transition bg-gray-200 border border-transparent rounded-md hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Back to Home
@@ -17,8 +17,8 @@
 
     <!-- Default message when no section is selected -->
     <div id="default-message" class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="p-6 overflow-hidden bg-white shadow-xl sm:rounded-lg">
                 <div class="text-center">
                     <h3 class="text-lg font-medium text-gray-900">{{ __('Welcome to the Dashboard') }}</h3>
                     <p class="mt-1 text-sm text-gray-500">{{ __('Please select a section from the welcome page to view its content.') }}</p>
@@ -37,12 +37,111 @@
             </div>
 
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <!-- Manage Data -->
+                <!-- Issuers -->
                 <x-dashboard-card
-                    title="Manage Data"
-                    icon="document-text"
-                    :count="$managedDataCount ?? 0"
-                    :href="route('upload.user.page')"
+                    title="Issuers"
+                    icon="office-building"
+                    :count="$issuersCount"
+                    :href="route('issuers-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Bonds -->
+                <x-dashboard-card
+                    title="Bonds"
+                    icon="banknotes"
+                    :count="$bondsCount"
+                    :href="route('bonds-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Rating Movements -->
+                <x-dashboard-card
+                    title="Rating Movements"
+                    icon="trending-up"
+                    :count="$ratingMovementsCount"
+                    :href="route('rating-movements-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Payment Schedules -->
+                <x-dashboard-card
+                    title="Payment Schedules"
+                    icon="currency-dollar"
+                    :count="$paymentSchedulesCount"
+                    :href="route('payment-schedules-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Redemptions -->
+                <x-dashboard-card
+                    title="Redemptions"
+                    icon="arrow-path"
+                    :count="$redemptionsCount"
+                    :href="route('redemptions-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Call Schedules -->
+                <x-dashboard-card
+                    title="Call Schedules"
+                    icon="phone-outgoing"
+                    :count="$callSchedulesCount"
+                    :href="route('call-schedules-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Lockout Periods -->
+                <x-dashboard-card
+                    title="Lockout Periods"
+                    icon="lock-closed"
+                    :count="$lockoutPeriodsCount"
+                    :href="route('lockout-periods-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Trading Activities -->
+                <x-dashboard-card
+                    title="Trading Activities"
+                    icon="chart-bar"
+                    :count="$tradingActivitiesCount"
+                    :href="route('trading-activities-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Announcements -->
+                <x-dashboard-card
+                    title="Announcements"
+                    icon="megaphone"
+                    :count="$announcementsCount"
+                    :href="route('announcements-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Facility Information -->
+                <x-dashboard-card
+                    title="Facility Information"
+                    icon="information-circle"
+                    :count="$facilityInformationsCount"
+                    :href="route('facility-informations-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Related Documents & Financials -->
+                <x-dashboard-card
+                    title="Related Documents & Financials"
+                    icon="folder-open"
+                    :count="$relatedDocumentsCount"
+                    :href="route('related-documents-info.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Charts -->
+                <x-dashboard-card
+                    title="Charts"
+                    icon="presentation-chart-line"
+                    :count="$chartsCount"
+                    :href="route('charts-info.index')"
                     color="bg-blue-100"
                 />
 
@@ -96,15 +195,15 @@
     @endif
 
     @if(Auth::user()->hasPermission('REITS'))
-    <div class="py-12 dashboard-section hidden" id="reits-section" data-section="reits">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="hidden py-12 dashboard-section" id="reits-section" data-section="reits">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="pb-6">
-                <h2 class="font-bold text-xl text-gray-800 leading-tight">
+                <h2 class="text-xl font-bold leading-tight text-gray-800">
                     {{ __('Real Estate Investment Trusts (REITs)') }}
                 </h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <!-- Portfolios -->
                 <x-dashboard-card
                     title="Portfolios"
@@ -209,15 +308,15 @@
     @endif
 
     @if(Auth::user()->hasPermission('LEGAL'))
-    <div class="py-12 dashboard-section hidden" id="legal-section" data-section="legal">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="hidden py-12 dashboard-section" id="legal-section" data-section="legal">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="pb-6">
-                <h2 class="font-bold text-xl text-gray-800 leading-tight">
+                <h2 class="text-xl font-bold leading-tight text-gray-800">
                     {{ __('Legal Department') }}
                 </h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <!-- Site Visits -->
                 <x-dashboard-card
                     title="Site Visits"
@@ -241,15 +340,15 @@
     @endif
 
     @if(Auth::user()->hasPermission('COMPLIANCE'))
-    <div class="py-12 dashboard-section hidden" id="compliance-section" data-section="compliance">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="hidden py-12 dashboard-section" id="compliance-section" data-section="compliance">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="pb-6">
-                <h2 class="font-bold text-xl text-gray-800 leading-tight">
+                <h2 class="text-xl font-bold leading-tight text-gray-800">
                     {{ __('Compliance Management') }}
                 </h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <!-- Site Visits -->
                 <x-dashboard-card
                     title="Site Visits"
@@ -275,8 +374,8 @@
     <!-- If the user has no permissions, show a message -->
     @if(!Auth::user()->hasPermission('DCMTRD') && !Auth::user()->hasPermission('REITS') && !Auth::user()->hasPermission('LEGAL') && !Auth::user()->hasPermission('COMPLIANCE'))
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="p-6 overflow-hidden bg-white shadow-xl sm:rounded-lg">
                 <div class="text-center">
                     <h3 class="text-lg font-medium text-gray-900">{{ __('No Access') }}</h3>
                     <p class="mt-1 text-sm text-gray-500">{{ __('You do not have permission to access any modules.') }}</p>
