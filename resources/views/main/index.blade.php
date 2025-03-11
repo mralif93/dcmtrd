@@ -7,7 +7,7 @@
 
             <div class="flex space-x-2">
                 <!-- Manage Button -->
-                <a href="{{ route('dashboard') }}"
+                <a href="{{ route('dashboard', ['section' => 'dcmtrd']) }}"
                     class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300 active:bg-blue-800">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">

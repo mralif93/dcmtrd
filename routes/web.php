@@ -228,6 +228,31 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::get('/facility-info-details/{facility}/edit', [MainController::class, 'FacilityInfoEdit'])->name('facility-info-details.edit');
     Route::patch('/facility-info-details/{facility}/edit', [MainController::class, 'FacilityInfoUpdate'])->name('facility-info-details.update');
 
+    // Frontend Dashboard routes
+
+    Route::get('/user/upload/page', [UploadController::class, 'userUpload'])->name('upload.user.page');
+    Route::get('/user/upload', [UploadController::class, 'index'])->name('upload.index');
+    Route::post('/user/upload/issuer', [UploadController::class, 'storeIssuer'])->name('upload.issuer');
+    // upload bond
+    Route::get('/user/upload/bond', [UploadController::class, 'bondUploadForm'])->name('upload.bond');
+    Route::post('/user/upload/bond', [UploadController::class, 'storeBond'])->name('store.bond');
+    // upload rating movement
+    Route::get('/user/upload/rating-movement', [UploadController::class, 'ratingMovementUploadForm'])->name('upload.rating-movement');
+    Route::post('/user/upload/rating-movement', [UploadController::class, 'storeRatingMovement'])->name('store.rating-movement');
+    // upload payment schedule
+    Route::get('/user/upload/payment-schedule', [UploadController::class, 'paymentScheduleUploadForm'])->name('upload.payment-schedule');
+    Route::post('/user/upload/payment-schedule', [UploadController::class, 'storePaymentSchedule'])->name('store.payment-schedule');
+    // upload trading activity
+    Route::get('/user/upload/trading-activity', [UploadController::class, 'tradingActivityUploadForm'])->name('upload.trading-activity');
+    Route::post('/user/upload/trading-activity', [UploadController::class, 'storeTradingActivity'])->name('store.trading-activity');
+
+    // Fix : need to create a flow request insert data
+    Route::resource('/user/bonds', BondController::class);
+    // Routes for Approve and Reject
+    Route::post('/user/bonds/{bond}/approve', [BondController::class, 'approve'])->name('bonds.approve');
+    Route::post('/user/bonds/{bond}/reject', [BondController::class, 'reject'])->name('bonds.reject');
+    Route::resource('/user/announcements', AnnouncementController::class);
+
     // Bonds
     Route::resource('/user/issuers-info', UserIssuerController::class);
     Route::resource('/user/bonds-info', UserBondController::class);
