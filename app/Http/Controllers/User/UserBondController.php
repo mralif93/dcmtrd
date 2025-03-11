@@ -14,18 +14,18 @@ class UserBondController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
+    { 
         $searchTerm = $request->input('search');
-        
+
         $bonds = Bond::with('issuer')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where(function ($q) use ($searchTerm) {
                     $q->where('bond_sukuk_name', 'like', "%$searchTerm%")
-                      ->orWhere('isin_code', 'like', "%$searchTerm%")
-                      ->orWhere('stock_code', 'like', "%$searchTerm%")
-                      ->orWhereHas('issuer', function ($q) use ($searchTerm) {
-                          $q->where('issuer_name', 'like', "%$searchTerm%");
-                      });
+                        ->orWhere('isin_code', 'like', "%$searchTerm%")
+                        ->orWhere('stock_code', 'like', "%$searchTerm%")
+                        ->orWhereHas('issuer', function ($q) use ($searchTerm) {
+                            $q->where('issuer_name', 'like', "%$searchTerm%");
+                        });
                 });
             })
             ->orderBy('created_at', 'desc')
@@ -99,7 +99,7 @@ class UserBondController extends Controller
 
         try {
             $bond->update($validated);
-            return redirect()->route('bonds-info.show', $bond)->with('success', 'Bond updated successfully');            
+            return redirect()->route('bonds-info.show', $bond)->with('success', 'Bond updated successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
         }

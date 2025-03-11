@@ -311,28 +311,28 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @forelse($bond->ratings as $rating)
+                                @forelse($bond->ratingMovements as $rating)
                                     <tr class="border-b">
-                                        <td class="px-4 py-2 text-sm text-gray-900">{{ $rating->agency ?? 'N/A' }}
+                                        <td class="px-4 py-2 text-sm text-gray-900">{{ $rating->rating_agency ?? 'N/A' }}
                                         </td>
                                         <td class="px-4 py-2 text-sm text-gray-900">
                                             {{ $rating->effective_date ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2 text-sm text-gray-900">{{ $rating->tenure ?? 'N/A' }}
+                                        <td class="px-4 py-2 text-sm text-gray-900">{{ $rating->rating_tenure ?? 'N/A' }}
                                         </td>
                                         <td class="px-4 py-2 text-sm text-gray-900">{{ $rating->rating ?? 'N/A' }}
                                         </td>
-                                        <td class="px-4 py-2 text-sm text-gray-900">{{ $rating->action ?? 'N/A' }}
+                                        <td class="px-4 py-2 text-sm text-gray-900">{{ $rating->rating_action ?? 'N/A' }}
                                         </td>
-                                        <td class="px-4 py-2 text-sm text-gray-900">{{ $rating->outlook ?? 'N/A' }}
+                                        <td class="px-4 py-2 text-sm text-gray-900">{{ $rating->rating_outlook ?? 'N/A' }}
                                         </td>
-                                        <td class="px-4 py-2 text-sm text-gray-900">{{ $rating->watch ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2 text-sm text-gray-900">{{ $rating->rating_watch ?? 'N/A' }}</td>
                                     </tr>
                                 @empty
                                     <tr>
                                         <td colspan="7" class="px-4 py-2 text-sm text-center text-gray-500">No
                                             rating information available</td>
                                     </tr>
-                                @endforelse --}}
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -362,7 +362,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @forelse($bond->payment_schedule as $index => $payment)
+                                @forelse($bond->paymentSchedules as $index => $payment)
                                     <tr class="border-b">
                                         <td class="px-4 py-2 text-sm text-gray-900">{{ $index + 1 }}</td>
                                         <td class="px-4 py-2 text-sm text-gray-900">
@@ -383,7 +383,7 @@
                                         <td colspan="7" class="px-4 py-2 text-sm text-center text-gray-500">No
                                             payment schedule available</td>
                                     </tr>
-                                @endforelse --}}
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -395,16 +395,16 @@
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Allow Partial Call</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $bond->allow_partial_call ?? 'No' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900">{{ $bond->redemption->allow_partial_call ?? 'No' }}</dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Last Call Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $bond->last_call_date ?? '-' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900">{{ $bond->redemption->last_call_date ?? '-' }}</dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Redeem to Nearest Denomination</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                {{ $bond->redeem_nearest_denomination ?? 'No' }}</dd>
+                                {{ $bond->redemption->redeem_nearest_denomination ?? 'No' }}</dd>
                         </div>
                     </div>
 
@@ -419,7 +419,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @forelse ($bond->call_schedule ?? [] as $schedule)
+                                @forelse ($bond->redemption->callSchedules ?? [] as $schedule)
                                         <tr>
                                             <td class="px-4 py-2 border">{{ $schedule->start_date ?? '-' }}</td>
                                             <td class="px-4 py-2 border">{{ $schedule->end_date ?? '-' }}</td>
@@ -430,7 +430,7 @@
                                             <td colspan="3" class="px-4 py-2 text-center border">No data available
                                             </td>
                                         </tr>
-                                    @endforelse --}}
+                                    @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -445,7 +445,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @forelse ($bond->lockout_period ?? [] as $lockout)
+                                @forelse ($bond->redemption->lockoutPeriods ?? [] as $lockout)
                                         <tr>
                                             <td class="px-4 py-2 border">{{ $lockout->start_date ?? '-' }}</td>
                                             <td class="px-4 py-2 border">{{ $lockout->end_date ?? '-' }}</td>
@@ -455,7 +455,7 @@
                                             <td colspan="2" class="px-4 py-2 text-center border">No data available
                                             </td>
                                         </tr>
-                                    @endforelse --}}
+                                    @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -483,7 +483,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @forelse($bond->trades ?? [] as $trade)
+                                @forelse($bond->tradingActivities ?? [] as $trade)
                                     <tr class="border-b">
                                         <td class="px-4 py-2 text-sm text-gray-900">{{ $trade->trade_date ?? '-' }}
                                         </td>
@@ -501,7 +501,7 @@
                                             No trading data available
                                         </td>
                                     </tr>
-                                @endforelse --}}
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

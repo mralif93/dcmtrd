@@ -11,7 +11,7 @@
         <div class="grid max-w-6xl grid-cols-1 gap-6 mx-auto sm:grid-cols-2 md:grid-cols-3">
 
             <!-- Issuer Data Management Card -->
-            <a href="{{ route('issuers-info.create') }}"
+            <a href="{{ route('issuers-info.index') }}"
                 class="block p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg group rounded-xl hover:shadow-2xl hover:-translate-y-1">
                 <div class="flex items-center space-x-4">
                     <div class="p-3 bg-purple-100 rounded-lg">

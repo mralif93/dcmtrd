@@ -14,14 +14,14 @@ class UserIssuerController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        
+
         $issuers = Issuer::when($search, function ($query) use ($search) {
             $query->where('issuer_short_name', 'like', "%{$search}%")
-                  ->orWhere('issuer_name', 'like', "%{$search}%");
+                ->orWhere('issuer_name', 'like', "%{$search}%");
         })
-        ->latest()
-        ->paginate(10)
-        ->appends(['search' => $search]); // Preserve search in pagination
+            ->latest()
+            ->paginate(10)
+            ->appends(['search' => $search]); // Preserve search in pagination
 
         return view('user.issuers.index', compact('issuers'));
     }
@@ -43,15 +43,6 @@ class UserIssuerController extends Controller
             'issuer_short_name' => 'required|string|max:50|unique:issuers',
             'issuer_name' => 'required|string|max:100',
             'registration_number' => 'required|unique:issuers',
-            'debenture' => 'nullable|string|max:100',
-            'trustee_fee_amount_1' => 'nullable|numeric',
-            'trustee_fee_amount_2' => 'nullable|numeric',
-            'reminder_1' => 'nullable|date',
-            'reminder_2' => 'nullable|date',
-            'reminder_3' => 'nullable|date',
-            'trustee_role_1' => 'nullable|string|max:100',
-            'trustee_role_2' => 'nullable|string|max:100',
-            'trust_deed_date' => 'required|date',
         ]);
 
         $issuer = Issuer::create($validated);
@@ -86,15 +77,6 @@ class UserIssuerController extends Controller
             'issuer_short_name' => 'required|string|max:50|unique:issuers,issuer_short_name,' . $issuer->id,
             'issuer_name' => 'required|string|max:100',
             'registration_number' => 'required|unique:issuers,registration_number,' . $issuer->id,
-            'debenture' => 'nullable|string|max:100',
-            'trustee_fee_amount_1' => 'nullable|numeric',
-            'trustee_fee_amount_2' => 'nullable|numeric',
-            'reminder_1' => 'nullable|date',
-            'reminder_2' => 'nullable|date',
-            'reminder_3' => 'nullable|date',
-            'trustee_role_1' => 'nullable|string|max:100',
-            'trustee_role_2' => 'nullable|string|max:100',
-            'trust_deed_date' => 'required|date',
         ]);
 
         $issuer->update($validated);
