@@ -11,6 +11,7 @@ use App\Models\Bond;
 use App\Models\BondInfo;
 use App\Models\CallSchedule;
 use App\Models\LockoutPeriod;
+use App\Models\RelatedDocument;
 use App\Models\FacilityInformation;
 
 class MainController extends Controller
@@ -387,6 +388,145 @@ class MainController extends Controller
             return redirect()->route('issuer-search.show', $announcement->issuer)->with('success', 'Announcement updated successfully');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    // Document
+    public function DocumentCreate(Issuer $issuer)
+    {
+        $facilities = FacilityInformation::all();
+        return view('main.related-documents.create', compact('facilities', 'issuer'));
+    }
+    
+    public function DocumentStore(Request $request)
+    {
+        $validated = $request->validate([
+            'facility_id' => 'required|exists:facility_informations,id',
+            'document_name' => 'required|max:200',
+            'document_type' => 'required|max:50',
+            'upload_date' => 'required|date',
+            'document_file' => 'required|file|mimes:pdf|max:2048'
+        ]);
+
+        $file = $request->file('document_file');
+        $validated['file_path'] = $file->store('documents');
+
+        $relatedDocument = RelatedDocument::create($validated);
+        return redirect()->route('issuer-search.show', $relatedDocument->facility->issuer)->with('success', 'Document uploaded successfully');
+    }
+
+    public function DocumentEdit(RelatedDocument $document)
+    {
+        $facilities = FacilityInformation::all();
+        return view('main.related-documents.edit', compact('document', 'facilities'));
+    }
+
+    public function DocumentUpdate(Request $request, RelatedDocument $document)
+    {
+        $relatedDocument = $document;
+        $validated = $request->validate([
+            'facility_id' => 'required|exists:facility_informations,id',
+            'document_name' => 'required|max:200',
+            'document_type' => 'required|max:50',
+            'upload_date' => 'required|date',
+            'document_file' => 'nullable|file|mimes:pdf|max:2048'
+        ]);
+
+        if ($request->hasFile('document_file')) {
+            // Delete old file
+            if ($relatedDocument->file_path) {
+                Storage::delete($relatedDocument->file_path);
+            }
+            // Store new file
+            $validated['file_path'] = $request->file('file_path')->store('documents');
+        }
+
+        $relatedDocument->update($validated);
+        return redirect()->route('issuer-search.show', $relatedDocument->facility->issuer)->with('success', 'Document updated successfully');
+
+    }
+
+    // Facility Information
+    public function FacilityInfoCreate(Issuer $issuer)
+    {
+        $issuerInfo = $issuer;
+        $issuers = Issuer::all();
+        return view('main.facility-informations.create', compact('issuers', 'issuerInfo'));
+    }
+    
+    public function FacilityInfoStore(Request $request)
+    {
+        $validated = $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'facility_code' => 'required|unique:facility_informations|max:50',
+            'facility_number' => 'required|unique:facility_informations|max:50',
+            'facility_name' => 'required|max:100',
+            'principle_type' => 'required|max:50',
+            'islamic_concept' => 'nullable|max:100',
+            'maturity_date' => 'nullable|date',
+            'instrument' => 'nullable|max:50',
+            'instrument_type' => 'nullable|max:50',
+            'guaranteed' => 'nullable|boolean',
+            'total_guaranteed' => 'nullable|numeric|min:0',
+            'indicator' => 'nullable|max:50',
+            'facility_rating' => 'nullable|max:50',
+            'facility_amount' => 'nullable|numeric|min:0',
+            'available_limit' => 'nullable|numeric|min:0',
+            'outstanding_amount' => 'nullable|numeric|min:0',
+            'trustee_security_agent' => 'nullable|max:100',
+            'lead_arranger' => 'nullable|max:100',
+            'facility_agent' => 'nullable|max:100',
+            'availability_date' => 'nullable|date',
+        ]);
+
+        // Set guaranteed to false if not present
+        $validated['guaranteed'] = $request->has('guaranteed') ? true : false;
+
+        $facilityInformation = FacilityInformation::create($validated);
+        return redirect()->route('issuer-search.show', $facilityInformation->issuer)->with('success', 'Facility created successfully');
+    }
+
+    public function FacilityInfoEdit(FacilityInformation $facility)
+    {
+        $issuers = Issuer::all();
+        return view('main.facility-informations.edit', compact('facility', 'issuers'));
+    }
+
+    public function FacilityInfoUpdate(Request $request, FacilityInformation $facility)
+    {
+        $facilityInformation = $facility;
+
+        $validated = $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'facility_code' => 'required|max:50|unique:facility_informations,facility_code,'.$facilityInformation->id,
+            'facility_number' => 'required|max:50|unique:facility_informations,facility_number,'.$facilityInformation->id,
+            'facility_name' => 'required|max:100',
+            'principle_type' => 'required|max:50',
+            'islamic_concept' => 'nullable|max:100',
+            'maturity_date' => 'nullable|date',
+            'instrument' => 'nullable|max:50',
+            'instrument_type' => 'nullable|max:50',
+            'guaranteed' => 'nullable|boolean',
+            'total_guaranteed' => 'nullable|numeric|min:0',
+            'indicator' => 'nullable|max:50',
+            'facility_rating' => 'nullable|max:50',
+            'facility_amount' => 'nullable|numeric|min:0',
+            'available_limit' => 'nullable|numeric|min:0',
+            'outstanding_amount' => 'nullable|numeric|min:0',
+            'trustee_security_agent' => 'nullable|max:100',
+            'lead_arranger' => 'nullable|max:100',
+            'facility_agent' => 'nullable|max:100',
+            'availability_date' => 'nullable|date',
+        ]);
+
+        // Set guaranteed to false if not present
+        $validated['guaranteed'] = $request->has('guaranteed') ? true : false;
+
+        try {
+            $facilityInformation->update($validated);
+            return redirect()->route('issuer-search.show', $facilityInformation)->with('success', 'Facility updated successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
         }
     }
 }

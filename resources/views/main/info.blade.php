@@ -148,7 +148,7 @@
                         </svg>
                     </div>
                 </button>
-                <div x-show="openSection === 'announcements'" x-collapse class="border-t border-gray-200 p-6">
+                <div x-show="openSection === 'announcements'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
                     <div class="flex justify-start items-start pb-6">
                         <a href="{{ route('announcement-details.create', $issuer) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
                             Create New Announcement
@@ -190,7 +190,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                <td colspan="4" class="px-6 py-4 text-center text-gray-500">
                                     No announcements found
                                 </td>
                             </tr>
@@ -219,9 +219,9 @@
                         </svg>
                     </div>
                 </button>
-                <div x-show="openSection === 'documents'" x-collapse class="border-t border-gray-200 p-6">
+                <div x-show="openSection === 'documents'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
                     <div class="flex justify-start items-start pb-6">
-                        <a href="#" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
+                        <a href="{{ route('document-details.create', $issuer) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
                             Create New Documents
                         </a>
                     </div>
@@ -231,6 +231,7 @@
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document Type</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -248,10 +249,17 @@
                                         {{ $document->document_name }}
                                     </a>
                                 </td>
+                                <td class="px-6 py-4">
+                                    <a href="{{ route('document-details.edit', $document) }}" class="text-yellow-600 hover:text-yellow-900">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </a>
+                                </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                <td colspan="3" class="px-6 py-4 text-center text-gray-500">
                                     No documents found
                                 </td>
                             </tr>
@@ -280,10 +288,10 @@
                         </svg>
                     </div>
                 </button>
-                <div x-show="openSection === 'facilities'" x-collapse class="border-t border-gray-200 p-6">
+                <div x-show="openSection === 'facilities'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
                     <div class="flex justify-start items-start pb-6">
-                        <a href="#" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
-                            Create New Documents
+                        <a href="{{ route('facility-info-details.create', $issuer) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
+                            Create New Facility Information
                         </a>
                     </div>
                     <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
@@ -294,7 +302,7 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Facility Number</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Maturity Date</th>
-                                
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -319,7 +327,13 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {{ $facility->maturity_date->format('d M Y') }}
                                 </td>
-                                
+                                <td class="px-6 py-4">
+                                    <a href="{{ route('facility-info-details.edit', $facility) }}" class="text-yellow-600 hover:text-yellow-900">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </a>
+                                </td>
                             </tr>
                             @empty
                             <tr>

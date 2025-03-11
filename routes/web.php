@@ -218,6 +218,15 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::get('/announcement-details/{announcement}/edit', [MainController::class, 'AnnouncementEdit'])->name('announcement-details.edit');
     Route::patch('/announcement-details/{announcement}/edit', [MainController::class, 'AnnouncementUpdate'])->name('announcement-details.update');
 
+    Route::get('/document-details/create/{issuer}', [MainController::class, 'DocumentCreate'])->name('document-details.create');
+    Route::post('/document-details/create', [MainController::class, 'DocumentStore'])->name('document-details.store');
+    Route::get('/document-details/{document}/edit', [MainController::class, 'DocumentEdit'])->name('document-details.edit');
+    Route::patch('/document-details/{document}/edit', [MainController::class, 'DocumentUpdate'])->name('document-details.update');
+
+    Route::get('/facility-info-details/create/{issuer}', [MainController::class, 'FacilityInfoCreate'])->name('facility-info-details.create');
+    Route::post('/facility-info-details/create', [MainController::class, 'FacilityInfoStore'])->name('facility-info-details.store');
+    Route::get('/facility-info-details/{facility}/edit', [MainController::class, 'FacilityInfoEdit'])->name('facility-info-details.edit');
+    Route::patch('/facility-info-details/{facility}/edit', [MainController::class, 'FacilityInfoUpdate'])->name('facility-info-details.update');
 
     // Bonds
     Route::resource('/user/issuers-info', UserIssuerController::class);
