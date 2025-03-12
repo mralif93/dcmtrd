@@ -14,8 +14,6 @@ class SecurityInformationImport implements ToModel, WithHeadingRow
     public static $bondIds = []; 
     public function model(array $row)
     {
-        // dd($row); 
-
         $issuer = Issuer::firstOrCreate(['issuer_name' => $row['issuer_name'] ?? null]);
 
         $bond = new Bond([
