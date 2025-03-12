@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Jobs\BondApprovalJob;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class BondController extends Controller
 {
@@ -52,6 +53,8 @@ class BondController extends Controller
         $validated = $this->validateBond($request);
 
         try {
+            $validated['prepared_by'] = Auth::id();
+            
             $bond = Bond::create($validated);
             return redirect()->route('bonds.show', $bond)->with('success', 'Bond created successfully');
         } catch (\Exception $e) {
@@ -177,9 +180,7 @@ class BondController extends Controller
             'approval_date_time' => now(),
         ]);
 
-        dd($bond);
-
-        BondApprovalJob::dispatch($bond);
+        // BondApprovalJob::dispatch($bond);
 
         return redirect()->back()->with('success', 'Bond approved successfully.');
     }

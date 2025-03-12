@@ -12,13 +12,13 @@
             
                 <!-- Navigation Links -->
                 <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="Auth::user()->role == 'admin' ? route('admin.dashboard') : route('dashboard')" 
+                    <x-nav-link :href="Auth::user()->role == 'admin' ? route('admin.dashboard') : route('dashboard', ['section' => 'dcmtrd'])" 
                         :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
             
                     {{-- User-specific Links --}}
-                    @if (Auth::user()->role == 'user')
+                    @if (Auth::user()->role == 'user' && Auth::user()->hasPermission('DCMTRD'))
                         <x-nav-link :href="route('upload.user.page') " :active="request()->routeIs('upload.user.page')">
                             {{ __('Manage Data') }}
                         </x-nav-link>

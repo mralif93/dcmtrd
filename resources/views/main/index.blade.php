@@ -1,4 +1,4 @@
-<x-main-layout>
+<x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">

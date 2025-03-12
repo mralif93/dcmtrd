@@ -120,7 +120,7 @@
                         <tbody class="divide-y divide-gray-200">
                             @forelse($bonds as $bond)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 font-medium text-gray-600">{{ $bond->preparedBy->name }}</td>
+                                    <td class="px-6 py-4 font-medium text-gray-600">{{ $bond->preparedBy->name ?? 'N/A' }}</td>
                                     <td class="px-6 py-4">
                                         <span
                                             class="px-3 py-1 text-xs font-medium rounded-lg shadow-sm

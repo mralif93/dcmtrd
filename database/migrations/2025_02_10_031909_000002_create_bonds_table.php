@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Issuer;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -13,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('bonds', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(Issuer::class)->constrained()->onDelete('cascade');
             $table->string('bond_sukuk_name');
             $table->string('sub_name')->nullable();
             $table->string('rating')->nullable();
@@ -46,7 +48,6 @@ return new class extends Migration
             $table->string('facility_code')->nullable();
             $table->string('status')->nullable();
             $table->dateTime('approval_date_time')->nullable();
-            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
