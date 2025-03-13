@@ -168,7 +168,7 @@
                     title="Activity Daily"
                     icon="calendar"
                     :count="$activityDailyCount ?? 0"
-                    href="#"
+                    :href="route('activity-diaries-info.index')"
                     color="bg-blue-100"
                 />
 

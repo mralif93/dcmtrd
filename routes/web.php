@@ -11,8 +11,14 @@ use App\Http\Controllers\Maker\MakerController;
 use App\Http\Controllers\Approver\ApproverController;
 use App\Http\Controllers\TwoFactorController;
 
+// User Main
 use App\Http\Controllers\MainController;
 
+// Permission
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\PermissionUserController;
+
+// Bonds
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\Admin\IssuerController;
 use App\Http\Controllers\Admin\BondController;
@@ -28,8 +34,8 @@ use App\Http\Controllers\Admin\RelatedDocumentController;
 use App\Http\Controllers\Admin\ChartController;
 use App\Http\Controllers\Admin\TrusteeFeeController;
 use App\Http\Controllers\Admin\ComplianceCovenantController;
-use App\Http\Controllers\Admin\PermissionController;
-use App\Http\Controllers\Admin\PermissionUserController;
+use App\Http\Controllers\Admin\ActivityDiaryController;
+
 
 // REITs
 use App\Http\Controllers\Admin\FinancialTypeController;
@@ -62,6 +68,7 @@ use App\Http\Controllers\User\UserChartController;
 use App\Http\Controllers\User\UserTrusteeFeeController;
 use App\Http\Controllers\User\UserComplianceCovenantController;
 use App\Http\Controllers\User\UserUploadController;
+use App\Http\Controllers\User\UserActivityDiaryController;
 
 // REITs
 use App\Http\Controllers\User\UserPortfolioController;
@@ -150,6 +157,8 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
         Route::post('{permission}/assign-users', [\App\Http\Controllers\Admin\PermissionController::class, 'assignUsers'])->name('assign-users');
         Route::delete('{permission}/users/{user}', [\App\Http\Controllers\Admin\PermissionController::class, 'removeUser'])->name('remove-user');
     });
+
+    Route::resource('/admin/activity-diaries', ActivityDiaryController::class);
 
     //  REITs
     Route::resource('/admin/banks', BankController::class);
@@ -273,6 +282,12 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::post('/bonds-info/{bonds_info}/approve', [UserBondController::class, 'approve'])->name('bonds-info.approve');
     Route::post('/bonds-info/{bonds_info}/reject', [UserBondController::class, 'reject'])->name('bonds-info.reject');
 
+    Route::resource('/user/activity-diaries-info', UserActivityDiaryController::class);
+
+    // Additional routes for activity diaries
+    Route::get('/user/activity-diaries-upcoming', [UserActivityDiaryController::class, 'upcoming'])->name('activity-diaries-info.upcoming');
+    Route::get('/user/activity-diaries/by-bond/{bond}', [UserActivityDiaryController::class, 'getByBond'])->name('activity-diaries-info.by-bond');
+    Route::patch('/user/activity-diaries/{activity_diaries_info}/update-status', [UserActivityDiaryController::class, 'updateStatus'])->name('activity-diaries-info.update-status');
 
     // Frontend Upload routes
     Route::prefix('/user/bonds-info')->name('bonds-info.')->group(function () {
