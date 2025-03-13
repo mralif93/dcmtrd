@@ -51,6 +51,7 @@ use App\Http\Controllers\Admin\DocumentationItemController;
 use App\Http\Controllers\Admin\TenantApprovalController;
 use App\Http\Controllers\Admin\ConditionCheckController;
 use App\Http\Controllers\Admin\PropertyImprovementController;
+use App\Http\Controllers\Admin\SiteVisitLogController;
 
 use App\Http\Controllers\User\UserIssuerController;
 use App\Http\Controllers\User\UserBondController;
@@ -81,6 +82,7 @@ use App\Http\Controllers\User\UserDocumentationItemController;
 use App\Http\Controllers\User\UserTenantApprovalController;
 use App\Http\Controllers\User\UserConditionCheckController;
 use App\Http\Controllers\User\UserPropertyImprovementController;
+use App\Http\Controllers\User\UserSiteVisitLogController;
 
 // Main: Login
 Route::get('/', function () {
@@ -179,6 +181,7 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::resource('/admin/tenant-approvals', TenantApprovalController::class);
     Route::resource('/admin/condition-checks', ConditionCheckController::class);
     Route::resource('/admin/property-improvements', PropertyImprovementController::class);
+    Route::resource('/admin/site-visit-logs', SiteVisitLogController::class);
 
     // Additional
     Route::prefix('/admin/properties')->name('properties.')->group(function () {
@@ -197,6 +200,11 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
         Route::post('{tenantApproval}/approve-by-od', [TenantApprovalController::class, 'approveByOD'])->name('approve-by-od');
         Route::post('{tenantApproval}/verify-by-ld', [TenantApprovalController::class, 'verifyByLD'])->name('verify-by-ld');
         Route::post('{tenantApproval}/submit-to-ld', [TenantApprovalController::class, 'submitToLD'])->name('submit-to-ld');
+    });
+
+    // Additional
+    Route::prefix('/admin/site-visit-logs')->name('site-visit-logs.')->group(function () {
+        Route::get('{siteVisitLog}/download-report', [SiteVisitLogController::class, 'downloadReport'])->name('download-report');
     });
 });
 
@@ -334,11 +342,17 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::resource('/user/tenant-approvals-info', UserTenantApprovalController::class);
     Route::resource('/user/condition-checks-info', UserConditionCheckController::class);
     Route::resource('/user/property-improvements-info', UserPropertyImprovementController::class);
+    Route::resource('/user/site-visit-logs-info', UserSiteVisitLogController::class);
 
     // Additional custom routes
     Route::prefix('/user/leases-info')->name('leases-info.')->group(function () {
         Route::get('expiring/soon', [UserLeaseController::class, 'expiringLeases'])->name('expiring');
         Route::patch('{lease}/status', [UserLeaseController::class, 'updateStatus'])->name('update-status');
+    });
+
+    // Additional
+    Route::prefix('/user/site-visit-logs-info')->name('site-visit-logs-info.')->group(function () {
+        Route::get('{site_visit_logs_info}/download-report', [UserSiteVisitLogController::class, 'downloadReport'])->name('download-report');
     });
 });
 

@@ -55,7 +55,8 @@ class UserController extends Controller
                     (SELECT COUNT(*) FROM documentation_items) AS documentation_items_count,
                     (SELECT COUNT(*) FROM tenant_approvals) AS tenant_approvals_count,
                     (SELECT COUNT(*) FROM condition_checks) AS condition_checks_count,
-                    (SELECT COUNT(*) FROM property_improvements) AS property_improvements_count
+                    (SELECT COUNT(*) FROM property_improvements) AS property_improvements_count,
+                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count
             ");
             return (array) $result[0];
         });
@@ -76,7 +77,7 @@ class UserController extends Controller
             'chartsCount' => $counts['charts_count'],
             'trusteeFeesCount' => $counts['trustee_fees_count'],
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
-            'activityDailyCount' => $counts['activity_diaries_count'],
+            'activityDairyCount' => $counts['activity_diaries_count'],
 
             // REITs counts
             'financialTypesCount' => $counts['financial_types_count'],
@@ -93,6 +94,7 @@ class UserController extends Controller
             'tenantApprovalsCount' => $counts['tenant_approvals_count'],
             'conditionChecksCount' => $counts['condition_checks_count'],
             'propertyImprovementsCount' => $counts['property_improvements_count'],
+            'siteVisitLogsCount' => $counts['site_visit_logs_count'] ?? 0
         ]);
     }
 }

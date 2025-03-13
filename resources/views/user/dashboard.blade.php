@@ -163,11 +163,11 @@
                     color="bg-blue-100"
                 />
 
-                <!-- Activity Daily -->
+                <!-- Activity Dairy -->
                 <x-dashboard-card
                     title="Activity Daily"
                     icon="calendar"
-                    :count="$activityDailyCount ?? 0"
+                    :count="$activityDairyCount ?? 0"
                     :href="route('activity-diaries-info.index')"
                     color="bg-blue-100"
                 />
@@ -208,7 +208,7 @@
                 <x-dashboard-card
                     title="Portfolios"
                     icon="briefcase"
-                    :count="$portfoliosCount"
+                    :count="$portfoliosCount ?? 0"
                     :href="route('portfolios-info.index')"
                     color="bg-green-100"
                 />
@@ -217,7 +217,7 @@
                 <x-dashboard-card
                     title="Properties"
                     icon="home"
-                    :count="$propertiesCount"
+                    :count="$propertiesCount ?? 0"
                     :href="route('properties-info.index')"
                     color="bg-green-100"
                 />
@@ -226,7 +226,7 @@
                 <x-dashboard-card
                     title="Tenants"
                     icon="users"
-                    :count="$tenantsCount"
+                    :count="$tenantsCount ?? 0"
                     :href="route('tenants-info.index')"
                     color="bg-green-100"
                 />
@@ -235,7 +235,7 @@
                 <x-dashboard-card
                     title="Leases"
                     icon="document-text"
-                    :count="$leasesCount"
+                    :count="$leasesCount ?? 0"
                     :href="route('leases-info.index')"
                     color="bg-green-100"
                 />
@@ -244,7 +244,7 @@
                 <x-dashboard-card
                     title="Checklists"
                     icon="clipboard-check"
-                    :count="$checklistsCount"
+                    :count="$checklistsCount ?? 0"
                     :href="route('checklists-info.index')"
                     color="bg-green-100"
                 />
@@ -253,7 +253,7 @@
                 <x-dashboard-card
                     title="Financials"
                     icon="currency-dollar"
-                    :count="$financialsCount"
+                    :count="$financialsCount ?? 0"
                     :href="route('financials-info.index')"
                     color="bg-green-100"
                 />
@@ -262,7 +262,7 @@
                 <x-dashboard-card
                     title="Site Visits"
                     icon="location-marker"
-                    :count="$siteVisitsCount"
+                    :count="$siteVisitsCount ?? 0"
                     :href="route('site-visits-info.index')"
                     color="bg-green-100"
                 />
@@ -271,7 +271,7 @@
                 <x-dashboard-card
                     title="Documentation Items"
                     icon="document-duplicate"
-                    :count="$documentationItemsCount"
+                    :count="$documentationItemsCount ?? 0"
                     :href="route('documentation-items-info.index')"
                     color="bg-green-100"
                 />
@@ -280,7 +280,7 @@
                 <x-dashboard-card
                     title="Tenant Approvals"
                     icon="shield-check"
-                    :count="$tenantApprovalsCount"
+                    :count="$tenantApprovalsCount ?? 0"
                     :href="route('tenant-approvals-info.index')"
                     color="bg-green-100"
                 />
@@ -289,7 +289,7 @@
                 <x-dashboard-card
                     title="Condition Checks"
                     icon="clipboard-check"
-                    :count="$conditionChecksCount"
+                    :count="$conditionChecksCount ?? 0"
                     :href="route('condition-checks-info.index')"
                     color="bg-green-100"
                 />
@@ -298,8 +298,17 @@
                 <x-dashboard-card
                     title="Property Improvements"
                     icon="home-modern"
-                    :count="$propertyImprovementsCount"
+                    :count="$propertyImprovementsCount ?? 0"
                     :href="route('property-improvements-info.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Site Visit Logs -->
+                <x-dashboard-card
+                    title="Site Visit Logs"
+                    icon="home-modern"
+                    :count="$siteVisitLogsCount ?? 0"
+                    :href="route('site-visit-logs-info.index')"
                     color="bg-green-100"
                 />
             </div>

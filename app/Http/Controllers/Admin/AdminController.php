@@ -63,7 +63,8 @@ class AdminController extends Controller
                     (SELECT COUNT(*) FROM documentation_items) AS documentation_items_count,
                     (SELECT COUNT(*) FROM tenant_approvals) AS tenant_approvals_count,
                     (SELECT COUNT(*) FROM condition_checks) AS condition_checks_count,
-                    (SELECT COUNT(*) FROM property_improvements) AS property_improvements_count
+                    (SELECT COUNT(*) FROM property_improvements) AS property_improvements_count,
+                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count
             ");
             return (array) $result[0];
         });
@@ -101,7 +102,8 @@ class AdminController extends Controller
             'documentationItemsCount' => $counts['documentation_items_count'],
             'tenantApprovalsCount' => $counts['tenant_approvals_count'],
             'conditionChecksCount' => $counts['condition_checks_count'],
-            'propertyImprovementsCount' => $counts['property_improvements_count']
+            'propertyImprovementsCount' => $counts['property_improvements_count'],
+            'siteVisitLogsCount' => $counts['site_visit_logs_count']
         ]);
     }
 }

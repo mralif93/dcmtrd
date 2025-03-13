@@ -627,5 +627,49 @@ class ReitsSeeder extends Seeder
                 'updated_at' => now()
             ]));
         }
+        
+        // Seed Site Visit Logs
+        $siteVisitLogs = [
+            [
+                'site_visit_id' => 1,
+                'no' => 1,
+                'visitation_date' => Carbon::parse('2025-02-02'),
+                'purpose' => 'Approval for Proposed Total Replacement and Disposal for Two (2) Units Suction Water Pump No. 1 & No. 2',
+                'status' => 'Completed',
+                'report_submission_date' => Carbon::parse('2025-05-03'),
+                'report_attachment' => 'SV_Report_KPJ_Ampang_Puteri.pdf',
+                'follow_up_required' => false,
+                'remarks' => 'NIL'
+            ],
+            [
+                'site_visit_id' => 2,
+                'no' => 2,
+                'visitation_date' => Carbon::parse('2025-07-07'),
+                'purpose' => 'To discharge ART\'s duty as the legal owner of the Al-Salām Reit properties',
+                'status' => 'Pending',
+                'report_submission_date' => null,
+                'report_attachment' => null,
+                'follow_up_required' => false,
+                'remarks' => null
+            ],
+            [
+                'site_visit_id' => 3,
+                'no' => 3,
+                'visitation_date' => Carbon::now()->addDays(7),
+                'purpose' => 'Regular property assessment and tenant review',
+                'status' => 'Scheduled',
+                'report_submission_date' => null,
+                'report_attachment' => null,
+                'follow_up_required' => true,
+                'remarks' => 'Will verify maintenance issues reported by tenants'
+            ]
+        ];
+        
+        foreach ($siteVisitLogs as $log) {
+            DB::table('site_visit_logs')->insert(array_merge($log, [
+                'created_at' => now(),
+                'updated_at' => now()
+            ]));
+        }
     }
 }

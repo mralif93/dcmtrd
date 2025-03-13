@@ -278,7 +278,7 @@
                     color="bg-green-100"
                 />
 
-                <!-- NEW MODULE 1: Documentation Items -->
+                <!-- Documentation Items -->
                 <x-dashboard-card
                     title="Documentation Items"
                     icon="document"
@@ -287,7 +287,7 @@
                     color="bg-green-100"
                 />
 
-                <!-- NEW MODULE 2: Tenant Approvals -->
+                <!-- Tenant Approvals -->
                 <x-dashboard-card
                     title="Tenant Approvals"
                     icon="check-circle"
@@ -296,7 +296,7 @@
                     color="bg-green-100"
                 />
 
-                <!-- NEW MODULE 3: Condition Checks -->
+                <!-- Condition Checks -->
                 <x-dashboard-card
                     title="Condition Checks"
                     icon="clipboard-list"
@@ -305,12 +305,21 @@
                     color="bg-green-100"
                 />
 
-                <!-- NEW MODULE 4: Property Improvements -->
+                <!-- Property Improvements -->
                 <x-dashboard-card
                     title="Property Improvements"
                     icon="sparkles"
                     :count="$propertyImprovementsCount ?? 0"
                     :href="route('property-improvements.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Site Visit Logs -->
+                <x-dashboard-card
+                    title="Site Visit Logs"
+                    icon="sparkles"
+                    :count="$siteVisitLogsCount ?? 0"
+                    :href="route('site-visit-logs.index')"
                     color="bg-green-100"
                 />
             </div>
