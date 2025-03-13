@@ -46,7 +46,10 @@ class Bond extends Model
         'facility_agent',
         'facility_code',
         'status',
-        'approval_date_time',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
+        'remarks',
         'issuer_id',
     ];
 
@@ -67,7 +70,7 @@ class Bond extends Model
         'last_coupon_payment_date' => 'date:Y-m-d',
         'amount_issued' => 'decimal:2',
         'amount_outstanding' => 'decimal:2',
-        'approval_date_time' => 'datetime:Y-m-d H:i:s',
+        'approval_datetime' => 'datetime:Y-m-d H:i:s',
     ];
 
     // Relationships
@@ -112,6 +115,11 @@ class Bond extends Model
         return $query->where('status', 'Matured');
     }
 
+    public function scopePending($query)
+    {
+        return $query->where('status', 'Pending');
+    }
+
     public function scopeByIssuer($query, $issuerId)
     {
         return $query->where('issuer_id', $issuerId);
@@ -136,6 +144,22 @@ class Bond extends Model
     public function getIsTradableAttribute(): bool
     {
         return $this->status === 'Active' && $this->days_to_maturity > 0;
+    }
+
+    // Status checks
+    public function getIsPendingAttribute(): bool
+    {
+        return $this->status === 'Pending';
+    }
+
+    public function getIsApprovedAttribute(): bool
+    {
+        return $this->status === 'Active';
+    }
+
+    public function getIsRejectedAttribute(): bool
+    {
+        return $this->status === 'Inactive' && $this->verified_by !== null;
     }
 
     // Mutators

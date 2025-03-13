@@ -21,6 +21,10 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->string('attachment')->nullable();
             $table->string('source')->nullable();
+            $table->string('prepared_by')->nullable();
+            $table->string('verified_by')->nullable();
+            $table->text('remarks')->nullable();
+            $table->dateTime('approval_datetime')->nullable();
             $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();

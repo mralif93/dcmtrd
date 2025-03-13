@@ -45,7 +45,10 @@ return new class extends Migration
             $table->string('facility_agent')->nullable();
             $table->string('facility_code')->nullable();
             $table->string('status')->nullable();
-            $table->dateTime('approval_date_time')->nullable();
+            $table->string('prepared_by')->nullable();
+            $table->string('verified_by')->nullable();
+            $table->text('remarks')->nullable();
+            $table->dateTime('approval_datetime')->nullable();
             $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();

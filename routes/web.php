@@ -262,6 +262,16 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
         Route::patch('/compliance-covenants/{id}/restore', [UserComplianceCovenantController::class, 'restore'])->name('restore');
         Route::delete('/compliance-covenants/{id}/force-delete', [UserComplianceCovenantController::class, 'forceDelete'])->name('force-delete');
     });
+    
+    // For Issuers
+    Route::post('/issuers-info/{issuers_info}/submit', [UserIssuerController::class, 'submitForApproval'])->name('issuers-info.submit');
+    Route::post('/issuers-info/{issuers_info}/approve', [UserIssuerController::class, 'approve'])->name('issuers-info.approve');
+    Route::post('/issuers-info/{issuers_info}/reject', [UserIssuerController::class, 'reject'])->name('issuers-info.reject');
+
+    // For Bonds
+    Route::post('/bonds-info/{bonds_info}/submit', [UserBondController::class, 'submitForApproval'])->name('bonds-info.submit');
+    Route::post('/bonds-info/{bonds_info}/approve', [UserBondController::class, 'approve'])->name('bonds-info.approve');
+    Route::post('/bonds-info/{bonds_info}/reject', [UserBondController::class, 'reject'])->name('bonds-info.reject');
 
 
     // Frontend Upload routes

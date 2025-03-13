@@ -23,6 +23,11 @@ class Issuer extends Model
         'reminder_2',
         'reminder_3',
         'trust_deed_date',
+        'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
+        'remarks',
     ];
 
     protected $casts = [
@@ -30,6 +35,9 @@ class Issuer extends Model
         'reminder_2' => 'date',
         'reminder_3' => 'date',
         'trust_deed_date' => 'date',
+        'approval_datetime' => 'datetime',
+        'trustee_fee_amount_1' => 'decimal:2',
+        'trustee_fee_amount_2' => 'decimal:2',
     ];
 
     public function bonds()
@@ -57,5 +65,33 @@ class Issuer extends Model
             'id',           // Local key on issuers
             'id'            // Local key on facilities
         );
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'Active');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'Pending');
+    }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('status', 'Rejected');
+    }
+
+    // Get the count of related bonds
+    public function getBondsCountAttribute()
+    {
+        return $this->bonds()->count();
+    }
+
+    // Get the count of active bonds
+    public function getActiveBondsCountAttribute()
+    {
+        return $this->bonds()->where('status', 'Active')->count();
     }
 }

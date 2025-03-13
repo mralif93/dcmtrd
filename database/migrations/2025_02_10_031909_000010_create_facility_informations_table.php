@@ -32,6 +32,10 @@ return new class extends Migration
             $table->string('lead_arranger')->nullable();
             $table->string('facility_agent')->nullable();
             $table->date('availability_date')->nullable();
+            $table->string('prepared_by')->nullable();
+            $table->string('verified_by')->nullable();
+            $table->text('remarks')->nullable();
+            $table->dateTime('approval_datetime')->nullable();
             $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();

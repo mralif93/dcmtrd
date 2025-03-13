@@ -31,6 +31,10 @@ return new class extends Migration
             $table->date('memo_receipt_to_fad')->nullable(); // Date memo receipt sent to FAD
             $table->date('receipt_to_issuer')->nullable(); // Date receipt sent to issuer
             $table->string('receipt_no')->nullable(); // Receipt number
+            $table->string('prepared_by')->nullable();
+            $table->string('verified_by')->nullable();
+            $table->text('remarks')->nullable();
+            $table->dateTime('approval_datetime')->nullable();
             $table->timestamps(); // Laravel's created_at and updated_at
             $table->softDeletes(); // Laravel's deleted_at
         });

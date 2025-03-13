@@ -7,6 +7,7 @@ use App\Models\Bond;
 use App\Models\Issuer;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class UserBondController extends Controller
 {
@@ -14,18 +15,18 @@ class UserBondController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
+    { 
         $searchTerm = $request->input('search');
-        
+
         $bonds = Bond::with('issuer')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where(function ($q) use ($searchTerm) {
                     $q->where('bond_sukuk_name', 'like', "%$searchTerm%")
-                      ->orWhere('isin_code', 'like', "%$searchTerm%")
-                      ->orWhere('stock_code', 'like', "%$searchTerm%")
-                      ->orWhereHas('issuer', function ($q) use ($searchTerm) {
-                          $q->where('issuer_name', 'like', "%$searchTerm%");
-                      });
+                        ->orWhere('isin_code', 'like', "%$searchTerm%")
+                        ->orWhere('stock_code', 'like', "%$searchTerm%")
+                        ->orWhereHas('issuer', function ($q) use ($searchTerm) {
+                            $q->where('issuer_name', 'like', "%$searchTerm%");
+                        });
                 });
             })
             ->orderBy('created_at', 'desc')
@@ -51,12 +52,16 @@ class UserBondController extends Controller
     {
         // validate request data
         $validated = $this->validateBond($request);
+        
+        // Add prepared_by from authenticated user and set status to pending
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Pending';
 
         try {
             $bond = Bond::create($validated);
             return redirect()->route('bonds-info.show', $bond)->with('success', 'Bond created successfully');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error creating: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
         }
     }
 
@@ -99,7 +104,7 @@ class UserBondController extends Controller
 
         try {
             $bond->update($validated);
-            return redirect()->route('bonds-info.show', $bond)->with('success', 'Bond updated successfully');            
+            return redirect()->route('bonds-info.show', $bond)->with('success', 'Bond updated successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
         }
@@ -117,6 +122,74 @@ class UserBondController extends Controller
             return redirect()->route('bonds.index')->with('success', 'Bond deleted successfully');
         } catch (\Exception $e) {
             return back()->with('error', 'Error deleting bond: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Submit bond for approval
+     */
+    public function submitForApproval(Bond $bonds_info)
+    {
+        $bond = $bonds_info;
+        
+        try {
+            $bond->update([
+                'status' => 'Pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+            
+            return redirect()->route('bonds-info.show', $bond)
+                ->with('success', 'Bond submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Approve the bond
+     */
+    public function approve(Bond $bonds_info)
+    {
+        $bond = $bonds_info;
+        
+        try {
+            $bond->update([
+                'status' => 'Active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+            
+            return redirect()->route('bonds-info.show', $bond)
+                ->with('success', 'Bond approved successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error approving bond: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Reject the bond
+     */
+    public function reject(Request $request, Bond $bonds_info)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+        
+        $bond = $bonds_info;
+        
+        try {
+            $bond->update([
+                'status' => 'Inactive',
+                'verified_by' => Auth::user()->name,
+            ]);
+            
+            // You might want to store the rejection reason in a separate table
+            // or add it to the bond table if needed
+            
+            return redirect()->route('bonds-info.show', $bond)
+                ->with('success', 'Bond rejected successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error rejecting bond: ' . $e->getMessage());
         }
     }
 
@@ -175,7 +248,7 @@ class UserBondController extends Controller
                 Rule::unique('bonds')->ignore($bond?->id)
             ],
             'status' => 'nullable|in:Active,Inactive,Matured,Pending',
-            'approval_date_time' => 'nullable|date',
+            'remarks' => 'nullable|string',
             'issuer_id' => 'required|exists:issuers,id',
         ], [
             'maturity_date.after' => 'Maturity date must be after issue date',
