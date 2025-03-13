@@ -36,7 +36,6 @@ use App\Http\Controllers\Admin\TrusteeFeeController;
 use App\Http\Controllers\Admin\ComplianceCovenantController;
 use App\Http\Controllers\Admin\ActivityDiaryController;
 
-
 // REITs
 use App\Http\Controllers\Admin\FinancialTypeController;
 use App\Http\Controllers\Admin\BankController;
@@ -159,6 +158,11 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     });
 
     Route::resource('/admin/activity-diaries', ActivityDiaryController::class);
+
+    // Additional routes for activity diaries
+    Route::get('/admin/activity-diaries-upcoming', [ActivityDiaryController::class, 'upcoming'])->name('activity-diaries.upcoming');
+    Route::get('/admin/activity-diaries/by-bond/{bond}', [ActivityDiaryController::class, 'getByBond'])->name('activity-diaries.by-bond');
+    Route::patch('/admin/activity-diaries/{activity_diaries_info}/update-status', [ActivityDiaryController::class, 'updateStatus'])->name('activity-diaries.update-status');
 
     //  REITs
     Route::resource('/admin/banks', BankController::class);

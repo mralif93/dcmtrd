@@ -148,6 +148,33 @@
                     :href="route('compliance-covenants.index')"
                     color="bg-blue-100"
                 />
+
+                <!-- Activity Daily -->
+                <x-dashboard-card
+                    title="Activity Daily"
+                    icon="calendar"
+                    :count="$activityDailyCount ?? 0"
+                    :href="route('activity-diaries.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Audit Log -->
+                <x-dashboard-card
+                    title="Audit Log"
+                    icon="clipboard-list"
+                    :count="$auditLogCount ?? 0"
+                    href="#"
+                    color="bg-blue-100"
+                />
+
+                <!-- Reports -->
+                <x-dashboard-card
+                    title="Reports"
+                    icon="document"
+                    :count="$reportsCount ?? 0"
+                    href="#"
+                    color="bg-blue-100"
+                />
             </div>
         </div>
     </div>

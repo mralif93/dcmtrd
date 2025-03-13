@@ -48,6 +48,7 @@ class AdminController extends Controller
                     (SELECT COUNT(*) FROM charts) AS charts_count,
                     (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
                     (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
+                    (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
 
                     (SELECT COUNT(*) FROM banks) AS banks_count,
                     (SELECT COUNT(*) FROM financial_types) AS financial_types_count,
@@ -84,6 +85,7 @@ class AdminController extends Controller
             'chartsCount' => $counts['charts_count'],
             'trusteeFeesCount' => $counts['trustee_fees_count'],
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
+            'activityDailyCount' => $counts['activity_diaries_count'],
             
             // REITs counts
             'banksCount' => $counts['banks_count'],

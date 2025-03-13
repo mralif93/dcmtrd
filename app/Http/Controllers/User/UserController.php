@@ -41,6 +41,7 @@ class UserController extends Controller
                     (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
                     (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
                     (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
+
                     (SELECT COUNT(*) FROM financial_types) AS financial_types_count,
                     (SELECT COUNT(*) FROM banks) AS banks_count,
                     (SELECT COUNT(*) FROM portfolio_types) AS portfolio_types_count,
@@ -60,6 +61,7 @@ class UserController extends Controller
         });
     
         return view('user.dashboard', [
+            // Bond counts
             'issuersCount' => $counts['issuers_count'],
             'bondsCount' => $counts['bonds_count'],
             'ratingMovementsCount' => $counts['rating_movements_count'],
@@ -75,6 +77,8 @@ class UserController extends Controller
             'trusteeFeesCount' => $counts['trustee_fees_count'],
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
             'activityDailyCount' => $counts['activity_diaries_count'],
+
+            // REITs counts
             'financialTypesCount' => $counts['financial_types_count'],
             'banksCount' => $counts['banks_count'],
             'portfolioTypesCount' => $counts['portfolio_types_count'],

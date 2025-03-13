@@ -55,7 +55,7 @@
                 <!-- Activity Diaries Section -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center border-t border-gray-200">
                     <h3 class="text-lg font-medium text-gray-900">Activity Diaries</h3>
-                    <a href="{{ route('activity-diaries-info.create', ['bond_id' => $bond->id]) }}" 
+                    <a href="{{ route('activity-diaries.create', ['bond_id' => $bond->id]) }}" 
                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -109,18 +109,18 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        <a href="{{ route('activity-diaries-info.show', $diary) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('activity-diaries.show', $diary) }}" class="text-indigo-600 hover:text-indigo-900">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                             </svg>
                                         </a>
-                                        <a href="{{ route('activity-diaries-info.edit', $diary) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('activity-diaries.edit', $diary) }}" class="text-indigo-600 hover:text-indigo-900">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                             </svg>
                                         </a>
-                                        <form action="{{ route('activity-diaries-info.destroy', $diary) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this activity diary?');" class="inline">
+                                        <form action="{{ route('activity-diaries.destroy', $diary) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this activity diary?');" class="inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-900">
@@ -151,7 +151,7 @@
                 <!-- Footer Actions -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <div class="flex justify-end space-x-3">
-                        <a href="{{ route('activity-diaries-info.index') }}" 
+                        <a href="{{ route('activity-diaries.index') }}" 
                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
