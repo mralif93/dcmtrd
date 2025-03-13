@@ -55,7 +55,7 @@
                                     <option value="">All Issuers</option>
                                     @foreach($issuers ?? [] as $issuer)
                                         <option value="{{ $issuer->id }}" @selected(request('issuer_id') == $issuer->id)>
-                                            {{ $issuer->name }}
+                                            {{ $issuer->issuer_name }}
                                         </option>
                                     @endforeach
                                 </select>

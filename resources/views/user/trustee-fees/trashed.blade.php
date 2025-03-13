@@ -50,13 +50,13 @@
                             @forelse($trashedFees as $fee)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $fee->issuer }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $fee->issuer->name }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">{{ $fee->invoice_no }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">RM {{ number_format($fee->fees_rm, 2) }}</div>
+                                    <div class="text-sm text-gray-900">RM {{ number_format($fee->getTotalAmount(), 2) }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">{{ $fee->deleted_at->format('d/m/Y H:i') }}</div>

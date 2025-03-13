@@ -40,10 +40,16 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label for="issuer" class="block text-sm font-medium text-gray-700">Issuer *</label>
-                                    <input type="text" name="issuer" id="issuer" 
-                                        value="{{ old('issuer', $trusteeFee->issuer) }}" required 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
+                                    <select name="issuer_id" id="issuer_id" required 
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">-- Select Issuer --</option>
+                                        @foreach($issuers as $issuer)
+                                            <option value="{{ $issuer->id }}" @selected(old('issuer_id', $trusteeFee->issuer_id) == $issuer->id)>
+                                                {{ $issuer->issuer_short_name }} - {{ $issuer->issuer_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div>
                                     <label for="invoice_no" class="block text-sm font-medium text-gray-700">Invoice Number *</label>
@@ -57,9 +63,15 @@
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description', $trusteeFee->description) }}</textarea>
                                 </div>
                                 <div>
-                                    <label for="fees_rm" class="block text-sm font-medium text-gray-700">Fee Amount (RM) *</label>
-                                    <input type="number" name="fees_rm" id="fees_rm" step="0.01" min="0" 
-                                        value="{{ old('fees_rm', $trusteeFee->fees_rm) }}" required
+                                    <label for="trustee_fee_amount_1" class="block text-sm font-medium text-gray-700">Fee Amount 1 (RM)</label>
+                                    <input type="number" name="trustee_fee_amount_1" id="trustee_fee_amount_1" step="0.01" min="0" 
+                                        value="{{ old('trustee_fee_amount_1', $trusteeFee->trustee_fee_amount_1) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="trustee_fee_amount_2" class="block text-sm font-medium text-gray-700">Fee Amount 2 (RM)</label>
+                                    <input type="number" name="trustee_fee_amount_2" id="trustee_fee_amount_2" step="0.01" min="0" 
+                                        value="{{ old('trustee_fee_amount_2', $trusteeFee->trustee_fee_amount_2) }}"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                             </div>
@@ -177,6 +189,30 @@
                                     <input type="text" name="receipt_no" id="receipt_no" 
                                         value="{{ old('receipt_no', $trusteeFee->receipt_no) }}"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="prepared_by" class="block text-sm font-medium text-gray-700">Prepared By</label>
+                                    <input type="text" name="prepared_by" id="prepared_by" 
+                                        value="{{ old('prepared_by', $trusteeFee->prepared_by) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified By</label>
+                                    <input type="text" name="verified_by" id="verified_by" 
+                                        value="{{ old('verified_by', $trusteeFee->verified_by) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="remarks" class="block text-sm font-medium text-gray-700">Remarks</label>
+                                    <textarea name="remarks" id="remarks" rows="3"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks', $trusteeFee->remarks) }}</textarea>
                                 </div>
                             </div>
                         </div>

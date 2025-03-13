@@ -45,7 +45,7 @@
                                         <option value="">-- Select Issuer --</option>
                                         @foreach($issuers as $issuer)
                                             <option value="{{ $issuer->id }}" @selected(old('issuer_id') == $issuer->id)>
-                                                {{ $issuer->name }}
+                                                {{ $issuer->issuer_name }}
                                             </option>
                                         @endforeach
                                     </select>

@@ -19,7 +19,8 @@ class TrusteeFeeController extends Controller
     public function index()
     {
         $trustee_fees = TrusteeFee::with('issuer')->latest()->paginate(10);
-        return view('admin.trustee-fees.index', compact('trustee_fees'));
+        $issuers = Issuer::all();
+        return view('admin.trustee-fees.index', compact('trustee_fees', 'issuers'));
     }
 
     /**

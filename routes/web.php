@@ -134,11 +134,11 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     
     // Additional
     Route::prefix('/admin/trustee-fees')->name('trustee-fees.')->group(function () {
-        Route::get('/trustee-fees-search', [TrusteeFeeController::class, 'search'])->name('search');
-        Route::get('/trustee-fees-report', [TrusteeFeeController::class, 'report'])->name('report');
-        Route::get('/trustee-fees-trashed', [TrusteeFeeController::class, 'trashed'])->name('trashed');
-        Route::patch('/trustee-fees/{id}/restore', [TrusteeFeeController::class, 'restore'])->name('restore');
-        Route::delete('/trustee-fees/{id}/force-delete', [TrusteeFeeController::class, 'forceDelete'])->name('force-delete');
+        Route::get('/admin/trustee-fees-search', [TrusteeFeeController::class, 'search'])->name('search');
+        Route::get('/admin/trustee-fees-report', [TrusteeFeeController::class, 'report'])->name('report');
+        Route::get('/admin/trustee-fees-trashed', [TrusteeFeeController::class, 'trashed'])->name('trashed');
+        Route::patch('/admin/trustee-fees/{id}/restore', [TrusteeFeeController::class, 'restore'])->name('restore');
+        Route::delete('/admin/trustee-fees/{id}/force-delete', [TrusteeFeeController::class, 'forceDelete'])->name('force-delete');
     });
 
     Route::resource('/admin/compliance-covenants', ComplianceCovenantController::class);
@@ -268,10 +268,10 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
 
     // Additional
     Route::prefix('/user/trustee-fees-info')->name('trustee-fees-info.')->group(function () {
-        Route::get('/report', [UserTrusteeFeeController::class, 'report'])->name('report');
-        Route::get('/trashed', [UserTrusteeFeeController::class, 'trashed'])->name('trashed');
-        Route::patch('{id}/restore', [UserTrusteeFeeController::class, 'restore'])->name('restore');
-        Route::delete('{id}/force-delete', [UserTrusteeFeeController::class, 'forceDelete'])->name('force-delete');
+        Route::get('/user/trustee-fees-info/report', [UserTrusteeFeeController::class, 'report'])->name('report');
+        Route::get('/user/trustee-fees-info/trashed', [UserTrusteeFeeController::class, 'trashed'])->name('trashed');
+        Route::patch('/user/trustee-fees-info{id}/restore', [UserTrusteeFeeController::class, 'restore'])->name('restore');
+        Route::delete('/user/trustee-fees-info{id}/force-delete', [UserTrusteeFeeController::class, 'forceDelete'])->name('force-delete');
     });
 
     Route::resource('/user/compliance-covenants-info', UserComplianceCovenantController::class);

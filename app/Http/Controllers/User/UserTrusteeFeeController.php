@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\TrusteeFee;
+use App\Models\Issuer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,10 +17,10 @@ class UserTrusteeFeeController extends Controller
      */
     public function index(Request $request)
     {
-        $query = TrusteeFee::query();
+        $query = TrusteeFee::with('issuer');
         
-        if ($request->has('issuer') && !empty($request->issuer)) {
-            $query->where('issuer', 'LIKE', '%' . $request->issuer . '%');
+        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
+            $query->where('issuer_id', $request->issuer_id);
         }
         
         if ($request->has('invoice_no') && !empty($request->invoice_no)) {
@@ -38,8 +39,11 @@ class UserTrusteeFeeController extends Controller
             }
         }
         
+        // Get all issuers for the dropdown
+        $issuers = Issuer::orderBy('name')->get();
+        
         $trustee_fees = $query->latest()->paginate(10);
-        return view('user.trustee-fees.index', compact('trustee_fees'));
+        return view('user.trustee-fees.index', compact('trustee_fees', 'issuers'));
     }
 
     /**
@@ -49,7 +53,8 @@ class UserTrusteeFeeController extends Controller
      */
     public function create()
     {
-        return view('user.trustee-fees.create');
+        $issuers = Issuer::orderBy('name')->get();
+        return view('user.trustee-fees.create', compact('issuers'));
     }
 
     /**
@@ -61,9 +66,10 @@ class UserTrusteeFeeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'issuer' => 'required|string|max:255',
+            'issuer_id' => 'required|exists:issuers,id',
             'description' => 'required|string',
-            'fees_rm' => 'required|numeric',
+            'trustee_fee_amount_1' => 'nullable|numeric',
+            'trustee_fee_amount_2' => 'nullable|numeric',
             'start_anniversary_date' => 'required|date',
             'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
             'invoice_no' => 'required|string|unique:trustee_fees,invoice_no',
@@ -79,6 +85,9 @@ class UserTrusteeFeeController extends Controller
             'memo_receipt_to_fad' => 'nullable|date',
             'receipt_to_issuer' => 'nullable|date',
             'receipt_no' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
         ]);
 
         TrusteeFee::create($request->all());
@@ -108,7 +117,8 @@ class UserTrusteeFeeController extends Controller
     public function edit(TrusteeFee $trustee_fees_info)
     {
         $trusteeFee = $trustee_fees_info;
-        return view('user.trustee-fees.edit', compact('trusteeFee'));
+        $issuers = Issuer::orderBy('name')->get();
+        return view('user.trustee-fees.edit', compact('trusteeFee', 'issuers'));
     }
 
     /**
@@ -122,9 +132,10 @@ class UserTrusteeFeeController extends Controller
     {
         $trusteeFee = $trustee_fees_info;
         $request->validate([
-            'issuer' => 'required|string|max:255',
+            'issuer_id' => 'required|exists:issuers,id',
             'description' => 'required|string',
-            'fees_rm' => 'required|numeric',
+            'trustee_fee_amount_1' => 'nullable|numeric',
+            'trustee_fee_amount_2' => 'nullable|numeric',
             'start_anniversary_date' => 'required|date',
             'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
             'invoice_no' => 'required|string|unique:trustee_fees,invoice_no,' . $trusteeFee->id,
@@ -140,6 +151,9 @@ class UserTrusteeFeeController extends Controller
             'memo_receipt_to_fad' => 'nullable|date',
             'receipt_to_issuer' => 'nullable|date',
             'receipt_no' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
         ]);
 
         $trusteeFee->update($request->all());
@@ -171,10 +185,10 @@ class UserTrusteeFeeController extends Controller
      */
     public function search(Request $request)
     {
-        $query = TrusteeFee::query();
+        $query = TrusteeFee::with('issuer');
         
-        if ($request->has('issuer') && !empty($request->issuer)) {
-            $query->where('issuer', 'LIKE', '%' . $request->issuer . '%');
+        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
+            $query->where('issuer_id', $request->issuer_id);
         }
         
         if ($request->has('invoice_no') && !empty($request->invoice_no)) {
@@ -193,9 +207,12 @@ class UserTrusteeFeeController extends Controller
             }
         }
         
+        // Get all issuers for the dropdown
+        $issuers = Issuer::orderBy('name')->get();
+        
         $trustee_fees = $query->latest()->paginate(10);
         
-        return view('user.trustee-fees.index', compact('trustee_fees'));
+        return view('user.trustee-fees.index', compact('trustee_fees', 'issuers'));
     }
     
     /**
@@ -206,7 +223,7 @@ class UserTrusteeFeeController extends Controller
      */
     public function report(Request $request)
     {
-        $query = TrusteeFee::query();
+        $query = TrusteeFee::with('issuer');
         
         if ($request->has('start_date') && !empty($request->start_date)) {
             $query->whereDate('created_at', '>=', $request->start_date);
@@ -217,7 +234,9 @@ class UserTrusteeFeeController extends Controller
         }
         
         if ($request->has('issuer') && !empty($request->issuer)) {
-            $query->where('issuer', 'LIKE', '%' . $request->issuer . '%');
+            $query->whereHas('issuer', function($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->issuer . '%');
+            });
         }
         
         if ($request->has('payment_status') && !empty($request->payment_status)) {
@@ -231,8 +250,14 @@ class UserTrusteeFeeController extends Controller
         $trustee_fees = $query->get();
         
         // Calculate totals
-        $total_fees = $trustee_fees->sum('fees_rm');
-        $total_paid = $trustee_fees->whereNotNull('payment_received')->sum('fees_rm');
+        $total_fees = $trustee_fees->sum(function($fee) {
+            return $fee->getTotalAmount();
+        });
+        
+        $total_paid = $trustee_fees->whereNotNull('payment_received')->sum(function($fee) {
+            return $fee->getTotalAmount();
+        });
+        
         $total_unpaid = $total_fees - $total_paid;
         
         return view('user.trustee-fees.report', compact('trustee_fees', 'total_fees', 'total_paid', 'total_unpaid'));
@@ -245,7 +270,7 @@ class UserTrusteeFeeController extends Controller
      */
     public function trashed()
     {
-        $trashedFees = TrusteeFee::onlyTrashed()->latest()->paginate(10);
+        $trashedFees = TrusteeFee::with('issuer')->onlyTrashed()->latest()->paginate(10);
         return view('user.trustee-fees.trashed', compact('trashedFees'));
     }
 
