@@ -31,7 +31,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('upload.rating-movement') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('rating-movements-info.upload-store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <!-- File Input -->
