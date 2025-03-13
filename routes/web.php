@@ -322,12 +322,9 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
         Route::post('/user/trading-activities-info/upload', [UserUploadController::class, 'StoreTradingActivity'])->name('upload-store');
     });
 
-    // Fix : need to create a flow request insert data
-    Route::resource('/user/bonds', BondController::class);
     // Routes for Approve and Reject
     Route::post('/user/bonds/{bond}/approve', [BondController::class, 'approve'])->name('bonds.approve');
     Route::post('/user/bonds/{bond}/reject', [BondController::class, 'reject'])->name('bonds.reject');
-    Route::resource('/user/announcements', AnnouncementController::class);
 
 
     // REITs

@@ -61,8 +61,10 @@ class UserIssuerController extends Controller
     public function show(Issuer $issuers_info)
     {
         $issuer = $issuers_info;
-        // Load related bonds
-        $issuer->load('bonds');
+        // Load related bonds if relationship exists
+        if (method_exists($issuer, 'bonds')) {
+            $issuer->load('bonds');
+        }
         return view('user.issuers.show', compact('issuer'));
     }
 
@@ -173,7 +175,7 @@ class UserIssuerController extends Controller
     }
 
     /**
-     * Validate issuer data
+     * Validate issuer data based on schema
      */
     protected function validateIssuer(Request $request, Issuer $issuer = null)
     {
@@ -182,14 +184,12 @@ class UserIssuerController extends Controller
             'issuer_name' => 'required|string|max:100',
             'registration_number' => 'required' . ($issuer ? '|unique:issuers,registration_number,'.$issuer->id : '|unique:issuers'),
             'debenture' => 'nullable|string|max:255',
-            'trustee_fee_amount_1' => 'nullable|numeric|min:0',
-            'trustee_fee_amount_2' => 'nullable|numeric|min:0',
             'trustee_role_1' => 'nullable|string|max:255',
             'trustee_role_2' => 'nullable|string|max:255',
-            'reminder_1' => 'nullable|date',
-            'reminder_2' => 'nullable|date',
-            'reminder_3' => 'nullable|date',
             'trust_deed_date' => 'nullable|date',
+            'trust_amount_escrow_sum' => 'nullable|string|max:255',
+            'no_of_share' => 'nullable|string|max:255',
+            'outstanding_size' => 'nullable|string|max:255',
             'status' => 'nullable|in:Active,Inactive,Pending,Rejected',
             'remarks' => 'nullable|string',
         ]);

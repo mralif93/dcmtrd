@@ -15,14 +15,12 @@ class Issuer extends Model
         'issuer_name',
         'registration_number',
         'debenture',
-        'trustee_fee_amount_1',
-        'trustee_fee_amount_2',
         'trustee_role_1',
         'trustee_role_2',
-        'reminder_1',
-        'reminder_2',
-        'reminder_3',
         'trust_deed_date',
+        'trust_amount_escrow_sum',
+        'no_of_share',
+        'outstanding_size',
         'status',
         'prepared_by',
         'verified_by',
@@ -31,13 +29,8 @@ class Issuer extends Model
     ];
 
     protected $casts = [
-        'reminder_1' => 'date',
-        'reminder_2' => 'date',
-        'reminder_3' => 'date',
         'trust_deed_date' => 'date',
         'approval_datetime' => 'datetime',
-        'trustee_fee_amount_1' => 'decimal:2',
-        'trustee_fee_amount_2' => 'decimal:2',
     ];
 
     public function bonds()

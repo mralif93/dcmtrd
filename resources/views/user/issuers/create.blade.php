@@ -83,11 +83,45 @@
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
+                                <div>
+                                    <label for="trust_amount_escrow_sum" class="block text-sm font-medium text-gray-700">Trust Amount/Escrow Sum</label>
+                                    <input type="text" name="trust_amount_escrow_sum" id="trust_amount_escrow_sum" 
+                                        value="{{ old('trust_amount_escrow_sum') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('trust_amount_escrow_sum')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Share Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Share Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="no_of_share" class="block text-sm font-medium text-gray-700">Number of Shares</label>
+                                    <input type="text" name="no_of_share" id="no_of_share" 
+                                        value="{{ old('no_of_share') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('no_of_share')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="outstanding_size" class="block text-sm font-medium text-gray-700">Outstanding Size</label>
+                                    <input type="text" name="outstanding_size" id="outstanding_size" 
+                                        value="{{ old('outstanding_size') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('outstanding_size')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Trustee Information Section -->
-                        <div class="border-b border-gray-200 pb-6">
+                        <div>
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Trustee Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -100,63 +134,11 @@
                                     @enderror
                                 </div>
                                 <div>
-                                    <label for="trustee_fee_amount_1" class="block text-sm font-medium text-gray-700">Fee Amount 1 (RM)</label>
-                                    <input type="number" step="0.01" name="trustee_fee_amount_1" id="trustee_fee_amount_1" 
-                                        value="{{ old('trustee_fee_amount_1') }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('trustee_fee_amount_1')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div>
                                     <label for="trustee_role_2" class="block text-sm font-medium text-gray-700">Role 2</label>
                                     <input type="text" name="trustee_role_2" id="trustee_role_2" 
                                         value="{{ old('trustee_role_2') }}"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('trustee_role_2')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div>
-                                    <label for="trustee_fee_amount_2" class="block text-sm font-medium text-gray-700">Fee Amount 2 (RM)</label>
-                                    <input type="number" step="0.01" name="trustee_fee_amount_2" id="trustee_fee_amount_2" 
-                                        value="{{ old('trustee_fee_amount_2') }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('trustee_fee_amount_2')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Reminder Dates Section -->
-                        <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Reminder Dates</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label for="reminder_1" class="block text-sm font-medium text-gray-700">Reminder 1</label>
-                                    <input type="date" name="reminder_1" id="reminder_1" 
-                                        value="{{ old('reminder_1') }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('reminder_1')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div>
-                                    <label for="reminder_2" class="block text-sm font-medium text-gray-700">Reminder 2</label>
-                                    <input type="date" name="reminder_2" id="reminder_2" 
-                                        value="{{ old('reminder_2') }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('reminder_2')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div>
-                                    <label for="reminder_3" class="block text-sm font-medium text-gray-700">Reminder 3</label>
-                                    <input type="date" name="reminder_3" id="reminder_3" 
-                                        value="{{ old('reminder_3') }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('reminder_3')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>

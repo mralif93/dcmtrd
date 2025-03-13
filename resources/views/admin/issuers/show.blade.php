@@ -5,8 +5,8 @@
         </h2>
     </x-slot>
 
-    <div class="py-6 sm:py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Success Message -->
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400 rounded shadow-sm transition-all duration-300">
@@ -24,147 +24,146 @@
             @endif
 
             <!-- Main Content -->
-            <div class="bg-white overflow-hidden shadow-md sm:rounded-lg transition-all duration-300 hover:shadow-lg">
-                <!-- Section: Issuer Details -->
-                <div class="p-4 sm:p-6 bg-white border-b border-gray-200">
-                    <div class="mb-6 pb-2 border-b border-gray-100">
-                        <h3 class="text-lg font-medium text-gray-900">Issuer Details</h3>
-                        <p class="mt-1 text-sm text-gray-500">Basic information about the issuer.</p>
+            <div class="bg-white overflow-hidden shadow-md sm:rounded-lg">
+                <!-- Header Section -->
+                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-lg font-medium text-gray-900">Issuer Information</h3>
+                    <div class="flex space-x-2">
+                        <a href="{{ route('issuers.edit', $issuer) }}" 
+                           class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                            Edit
+                        </a>
                     </div>
-                    
-                    <dl class="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
-                            <dt class="text-sm font-medium text-gray-500">Full Name</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $issuer->issuer_name ?? 'N/A' }}</dd>
+                </div>
+
+                <!-- Section: Issuer Details -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Issuer Details</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Issuer Name</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->issuer_name ?? 'N/A' }}</dd>
                         </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Short Name</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $issuer->issuer_short_name ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->issuer_short_name ?? 'N/A' }}</dd>
                         </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Registration Number</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $issuer->registration_number ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->registration_number ?? 'N/A' }}</dd>
                         </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Debenture Number</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $issuer->debenture ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->debenture ?? 'N/A' }}</dd>
                         </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Trust Deed Date</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $issuer->trust_deed_date ? $issuer->trust_deed_date->format('d/m/Y') : 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->trust_deed_date ? $issuer->trust_deed_date->format('d/m/Y') : 'N/A' }}</dd>
                         </div>
                     </dl>
                 </div>
 
                 <!-- Section: Trustee Information -->
-                <div class="p-4 sm:p-6 bg-white border-b border-gray-200">
-                    <div class="mb-6 pb-2 border-b border-gray-100">
-                        <h3 class="text-lg font-medium text-gray-900">Trustee Information</h3>
-                        <p class="mt-1 text-sm text-gray-500">Details about trustee roles and fees.</p>
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Trustee Information</h3>
                     </div>
-                    
-                    <dl class="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Role 1</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $issuer->trustee_role_1 ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->trustee_role_1 ?? 'N/A' }}</dd>
                         </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
-                            <dt class="text-sm font-medium text-gray-500">Fee Amount 1</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">
-                                @if($issuer->trustee_fee_amount_1)
-                                    <span class="font-mono">RM{{ number_format($issuer->trustee_fee_amount_1, 2) }}</span>
-                                @else
-                                    N/A
-                                @endif
-                            </dd>
-                        </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Role 2</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $issuer->trustee_role_2 ?? 'N/A' }}</dd>
-                        </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
-                            <dt class="text-sm font-medium text-gray-500">Fee Amount 2</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">
-                                @if($issuer->trustee_fee_amount_2)
-                                    <span class="font-mono">RM{{ number_format($issuer->trustee_fee_amount_2, 2) }}</span>
-                                @else
-                                    N/A
-                                @endif
-                            </dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->trustee_role_2 ?? 'N/A' }}</dd>
                         </div>
                     </dl>
                 </div>
 
-                <!-- Section: Reminder Dates -->
-                <div class="p-4 sm:p-6 bg-white border-b border-gray-200">
-                    <div class="mb-6 pb-2 border-b border-gray-100">
-                        <h3 class="text-lg font-medium text-gray-900">Reminder Dates</h3>
-                        <p class="mt-1 text-sm text-gray-500">Important dates for reminders.</p>
+                <!-- Section: Additional Information -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Additional Information</h3>
                     </div>
-                    
-                    <dl class="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
-                            <dt class="text-sm font-medium text-gray-500">Reminder 1</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">
-                                {{ $issuer->reminder_1 ? $issuer->reminder_1->format('d/m/Y') : 'N/A' }}
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Trust Amount Escrow Sum</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->trust_amount_escrow_sum ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Number of Shares</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->no_of_share ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Outstanding Size</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->outstanding_size ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Status</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
+                                    $issuer->status == 'Active' ? 'bg-green-100 text-green-800' : 
+                                    ($issuer->status == 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                    'bg-red-100 text-red-800') }}">
+                                    {{ $issuer->status ?? 'N/A' }}
+                                </span>
                             </dd>
                         </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
-                            <dt class="text-sm font-medium text-gray-500">Reminder 2</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">
-                                {{ $issuer->reminder_2 ? $issuer->reminder_2->format('d/m/Y') : 'N/A' }}
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->prepared_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->verified_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date & Time</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $issuer->approval_datetime ? $issuer->approval_datetime->format('d/m/Y H:i') : 'N/A' }}
                             </dd>
                         </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
-                            <dt class="text-sm font-medium text-gray-500">Reminder 3</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">
-                                {{ $issuer->reminder_3 ? $issuer->reminder_3->format('d/m/Y') : 'N/A' }}
-                            </dd>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->remarks ?? 'N/A' }}</dd>
                         </div>
                     </dl>
                 </div>
 
                 <!-- Section: System Information -->
-                <div class="p-4 sm:p-6 bg-white border-b border-gray-200">
-                    <div class="mb-6 pb-2 border-b border-gray-100">
-                        <h3 class="text-lg font-medium text-gray-900">System Information</h3>
-                        <p class="mt-1 text-sm text-gray-500">Record creation and modification details.</p>
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">System Information</h3>
                     </div>
-                    
-                    <dl class="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $issuer->created_at->format('d/m/Y H:i') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->created_at->format('d/m/Y H:i') }}</dd>
                         </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg transition-all duration-300 hover:bg-gray-100">
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                            <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $issuer->updated_at->format('d/m/Y H:i') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $issuer->updated_at->format('d/m/Y H:i') }}</dd>
                         </div>
                     </dl>
                 </div>
 
-                <!-- Actions -->
-                <div class="p-4 sm:p-6 bg-white">
-                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
+                <!-- Action Buttons -->
+                <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
+                    <div class="flex justify-end gap-x-4">
                         <a href="{{ route('issuers.index') }}" 
-                        class="inline-flex items-center justify-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-300">
+                           class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
                             </svg>
                             Back to List
                         </a>
                         <a href="{{ route('issuers.edit', $issuer) }}" 
-                        class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300">
+                           class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                             </svg>

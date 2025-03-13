@@ -13,30 +13,31 @@ return new class extends Migration
     {
         Schema::create('trustee_fees', function (Blueprint $table) {
             $table->id();
-            $table->string('month')->nullable(); // Jan, Feb, etc.
-            $table->integer('date')->nullable(); // Day of the month
-            $table->string('issuer'); // Company code
-            $table->text('description'); // Description of the fee
-            $table->decimal('fees_rm', 10, 2); // Amount in RM
-            $table->date('start_anniversary_date'); // Period of anniversary
-            $table->date('end_anniversary_date'); // Period of anniversary
-            $table->date('memo_to_fad')->nullable(); // Date memo sent to FAD
-            $table->string('invoice_no')->unique(); // Invoice number
-            $table->date('date_letter_to_issuer')->nullable(); // Date letter sent to issuer
-            $table->date('first_reminder')->nullable(); // First reminder date
-            $table->date('second_reminder')->nullable(); // Second reminder date
-            $table->date('third_reminder')->nullable(); // Third reminder date
-            $table->date('payment_received')->nullable(); // Date payment received
-            $table->string('tt_cheque_no')->nullable(); // TT/Cheque number
-            $table->date('memo_receipt_to_fad')->nullable(); // Date memo receipt sent to FAD
-            $table->date('receipt_to_issuer')->nullable(); // Date receipt sent to issuer
-            $table->string('receipt_no')->nullable(); // Receipt number
+            $table->string('month')->nullable();
+            $table->integer('date')->nullable();
+            $table->string('description')->nullable();
+            $table->decimal('trustee_fee_amount_1', 15, 2)->nullable();
+            $table->decimal('trustee_fee_amount_2', 15, 2)->nullable();
+            $table->date('start_anniversary_date')->nullable();
+            $table->date('end_anniversary_date')->nullable();
+            $table->date('memo_to_fad')->nullable();
+            $table->string('invoice_no')->unique();
+            $table->date('date_letter_to_issuer')->nullable();
+            $table->date('first_reminder')->nullable();
+            $table->date('second_reminder')->nullable();
+            $table->date('third_reminder')->nullable();
+            $table->date('payment_received')->nullable();
+            $table->string('tt_cheque_no')->nullable();
+            $table->date('memo_receipt_to_fad')->nullable();
+            $table->date('receipt_to_issuer')->nullable();
+            $table->string('receipt_no')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
-            $table->timestamps(); // Laravel's created_at and updated_at
-            $table->softDeletes(); // Laravel's deleted_at
+            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

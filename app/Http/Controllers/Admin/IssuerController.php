@@ -9,19 +9,24 @@ use App\Models\Issuer;
 class IssuerController extends Controller
 {
     /**
-     * Display a listing of the resource (with search).
+     * Display a listing of the resource (with search and filters).
      */
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $status = $request->input('status');
         
         $issuers = Issuer::when($search, function ($query) use ($search) {
             $query->where('issuer_short_name', 'like', "%{$search}%")
-                  ->orWhere('issuer_name', 'like', "%{$search}%");
+                  ->orWhere('issuer_name', 'like', "%{$search}%")
+                  ->orWhere('registration_number', 'like', "%{$search}%");
+        })
+        ->when($status, function ($query) use ($status) {
+            $query->where('status', $status);
         })
         ->latest()
         ->paginate(10)
-        ->appends(['search' => $search]); // Preserve search in pagination
+        ->appends($request->except('page')); // Preserve all filters in pagination
 
         return view('admin.issuers.index', compact('issuers'));
     }
@@ -44,18 +49,21 @@ class IssuerController extends Controller
             'issuer_name' => 'required|string|max:100',
             'registration_number' => 'required|unique:issuers',
             'debenture' => 'nullable|string|max:100',
-            'trustee_fee_amount_1' => 'nullable|numeric',
-            'trustee_fee_amount_2' => 'nullable|numeric',
-            'reminder_1' => 'nullable|date',
-            'reminder_2' => 'nullable|date',
-            'reminder_3' => 'nullable|date',
             'trustee_role_1' => 'nullable|string|max:100',
             'trustee_role_2' => 'nullable|string|max:100',
             'trust_deed_date' => 'required|date',
+            'trust_amount_escrow_sum' => 'nullable|string|max:100',
+            'no_of_share' => 'nullable|string|max:100',
+            'outstanding_size' => 'nullable|string|max:100',
+            'status' => 'nullable|string|max:50',
+            'prepared_by' => 'nullable|string|max:100',
+            'verified_by' => 'nullable|string|max:100',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
         ]);
 
         try {
-            Issuer::create($validated);
+            $issuer = Issuer::create($validated);
             return redirect()->route('issuers.show', $issuer)->with('success', 'Issuer created successfully.');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
@@ -88,14 +96,17 @@ class IssuerController extends Controller
             'issuer_name' => 'required|string|max:100',
             'registration_number' => 'required|unique:issuers,registration_number,' . $issuer->id,
             'debenture' => 'nullable|string|max:100',
-            'trustee_fee_amount_1' => 'nullable|numeric',
-            'trustee_fee_amount_2' => 'nullable|numeric',
-            'reminder_1' => 'nullable|date',
-            'reminder_2' => 'nullable|date',
-            'reminder_3' => 'nullable|date',
             'trustee_role_1' => 'nullable|string|max:100',
             'trustee_role_2' => 'nullable|string|max:100',
             'trust_deed_date' => 'required|date',
+            'trust_amount_escrow_sum' => 'nullable|string|max:100',
+            'no_of_share' => 'nullable|string|max:100',
+            'outstanding_size' => 'nullable|string|max:100',
+            'status' => 'nullable|string|max:50',
+            'prepared_by' => 'nullable|string|max:100',
+            'verified_by' => 'nullable|string|max:100',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
         ]);
 
         try {

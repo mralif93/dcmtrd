@@ -17,14 +17,12 @@ return new class extends Migration
             $table->string('issuer_name');
             $table->string('registration_number')->unique();
             $table->string('debenture')->nullable();
-            $table->decimal('trustee_fee_amount_1', 15, 2)->nullable();
-            $table->decimal('trustee_fee_amount_2', 15, 2)->nullable();
             $table->string('trustee_role_1')->nullable();
             $table->string('trustee_role_2')->nullable();
-            $table->date('reminder_1')->nullable();
-            $table->date('reminder_2')->nullable();
-            $table->date('reminder_3')->nullable();
             $table->date('trust_deed_date')->nullable();
+            $table->string('trust_amount_escrow_sum')->nullable();
+            $table->string('no_of_share')->nullable();
+            $table->string('outstanding_size')->nullable();
             $table->string('status')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
