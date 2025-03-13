@@ -5,15 +5,14 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="flex items-center shrink-0">
-                    <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('dashboard') }}">
+                    <a :href="route('main') " :active="request()->routeIs('main')">
                         <x-application-logo class="block w-auto text-gray-800 fill-current h-9" />
                     </a>
                 </div>
             
                 <!-- Navigation Links -->
                 <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="Auth::user()->role == 'admin' ? route('admin.dashboard') : route('dashboard', ['section' => 'dcmtrd'])" 
-                        :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('main') " :active="request()->routeIs('main')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
             
@@ -96,7 +95,7 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            <x-responsive-nav-link>
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>

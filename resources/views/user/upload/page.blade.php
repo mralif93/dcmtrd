@@ -67,7 +67,7 @@
             </a>
 
             <!-- Rating Movements Upload Card -->
-            <a href="{{ route('upload.rating-movement') }}"
+            <a href="{{ route('related-documents.index') }}"
                 class="block p-6 transition-all duration-300 bg-white border border-gray-200 shadow-lg group rounded-xl hover:shadow-2xl hover:-translate-y-1">
                 <div class="flex items-center space-x-4">
                     <div class="p-3 bg-green-100 rounded-lg">

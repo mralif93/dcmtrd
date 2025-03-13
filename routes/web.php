@@ -105,99 +105,99 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Admin routes
-Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])
-        ->name('admin.dashboard');
+// Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
+//     Route::get('/admin/dashboard', [AdminController::class, 'index'])
+//         ->name('admin.dashboard');
 
-    // Bond
-    Route::resource('/admin/users', UserAdminController::class);
-    Route::resource('/admin/issuers', IssuerController::class);
-    Route::resource('/admin/bonds', BondController::class);
-    Route::resource('/admin/rating-movements', RatingMovementController::class);
-    Route::resource('/admin/payment-schedules', PaymentScheduleController::class);
-    Route::resource('/admin/redemptions', RedemptionController::class);
-    Route::resource('/admin/call-schedules', CallScheduleController::class);
-    Route::resource('/admin/lockout-periods', LockoutPeriodController::class);
-    Route::resource('/admin/trading-activities', TradingActivityController::class);
-    Route::resource('/admin/announcements', AnnouncementController::class);
-    Route::resource('/admin/facility-informations', FacilityInformationController::class);
-    Route::resource('/admin/related-documents', RelatedDocumentController::class);
-    Route::resource('/admin/charts', ChartController::class);
+//     // Bond
+//     Route::resource('/admin/users', UserAdminController::class);
+//     Route::resource('/admin/issuers', IssuerController::class);
+//     Route::resource('/admin/bonds', BondController::class);
+//     Route::resource('/admin/rating-movements', RatingMovementController::class);
+//     Route::resource('/admin/payment-schedules', PaymentScheduleController::class);
+//     Route::resource('/admin/redemptions', RedemptionController::class);
+//     Route::resource('/admin/call-schedules', CallScheduleController::class);
+//     Route::resource('/admin/lockout-periods', LockoutPeriodController::class);
+//     Route::resource('/admin/trading-activities', TradingActivityController::class);
+//     Route::resource('/admin/announcements', AnnouncementController::class);
+//     Route::resource('/admin/facility-informations', FacilityInformationController::class);
+    
+//     Route::resource('/admin/charts', ChartController::class);
 
-    Route::resource('/admin/trustee-fees', TrusteeFeeController::class);
+//     Route::resource('/admin/trustee-fees', TrusteeFeeController::class);
 
-    // Additional
-    Route::prefix('/admin/trustee-fees')->name('trustee-fees.')->group(function () {
-        Route::get('/trustee-fees-search', [TrusteeFeeController::class, 'search'])->name('search');
-        Route::get('/trustee-fees-report', [TrusteeFeeController::class, 'report'])->name('report');
-        Route::get('/trustee-fees-trashed', [TrusteeFeeController::class, 'trashed'])->name('trashed');
-        Route::patch('/trustee-fees/{id}/restore', [TrusteeFeeController::class, 'restore'])->name('restore');
-        Route::delete('/trustee-fees/{id}/force-delete', [TrusteeFeeController::class, 'forceDelete'])->name('force-delete');
-    });
+//     // Additional
+//     Route::prefix('/admin/trustee-fees')->name('trustee-fees.')->group(function () {
+//         Route::get('/trustee-fees-search', [TrusteeFeeController::class, 'search'])->name('search');
+//         Route::get('/trustee-fees-report', [TrusteeFeeController::class, 'report'])->name('report');
+//         Route::get('/trustee-fees-trashed', [TrusteeFeeController::class, 'trashed'])->name('trashed');
+//         Route::patch('/trustee-fees/{id}/restore', [TrusteeFeeController::class, 'restore'])->name('restore');
+//         Route::delete('/trustee-fees/{id}/force-delete', [TrusteeFeeController::class, 'forceDelete'])->name('force-delete');
+//     });
 
-    Route::resource('/admin/compliance-covenants', ComplianceCovenantController::class);
+//     Route::resource('/admin/compliance-covenants', ComplianceCovenantController::class);
 
-    // Additional
-    Route::prefix('/admin/compliance-covenants')->name('compliance-covenants.')->group(function () {
-        Route::get('/compliance-covenants/report', [ComplianceCovenantController::class, 'report'])->name('report');
-        Route::get('/compliance-covenants-trashed', [ComplianceCovenantController::class, 'trashed'])->name('trashed');
-        Route::patch('/compliance-covenants/{id}/restore', [ComplianceCovenantController::class, 'restore'])->name('restore');
-        Route::delete('/compliance-covenants/{id}/force-delete', [ComplianceCovenantController::class, 'forceDelete'])->name('force-delete');
-    });
+//     // Additional
+//     Route::prefix('/admin/compliance-covenants')->name('compliance-covenants.')->group(function () {
+//         Route::get('/compliance-covenants/report', [ComplianceCovenantController::class, 'report'])->name('report');
+//         Route::get('/compliance-covenants-trashed', [ComplianceCovenantController::class, 'trashed'])->name('trashed');
+//         Route::patch('/compliance-covenants/{id}/restore', [ComplianceCovenantController::class, 'restore'])->name('restore');
+//         Route::delete('/compliance-covenants/{id}/force-delete', [ComplianceCovenantController::class, 'forceDelete'])->name('force-delete');
+//     });
 
-    Route::resource('permissions', \App\Http\Controllers\Admin\PermissionController::class);
+//     Route::resource('permissions', \App\Http\Controllers\Admin\PermissionController::class);
 
-    // Additional
-    Route::prefix('/admin/permissions')->name('permissions.')->group(function () {
-        Route::post('{permission}/assign-users', [\App\Http\Controllers\Admin\PermissionController::class, 'assignUsers'])->name('assign-users');
-        Route::delete('{permission}/users/{user}', [\App\Http\Controllers\Admin\PermissionController::class, 'removeUser'])->name('remove-user');
-    });
+//     // Additional
+//     Route::prefix('/admin/permissions')->name('permissions.')->group(function () {
+//         Route::post('{permission}/assign-users', [\App\Http\Controllers\Admin\PermissionController::class, 'assignUsers'])->name('assign-users');
+//         Route::delete('{permission}/users/{user}', [\App\Http\Controllers\Admin\PermissionController::class, 'removeUser'])->name('remove-user');
+//     });
 
-    //  REITs
-    Route::resource('/admin/banks', BankController::class);
-    Route::resource('/admin/financial-types', FinancialTypeController::class);
-    Route::resource('/admin/portfolio-types', PortfolioTypeController::class);
-    Route::resource('/admin/portfolios', PortfolioController::class);
-    Route::resource('/admin/properties', PropertyController::class);
-    Route::resource('/admin/checklists', ChecklistController::class);
-    Route::resource('/admin/tenants', TenantController::class);
-    Route::resource('/admin/leases', LeaseController::class);
-    Route::resource('/admin/financials', FinancialController::class);
-    Route::resource('/admin/site-visits', SiteVisitController::class);
-    Route::resource('/admin/documentation-items', DocumentationItemController::class);
-    Route::resource('/admin/tenant-approvals', TenantApprovalController::class);
-    Route::resource('/admin/condition-checks', ConditionCheckController::class);
-    Route::resource('/admin/property-improvements', PropertyImprovementController::class);
+//     //  REITs
+//     Route::resource('/admin/banks', BankController::class);
+//     Route::resource('/admin/financial-types', FinancialTypeController::class);
+//     Route::resource('/admin/portfolio-types', PortfolioTypeController::class);
+//     Route::resource('/admin/portfolios', PortfolioController::class);
+//     Route::resource('/admin/properties', PropertyController::class);
+//     Route::resource('/admin/checklists', ChecklistController::class);
+//     Route::resource('/admin/tenants', TenantController::class);
+//     Route::resource('/admin/leases', LeaseController::class);
+//     Route::resource('/admin/financials', FinancialController::class);
+//     Route::resource('/admin/site-visits', SiteVisitController::class);
+//     Route::resource('/admin/documentation-items', DocumentationItemController::class);
+//     Route::resource('/admin/tenant-approvals', TenantApprovalController::class);
+//     Route::resource('/admin/condition-checks', ConditionCheckController::class);
+//     Route::resource('/admin/property-improvements', PropertyImprovementController::class);
 
-    // Additional
-    Route::prefix('/admin/properties')->name('properties.')->group(function () {
-        Route::get('{property}/tenants', [PropertyController::class, 'tenants'])->name('tenants');
-        Route::get('{property}/checklists', [PropertyController::class, 'checklists'])->name('checklists');
-        Route::get('{property}/site-visits', [PropertyController::class, 'siteVisits'])->name('site-visits');
-    });
+//     // Additional
+//     Route::prefix('/admin/properties')->name('properties.')->group(function () {
+//         Route::get('{property}/tenants', [PropertyController::class, 'tenants'])->name('tenants');
+//         Route::get('{property}/checklists', [PropertyController::class, 'checklists'])->name('checklists');
+//         Route::get('{property}/site-visits', [PropertyController::class, 'siteVisits'])->name('site-visits');
+//     });
 
-    // Additional
-    Route::prefix('/admin/site-visits')->name('site-visits.')->group(function () {
-        Route::get('{site_visit}/download', [SiteVisitController::class, 'downloadAttachment'])->name('download');
-    });
+//     // Additional
+//     Route::prefix('/admin/site-visits')->name('site-visits.')->group(function () {
+//         Route::get('{site_visit}/download', [SiteVisitController::class, 'downloadAttachment'])->name('download');
+//     });
 
-    // Additional
-    Route::prefix('/admin/tenant-approvals')->name('tenant-approvals.')->group(function () {
-        Route::post('{tenantApproval}/approve-by-od', [TenantApprovalController::class, 'approveByOD'])->name('approve-by-od');
-        Route::post('{tenantApproval}/verify-by-ld', [TenantApprovalController::class, 'verifyByLD'])->name('verify-by-ld');
-        Route::post('{tenantApproval}/submit-to-ld', [TenantApprovalController::class, 'submitToLD'])->name('submit-to-ld');
-    });
-});
+//     // Additional
+//     Route::prefix('/admin/tenant-approvals')->name('tenant-approvals.')->group(function () {
+//         Route::post('{tenantApproval}/approve-by-od', [TenantApprovalController::class, 'approveByOD'])->name('approve-by-od');
+//         Route::post('{tenantApproval}/verify-by-ld', [TenantApprovalController::class, 'verifyByLD'])->name('verify-by-ld');
+//         Route::post('{tenantApproval}/submit-to-ld', [TenantApprovalController::class, 'submitToLD'])->name('submit-to-ld');
+//     });
+// });
 
 // User routes
 Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     // Welcome
-    Route::get('/welcome', function () {
-        return view('welcome');
-    })->name('main');
+    // Route::get('/welcome', function () {
+    //     return view('user.dashboard');
+    // })->name('main');
 
     // Dashboard
-    Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [UserController::class, 'index'])->name('main');
 
     // Frontend routes
     Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
@@ -235,7 +235,7 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::resource('/admin/call-schedules', CallScheduleController::class);
     Route::resource('/admin/lockout-periods', LockoutPeriodController::class);
     Route::resource('/admin/trading-activities', TradingActivityController::class);
-
+    Route::resource('/admin/related-documents', RelatedDocumentController::class);
     Route::resource('/user/issuers-info', UserIssuerController::class);
     Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
     Route::get('issuer-info/{issuer}', [MainController::class, 'info'])->name('issuer-search.show');

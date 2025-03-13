@@ -114,7 +114,7 @@
         </div>
     @endif
 
-    @if (Auth::user()->hasPermission('REITS'))
+    {{-- @if (Auth::user()->hasPermission('REITS'))
         <div class="hidden py-12 dashboard-section" id="reits-section" data-section="reits">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="pb-6">
@@ -170,9 +170,9 @@
                 </div>
             </div>
         </div>
-    @endif
+    @endif --}}
 
-    @if (Auth::user()->hasPermission('LEGAL'))
+    {{-- @if (Auth::user()->hasPermission('LEGAL'))
         <div class="hidden py-12 dashboard-section" id="legal-section" data-section="legal">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="pb-6">
@@ -214,7 +214,7 @@
                 </div>
             </div>
         </div>
-    @endif
+    @endif --}}
 
     <!-- If the user has no permissions, show a message -->
     @if (
