@@ -18,9 +18,9 @@ class TrusteeFee extends Model
     protected $fillable = [
         'month',
         'date',
-        'issuer',
         'description',
-        'fees_rm',
+        'trustee_fee_amount_1',
+        'trustee_fee_amount_2',
         'start_anniversary_date',
         'end_anniversary_date',
         'memo_to_fad',
@@ -34,6 +34,11 @@ class TrusteeFee extends Model
         'memo_receipt_to_fad',
         'receipt_to_issuer',
         'receipt_no',
+        'prepared_by',
+        'verified_by',
+        'remarks',
+        'approval_datetime',
+        'issuer_id'
     ];
 
     /**
@@ -52,9 +57,19 @@ class TrusteeFee extends Model
         'payment_received' => 'date',
         'memo_receipt_to_fad' => 'date',
         'receipt_to_issuer' => 'date',
-        'fees_rm' => 'decimal:2',
+        'trustee_fee_amount_1' => 'decimal:2',
+        'trustee_fee_amount_2' => 'decimal:2',
+        'approval_datetime' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+    
+    /**
+     * Get the issuer that the trustee fee belongs to.
+     */
+    public function issuer()
+    {
+        return $this->belongsTo(Issuer::class);
+    }
     
     /**
      * Check if the trustee fee has been paid.
@@ -102,6 +117,16 @@ class TrusteeFee extends Model
         }
         
         return null;
+    }
+    
+    /**
+     * Get the total trustee fee amount.
+     *
+     * @return float
+     */
+    public function getTotalAmount()
+    {
+        return (float)$this->trustee_fee_amount_1 + (float)$this->trustee_fee_amount_2;
     }
     
     /**

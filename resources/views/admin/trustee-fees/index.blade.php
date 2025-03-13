@@ -49,10 +49,16 @@
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <!-- Issuer Search Field -->
                             <div>
-                                <label for="issuer" class="block text-sm font-medium text-gray-700">Issuer</label>
-                                <input type="text" name="issuer" id="issuer" value="{{ request('issuer') }}" 
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
-                                       placeholder="Issuer name...">
+                                <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer</label>
+                                <select name="issuer_id" id="issuer_id" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">All Issuers</option>
+                                    @foreach($issuers ?? [] as $issuer)
+                                        <option value="{{ $issuer->id }}" @selected(request('issuer_id') == $issuer->id)>
+                                            {{ $issuer->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <!-- Invoice Number Filter -->
@@ -117,13 +123,19 @@
                             @foreach($trustee_fees as $fee)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $fee->issuer }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $fee->issuer->name ?? 'N/A' }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">{{ $fee->invoice_no }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">RM {{ number_format($fee->fees_rm, 2) }}</div>
+                                    <div class="text-sm text-gray-900">
+                                        RM {{ number_format($fee->trustee_fee_amount_1, 2) }}
+                                        @if($fee->trustee_fee_amount_2 > 0)
+                                            + RM {{ number_format($fee->trustee_fee_amount_2, 2) }}
+                                            = RM {{ number_format($fee->getTotalAmount(), 2) }}
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">
