@@ -10,7 +10,7 @@
             <!-- Error Handling -->
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
-                    <div class="flex items-center">
+                    <div class="flex">
                         <div class="flex-shrink-0">
                             <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
@@ -31,11 +31,18 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Bond Information</h3>
+                    <p class="mt-1 text-sm text-gray-600">
+                        Create a new bond by filling out the form below.
+                    </p>
+                </div>
+                
                 <form action="{{ route('bonds-info.store') }}" method="POST" class="p-6">
                     @csrf
 
                     <!-- Section: Security Information -->
-                    <div class="space-y-6 pb-6">
+                    <div class="space-y-6 pb-6 border-b border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Security Information</h3>
 
                         <!-- Row 1: Issuer -->
@@ -196,7 +203,7 @@
                     </div>
 
                     <!-- Section: Coupon Payment Details -->
-                    <div class="space-y-6 pb-6">
+                    <div class="space-y-6 py-6 border-b border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Coupon Payment Details</h3>
 
                         <!-- Row 1: Coupon Accrual, Prev Coupon Payment Date -->
@@ -241,7 +248,7 @@
                     </div>
 
                     <!-- Section: Latest Trading -->
-                    <div class="space-y-6 pb-6">
+                    <div class="space-y-6 py-6 border-b border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Latest Trading</h3>
 
                         <!-- Row 1: Last Traded Yield (%), Last Traded Price (RM) -->
@@ -278,7 +285,7 @@
                     </div>
 
                     <!-- Section: Ratings -->
-                    <div class="space-y-6 pb-6">
+                    <div class="space-y-6 py-6 border-b border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Ratings</h3>
 
                         <!-- Row 1: Ratings -->
@@ -291,7 +298,7 @@
                     </div>
 
                     <!-- Section: Issuance -->
-                    <div class="space-y-6 pb-6">
+                    <div class="space-y-6 py-6 border-b border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Issuance</h3>
 
                         <!-- Row 1: Amount Issued (RM’mil), Amount Outstanding (RM’mil) -->
@@ -312,7 +319,7 @@
                     </div>
 
                     <!-- Section: Additional Info -->
-                    <div class="space-y-6 pb-6">
+                    <div class="space-y-6 py-6 border-b border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Additional Info</h3>
 
                         <!-- Row 1: Lead Arranger -->
@@ -341,7 +348,7 @@
                     </div>
 
                     <!-- Section: System Information -->
-                    <div class="space-y-6 pb-6">
+                    <div class="space-y-6 py-6 border-b border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
 
                         <!-- Row 1: Status, Approval Date/Time -->
@@ -358,22 +365,25 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="approval_date_time" class="block text-sm font-medium text-gray-700">Approval Date/Time *</label>
-                                <input type="datetime-local" name="approval_date_time" id="approval_date_time"
-                                    value="{{ old('approval_date_time') }}"
+                                <label for="approval_datetime" class="block text-sm font-medium text-gray-700">Approval Date/Time *</label>
+                                <input type="datetime-local" name="approval_datetime" id="approval_datetime"
+                                    value="{{ old('approval_datetime') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                         </div>
                     </div>
-
+                    
                     <!-- Form Actions -->
-                    <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
+                    <div class="flex justify-end gap-4 pt-6">
                         <a href="{{ route('bonds-info.index') }}"
                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>
                         <button type="submit"
                                 class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
                             Create Bond
                         </button>
                     </div>
