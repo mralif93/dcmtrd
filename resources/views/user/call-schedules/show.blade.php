@@ -7,7 +7,6 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
                     <div class="flex items-center">
@@ -24,59 +23,66 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <!-- Header Section -->
+                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-lg font-medium text-gray-900">Call Schedule Information</h3>
+                    <div class="flex space-x-2">
+                        <a href="{{ route('call-schedules-info.edit', $schedule) }}" 
+                           class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                            Edit
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Basic Information Section -->
                 <div class="border-t border-gray-200">
-                    <dl class="space-y-6 px-4 py-5 sm:p-6">
-                        <!-- Row 1: Core Information -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Bond Information -->
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Associated Bond</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    <div class="font-medium">{{ $schedule->redemption->bond->bond_sukuk_name }} - {{ $schedule->redemption->bond->sub_name }}</div>
-                                </dd>
-                            </div>
-
-                            <!-- Call Price -->
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Call Price</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    {{ number_format($schedule->call_price, 2) }}
-                                </dd>
-                            </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Associated Bond</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $schedule->redemption->bond->bond_sukuk_name }} - {{ $schedule->redemption->bond->sub_name }}
+                            </dd>
                         </div>
-
-                        <!-- Row 2: Schedule Dates -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Start Date</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $schedule->start_date->format('d/m/Y') }}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">End Date</dt>
-                                <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $schedule->end_date->format('d/m/Y') }}
-                                </dd>
-                            </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Call Price</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ number_format($schedule->call_price, 2) }}
+                            </dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Start Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $schedule->start_date->format('d/m/Y') }}
+                            </dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">End Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $schedule->end_date->format('d/m/Y') }}
+                            </dd>
                         </div>
                     </dl>
                 </div>
 
-                <!-- System Information -->
-                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
-                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
-                        <div>
+                <!-- System Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">System Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->created_at->format('d/m/Y h:i A') }}
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $schedule->created_at->format('d/m/Y H:i') }}
                             </dd>
                         </div>
-                        <div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ $schedule->updated_at->format('d/m/Y h:i A') }}
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $schedule->updated_at->format('d/m/Y H:i') }}
                             </dd>
                         </div>
                     </dl>
@@ -91,13 +97,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
                             </svg>
                             Back to List
-                        </a>
-                        <a href="{{ route('call-schedules-info.edit', $schedule) }}" 
-                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                            </svg>
-                            Edit Call Schedule
                         </a>
                     </div>
                 </div>

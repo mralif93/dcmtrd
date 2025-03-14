@@ -283,6 +283,12 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
         Route::patch('/compliance-covenants/{id}/restore', [UserComplianceCovenantController::class, 'restore'])->name('restore');
         Route::delete('/compliance-covenants/{id}/force-delete', [UserComplianceCovenantController::class, 'forceDelete'])->name('force-delete');
     });
+
+    // Additional
+    Route::prefix('/user/facility-informations-info')->name('facility-informations-info.')->group(function () {
+        Route::get('/user/facility-informations-info-report', [UserFacilityInformationController::class, 'report'])->name('report');
+        Route::get('/user/facility-informations-info-trashed', [UserFacilityInformationController::class, 'trashed'])->name('trashed');
+    });
     
     // For Issuers
     Route::post('/issuers-info/{issuers_info}/submit', [UserIssuerController::class, 'submitForApproval'])->name('issuers-info.submit');

@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
+            <!-- Error Handling -->
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
                     <div class="flex">
@@ -33,16 +33,17 @@
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <form action="{{ route('call-schedules-info.store') }}" method="POST" class="p-6">
                     @csrf
-
                     <div class="space-y-6 pb-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Redemption Selection -->
-                            <div class="space-y-4">
+                        <!-- Basic Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Redemption Selection -->
                                 <div>
                                     <label for="redemption_id" class="block text-sm font-medium text-gray-700">Redemption *</label>
                                     <select name="redemption_id" id="redemption_id" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Select a Redemption</option>
+                                        <option value="">-- Select a Redemption --</option>
                                         @foreach($redemptions as $redemption)
                                             <option value="{{ $redemption->id }}" @selected(old('redemption_id') == $redemption->id)>
                                                 {{ $redemption->bond->bond_sukuk_name }} - {{ $redemption->bond->sub_name }}
@@ -50,10 +51,8 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
 
-                            <!-- Call Price -->
-                            <div class="space-y-4">
+                                <!-- Call Price -->
                                 <div>
                                     <label for="call_price" class="block text-sm font-medium text-gray-700">Call Price *</label>
                                     <input type="number" name="call_price" id="call_price" 
@@ -63,8 +62,9 @@
                             </div>
                         </div>
 
-                        <!-- Date Fields -->
-                        <div class="border-t border-gray-200 pt-6">
+                        <!-- Date Range Section -->
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Date Range</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date *</label>
@@ -83,9 +83,10 @@
                         </div>
                     </div>
 
+                    <!-- Form Actions -->
                     <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
                         <a href="{{ route('call-schedules-info.index') }}" 
-                        class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                           class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>
                         <button type="submit" 

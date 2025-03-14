@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
+            <!-- Error Handling -->
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
                     <div class="flex">
@@ -36,120 +36,163 @@
                     @method('PUT')
 
                     <div class="space-y-6 pb-6">
-                        <!-- Row 1: Issuer -->
-                        <div>
-                            <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
-                            <select name="issuer_id" id="issuer_id" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Select Issuer</option>
-                                @foreach($issuers as $issuer)
-                                    <option value="{{ $issuer->id }}" @selected($announcement->issuer_id == $issuer->id)>
-                                        {{ $issuer->issuer_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('issuer_id')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Row 2: Category & Sub Category -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Basic Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
                             <div>
-                                <label for="category" class="block text-sm font-medium text-gray-700">Category *</label>
-                                <input type="text" name="category" id="category" 
-                                    value="{{ old('category', $announcement->category) }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                @error('category')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label for="sub_category" class="block text-sm font-medium text-gray-700">Sub Category</label>
-                                <input type="text" name="sub_category" id="sub_category" 
-                                    value="{{ old('sub_category', $announcement->sub_category) }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                @error('sub_category')
+                                <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
+                                <select name="issuer_id" id="issuer_id" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">-- Select Issuer --</option>
+                                    @foreach($issuers as $issuer)
+                                        <option value="{{ $issuer->id }}" @selected(old('issuer_id', $announcement->issuer_id) == $issuer->id)>
+                                            {{ $issuer->issuer_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('issuer_id')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                         </div>
 
-                        <!-- Row 3: Source & Date -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Category Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Category Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="category" class="block text-sm font-medium text-gray-700">Category *</label>
+                                    <input type="text" name="category" id="category" 
+                                        value="{{ old('category', $announcement->category) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('category')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="sub_category" class="block text-sm font-medium text-gray-700">Sub Category</label>
+                                    <input type="text" name="sub_category" id="sub_category" 
+                                        value="{{ old('sub_category', $announcement->sub_category) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('sub_category')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Publication Details Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Publication Details</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="source" class="block text-sm font-medium text-gray-700">Source *</label>
+                                    <input type="text" name="source" id="source" 
+                                        value="{{ old('source', $announcement->source) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('source')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="announcement_date" class="block text-sm font-medium text-gray-700">Date *</label>
+                                    <input type="date" name="announcement_date" id="announcement_date" 
+                                        value="{{ old('announcement_date', $announcement->announcement_date->format('Y-m-d')) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('announcement_date')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Announcement Content</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="title" class="block text-sm font-medium text-gray-700">Title *</label>
+                                    <input type="text" name="title" id="title" 
+                                        value="{{ old('title', $announcement->title) }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('title')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="description" class="block text-sm font-medium text-gray-700">Description *</label>
+                                    <textarea name="description" id="description" required
+                                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                          rows="3">{{ old('description', $announcement->description) }}</textarea>
+                                    @error('description')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="content" class="block text-sm font-medium text-gray-700">Content *</label>
+                                    <textarea name="content" id="content" required
+                                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                          rows="6">{{ old('content', $announcement->content) }}</textarea>
+                                    @error('content')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Attachment Section -->
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Attachment</h3>
                             <div>
-                                <label for="source" class="block text-sm font-medium text-gray-700">Source *</label>
-                                <input type="text" name="source" id="source" 
-                                    value="{{ old('source', $announcement->source) }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                @error('source')
+                                <label for="attachment" class="block text-sm font-medium text-gray-700">Upload File</label>
+                                <input type="file" name="attachment" id="attachment"
+                                       class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
+                                @if($announcement->attachment)
+                                    <p class="mt-2 text-sm text-gray-500">
+                                        Current Attachment: 
+                                        <a href="{{ Storage::url($announcement->attachment) }}" class="text-blue-600 underline" target="_blank">View</a>
+                                    </p>
+                                @endif
+                                @error('attachment')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
-                            <div>
-                                <label for="announcement_date" class="block text-sm font-medium text-gray-700">Date *</label>
-                                <input type="date" name="announcement_date" id="announcement_date" 
-                                    value="{{ old('announcement_date', $announcement->announcement_date->format('Y-m-d')) }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                @error('announcement_date')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
                         </div>
 
-                        <!-- Row 4: Title -->
-                        <div>
-                            <label for="title" class="block text-sm font-medium text-gray-700">Title *</label>
-                            <input type="text" name="title" id="title" 
-                                value="{{ old('title', $announcement->title) }}" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('title')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Row 5: Description -->
-                        <div>
-                            <label for="description" class="block text-sm font-medium text-gray-700">Description *</label>
-                            <textarea name="description" id="description" required
-                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                      rows="3">{{ old('description', $announcement->description) }}</textarea>
-                            @error('description')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Row 6: Content -->
-                        <div>
-                            <label for="content" class="block text-sm font-medium text-gray-700">Content *</label>
-                            <textarea name="content" id="content" required
-                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                      rows="6">{{ old('content', $announcement->content) }}</textarea>
-                            @error('content')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Row 7: Attachment -->
-                        <div>
-                            <label for="attachment" class="block text-sm font-medium text-gray-700">Attachment</label>
-                            <input type="file" name="attachment" id="attachment"
-                                   class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
-                            @if($announcement->attachment)
-                                <p class="mt-2 text-sm text-gray-500">Current Attachment: 
-                                    <a href="{{ Storage::url($announcement->attachment) }}" class="text-blue-600 underline" target="_blank">View</a>
-                                </p>
-                            @endif
-                            @error('attachment')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                        <!-- System Information -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
+                            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $announcement->created_at->format('M j, Y H:i') }}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $announcement->updated_at->format('M j, Y H:i') }}
+                                    </dd>
+                                </div>
+                                @if($announcement->approval_datetime)
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $announcement->approval_datetime->format('M j, Y H:i') }}
+                                    </dd>
+                                </div>
+                                @endif
+                            </dl>
                         </div>
                     </div>
 
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
                         <a href="{{ route('announcements-info.index') }}" 
-                        class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                           class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>
                         <button type="submit" 

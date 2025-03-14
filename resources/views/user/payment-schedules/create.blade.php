@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
+            <!-- Error Handling -->
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
                     <div class="flex">
@@ -35,81 +35,97 @@
                     @csrf
 
                     <div class="space-y-6 pb-6">
-                        <!-- Row 1: Bond -->
+                        <!-- Bond Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Bond Information</h3>
+                            <div>
+                                <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
+                                <select name="bond_id" id="bond_id" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">-- Select Bond --</option>
+                                    @foreach($bonds as $bond)
+                                        <option value="{{ $bond->id }}" @selected(old('bond_id') == $bond->id)>
+                                            {{ $bond->bond_sukuk_name }} - {{ $bond->sub_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Coupon Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Coupon Information</h3>
+                            <div>
+                                <label for="coupon_rate" class="block text-sm font-medium text-gray-700">Coupon Rate (%) *</label>
+                                <input type="number" step="0.01" name="coupon_rate" id="coupon_rate" 
+                                    value="{{ old('coupon_rate') }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    placeholder="e.g., 5.25">
+                            </div>
+                        </div>
+                        
+                        <!-- Period Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Period Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date *</label>
+                                    <input type="date" name="start_date" id="start_date" 
+                                        value="{{ old('start_date') }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End Date *</label>
+                                    <input type="date" name="end_date" id="end_date" 
+                                        value="{{ old('end_date') }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Payment Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="ex_date" class="block text-sm font-medium text-gray-700">Ex-Date *</label>
+                                    <input type="date" name="ex_date" id="ex_date" 
+                                        value="{{ old('ex_date') }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="payment_date" class="block text-sm font-medium text-gray-700">Payment Date *</label>
+                                    <input type="date" name="payment_date" id="payment_date" 
+                                        value="{{ old('payment_date') }}" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information Section -->
                         <div>
-                            <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
-                            <select name="bond_id" id="bond_id" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Select a Bond</option>
-                                @foreach($bonds as $bond)
-                                    <option value="{{ $bond->id }}" @selected(old('bond_id') == $bond->id)>
-                                        {{ $bond->bond_sukuk_name }} - {{ $bond->sub_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Row 2: Coupon Rate -->
-                        <div>
-                            <label for="coupon_rate" class="block text-sm font-medium text-gray-700">Coupon Rate (%) *</label>
-                            <input type="number" step="0.01" name="coupon_rate" id="coupon_rate" 
-                                value="{{ old('coupon_rate') }}" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                placeholder="e.g., 5.25">
-                        </div>
-
-                        <!-- Row 3: Start Date & End Date -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
                             <div>
-                                <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date *</label>
-                                <input type="date" name="start_date" id="start_date" 
-                                    value="{{ old('start_date') }}" required
+                                <label for="adjustment_date" class="block text-sm font-medium text-gray-700">Adjustment Date</label>
+                                <input type="date" name="adjustment_date" id="adjustment_date" 
+                                    value="{{ old('adjustment_date') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <p class="mt-1 text-sm text-gray-500">Optional. Leave blank if no adjustment date applies.</p>
                             </div>
-                            
-                            <div>
-                                <label for="end_date" class="block text-sm font-medium text-gray-700">End Date *</label>
-                                <input type="date" name="end_date" id="end_date" 
-                                    value="{{ old('end_date') }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            </div>
-                        </div>
-
-                        <!-- Row 4: Ex-Date & Payment Date -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="ex_date" class="block text-sm font-medium text-gray-700">Ex-Date *</label>
-                                <input type="date" name="ex_date" id="ex_date" 
-                                    value="{{ old('ex_date') }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            </div>
-                            
-                            <div>
-                                <label for="payment_date" class="block text-sm font-medium text-gray-700">Payment Date *</label>
-                                <input type="date" name="payment_date" id="payment_date" 
-                                    value="{{ old('payment_date') }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            </div>
-                        </div>
-
-                        <!-- Row 5: Adjustment Date -->
-                        <div>
-                            <label for="adjustment_date" class="block text-sm font-medium text-gray-700">Adjustment Date</label>
-                            <input type="date" name="adjustment_date" id="adjustment_date" 
-                                value="{{ old('adjustment_date') }}"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
                     </div>
 
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
                         <a href="{{ route('payment-schedules-info.index') }}" 
-                        class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                           class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>
                         <button type="submit" 
                                 class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Create
+                            Create Payment Schedule
                         </button>
                     </div>
                 </form>

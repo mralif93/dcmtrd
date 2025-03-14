@@ -60,6 +60,9 @@ class UserController extends Controller
             ");
             return (array) $result[0];
         });
+
+        // fetch all issuer
+        $issuers = Issuer::query()->latest()->paginate(10);
     
         return view('user.dashboard', [
             // Bond counts
@@ -95,6 +98,6 @@ class UserController extends Controller
             'conditionChecksCount' => $counts['condition_checks_count'],
             'propertyImprovementsCount' => $counts['property_improvements_count'],
             'siteVisitLogsCount' => $counts['site_visit_logs_count'] ?? 0
-        ]);
+        ], compact('issuers'));
     }
 }

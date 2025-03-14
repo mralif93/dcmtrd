@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
+            <!-- Error Handling -->
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
                     <div class="flex">
@@ -33,95 +33,99 @@
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <form action="{{ route('trading-activities-info.store') }}" method="POST" class="p-6">
                     @csrf
-
                     <div class="space-y-6 pb-6">
-                        <!-- Row 1: Bond -->
-                        <div>
-                            <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
-                            <select name="bond_id" id="bond_id" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
-                                           {{ $errors->has('bond_id') ? 'border-red-300' : '' }}">
-                                <option value="">Select a Bond</option>
-                                @foreach($bonds as $bond)
-                                    <option value="{{ $bond->id }}" @selected(old('bond_id') == $bond->id)>
-                                        {{ $bond->bond_sukuk_name }} - {{ $bond->sub_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('bond_id')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Row 2: Trade Date & Input Time -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Basic Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
                             <div>
-                                <label for="trade_date" class="block text-sm font-medium text-gray-700">Trade Date *</label>
-                                <input type="date" name="trade_date" id="trade_date" 
-                                    value="{{ old('trade_date') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
-                                           {{ $errors->has('trade_date') ? 'border-red-300' : '' }}">
-                                @error('trade_date')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label for="input_time" class="block text-sm font-medium text-gray-700">Trade Time *</label>
-                                <input type="time" name="input_time" id="input_time" step="1"
-                                    value="{{ old('input_time', now()->format('H:i:s')) }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
-                                           {{ $errors->has('input_time') ? 'border-red-300' : '' }}">
-                                @error('input_time')
+                                <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
+                                <select name="bond_id" id="bond_id" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                               {{ $errors->has('bond_id') ? 'border-red-300' : '' }}">
+                                    <option value="">-- Select a Bond --</option>
+                                    @foreach($bonds as $bond)
+                                        <option value="{{ $bond->id }}" @selected(old('bond_id') == $bond->id)>
+                                            {{ $bond->bond_sukuk_name }} - {{ $bond->sub_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('bond_id')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                         </div>
 
-                        <!-- Row 3: Amount & Price -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="amount" class="block text-sm font-medium text-gray-700">Amount (RM million) *</label>
-                                <input type="number" step="0.01" name="amount" id="amount" 
-                                    value="{{ old('amount') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
-                                           {{ $errors->has('amount') ? 'border-red-300' : '' }}">
-                                @error('amount')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label for="price" class="block text-sm font-medium text-gray-700">Price *</label>
-                                <input type="number" step="0.0001" name="price" id="price" 
-                                    value="{{ old('price') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
-                                           {{ $errors->has('price') ? 'border-red-300' : '' }}">
-                                @error('price')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
+                        <!-- Trading Details Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Trading Details</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="trade_date" class="block text-sm font-medium text-gray-700">Trade Date *</label>
+                                    <input type="date" name="trade_date" id="trade_date" 
+                                        value="{{ old('trade_date') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                               {{ $errors->has('trade_date') ? 'border-red-300' : '' }}">
+                                    @error('trade_date')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="input_time" class="block text-sm font-medium text-gray-700">Trade Time *</label>
+                                    <input type="time" name="input_time" id="input_time" step="1"
+                                        value="{{ old('input_time', now()->format('H:i:s')) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                               {{ $errors->has('input_time') ? 'border-red-300' : '' }}">
+                                    @error('input_time')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Row 4: Yield & Value Date -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="yield" class="block text-sm font-medium text-gray-700">Yield (%) *</label>
-                                <input type="number" step="0.01" name="yield" id="yield" 
-                                    value="{{ old('yield') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
-                                           {{ $errors->has('yield') ? 'border-red-300' : '' }}">
-                                @error('yield')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label for="value_date" class="block text-sm font-medium text-gray-700">Value Date *</label>
-                                <input type="date" name="value_date" id="value_date" 
-                                    value="{{ old('value_date') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
-                                           {{ $errors->has('value_date') ? 'border-red-300' : '' }}">
-                                @error('value_date')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
+                        <!-- Pricing Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Pricing Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="amount" class="block text-sm font-medium text-gray-700">Amount (RM million) *</label>
+                                    <input type="number" step="0.01" name="amount" id="amount" 
+                                        value="{{ old('amount') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                               {{ $errors->has('amount') ? 'border-red-300' : '' }}">
+                                    @error('amount')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="price" class="block text-sm font-medium text-gray-700">Price *</label>
+                                    <input type="number" step="0.0001" name="price" id="price" 
+                                        value="{{ old('price') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                               {{ $errors->has('price') ? 'border-red-300' : '' }}">
+                                    @error('price')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="yield" class="block text-sm font-medium text-gray-700">Yield (%) *</label>
+                                    <input type="number" step="0.01" name="yield" id="yield" 
+                                        value="{{ old('yield') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                               {{ $errors->has('yield') ? 'border-red-300' : '' }}">
+                                    @error('yield')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="value_date" class="block text-sm font-medium text-gray-700">Value Date *</label>
+                                    <input type="date" name="value_date" id="value_date" 
+                                        value="{{ old('value_date') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                               {{ $errors->has('value_date') ? 'border-red-300' : '' }}">
+                                    @error('value_date')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -129,12 +133,12 @@
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
                         <a href="{{ route('trading-activities-info.index') }}" 
-                        class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                           class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>
                         <button type="submit" 
                                 class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Create
+                            Create Trading Activity
                         </button>
                     </div>
                 </form>

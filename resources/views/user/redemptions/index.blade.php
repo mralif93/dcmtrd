@@ -1,129 +1,151 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Redemption Configurations') }}
+            {{ __('Redemption Management') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(session('success'))
-                <div class="mb-4">
-                    <div class="bg-green-500 text-white p-4 rounded-lg">
-                        {{ session('success') }}
+                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+                        </div>
                     </div>
                 </div>
             @endif
 
-            <div class="bg-white shadow rounded-lg p-6">
-                <!-- Search and Create Header -->
-                <div class="flex flex-col sm:flex-row justify-between gap-4 mb-6">
-                    <form method="GET" action="{{ route('redemptions-info.index') }}" class="w-full sm:w-1/2">
-                        <div class="flex gap-2">
-                            <input type="text" 
-                                name="search" 
-                                value="{{ $searchTerm }}"
-                                placeholder="Search by bond name, ISIN, or date..." 
-                                class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-                            
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-lg font-medium text-gray-900">Redemption Configurations</h3>
+                    <div class="flex gap-2">
+                        <a href="{{ route('redemptions-info.create') }}" 
+                           class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Add New Configuration
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Search and Filter Bar -->
+                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                    <form method="GET" action="{{ route('redemptions-info.index') }}">
+                        <div class="flex gap-4">
+                            <div class="flex-1">
+                                <input type="text" 
+                                    name="search" 
+                                    value="{{ $searchTerm }}"
+                                    placeholder="Search by bond name, ISIN, or date..." 
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            <button type="submit" 
+                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
                                 Search
                             </button>
-                            
                             @if($searchTerm)
-                                <a href="{{ route('redemptions-info.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                <a href="{{ route('redemptions-info.index') }}" 
+                                   class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     Clear
                                 </a>
                             @endif
                         </div>
                     </form>
-                    
-                    <a href="{{ route('redemptions-info.create') }}" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
-                        New Configuration
-                    </a>
                 </div>
 
-                <!-- Table Container -->
-                <div class="border rounded-lg overflow-hidden">
-                    <table class="w-full text-sm text-left">
+                <!-- Redemptions Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Bond Information</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Partial Redemption</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Last Call Date</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Nearest Denomination</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bond Information</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Partial Redemption</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Call Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nearest Denomination</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
+                        <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($redemptions as $redemption)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4">
-                                        <div class="font-medium text-gray-900">{{ $redemption->bond->bond_sukuk_name }}</div>
-                                        <div class="text-sm text-indigo-600">{{ $redemption->bond->sub_name }}</div>
-                                    </td>
-                                    
-                                    <td class="px-6 py-4">
-                                        <span class="px-2 py-1 rounded-full text-xs 
-                                            {{ $redemption->allow_partial_call ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                            {{ $redemption->allow_partial_call ? 'Allowed' : 'Prohibited' }}
-                                        </span>
-                                    </td>
-                                    
-                                    <td class="px-6 py-4">
-                                        <div class="text-sm text-gray-900">
-                                            {{ $redemption->last_call_date->format('d-M-Y') }}
-                                        </div>
-                                    </td>
-                                    
-                                    <td class="px-6 py-4">
-                                        <span class="px-2 py-1 rounded-full text-xs 
-                                            {{ $redemption->redeem_nearest_denomination ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
-                                            {{ $redemption->redeem_nearest_denomination ? 'Enabled' : 'Disabled' }}
-                                        </span>
-                                    </td>
-                                    
-                                    <td class="px-6 py-4 space-x-2">
-                                        <div class="flex items-center gap-2">
-                                            <a href="{{ route('redemptions-info.show', $redemption) }}" 
-                                            class="px-3 py-1 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors text-xs">
-                                                View
-                                            </a>
-                                            <a href="{{ route('redemptions-info.edit', $redemption) }}" 
-                                            class="px-3 py-1 bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors text-xs">
-                                                Edit
-                                            </a>
-                                            <form action="{{ route('redemptions-info.destroy', $redemption) }}" method="POST" class="inline">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" 
-                                                        class="px-3 py-1 bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors text-xs"
-                                                        onclick="return confirm('Permanently delete this configuration?')">
-                                                    Delete
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="font-medium text-indigo-600">{{ $redemption->bond->bond_sukuk_name }}</div>
+                                    <div class="text-sm text-gray-500">{{ $redemption->bond->sub_name }}</div>
+                                </td>
+                                
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
+                                        $redemption->allow_partial_call ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                    }}">
+                                        {{ $redemption->allow_partial_call ? 'Allowed' : 'Prohibited' }}
+                                    </span>
+                                </td>
+                                
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">
+                                        {{ $redemption->last_call_date->format('d-M-Y') }}
+                                    </div>
+                                </td>
+                                
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
+                                        $redemption->redeem_nearest_denomination ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                                    }}">
+                                        {{ $redemption->redeem_nearest_denomination ? 'Enabled' : 'Disabled' }}
+                                    </span>
+                                </td>
+                                
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex justify-end space-x-2">
+                                        <a href="{{ route('redemptions-info.show', $redemption) }}" class="text-indigo-600 hover:text-indigo-900">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </a>
+                                        <a href="{{ route('redemptions-info.edit', $redemption) }}" class="text-indigo-600 hover:text-indigo-900">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                            </svg>
+                                        </a>
+                                        <form action="{{ route('redemptions-info.destroy', $redemption) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this redemption configuration?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900">
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
                             @empty
-                                <tr>
-                                    <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                                        No redemption configurations found {{ $searchTerm ? 'matching your search' : '' }}
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                    No redemption configurations found {{ $searchTerm ? 'matching your search' : '' }}
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Pagination -->
-                @if($redemptions->hasPages())
-                    <div class="mt-6">
-                        {{ $redemptions->links() }}
-                    </div>
-                @endif
+                
+                <!-- Pagination Links -->
+                <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+                    {{ $redemptions->links() }}
+                </div>
             </div>
         </div>
     </div>

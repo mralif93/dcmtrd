@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Trading Activities List') }}
+            {{ __('Trading Activities Management') }}
         </h2>
     </x-slot>
 
@@ -23,63 +23,79 @@
                 </div>
             @endif
 
-            <div class="bg-white shadow rounded-lg p-6">
-                <!-- Search and Create Header -->
-                <div class="flex flex-col sm:flex-row justify-between gap-4 mb-6">
-                    <form method="GET" action="{{ route('trading-activities-info.index') }}" class="w-full sm:w-1/2">
-                        <div class="flex gap-2">
-                            <input type="text" 
-                                name="search" 
-                                value="{{ $searchTerm }}"
-                                placeholder="Search by date or bond code..." 
-                                class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-                            
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-                                Search
-                            </button>
-                            
-                            @if($searchTerm)
-                                <a href="{{ route('trading-activities-info.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                                    Clear
-                                </a>
-                            @endif
-                        </div>
-                    </form>
-
-                    <div class="flex space-x-2">
-                        <a href="{{ route('trading-activities-info.upload-form') }}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2">
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-lg font-medium text-gray-900">Trading Activities</h3>
+                    <div class="flex gap-2">
+                        <a href="{{ route('trading-activities-info.upload-form') }}" 
+                           class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
                             Upload Data
                         </a>
                         
-                        <a href="{{ route('trading-activities-info.create') }}" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        <a href="{{ route('trading-activities-info.create') }}" 
+                           class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            Create New Activity
+                            Add New Activity
                         </a>
                     </div>
                 </div>
 
-                <!-- Table Container -->
-                <div class="border rounded-lg overflow-hidden">
-                    <table class="w-full text-sm text-left">
+                <!-- Search and Filter Bar -->
+                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                    <form method="GET" action="{{ route('trading-activities-info.index') }}">
+                        <div class="flex gap-4">
+                            <div class="flex-1">
+                                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                                <input type="text" 
+                                    name="search" 
+                                    id="search"
+                                    value="{{ $searchTerm }}"
+                                    placeholder="Search by date or bond code..." 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            <div class="flex items-end">
+                                <button type="submit" 
+                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                    </svg>
+                                    Search
+                                </button>
+                                @if($searchTerm)
+                                    <a href="{{ route('trading-activities-info.index') }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                        Clear
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Trading Activities Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Bond</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Trade Date</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Input Time</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">Amount (RM'mil)</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">Price</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-right">Yield (%)</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Value Date</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Actions</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bond</th>
+                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Trade Date</th>
+                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Input Time</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amount (RM'mil)</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Yield (%)</th>
+                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Value Date</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
+                        <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($activities as $activity)
-                                <tr class="hover:bg-gray-50">
+                                <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="font-medium text-indigo-600">{{ $activity->bond->bond_sukuk_name }}</div>
+                                        <div class="text-sm font-medium text-indigo-600">{{ $activity->bond->bond_sukuk_name }}</div>
                                         <div class="text-sm text-gray-500">{{ $activity->bond->sub_name }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
@@ -100,42 +116,46 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <div class="text-sm text-gray-900">{{ $activity->value_date->format('d/m/Y') }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap space-x-2 text-center">
-                                        <a href="{{ route('trading-activities-info.show', $activity) }}" 
-                                            class="px-3 py-1 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors">
-                                            View
-                                        </a>
-                                        <a href="{{ route('trading-activities-info.edit', $activity) }}" 
-                                            class="px-3 py-1 bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors">
-                                            Edit
-                                        </a>
-                                        <form action="{{ route('trading-activities-info.destroy', $activity) }}" method="POST" class="inline">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" 
-                                                class="px-3 py-1 bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors"
-                                                onclick="return confirm('Delete this trading activity?')">
-                                                Delete
-                                            </button>
-                                        </form>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex justify-end space-x-2">
+                                            <a href="{{ route('trading-activities-info.show', $activity) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="{{ route('trading-activities-info.edit', $activity) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                                </svg>
+                                            </a>
+                                            <form action="{{ route('trading-activities-info.destroy', $activity) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this trading activity?');" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-900">
+                                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="px-6 py-4 text-center text-gray-500">
-                                        No trading activities found {{ $searchTerm ? 'matching your search' : '' }}
+                                    <td colspan="8" class="px-6 py-4 text-center">
+                                        <div class="text-sm text-gray-500">No trading activities found {{ $searchTerm ? 'matching your search' : '' }}.</div>
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Pagination -->
-                @if($activities->hasPages())
-                    <div class="mt-6">
-                        {{ $activities->links() }}
-                    </div>
-                @endif
+                
+                <!-- Pagination Links -->
+                <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+                    {{ $activities->links() }}
+                </div>
             </div>
         </div>
     </div>

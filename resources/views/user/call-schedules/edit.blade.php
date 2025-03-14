@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
+            <!-- Error Handling -->
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
                     <div class="flex">
@@ -31,87 +31,109 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <form action="{{ route('call-schedules-info.update', $schedule) }}" method="POST" class="space-y-8 p-6">
+                <form action="{{ route('call-schedules-info.update', $schedule) }}" method="POST" class="p-6">
                     @csrf
                     @method('PUT')
+                    <div class="space-y-6 pb-6">
+                        <!-- Basic Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Redemption Selection -->
+                                <div>
+                                    <label for="redemption_id" class="block text-sm font-medium text-gray-700">Redemption *</label>
+                                    <select name="redemption_id" id="redemption_id" required
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                                   {{ $errors->has('redemption_id') ? 'border-red-300' : '' }}">
+                                        @foreach($redemptions as $redemption)
+                                            <option value="{{ $redemption->id }}" 
+                                                @selected(old('redemption_id', $schedule->redemption_id) == $redemption->id)>
+                                                {{ $redemption->bond->bond_sukuk_name }} - {{ $redemption->bond->sub_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('redemption_id')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
 
-                    <div class="space-y-6">
-                        <!-- Row 1: Redemption & Call Price -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Redemption Selection -->
-                            <div>
-                                <label for="redemption_id" class="block text-sm font-medium text-gray-700">Redemption *</label>
-                                <select name="redemption_id" id="redemption_id" required
+                                <!-- Call Price -->
+                                <div>
+                                    <label for="call_price" class="block text-sm font-medium text-gray-700">Call Price *</label>
+                                    <input type="number" name="call_price" id="call_price" 
+                                        value="{{ old('call_price', $schedule->call_price) }}" 
+                                        required 
+                                        step="0.01"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
-                                               {{ $errors->has('redemption_id') ? 'border-red-300' : '' }}">
-                                    @foreach($redemptions as $redemption)
-                                        <option value="{{ $redemption->id }}" 
-                                            @selected(old('redemption_id', $schedule->redemption_id) == $redemption->id)
-                                            {{ $schedule->redemption_id == $redemption->id ? 'selected' : '' }}>
-                                            {{ $redemption->bond->bond_sukuk_name }} - {{ $redemption->bond->sub_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('redemption_id')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Call Price -->
-                            <div>
-                                <label for="call_price" class="block text-sm font-medium text-gray-700">Call Price *</label>
-                                <input type="number" name="call_price" id="call_price" 
-                                    value="{{ old('call_price', $schedule->call_price) }}" 
-                                    required 
-                                    step="0.01"
-                                    placeholder="Enter call price"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
-                                           {{ $errors->has('call_price') ? 'border-red-300' : '' }}">
-                                @error('call_price')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
+                                               {{ $errors->has('call_price') ? 'border-red-300' : '' }}">
+                                    @error('call_price')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Row 2: Start Date & End Date -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date *</label>
-                                <input type="date" name="start_date" id="start_date" 
-                                    value="{{ old('start_date', $schedule->start_date->format('Y-m-d')) }}" 
-                                    required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
-                                           {{ $errors->has('start_date') ? 'border-red-300' : '' }}">
-                                @error('start_date')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div>
-                                <label for="end_date" class="block text-sm font-medium text-gray-700">End Date *</label>
-                                <input type="date" name="end_date" id="end_date" 
-                                    value="{{ old('end_date', $schedule->end_date->format('Y-m-d')) }}" 
-                                    required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
-                                           {{ $errors->has('end_date') ? 'border-red-300' : '' }}">
-                                @error('end_date')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
+                        <!-- Date Range Section -->
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Date Range</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date *</label>
+                                    <input type="date" name="start_date" id="start_date" 
+                                        value="{{ old('start_date', $schedule->start_date->format('Y-m-d')) }}" 
+                                        required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                            {{ $errors->has('start_date') ? 'border-red-300' : '' }}">
+                                    @error('start_date')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                
+                                <div>
+                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End Date *</label>
+                                    <input type="date" name="end_date" id="end_date" 
+                                        value="{{ old('end_date', $schedule->end_date->format('Y-m-d')) }}" 
+                                        required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                                            {{ $errors->has('end_date') ? 'border-red-300' : '' }}">
+                                    @error('end_date')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Form Actions -->
-                    <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
-                        <a href="{{ route('call-schedules-info.index') }}" 
-                        class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                            Cancel
-                        </a>
-                        <button type="submit" 
-                                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Update Call Schedule
-                        </button>
-                    </div>
+                        <!-- System Information -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
+                            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $schedule->created_at->format('M j, Y H:i') }}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $schedule->updated_at->format('M j, Y H:i') }}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
+                            <a href="{{ route('call-schedules-info.index') }}" 
+                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                Cancel
+                            </a>
+                            <button type="submit" 
+                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Update Call Schedule
+                            </button>
+                        </div>
                 </form>
             </div>
         </div>
