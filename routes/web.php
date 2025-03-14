@@ -368,24 +368,27 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
 
 // Legal routes
 Route::middleware(['auth', 'two-factor', 'role:legal'])->group(function () {
-    Route::get('/legal/dashboard', [LegalController::class, 'index'])
-        ->name('legal.dashboard');
+    Route::get('/legal/dashboard', [LegalController::class, 'index'])->name('legal.dashboard');
 });
 
 // Compliance routes
 Route::middleware(['auth', 'two-factor', 'role:compliance'])->group(function () {
-    Route::get('/compliance/dashboard', [ComplianceController::class, 'index'])
-        ->name('compliance.dashboard');
+    Route::get('/compliance/dashboard', [ComplianceController::class, 'index'])->name('compliance.dashboard');
 });
 
 // Maker routes
 Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
-    Route::get('/maker/dashboard', [MakerController::class, 'index'])
-        ->name('maker.dashboard');
+    Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
+
+    // Issuer Module
+    Route::get('maker/issuer/create', [MakerController::class, 'IssuerCreate'])->name('issuer.create');
+    Route::post('maker/issuer/create', [MakerController::class, 'IssuerStore'])->name('issuer.store');
+    Route::get('maker/issuer/{issuer}/edit', [MakerController::class, 'IssuerEdit'])->name('issuer.edit');
+    Route::put('maker/issuer/{issuer}/update', [MakerController::class, 'IssuerUpdate'])->name('issuer.update');
+    Route::get('maker/issuer/{issuer}/show', [MakerController::class, 'IssuerShow'])->name('issuer.show');
 });
 
 // Approver routes
 Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
-    Route::get('/approver/dashboard', [ApproverController::class, 'index'])
-        ->name('approver.dashboard');
+    Route::get('/approver/dashboard', [ApproverController::class, 'index'])->name('approver.dashboard');
 });
