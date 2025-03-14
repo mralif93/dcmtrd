@@ -7,6 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Error Handling -->
             @if($errors->any())
                 <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
                     <div class="flex">
@@ -31,85 +32,98 @@
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <form action="{{ route('related-documents-info.update', $document) }}" method="POST" class="p-6" enctype="multipart/form-data">
-                    @csrf 
+                    @csrf
                     @method('PUT')
-
                     <div class="space-y-6 pb-6">
-                        <!-- Row 1: Facility Information -->
+                        <!-- Basic Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Document Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="facility_id" class="block text-sm font-medium text-gray-700">Facility *</label>
+                                    <select name="facility_id" id="facility_id" required 
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">-- Select Facility --</option>
+                                        @foreach($facilities as $facility)
+                                            <option value="{{ $facility->id }}" @selected(old('facility_id', $document->facility_id) == $facility->id)>
+                                                {{ $facility->facility_name }} ({{ $facility->facility_code }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="document_name" class="block text-sm font-medium text-gray-700">Document Name *</label>
+                                    <input type="text" name="document_name" id="document_name" 
+                                           value="{{ old('document_name', $document->document_name) }}" required
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="document_type" class="block text-sm font-medium text-gray-700">Document Type *</label>
+                                    <input type="text" name="document_type" id="document_type" 
+                                           value="{{ old('document_type', $document->document_type) }}" required
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="upload_date" class="block text-sm font-medium text-gray-700">Upload Date *</label>
+                                    <input type="date" name="upload_date" id="upload_date" 
+                                           value="{{ old('upload_date', $document->upload_date->format('Y-m-d')) }}" required
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Document Upload Section -->
                         <div>
-                            <label for="facility_id" class="block text-sm font-medium text-gray-700">Facility *</label>
-                            <select name="facility_id" id="facility_id" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Select Facility</option>
-                                @foreach($facilities as $facility)
-                                    <option value="{{ $facility->id }}" @selected(old('facility_id', $document->facility_id) == $facility->id)>
-                                        {{ $facility->facility_name }} ({{ $facility->facility_code }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('facility_id')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Document File</h3>
+                            <div>
+                                <label for="document_file" class="block text-sm font-medium text-gray-700">Document File (Leave blank to keep current file)</label>
+                                <input type="file" name="document_file" id="document_file"
+                                       class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
+                                @if($document->file_path)
+                                    <div class="mt-2 flex items-center">
+                                        <svg class="h-5 w-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span class="ml-2 text-sm text-gray-500">Current file: 
+                                            <a href="{{ Storage::url($document->file_path) }}" class="text-indigo-600 hover:text-indigo-900" target="_blank">
+                                                View Document
+                                            </a>
+                                        </span>
+                                    </div>
+                                @endif
+                                <p class="mt-2 text-xs text-gray-500">Upload document in PDF, DOC, DOCX, XLS, XLSX format. Maximum file size 10MB.</p>
+                            </div>
                         </div>
 
-                        <!-- Row 2: Document Name -->
-                        <div>
-                            <label for="document_name" class="block text-sm font-medium text-gray-700">Document Name *</label>
-                            <input type="text" name="document_name" id="document_name" 
-                                value="{{ old('document_name', $document->document_name) }}" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('document_name')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Row 3: Document Type -->
-                        <div>
-                            <label for="document_type" class="block text-sm font-medium text-gray-700">Document Type *</label>
-                            <input type="text" name="document_type" id="document_type" 
-                                value="{{ old('document_type', $document->document_type) }}" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('document_type')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Row 4: Upload Date -->
-                        <div>
-                            <label for="upload_date" class="block text-sm font-medium text-gray-700">Upload Date *</label>
-                            <input type="date" name="upload_date" id="upload_date" 
-                                value="{{ old('upload_date', $document->upload_date->format('Y-m-d')) }}" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('upload_date')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Row 5: Document Upload -->
-                        <div>
-                            <label for="file_path" class="block text-sm font-medium text-gray-700">Document File (Leave blank to keep current file)</label>
-                            <input type="file" name="file_path" id="file_path" 
-                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
-                            @if($document->file_path)
-                                <p class="mt-2 text-sm text-gray-500">Current Attachment: 
-                                    <a href="{{ Storage::url($document->file_path) }}" class="text-blue-600 underline" target="_blank">View</a>
-                                </p>
-                            @endif
-                            @error('file_path')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                        <!-- System Information Section -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
+                            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $document->created_at->format('M j, Y H:i') }}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $document->updated_at->format('M j, Y H:i') }}
+                                    </dd>
+                                </div>
+                            </dl>
                         </div>
                     </div>
 
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
                         <a href="{{ route('related-documents-info.index') }}" 
-                        class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                           class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>
                         <button type="submit" 
                                 class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Update
+                            Update Document
                         </button>
                     </div>
                 </form>

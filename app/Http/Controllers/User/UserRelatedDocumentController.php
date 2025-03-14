@@ -16,6 +16,7 @@ class UserRelatedDocumentController extends Controller
     public function index(Request $request)
     {
         $searchTerm = $request->input('search');
+        $facilityId = $request->input('facility_id');
         
         $documents = RelatedDocument::with('facility')
             ->when($searchTerm, function ($query) use ($searchTerm) {
@@ -27,12 +28,18 @@ class UserRelatedDocumentController extends Controller
                       });
                 });
             })
+            ->when($facilityId, function ($query) use ($facilityId) {
+                $query->where('facility_id', $facilityId);
+            })
             ->latest()
             ->paginate(10);
 
+        $facilities = FacilityInformation::all();
+
         return view('user.related-documents.index', [
             'documents' => $documents,
-            'searchTerm' => $searchTerm
+            'searchTerm' => $searchTerm,
+            'facilities' => $facilities
         ]);
     }
 
@@ -109,7 +116,7 @@ class UserRelatedDocumentController extends Controller
                 Storage::delete($relatedDocument->file_path);
             }
             // Store new file
-            $validated['file_path'] = $request->file('file_path')->store('documents');
+            $validated['file_path'] = $request->file('document_file')->store('documents');
         }
 
         try {
@@ -128,13 +135,61 @@ class UserRelatedDocumentController extends Controller
         $relatedDocument = $related_documents_info;
 
         try {
-            if ($relatedDocument->file_path) {
-                Storage::delete($relatedDocument->file_path);
-            }
             $relatedDocument->delete();
-            return redirect()->route('related-documents-info.index')->with('success', 'Document deleted successfully');
+            return redirect()->route('related-documents-info.index')->with('success', 'Document moved to trash successfully');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error deleting: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    /**
+     * Display a listing of trashed resources.
+     */
+    public function trashed()
+    {
+        $trashedDocuments = RelatedDocument::onlyTrashed()
+            ->with('facility')
+            ->latest('deleted_at')
+            ->paginate(10);
+
+        return view('user.related-documents.trashed', compact('trashedDocuments'));
+    }
+
+    /**
+     * Restore the specified resource from trash.
+     */
+    public function restore($id)
+    {
+        try {
+            $document = RelatedDocument::onlyTrashed()->findOrFail($id);
+            $document->restore();
+            return redirect()->route('related-documents-info.trashed')
+                ->with('success', 'Document restored successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error restoring document: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Permanently delete the specified resource from storage.
+     */
+    public function forceDelete($id)
+    {
+        try {
+            $document = RelatedDocument::onlyTrashed()->findOrFail($id);
+            
+            // Delete the physical file
+            if ($document->file_path) {
+                Storage::delete($document->file_path);
+            }
+            
+            // Permanently delete the record
+            $document->forceDelete();
+            
+            return redirect()->route('related-documents-info.trashed')
+                ->with('success', 'Document permanently deleted successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error permanently deleting document: ' . $e->getMessage()]);
         }
     }
 }

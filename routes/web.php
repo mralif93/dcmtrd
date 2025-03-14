@@ -289,6 +289,13 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
         Route::get('/user/facility-informations-info-report', [UserFacilityInformationController::class, 'report'])->name('report');
         Route::get('/user/facility-informations-info-trashed', [UserFacilityInformationController::class, 'trashed'])->name('trashed');
     });
+
+    // Additional
+    Route::prefix('/user/related-documents-info')->name('related-documents-info.')->group(function () {
+        Route::get('/user/related-documents-info/trashed', [UserRelatedDocumentController::class, 'trashed'])->name('trashed');
+        Route::post('/user/related-documents-info/{id}/restore', [UserRelatedDocumentController::class, 'restore'])->name('restore');
+        Route::post('/user/related-documents-info/{id}/force-delete', [UserRelatedDocumentController::class, 'forceDelete'])->name('force-delete');
+    });
     
     // For Issuers
     Route::post('/issuers-info/{issuers_info}/submit', [UserIssuerController::class, 'submitForApproval'])->name('issuers-info.submit');
