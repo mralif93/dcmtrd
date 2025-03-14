@@ -391,4 +391,11 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
 // Approver routes
 Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('/approver/dashboard', [ApproverController::class, 'index'])->name('approver.dashboard');
+
+    // Issuer Module
+    Route::get('approver/issuer/{issuer}/edit', [ApproverController::class, 'IssuerEdit'])->name('issuer.edit');
+    Route::put('approver/issuer/{issuer}/update', [ApproverController::class, 'IssuerUpdate'])->name('issuer.update');
+    Route::get('approver/issuer/{issuer}/show', [ApproverController::class, 'IssuerShow'])->name('issuer.show');
+    Route::post('approver/{issuer}/approve', [ApproverController::class, 'approve'])->name('issuer.approve');
+    Route::post('approver/{issuer}/reject', [ApproverController::class, 'reject'])->name('issuer.reject');
 });
