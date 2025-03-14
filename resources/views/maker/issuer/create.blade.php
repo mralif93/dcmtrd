@@ -31,7 +31,7 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <form action="{{ route('issuer.store') }}" method="POST" class="p-6">
+                <form action="{{ route('issuer-m.store') }}" method="POST" class="p-6">
                     @csrf
                     <div class="space-y-6 pb-6">
                         <!-- Basic Information Section -->

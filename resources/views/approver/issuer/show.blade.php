@@ -27,7 +27,7 @@
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">Issuer Information</h3>
                     <div class="flex space-x-2">
-                        <a href="{{ route('issuer.edit', $issuer) }}" 
+                        <a href="{{ route('issuer-a.edit', $issuer) }}" 
                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
@@ -52,7 +52,7 @@
 
                                 @if($issuer->status == 'Pending')
                                     <div class="mt-2 flex gap-2">
-                                        <form action="{{ route('issuer.approve', $issuer) }}" method="POST" class="inline">
+                                        <form action="{{ route('issuer-a.approve', $issuer) }}" method="POST" class="inline">
                                             @csrf
                                             <button type="submit" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                                 Approve
@@ -211,7 +211,7 @@
                     </div>
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                     <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                        <form action="{{ route('issuer.reject', $issuer) }}" method="POST">
+                        <form action="{{ route('issuer-a.reject', $issuer) }}" method="POST">
                             @csrf
                             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <div class="sm:flex sm:items-start">

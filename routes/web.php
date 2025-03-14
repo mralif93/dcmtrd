@@ -381,11 +381,19 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
 
     // Issuer Module
-    Route::get('maker/issuer/create', [MakerController::class, 'IssuerCreate'])->name('issuer.create');
-    Route::post('maker/issuer/create', [MakerController::class, 'IssuerStore'])->name('issuer.store');
-    Route::get('maker/issuer/{issuer}/edit', [MakerController::class, 'IssuerEdit'])->name('issuer.edit');
-    Route::put('maker/issuer/{issuer}/update', [MakerController::class, 'IssuerUpdate'])->name('issuer.update');
-    Route::get('maker/issuer/{issuer}/show', [MakerController::class, 'IssuerShow'])->name('issuer.show');
+    Route::get('maker/issuer/create', [MakerController::class, 'IssuerCreate'])->name('issuer-m.create');
+    Route::post('maker/issuer/create', [MakerController::class, 'IssuerStore'])->name('issuer-m.store');
+    Route::get('maker/issuer/{issuer}/edit', [MakerController::class, 'IssuerEdit'])->name('issuer-m.edit');
+    Route::put('maker/issuer/{issuer}/update', [MakerController::class, 'IssuerUpdate'])->name('issuer-m.update');
+    Route::get('maker/issuer/{issuer}/show', [MakerController::class, 'IssuerShow'])->name('issuer-m.show');
+
+    // Bond Module
+    Route::get('maker/{issuer}/info', [MakerController::class, 'BondIndex'])->name('bond-m.index');
+    Route::get('maker/bond/{issuer}/create', [MakerController::class, 'BondCreate'])->name('bond-m.create');
+    Route::post('maker/bond/{issuer}/create', [MakerController::class, 'BondStore'])->name('bond-m.store');
+    Route::get('maker/bond/{bond}/edit', [MakerController::class, 'BondEdit'])->name('bond-m.edit');
+    Route::put('maker/bond/{bond}/update', [MakerController::class, 'BondUpdate'])->name('bond-m.update');
+    Route::get('maker/bond/{bond}/show', [MakerController::class, 'BondShow'])->name('bond-m.show');
 });
 
 // Approver routes
@@ -393,9 +401,15 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('/approver/dashboard', [ApproverController::class, 'index'])->name('approver.dashboard');
 
     // Issuer Module
-    Route::get('approver/issuer/{issuer}/edit', [ApproverController::class, 'IssuerEdit'])->name('issuer.edit');
-    Route::put('approver/issuer/{issuer}/update', [ApproverController::class, 'IssuerUpdate'])->name('issuer.update');
-    Route::get('approver/issuer/{issuer}/show', [ApproverController::class, 'IssuerShow'])->name('issuer.show');
-    Route::post('approver/{issuer}/approve', [ApproverController::class, 'approve'])->name('issuer.approve');
-    Route::post('approver/{issuer}/reject', [ApproverController::class, 'reject'])->name('issuer.reject');
+    Route::get('approver/issuer/{issuer}/edit', [ApproverController::class, 'IssuerEdit'])->name('issuer-a.edit');
+    Route::put('approver/issuer/{issuer}/update', [ApproverController::class, 'IssuerUpdate'])->name('issuer-a.update');
+    Route::get('approver/issuer/{issuer}/show', [ApproverController::class, 'IssuerShow'])->name('issuer-a.show');
+    Route::post('approver/{issuer}/approve', [ApproverController::class, 'approve'])->name('issuer-a.approve');
+    Route::post('approver/{issuer}/reject', [ApproverController::class, 'reject'])->name('issuer-a.reject');
+    
+    // Bond Module
+    Route::get('approver/{issuer}/info', [ApproverController::class, 'BondIndex'])->name('bond-a.index');
+    // Route::get('approver/bond/{bond}/edit', [ApproverController::class, 'BondEdit'])->name('bond.edit');
+    // Route::put('approver/bond/{bond}/update', [ApproverController::class, 'BondUpdate'])->name('bond.update');
+    // Route::get('approver/bond/{bond}/show', [ApproverController::class, 'BondShow'])->name('bond.show');
 });
