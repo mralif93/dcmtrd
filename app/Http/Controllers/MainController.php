@@ -21,6 +21,7 @@ class MainController extends Controller
         $search = $request->input('search');
         
         $issuers = Issuer::query()
+            ->where('status', 'Active')
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('issuer_name', 'like', "%{$search}%")
@@ -30,7 +31,7 @@ class MainController extends Controller
             })
             ->orderBy('issuer_name')
             ->paginate(10)
-            ->appends(['search' => $search]); // Preserve search in pagination links
+            ->appends(['search' => $search]);
     
         return view('main.index', [
             'issuers' => $issuers,
@@ -38,7 +39,7 @@ class MainController extends Controller
         ]);
     }
 
-    public function info(Issuer $issuer)
+    public function IssuerInfo(Issuer $issuer)
     {
         // items per page
         $perPage = 10;
@@ -61,7 +62,7 @@ class MainController extends Controller
             ->paginate($perPage, ['*'], 'facilitiesPage');
     
         // dd($bonds->toArray());
-        return view('main.info', [
+        return view('main.issuer-info', [
             'issuer' => $issuer,
             'bonds' => $bonds->isEmpty() ? null : $bonds,
             'announcements' => $announcements->isEmpty() ? null : $announcements,
@@ -70,7 +71,7 @@ class MainController extends Controller
         ]);
     }
 
-    public function bondInfo(Bond $bond)
+    public function BondInfo(Bond $bond)
     {
         $bond->load([
             'issuer',
@@ -115,7 +116,7 @@ class MainController extends Controller
             ?? $emptyPaginator;
 
         // dd($tradingActivities->toArray());
-        return view('main.bond', [
+        return view('main.bond-info', [
             'bond' => $bond,
             'documents' => $documents,
             'ratingMovements' => $ratingMovements,
@@ -128,13 +129,12 @@ class MainController extends Controller
         ]);
     }
     
-    public function announcement(Announcement $announcement)
+    public function AnnouncementInfo(Announcement $announcement)
     {
-        // dd($announcement->toArray());
-        return view('main.announcement', compact('announcement'));
+        return view('main.announcement-info', compact('announcement'));
     }
 
-    public function facility(FacilityInformation $facilityInformation)
+    public function FacilityInfo(FacilityInformation $facilityInformation)
     {
         // Items per page
         $perPage = 10;
@@ -164,7 +164,7 @@ class MainController extends Controller
 
         // dd($bonds->toArray());
     
-        return view('main.facility', [
+        return view('main.facility-info', [
             'issuer' => $facilityInformation->issuer,
             'facility' => $facilityInformation,
             'activeBonds' => $bonds,

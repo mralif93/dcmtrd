@@ -26,7 +26,7 @@ class BondsSeeder extends Seeder
                 'trust_amount_escrow_sum' => '500000000.00',
                 'no_of_share' => '1000000',
                 'outstanding_size' => '500000000.00',
-                'status' => 'Active',
+                'status' => 'Pending',
                 'prepared_by' => 'Ahmad Rizal',
                 'verified_by' => 'Sarah Abdullah',
                 'remarks' => 'Major local bank issuer with good compliance history',

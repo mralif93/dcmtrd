@@ -220,10 +220,10 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
 
     // Frontend routes
     Route::get('issuer-search', [MainController::class, 'index'])->name('issuer-search.index');
-    Route::get('issuer-info/{issuer}', [MainController::class, 'info'])->name('issuer-search.show');
-    Route::get('security-info/{bond}', [MainController::class, 'bondInfo'])->name('security-info.show');
-    Route::get('announcement/{announcement}', [MainController::class, 'announcement'])->name('announcement.show');
-    Route::get('facility-info/{facilityInformation}', [MainController::class, 'facility'])->name('facility.show');
+    Route::get('issuer-info/{issuer}', [MainController::class, 'IssuerInfo'])->name('issuer-search.show');
+    Route::get('security-info/{bond}', [MainController::class, 'BondInfo'])->name('security-info.show');
+    Route::get('announcement/{announcement}', [MainController::class, 'AnnouncementInfo'])->name('announcement.show');
+    Route::get('facility-info/{facilityInformation}', [MainController::class, 'FacilityInfo'])->name('facility.show');
 
     Route::get('/issuer-details/create', [MainController::class, 'IssuerCreate'])->name('issuer-details.create');
     Route::post('/issuer-details/create', [MainController::class, 'IssuerStore'])->name('issuer-details.store');

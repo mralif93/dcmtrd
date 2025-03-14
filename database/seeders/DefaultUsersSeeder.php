@@ -134,7 +134,7 @@ class DefaultUsersSeeder extends Seeder
             [
                 'name' => 'ROSLIM SYAH BIN IDRIS',
                 'email' => 'roslimsyah@artrustees.com.my',
-                'role' => 'user',
+                'role' => 'approver',
                 'job_title' => 'SENIOR MANAGER',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
@@ -152,7 +152,7 @@ class DefaultUsersSeeder extends Seeder
             [
                 'name' => 'MOHAMAD AZAHARI BIN AB AZIZ',
                 'email' => 'mohamad.azahari@artrustees.com.my',
-                'role' => 'user',
+                'role' => 'approver',
                 'job_title' => 'ASSISTANT MANAGER',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
@@ -170,7 +170,7 @@ class DefaultUsersSeeder extends Seeder
             [
                 'name' => 'FARAEDALISMALINA BINTI ZAKARIA',
                 'email' => 'faraedalismalina@artrustees.com.my',
-                'role' => 'user',
+                'role' => 'maker',
                 'job_title' => 'SENIOR EXECUTIVE',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
