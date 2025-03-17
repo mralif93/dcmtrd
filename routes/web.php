@@ -388,12 +388,19 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/issuer/{issuer}/show', [MakerController::class, 'IssuerShow'])->name('issuer-m.show');
 
     // Bond Module
-    Route::get('maker/{issuer}/info', [MakerController::class, 'BondIndex'])->name('bond-m.index');
+    Route::get('maker/{issuer}/index', [MakerController::class, 'BondIndex'])->name('bond-m.index');
     Route::get('maker/bond/{issuer}/create', [MakerController::class, 'BondCreate'])->name('bond-m.create');
     Route::post('maker/bond/{issuer}/create', [MakerController::class, 'BondStore'])->name('bond-m.store');
     Route::get('maker/bond/{bond}/edit', [MakerController::class, 'BondEdit'])->name('bond-m.edit');
     Route::put('maker/bond/{bond}/update', [MakerController::class, 'BondUpdate'])->name('bond-m.update');
     Route::get('maker/bond/{bond}/show', [MakerController::class, 'BondShow'])->name('bond-m.show');
+
+    // Announcement Module
+    Route::get('maker/announcement/{issuer}/create', [MakerController::class, 'AnnouncementCreate'])->name('announcement-m.create');
+    Route::post('maker/announcement/{issuer}/create', [MakerController::class, 'AnnouncementStore'])->name('announcement-m.store');
+    Route::get('maker/announcement/{announcement}/edit', [MakerController::class, 'AnnouncementEdit'])->name('announcement-m.edit');
+    Route::put('maker/announcement/{announcement}/update', [MakerController::class, 'AnnouncementUpdate'])->name('announcement-m.update');
+    Route::get('maker/announcement/{announcement}/show', [MakerController::class, 'AnnouncementShow'])->name('announcement-m.show');
 });
 
 // Approver routes

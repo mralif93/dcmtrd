@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Issuer;
 use App\Models\Bond;
+use App\Models\Announcement;
 
 
 class MakerController extends Controller
@@ -111,7 +112,7 @@ class MakerController extends Controller
         $facilities = $issuer->facilities()
             ->paginate($perPage, ['*'], 'facilitiesPage');
 
-        return view('maker.details', [
+        return view('maker.bond.index', [
             'issuer' => $issuer,
             'bonds' => $bonds->isEmpty() ? null : $bonds,
             'announcements' => $announcements->isEmpty() ? null : $announcements,
@@ -250,4 +251,77 @@ class MakerController extends Controller
             'unique' => 'This :attribute is already in use',
         ]);
     }
+
+    public function AnnouncementCreate(Issuer $issuer)
+    {
+        $issuerInfo = $issuer;
+        $issuers = Issuer::all();
+        return view('maker.announcement.create', compact('issuers', 'issuerInfo'));
+    }
+    public function AnnouncementStore(Request $request)
+    {
+        $validated = $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'category' => 'required|string|max:50',
+            'sub_category' => 'nullable|string|max:50',
+            'source' => 'required|string|max:100',
+            'announcement_date' => 'required|date',
+            'title' => 'required|string|max:200',
+            'description' => 'required|string',
+            'content' => 'required|string',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('attachments');
+        }
+
+        try {
+            $announcement = Announcement::create($validated);
+            return redirect()->route('announcement-m.show', $announcement->issuer)->with('success', 'Announcement created successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error creating: ' . $e->getMessage()])->withInput();
+        }
+    }
+    public function AnnouncementEdit(Announcement $announcement)
+    {
+        $announcement = $announcement->load('issuer');
+        $issuers = Issuer::all();
+        return view('maker.announcement.edit', compact('announcement', 'issuers'));
+    }
+    public function AnnouncementUpdate(Request $request, Announcement $announcement)
+    {
+        $validated = $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'category' => 'required|string|max:50',
+            'sub_category' => 'nullable|string|max:50',
+            'source' => 'required|string|max:100',
+            'announcement_date' => 'required|date',
+            'title' => 'required|string|max:200',
+            'description' => 'required|string',
+            'content' => 'required|string',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        if ($request->hasFile('attachment')) {
+            // Delete old attachment
+            if ($announcement->attachment) {
+                Storage::delete($announcement->attachment);
+            }
+            $validated['attachment'] = $request->file('attachment')->store('attachments');
+        }
+
+        try {
+            $announcement->update($validated);
+            return redirect()->route('announcement-m.show', $announcement->issuer)->with('success', 'Announcement updated successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
+        }
+    }
+    public function AnnouncementShow(Announcement $announcement)
+    {
+        $announcement = $announcement->load('issuer');
+        return view('maker.announcement.show', compact('announcement'));
+    }
+
 }

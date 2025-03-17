@@ -1,8 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Maker Dashboard') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Issuer Information') }}
+            </h2>
+            
+            <!-- Back Button -->
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Home
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-12">
@@ -35,7 +45,7 @@
                 </a>
             </div>
 
-            <!-- Table Issuer -->
+            <!-- Table Bond -->
             <div class="bg-white border-b border-gray-200 shadow rounded-lg mt-4">
                 <div class="overflow-x-auto rounded-lg">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -118,6 +128,66 @@
                 @if ($bonds->hasPages())
                     <div class="p-6">
                         {{ $bonds->links() }}
+                    </div>
+                @endif
+            </div>
+
+            <div class="flex justify-end items-end pt-6">
+                <a href="{{ route('announcement-m.create', $issuer) }}" class="inline-flex items-center px-4 py-2 bg-blue-200 border border-transparent rounded-md font-semibold text-xs text-blue-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300 active:bg-blue-300 transition">
+                    Create New Announcement
+                </a>
+            </div>
+
+            <!-- Table Issuer -->
+            <div class="bg-white border-b border-gray-200 shadow rounded-lg mt-4">
+                <div class="overflow-x-auto rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Announce Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Announcement Title</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($announcements as $announcement)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    {{ $announcement->announcement_date->format('d/m/Y') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                        {{ $announcement->category }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-sm max-w-md">
+                                    <a href="{{ route('announcement-m.show', $announcement) }}">
+                                        <div class="font-medium text-gray-500">{{ $announcement->title }}</div>
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <a href="{{ route('announcement-m.edit', $announcement) }}" class="text-yellow-600 hover:text-yellow-900">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </a>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                                    No announcements found
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                @if ($announcements->hasPages())
+                    <div class="p-6 border-t">
+                        {{ $announcements->links() }}
                     </div>
                 @endif
             </div>
