@@ -28,7 +28,7 @@
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center border-b border-gray-200">
                     <h3 class="text-lg font-medium text-gray-900">Bond Information</h3>
                     <div class="flex space-x-2">
-                        <a href="{{ route('bonds-info.edit', $bond) }}" 
+                        <a href="{{ route('bond-m.edit', $bond) }}" 
                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
@@ -322,7 +322,7 @@
                 <!-- Action Buttons -->
                 <div class="border-t border-gray-200 px-4 py-4 sm:px-6 flex justify-end">
                     <div class="flex space-x-3">
-                        <a href="{{ route('bond-m.index', $bond->issuer) }}" 
+                        <a href="{{ route('bond-m.details', $bond->issuer) }}" 
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>

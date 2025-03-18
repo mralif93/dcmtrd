@@ -494,6 +494,7 @@ class MainController extends Controller
 
     public function FacilityInfoUpdate(Request $request, FacilityInformation $facility)
     {
+        dd($facility);
         $facilityInformation = $facility;
 
         $validated = $request->validate([

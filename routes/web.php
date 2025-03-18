@@ -386,9 +386,10 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/issuer/{issuer}/edit', [MakerController::class, 'IssuerEdit'])->name('issuer-m.edit');
     Route::put('maker/issuer/{issuer}/update', [MakerController::class, 'IssuerUpdate'])->name('issuer-m.update');
     Route::get('maker/issuer/{issuer}/show', [MakerController::class, 'IssuerShow'])->name('issuer-m.show');
+    Route::get('maker/issuer/{issuer}/submit-for-approval', [MakerController::class, 'submitForApproval'])->name('issuer-m.approval');
 
     // Bond Module
-    Route::get('maker/{issuer}/index', [MakerController::class, 'BondIndex'])->name('bond-m.index');
+    Route::get('maker/{issuer}/details', [MakerController::class, 'BondIndex'])->name('bond-m.details');
     Route::get('maker/bond/{issuer}/create', [MakerController::class, 'BondCreate'])->name('bond-m.create');
     Route::post('maker/bond/{issuer}/create', [MakerController::class, 'BondStore'])->name('bond-m.store');
     Route::get('maker/bond/{bond}/edit', [MakerController::class, 'BondEdit'])->name('bond-m.edit');
@@ -401,6 +402,20 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/announcement/{announcement}/edit', [MakerController::class, 'AnnouncementEdit'])->name('announcement-m.edit');
     Route::put('maker/announcement/{announcement}/update', [MakerController::class, 'AnnouncementUpdate'])->name('announcement-m.update');
     Route::get('maker/announcement/{announcement}/show', [MakerController::class, 'AnnouncementShow'])->name('announcement-m.show');
+
+    // Document Module
+    Route::get('maker/document/{issuer}/create', [MakerController::class, 'DocumentCreate'])->name('document-m.create');
+    Route::post('maker/document/{issuer}/create', [MakerController::class, 'DocumentStore'])->name('document-m.store');
+    Route::get('maker/document/{document}/edit', [MakerController::class, 'DocumentEdit'])->name('document-m.edit');
+    Route::put('maker/document/{document}/update', [MakerController::class, 'DocumentUpdate'])->name('document-m.update');
+    Route::get('maker/document/{document}/show', [MakerController::class, 'DocumentShow'])->name('document-m.show');
+
+    // Facility Info Module
+    Route::get('maker/facility-info/{issuer}/create', [MakerController::class, 'FacilityInfoCreate'])->name('facility-info-m.create');
+    Route::post('maker/facility-info/{issuer}/create', [MakerController::class, 'FacilityInfoStore'])->name('facility-info-m.store');
+    Route::get('maker/facility-info/{facility}/edit', [MakerController::class, 'FacilityInfoEdit'])->name('facility-info-m.edit');
+    Route::put('maker/facility-info/{facility}/update', [MakerController::class, 'FacilityInfoUpdate'])->name('facility-info-m.update');
+    Route::get('maker/facility-info/{facility}/show', [MakerController::class, 'FacilityInfoShow'])->name('facility-info-m.show');
 });
 
 // Approver routes

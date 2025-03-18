@@ -10,14 +10,18 @@ use Illuminate\Http\Request;
 use App\Models\Issuer;
 use App\Models\Bond;
 use App\Models\Announcement;
+use App\Models\RelatedDocument;
+use App\Models\FacilityInformation;
+use App\Models\Portfolio;
 
 
 class MakerController extends Controller
 {
     public function index()
     {
-        $issuers = Issuer::query()->where('status', 'Active')->latest()->paginate(10);
-        return view('maker.index', compact('issuers'));
+        $issuers = Issuer::query()->whereIn('status', ['Active', 'Draft'])->latest()->paginate(10);
+        $portfolios = Portfolio::query()->latest()->paginate(10);
+        return view('maker.index', compact('issuers', 'portfolios'));
     }
 
     // Issuer Module
@@ -32,7 +36,7 @@ class MakerController extends Controller
         
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Pending';
+        $validated['status'] = 'Draft';
 
         try {
             $issuer = Issuer::create($validated);
@@ -89,6 +93,23 @@ class MakerController extends Controller
         ]);
     }
 
+    /**
+     * Submit issuer for approval
+     */
+    public function submitForApproval(Issuer $issuer)
+    {
+        try {
+            $issuer->update([
+                'status' => 'Pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+            
+            return redirect()->route('maker.dashboard', $issuer)->with('success', 'Issuer submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
+    }
+
     // Bond Module
     public function BondIndex(Issuer $issuer)
     {
@@ -112,7 +133,7 @@ class MakerController extends Controller
         $facilities = $issuer->facilities()
             ->paginate($perPage, ['*'], 'facilitiesPage');
 
-        return view('maker.bond.index', [
+        return view('maker.details', [
             'issuer' => $issuer,
             'bonds' => $bonds->isEmpty() ? null : $bonds,
             'announcements' => $announcements->isEmpty() ? null : $announcements,
@@ -318,10 +339,177 @@ class MakerController extends Controller
             return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
         }
     }
+
     public function AnnouncementShow(Announcement $announcement)
     {
         $announcement = $announcement->load('issuer');
         return view('maker.announcement.show', compact('announcement'));
+    }
+
+    public function DocumentCreate(Issuer $issuer)
+    {
+        $facilities = FacilityInformation::all();
+        return view('maker.related-document.create', compact('facilities', 'issuer'));
+    }
+    
+    public function DocumentStore(Request $request)
+    {
+        $validated = $request->validate([
+            'facility_id' => 'required|exists:facility_informations,id',
+            'document_name' => 'required|max:200',
+            'document_type' => 'required|max:50',
+            'upload_date' => 'required|date',
+            'document_file' => 'required|file|mimes:pdf|max:2048'
+        ]);
+
+        $file = $request->file('document_file');
+        $validated['file_path'] = $file->store('documents');
+
+        $relatedDocument = RelatedDocument::create($validated);
+        return redirect()->route('document-m.show', $relatedDocument)->with('success', 'Document created successfully');
+    }
+
+    public function DocumentEdit()
+    {
+        return view('maker.related-document.edit');
+    }
+
+    public function DocumentUpdate(Request $request, RelatedDocument $document)
+    {
+        $relatedDocument = $document;
+        $validated = $request->validate([
+            'facility_id' => 'required|exists:facility_informations,id',
+            'document_name' => 'required|max:200',
+            'document_type' => 'required|max:50',
+            'upload_date' => 'required|date',
+            'document_file' => 'nullable|file|mimes:pdf|max:2048'
+        ]);
+
+        if ($request->hasFile('document_file')) {
+            // Delete old file
+            if ($relatedDocument->file_path) {
+                Storage::delete($relatedDocument->file_path);
+            }
+            // Store new file
+            $validated['file_path'] = $request->file('file_path')->store('documents');
+        }
+
+        $relatedDocument->update($validated);
+        return redirect()->route('document-m.show', $relatedDocument)->with('success', 'Document updated successfully');
+    }
+
+    public function DocumentShow ()
+    {
+        return view('maker.related-document.show');
+    }
+
+
+    public function FacilityInfoCreate(Issuer $issuer)
+    {
+        $issuerInfo = $issuer;
+        $issuers = Issuer::all();
+        return view('maker.facility-information.create', compact('issuers', 'issuerInfo'));
+    }
+
+    public function FacilityInfoStore(Request $request)
+    {
+        $validated = $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'facility_code' => 'required|unique:facility_informations|max:50',
+            'facility_number' => 'required|unique:facility_informations|max:50',
+            'facility_name' => 'required|max:100',
+            'principle_type' => 'required|max:50',
+            'islamic_concept' => 'nullable|max:100',
+            'maturity_date' => 'nullable|date',
+            'instrument' => 'nullable|max:50',
+            'instrument_type' => 'nullable|max:50',
+            'guaranteed' => 'nullable|boolean',
+            'total_guaranteed' => 'nullable|numeric|min:0',
+            'indicator' => 'nullable|max:50',
+            'facility_rating' => 'nullable|max:50',
+            'facility_amount' => 'nullable|numeric|min:0',
+            'available_limit' => 'nullable|numeric|min:0',
+            'outstanding_amount' => 'nullable|numeric|min:0',
+            'trustee_security_agent' => 'nullable|max:100',
+            'lead_arranger' => 'nullable|max:100',
+            'facility_agent' => 'nullable|max:100',
+            'availability_date' => 'nullable|date',
+        ]);
+
+        // Set guaranteed to false if not present
+        $validated['guaranteed'] = $request->has('guaranteed') ? true : false;
+
+        $facilityInformation = FacilityInformation::create($validated);
+        return redirect()->route('facility-info-m.show', $facilityInformation)->with('success', 'Facility Information created successfully');
+    }
+
+    public function FacilityInfoEdit(FacilityInformation $facility)
+    {
+        $issuers = Issuer::all();
+        return view('maker.facility-information.edit', compact('facility', 'issuers'));
+    }
+
+    public function FacilityInfoUpdate(Request $request, FacilityInformation $facility)
+    {
+        $validated = $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'facility_code' => 'required|max:50|unique:facility_informations,facility_code,'.$facilityInformation->id,
+            'facility_number' => 'required|max:50|unique:facility_informations,facility_number,'.$facilityInformation->id,
+            'facility_name' => 'required|max:100',
+            'principle_type' => 'required|max:50',
+            'islamic_concept' => 'nullable|max:100',
+            'maturity_date' => 'nullable|date',
+            'instrument' => 'nullable|max:50',
+            'instrument_type' => 'nullable|max:50',
+            'guaranteed' => 'nullable|boolean',
+            'total_guaranteed' => 'nullable|numeric|min:0',
+            'indicator' => 'nullable|max:50',
+            'facility_rating' => 'nullable|max:50',
+            'facility_amount' => 'nullable|numeric|min:0',
+            'available_limit' => 'nullable|numeric|min:0',
+            'outstanding_amount' => 'nullable|numeric|min:0',
+            'trustee_security_agent' => 'nullable|max:100',
+            'lead_arranger' => 'nullable|max:100',
+            'facility_agent' => 'nullable|max:100',
+            'availability_date' => 'nullable|date',
+        ]);
+
+        // Set guaranteed to false if not present
+        $validated['guaranteed'] = $request->has('guaranteed') ? true : false;
+
+        $facilityInformation->update($validated);
+        return redirect()->route('facility-info-m.show', $facilityInformation)->with('success', 'Facility Information updated successfully');
+    }
+
+    public function FacilityInfoShow()
+    {
+        return view('maker.facility-information.show');
+    }
+
+    // REITs : Portfolio
+    public function PortfolioCreate()
+    {
+        return view('maker.portfolio.create');
+    }
+
+    public function PortfolioStore(Request $request)
+    {
+        return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio created successfully');
+    }
+
+    public function PortfolioEdit(Request $request, Portfolio $portfolio)
+    {
+        return view('maker.portfolio.edit', compact('portfolio'));
+    }
+
+    public function PortfolioUpdate(Request $request, Portfolio $portfolio)
+    {
+        return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio updated successfully');
+    }
+
+    public function PortfolioShow(Portfolio $portfolio)
+    {
+        return view('make.portfolio.show');
     }
 
 }
