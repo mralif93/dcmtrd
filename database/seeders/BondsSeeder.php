@@ -1013,7 +1013,7 @@ class BondsSeeder extends Seeder
         DB::table('payment_schedules')->insert($paymentSchedules);
 
         // Seed Redemptions
-        $redemptions = [f
+        $redemptions = [
             // Active bond
             [
                 'last_call_date' => '2030-01-10',
