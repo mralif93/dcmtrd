@@ -43,7 +43,7 @@
                                         {{ $issuer->issuer_short_name }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                        <a href="{{ route('bond-a.index') }}" class="cursor-pointer text-blue-600 hover:text-blue-900">
+                                        <a href="{{ route('bond-a.index', $issuer) }}" class="cursor-pointer text-blue-600 hover:text-blue-900">
                                             {{ $issuer->issuer_name }}
                                         </a>
                                     </td>
