@@ -101,4 +101,35 @@ class ApproverController extends Controller
             return back()->with('error', 'Error rejecting issuer: ' . $e->getMessage());
         }
     }
+
+    public function BondIndex(Issuer $issuer)
+    {
+        // items per page
+        $perPage = 10;
+
+        // Bonds with empty state handling
+        $bonds = $issuer->bonds()
+            ->paginate($perPage, ['*'], 'bondsPage');
+
+        // Announcements with empty handling
+        $announcements = $issuer->announcements()
+            ->latest()
+            ->paginate($perPage, ['*'], 'announcementsPage');
+
+        // Documents with empty handling
+        $documents = $issuer->documents()
+            ->paginate($perPage, ['*'], 'documentsPage');
+
+        // Facilities with empty handling
+        $facilities = $issuer->facilities()
+            ->paginate($perPage, ['*'], 'facilitiesPage');
+
+        return view('approver.details', [
+            'issuer' => $issuer,
+            'bonds' => $bonds->isEmpty() ? null : $bonds,
+            'announcements' => $announcements->isEmpty() ? null : $announcements,
+            'documents' => $documents->isEmpty() ? null : $documents,
+            'facilities' => $facilities->isEmpty() ? null : $facilities,
+        ]);
+    }
 }
