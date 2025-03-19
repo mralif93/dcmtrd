@@ -126,10 +126,10 @@ class ApproverController extends Controller
 
         return view('approver.details', [
             'issuer' => $issuer,
-            'bonds' => $bonds->isEmpty() ? null : $bonds,
-            'announcements' => $announcements->isEmpty() ? null : $announcements,
-            'documents' => $documents->isEmpty() ? null : $documents,
-            'facilities' => $facilities->isEmpty() ? null : $facilities,
+            'bonds' => $bonds,
+            'announcements' => $announcements,
+            'documents' => $documents,
+            'facilities' => $facilities,
         ]);
     }
 }
