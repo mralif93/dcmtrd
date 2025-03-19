@@ -26,15 +26,6 @@
                 <!-- Header Section -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">Issuer Information</h3>
-                    <div class="flex space-x-2">
-                        <a href="{{ route('issuer-a.edit', $issuer) }}" 
-                           class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                            </svg>
-                            Edit
-                        </a>
-                    </div>
                 </div>
 
                 <!-- Status Section -->
