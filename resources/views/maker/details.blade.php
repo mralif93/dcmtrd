@@ -48,16 +48,16 @@
                     </x-slot>
                     
                     <x-slot name="content">
-                        <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                        <a href="{{ route('bond-m.create', $issuer) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                             Bond
                         </a>
-                        <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                        <a href="{{ route('announcement-m.create', $issuer) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                             Announcement
                         </a>
-                        <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                        <a href="{{ route('document-m.create', $issuer) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                             Document
                         </a>
-                        <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                        <a href="{{ route('facility-info-m.create', $issuer) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                             Facility Information
                         </a>
                     </x-slot>
@@ -78,12 +78,6 @@
                     </div>
                 </button>
                 <div x-show="openSection === 'bonds'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <div class="flex justify-start items-start pb-6">
-                        <a href="{{ route('bond-m.create', $issuer) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
-                            Create New Bond
-                        </a>
-                    </div>
-
                     <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
                         <thead class="bg-gray-50">
                             <tr>
@@ -96,7 +90,7 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Traded Amt (RM mil)') }}</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('O/S Amt (RM mil)') }}</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Residual Tenure') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Action') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase flex justify-end">{{ __('Action') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -143,11 +137,13 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('bond-m.edit', $bond) }}" class="text-yellow-600 hover:text-yellow-900">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </a>
+                                    <div class="flex justify-end">
+                                        <a href="{{ route('bond-m.edit', $bond) }}" class="text-yellow-600 hover:text-yellow-900">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
@@ -182,19 +178,13 @@
                     </div>
                 </button>
                 <div x-show="openSection === 'announcements'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <div class="flex justify-start items-start pb-6">
-                        <a href="{{ route('announcement-m.create', $issuer) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
-                            Create New Announcement
-                        </a>
-                    </div>
-
                     <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Announce Date</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Announcement Title</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase flex justify-end">Action</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -209,16 +199,18 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm max-w-md">
-                                    <a href="{{ route('announcement.show', $announcement) }}">
+                                    <a href="{{ route('announcement-m.show', $announcement) }}">
                                         <div class="font-medium text-gray-500">{{ $announcement->title }}</div>
                                     </a>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('announcement-m.edit', $announcement) }}" class="text-yellow-600 hover:text-yellow-900">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </a>
+                                    <div class="flex justify-end">
+                                        <a href="{{ route('announcement-m.edit', $announcement) }}" class="text-yellow-600 hover:text-yellow-900">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
@@ -253,18 +245,12 @@
                     </div>
                 </button>
                 <div x-show="openSection === 'documents'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <div class="flex justify-start items-start pb-6">
-                        <a href="{{ route('document-m.create', $issuer) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
-                            Create New Documents
-                        </a>
-                    </div>
-
                     <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document Type</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document Name</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase flex justify-end">Action</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -283,11 +269,13 @@
                                     </a>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('document-m.edit', $document) }}" class="text-yellow-600 hover:text-yellow-900">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </a>
+                                    <div class="flex justify-end">
+                                        <a href="{{ route('document-m.edit', $document) }}" class="text-yellow-600 hover:text-yellow-900">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
@@ -322,11 +310,6 @@
                     </div>
                 </button>
                 <div x-show="openSection === 'facilities'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <div class="flex justify-start items-start pb-6">
-                        <a href="{{ route('facility-info-m.create', $issuer) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
-                            Create New Facility Information
-                        </a>
-                    </div>
                     <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
                         <thead class="bg-gray-50">
                             <tr>
@@ -335,14 +318,14 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Facility Number</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Maturity Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase flex justify-end">Action</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($facilities as $facility)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    <a href="{{ route('facility.show', $facility) }}">
+                                    <a href="{{ route('facility-info-m.show', $facility) }}">
                                         {{ $facility->facility_code }}
                                     </a>
                                 </td>
@@ -361,11 +344,13 @@
                                     {{ $facility->maturity_date->format('d M Y') }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('facility-info-m.edit', $facility) }}" class="text-yellow-600 hover:text-yellow-900">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </a>
+                                    <div class="flex justify-end">
+                                        <a href="{{ route('facility-info-m.edit', $facility) }}" class="text-yellow-600 hover:text-yellow-900">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             @empty

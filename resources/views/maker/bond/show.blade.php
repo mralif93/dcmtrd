@@ -19,56 +19,56 @@
         <div x-data="{ openSection: 'bonds' }">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4 pb-6">
 
-                    <h2 class="text-2xl font-bold">{{ $bond->bond_sukuk_name }}</h2>
-                    <p>Issuer Name: {{ $bond->issuer->issuer_name }}</p>
+                <h2 class="text-2xl font-bold">{{ $bond->bond_sukuk_name }} - {{ $bond->sub_name }}</h2>
+                <p>Issuer Name: {{ $bond->issuer->issuer_name }}</p>
 
 
-                    <div class="flex justify-end space-x-2">
-                        <x-custom-dropdown>
-                            <x-slot name="trigger">
-                                Create
-                            </x-slot>
-                            
-                            <x-slot name="content">
-                                <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                                    Bond Details
-                                </a>
-                                <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                                    Rating Movement
-                                </a>
-                                <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                                    Payment Schedule
-                                </a>
-                                <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                                    Redemption
-                                </a>
-                                <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                                    Trading Activity
-                                </a>
-                            </x-slot>
-                        </x-custom-dropdown>
+                <div class="flex justify-end space-x-2">
+                    <x-custom-dropdown>
+                        <x-slot name="trigger">
+                            Create
+                        </x-slot>
+                        
+                        <x-slot name="content">
+                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Bond Details
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Rating Movement
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Payment Schedule
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Redemption
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Trading Activity
+                            </a>
+                        </x-slot>
+                    </x-custom-dropdown>
 
-                        <x-custom-dropdown>
-                            <x-slot name="trigger">
-                                Upload
-                            </x-slot>
-                            
-                            <x-slot name="content">
-                                <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                                    Bond Details
-                                </a>
-                                <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                                    Rating Movements
-                                </a>
-                                <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                                    Payment Schedules
-                                </a>
-                                <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                                    Trading Activities
-                                </a>
-                            </x-slot>
-                        </x-custom-dropdown>
-                    </div>
+                    <x-custom-dropdown>
+                        <x-slot name="trigger">
+                            Upload
+                        </x-slot>
+                        
+                        <x-slot name="content">
+                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Bond Details
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Rating Movements
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Payment Schedules
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Trading Activities
+                            </a>
+                        </x-slot>
+                    </x-custom-dropdown>
+                </div>
 
                 <!-- Bond Details Accordion -->
                 <div class="bg-white shadow-sm sm:rounded-lg">

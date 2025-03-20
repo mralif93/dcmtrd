@@ -392,9 +392,10 @@ class MakerController extends Controller
         return redirect()->route('document-m.show', $relatedDocument)->with('success', 'Document created successfully');
     }
 
-    public function DocumentEdit()
+    public function DocumentEdit(RelatedDocument $document)
     {
-        return view('maker.related-document.edit');
+        $facilities = FacilityInformation::all();
+        return view('maker.related-document.edit', compact('document', 'facilities'));
     }
 
     public function DocumentUpdate(Request $request, RelatedDocument $document)
@@ -505,9 +506,41 @@ class MakerController extends Controller
         return redirect()->route('facility-info-m.show', $facilityInformation)->with('success', 'Facility Information updated successfully');
     }
 
-    public function FacilityInfoShow()
+    public function FacilityInfoShow(FacilityInformation $facility)
     {
-        return view('maker.facility-information.show');
+        // Items per page
+        $perPage = 10;
+    
+        // Fetch bonds with pagination
+        $bonds = $facility->issuer->bonds()
+            ? $facility->issuer->bonds()->paginate($perPage, ['*'], 'bondsPage')
+            : collect(); // Use an empty collection instead of $emptyPaginator
+    
+        // Documents Pagination
+        $documents = $facility->documents()
+            ? $facility->documents()->paginate($perPage, ['*'], 'documentsPage')
+            : collect(); // Use an empty collection instead of $emptyPaginator
+    
+        // Load all rating movements across all bonds
+        $allRatingMovements = $facility->issuer->bonds->flatMap(function ($bond) {
+            return $bond->ratingMovements; // Collect rating movements from each bond
+        });
+
+        // Paginate the rating movements
+        $currentPage = request()->get('ratingMovementsPage', 1); // Get current page from request
+        $currentPageItems = $allRatingMovements->slice(($currentPage - 1) * $perPage, $perPage)->all(); // Slice the collection
+        $ratingMovements = new LengthAwarePaginator($currentPageItems, $allRatingMovements->count(), $perPage, $currentPage, [
+            'path' => request()->url(), // Set the path for pagination links
+            'query' => request()->query(), // Preserve query parameters
+        ]);
+
+        return view('maker.facility-information.show', [
+            'issuer' => $facility->issuer,
+            'facility' => $facility,
+            'activeBonds' => $bonds,
+            'documents' => $documents,
+            'ratingMovements' => $ratingMovements,
+        ]);
     }
 
     // REITs : Portfolio
