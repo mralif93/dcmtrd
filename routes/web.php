@@ -444,8 +444,21 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/{issuer}/reject', [ApproverController::class, 'reject'])->name('issuer-a.reject');
     
     // Bond Module
-    Route::get('approver/{issuer}/info', [ApproverController::class, 'BondIndex'])->name('bond-a.index');
-    // Route::get('approver/bond/{bond}/edit', [ApproverController::class, 'BondEdit'])->name('bond.edit');
-    // Route::put('approver/bond/{bond}/update', [ApproverController::class, 'BondUpdate'])->name('bond.update');
-    // Route::get('approver/bond/{bond}/show', [ApproverController::class, 'BondShow'])->name('bond.show');
+    Route::get('approver/{issuer}/details', [ApproverController::class, 'BondIndex'])->name('bond-a.details');
+    Route::get('approver/bond/{bond}/show', [ApproverController::class, 'BondShow'])->name('bond-a.show');
+
+    // Announcement Module
+    Route::get('approver/announcement/{announcement}/show', [ApproverController::class, 'AnnouncementShow'])->name('announcement-a.show');
+
+    // Document Module
+    Route::get('approver/document/{document}/show', [ApproverController::class, 'DocumentShow'])->name('document-a.show');
+
+    // Facility Info Module
+    Route::get('approver/facility-info/{facility}/show', [ApproverController::class, 'FacilityInfoShow'])->name('facility-info-a.show');
+
+    // Trustee Fee Module
+    Route::get('approver/trustee-fee/{trustee_fee}/show', [ApproverController::class, 'TrusteeFeeShow'])->name('trustee-fee-a.show');
+
+    // Compliance Covenant Module
+    Route::get('approver/compliance-covenant/{compliance}/show', [ApproverController::class, 'ComplianceShow'])->name('compliance-covenant-a.show');
 });

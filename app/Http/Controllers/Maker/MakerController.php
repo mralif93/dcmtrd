@@ -306,6 +306,7 @@ class MakerController extends Controller
         $issuers = Issuer::all();
         return view('maker.announcement.create', compact('issuers', 'issuerInfo'));
     }
+
     public function AnnouncementStore(Request $request)
     {
         $validated = $request->validate([
@@ -331,12 +332,14 @@ class MakerController extends Controller
             return back()->withErrors(['error' => 'Error creating: ' . $e->getMessage()])->withInput();
         }
     }
+
     public function AnnouncementEdit(Announcement $announcement)
     {
         $announcement = $announcement->load('issuer');
         $issuers = Issuer::all();
         return view('maker.announcement.edit', compact('announcement', 'issuers'));
     }
+    
     public function AnnouncementUpdate(Request $request, Announcement $announcement)
     {
         $validated = $request->validate([

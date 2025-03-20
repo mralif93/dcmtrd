@@ -75,7 +75,7 @@
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('security-info.show', $bond) }}">
+                                        <a href="{{ route('bond-a.show', $bond) }}">
                                             {{ $bond->bond_sukuk_name }}
                                         </a>
                                     </div>
@@ -175,12 +175,10 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm max-w-md">
-                                    <a href="{{ route('announcement.show', $announcement) }}">
-                                        <div class="font-medium text-gray-500">{{ $announcement->title }}</div>
-                                    </a>
+                                    <div class="font-medium text-gray-500">{{ $announcement->title }}</div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('announcement-m.show', $announcement) }}" class="text-yellow-600 hover:text-yellow-900">
+                                    <a href="{{ route('announcement-a.show', $announcement) }}" class="text-yellow-600 hover:text-yellow-900">
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -244,7 +242,7 @@
                                     </a>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('document-m.show', $document) }}" class="text-yellow-600 hover:text-yellow-900">
+                                    <a href="{{ route('document-a.show', $document) }}" class="text-yellow-600 hover:text-yellow-900">
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -318,7 +316,7 @@
                                     {{ $facility->maturity_date->format('d M Y') }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('facility-info-m.show', $facility) }}" class="text-yellow-600 hover:text-yellow-900">
+                                    <a href="{{ route('facility-info-a.show', $facility) }}" class="text-yellow-600 hover:text-yellow-900">
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>

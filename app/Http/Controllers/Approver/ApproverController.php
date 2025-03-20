@@ -3,9 +3,19 @@
 namespace App\Http\Controllers\Approver;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rule;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Issuer;
+use App\Models\Bond;
+use App\Models\Announcement;
+use App\Models\RelatedDocument;
+use App\Models\FacilityInformation;
+use App\Models\TrusteeFee;
+use App\Models\ComplianceCovenant;
+use App\Models\Portfolio;
 
 class ApproverController extends Controller
 {
@@ -102,6 +112,7 @@ class ApproverController extends Controller
         }
     }
 
+    // Bond Module
     public function BondIndex(Issuer $issuer)
     {
         // items per page
@@ -131,5 +142,102 @@ class ApproverController extends Controller
             'documents' => $documents,
             'facilities' => $facilities,
         ]);
+    }
+
+    public function BondShow(Bond $bond)
+    {
+        $bond->load([
+            'issuer',
+            'ratingMovements',
+            'paymentSchedules',
+            'tradingActivities' => fn($q) => $q->latest()->limit(10),
+            'redemption.callSchedules',
+            'redemption.lockoutPeriods',
+            'charts'
+        ]);
+        
+        // Get related documents through the issuer
+        $relatedDocuments = null;
+        if ($bond->issuer) {
+            // Get the facilityInformation linked to this bond
+            $facilityCode = $bond->facility_code;
+            
+            if ($facilityCode) {
+                $facilityInfo = $bond->issuer->facilities()
+                    ->where('facility_code', $facilityCode)
+                    ->first();
+                    
+                if ($facilityInfo) {
+                    $relatedDocuments = $facilityInfo->documents()
+                        ->orderBy('upload_date', 'desc')
+                        ->paginate(10);
+                }
+            }
+        }
+
+        return view('approver.bond.show', compact('bond', 'relatedDocuments'));
+    }
+
+    // Announcement Module
+    public function AnnouncementShow(Announcement $announcement)
+    {
+        $announcement = $announcement->load('issuer');
+        return view('approver.announcement.show', compact('announcement'));
+    }
+
+    // Related Document & FInancials Module
+    public function DocumentShow ()
+    {
+        return view('approver.related-document.show');
+    }
+
+    // Facility Information Module
+    public function FacilityInfoShow(FacilityInformation $facility)
+    {
+        // Items per page
+        $perPage = 10;
+    
+        // Fetch bonds with pagination
+        $bonds = $facility->issuer->bonds()
+            ? $facility->issuer->bonds()->paginate($perPage, ['*'], 'bondsPage')
+            : collect(); // Use an empty collection instead of $emptyPaginator
+    
+        // Documents Pagination
+        $documents = $facility->documents()
+            ? $facility->documents()->paginate($perPage, ['*'], 'documentsPage')
+            : collect(); // Use an empty collection instead of $emptyPaginator
+    
+        // Load all rating movements across all bonds
+        $allRatingMovements = $facility->issuer->bonds->flatMap(function ($bond) {
+            return $bond->ratingMovements; // Collect rating movements from each bond
+        });
+
+        // Paginate the rating movements
+        $currentPage = request()->get('ratingMovementsPage', 1); // Get current page from request
+        $currentPageItems = $allRatingMovements->slice(($currentPage - 1) * $perPage, $perPage)->all(); // Slice the collection
+        $ratingMovements = new LengthAwarePaginator($currentPageItems, $allRatingMovements->count(), $perPage, $currentPage, [
+            'path' => request()->url(), // Set the path for pagination links
+            'query' => request()->query(), // Preserve query parameters
+        ]);
+
+        return view('approver.facility-information.show', [
+            'issuer' => $facility->issuer,
+            'facility' => $facility,
+            'activeBonds' => $bonds,
+            'documents' => $documents,
+            'ratingMovements' => $ratingMovements,
+        ]);
+    }
+
+    // Trustee Fee Module
+    public function TrusteeFeeShow(TrusteeFee $trusteeFee)
+    {
+        return view('approver.trustee-fee.show', compact('trusteeFee'));
+    }
+
+    // Compliance Covenant Module
+    public function ComplianceShow(ComplianceCovenant $compliance)
+    {
+        return view('approver.compliance-covenant.show', compact('compliance'));
     }
 }
