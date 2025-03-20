@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('compliance_covenants', function (Blueprint $table) {
             $table->id();
-            $table->string('issuer_short_name');
             $table->string('financial_year_end');
             $table->string('audited_financial_statements')->nullable();
             $table->string('unaudited_financial_statements')->nullable();
@@ -26,6 +25,7 @@ return new class extends Migration
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

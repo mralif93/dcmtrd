@@ -416,6 +416,20 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/facility-info/{facility}/edit', [MakerController::class, 'FacilityInfoEdit'])->name('facility-info-m.edit');
     Route::put('maker/facility-info/{facility}/update', [MakerController::class, 'FacilityInfoUpdate'])->name('facility-info-m.update');
     Route::get('maker/facility-info/{facility}/show', [MakerController::class, 'FacilityInfoShow'])->name('facility-info-m.show');
+
+    // Trustee Fee Module
+    Route::get('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeCreate'])->name('trustee-fee-m.create');
+    Route::post('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeStore'])->name('trustee-fee-m.store');
+    Route::get('maker/trustee-fee/{trustee_fee}/edit', [MakerController::class, 'TrusteeFeeEdit'])->name('trustee-fee-m.edit');
+    Route::put('maker/trustee-fee/{trustee_fee}/update', [MakerController::class, 'TrusteeFeeUpdate'])->name('trustee-fee-m.update');
+    Route::get('maker/trustee-fee/{trustee_fee}/show', [MakerController::class, 'TrusteeFeeShow'])->name('trustee-fee-m.show');
+
+    // Compliance Covenant Module
+    Route::get('maker/compliance-covenant/create', [MakerController::class, 'ComplianceCreate'])->name('compliance-covenant-m.create');
+    Route::post('maker/compliance-covenant/create', [MakerController::class, 'ComplianceStore'])->name('compliance-covenant-m.store');
+    Route::get('maker/compliance-covenant/{compliance}/edit', [MakerController::class, 'ComplianceEdit'])->name('compliance-covenant-m.edit');
+    Route::put('maker/compliance-covenant/{compliance}/update', [MakerController::class, 'ComplianceUpdate'])->name('compliance-covenant-m.update');
+    Route::get('maker/compliance-covenant/{compliance}/show', [MakerController::class, 'ComplianceShow'])->name('compliance-covenant-m.show');
 });
 
 // Approver routes

@@ -16,7 +16,6 @@ class ComplianceCovenant extends Model
      * @var array
      */
     protected $fillable = [
-        'issuer_short_name',
         'financial_year_end',
         'audited_financial_statements',
         'unaudited_financial_statements',
@@ -25,6 +24,7 @@ class ComplianceCovenant extends Model
         'annual_budget',
         'computation_of_finance_to_ebitda',
         'ratio_information_on_use_of_proceeds',
+        'issuer_id'
     ];
 
     /**

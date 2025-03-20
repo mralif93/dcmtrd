@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Issuer;
 use App\Models\Bond;
 use App\Models\Announcement;
 use App\Models\RelatedDocument;
 use App\Models\FacilityInformation;
+use App\Models\TrusteeFee;
+use App\Models\ComplianceCovenant;
 use App\Models\Portfolio;
 
 
@@ -21,8 +24,10 @@ class MakerController extends Controller
     public function index()
     {
         $issuers = Issuer::query()->whereIn('status', ['Active', 'Draft'])->latest()->paginate(10);
+        $trustee_fees = TrusteeFee::query()->latest()->paginate(10);
+        $covenants = ComplianceCovenant::query()->latest()->paginate(10);
         $portfolios = Portfolio::query()->latest()->paginate(10);
-        return view('maker.index', compact('issuers', 'portfolios'));
+        return view('maker.index', compact('issuers', 'trustee_fees', 'covenants', 'portfolios'));
     }
 
     // Issuer Module
@@ -542,6 +547,186 @@ class MakerController extends Controller
             'ratingMovements' => $ratingMovements,
         ]);
     }
+
+    // Trustee Fee
+    public function TrusteeFeeCreate()
+    {
+        $issuers = Issuer::orderBy('name')->get();
+        return view('maker.trustee-fee.create', compact('issuers'));
+    }
+
+    public function TrusteeFeeStore(Request $request)
+    {
+        $validated = $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'description' => 'required|string',
+            'trustee_fee_amount_1' => 'nullable|numeric',
+            'trustee_fee_amount_2' => 'nullable|numeric',
+            'start_anniversary_date' => 'required|date',
+            'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
+            'invoice_no' => 'required|string|unique:trustee_fees,invoice_no',
+            'month' => 'nullable|string|max:10',
+            'date' => 'nullable|integer|min:1|max:31',
+            'memo_to_fad' => 'nullable|date',
+            'date_letter_to_issuer' => 'nullable|date',
+            'first_reminder' => 'nullable|date',
+            'second_reminder' => 'nullable|date',
+            'third_reminder' => 'nullable|date',
+            'payment_received' => 'nullable|date',
+            'tt_cheque_no' => 'nullable|string|max:255',
+            'memo_receipt_to_fad' => 'nullable|date',
+            'receipt_to_issuer' => 'nullable|date',
+            'receipt_no' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+        ]);
+
+        // Add prepared_by from authenticated user and set status to pending
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Draft';
+
+        TrusteeFee::create($request->all());
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Trustee fee created successfully.');
+    }
+
+    public function TrusteeFeeEdit(TrusteeFee $trusteeFee)
+    {
+        $issuers = Issuer::orderBy('name')->get();
+        return view('maker.trustee-fee.edit', compact('trusteeFee', 'issuers'));
+    }
+
+    public function TrusteeFeeUpdate(Request $request, TrusteeFee $trusteeFee)
+    {
+        $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'description' => 'required|string',
+            'trustee_fee_amount_1' => 'nullable|numeric',
+            'trustee_fee_amount_2' => 'nullable|numeric',
+            'start_anniversary_date' => 'required|date',
+            'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
+            'invoice_no' => 'required|string|unique:trustee_fees,invoice_no,' . $trusteeFee->id,
+            'month' => 'nullable|string|max:10',
+            'date' => 'nullable|integer|min:1|max:31',
+            'memo_to_fad' => 'nullable|date',
+            'date_letter_to_issuer' => 'nullable|date',
+            'first_reminder' => 'nullable|date',
+            'second_reminder' => 'nullable|date',
+            'third_reminder' => 'nullable|date',
+            'payment_received' => 'nullable|date',
+            'tt_cheque_no' => 'nullable|string|max:255',
+            'memo_receipt_to_fad' => 'nullable|date',
+            'receipt_to_issuer' => 'nullable|date',
+            'receipt_no' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+        ]);
+
+        $trusteeFee->update($request->all());
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Trustee fee updated successfully.');
+    }
+
+    public function TrusteeFeeShow(TrusteeFee $trusteeFee)
+    {
+        return view('maker.trustee-fee.show', compact('trusteeFee'));
+    }
+
+    public function destroy(TrusteeFee $trusteeFee)
+    {
+        $trusteeFee->delete();
+
+        return redirect()->route('trustee-fee-m.index')
+            ->with('success', 'Trustee fee deleted successfully.');
+    }
+
+    // Compliance Covenants
+    public function ComplianceCreate()
+    {
+        $issuers = Issuer::orderBy('name')->get();
+        return view('maker.compliance-covenant.create', compact('issuers'));
+    }
+
+    public function ComplianceStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'issuer_short_name' => 'required|string|max:255',
+            'financial_year_end' => 'required|string|max:255',
+            'audited_financial_statements' => 'nullable|string|max:255',
+            'unaudited_financial_statements' => 'nullable|string|max:255',
+            'compliance_certificate' => 'nullable|string|max:255',
+            'finance_service_cover_ratio' => 'nullable|string|max:255',
+            'annual_budget' => 'nullable|string|max:255',
+            'computation_of_finance_to_ebitda' => 'nullable|string|max:255',
+            'ratio_information_on_use_of_proceeds' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->route('compliance-covenant.create')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        ComplianceCovenant::create($request->all());
+
+        return redirect()
+            ->route('compliance-covenant-m.index')
+            ->with('success', 'Compliance covenant created successfully.');
+    }
+
+    public function ComplianceEdit(ComplianceCovenant $compliance)
+    {
+        $issuers = Issuer::orderBy('name')->get();
+        return view('maker.compliance-covenant.edit', compact('compliance', 'issuers'));
+    }
+
+    public function ComplianceUpdate(Request $request, ComplianceCovenant $compliance)
+    {
+        $validator = Validator::make($request->all(), [
+            'issuer_id' => 'required|exists:issuers,id',
+            'financial_year_end' => 'required|string|max:255',
+            'audited_financial_statements' => 'nullable|string|max:255',
+            'unaudited_financial_statements' => 'nullable|string|max:255',
+            'compliance_certificate' => 'nullable|string|max:255',
+            'finance_service_cover_ratio' => 'nullable|string|max:255',
+            'annual_budget' => 'nullable|string|max:255',
+            'computation_of_finance_to_ebitda' => 'nullable|string|max:255',
+            'ratio_information_on_use_of_proceeds' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->route('compliance-covenant-m.edit', $compliance->id)
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $compliance->update($request->all());
+
+        return redirect()
+            ->route('compliance-covenant-m.index')
+            ->with('success', 'Compliance covenant updated successfully.');
+    }
+
+    public function ComplianceShow(ComplianceCovenant $compliance)
+    {
+        return view('maker.compliance-covenant.show', compact('compliance'));
+    }
+
+    public function ComplianceDestroy(ComplianceCovenant $compliance)
+    {
+        $compliance->delete();
+
+        return redirect()
+            ->route('compliance-covenant-m.index')
+            ->with('success', 'Compliance covenant deleted successfully.');
+    }
+
 
     // REITs : Portfolio
     public function PortfolioCreate()
