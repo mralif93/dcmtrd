@@ -136,10 +136,10 @@ class MakerController extends Controller
 
         return view('maker.details', [
             'issuer' => $issuer,
-            'bonds' => $bonds->isEmpty() ? null : $bonds,
-            'announcements' => $announcements->isEmpty() ? null : $announcements,
-            'documents' => $documents->isEmpty() ? null : $documents,
-            'facilities' => $facilities->isEmpty() ? null : $facilities,
+            'bonds' => $bonds,
+            'announcements' => $announcements,
+            'documents' => $documents,
+            'facilities' => $facilities,
         ]);
     }
 
