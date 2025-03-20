@@ -17,6 +17,7 @@ use App\Models\Portfolio;
 
 class MakerController extends Controller
 {
+    // List of Issuers and Portfolio
     public function index()
     {
         $issuers = Issuer::query()->whereIn('status', ['Active', 'Draft'])->latest()->paginate(10);
@@ -110,7 +111,7 @@ class MakerController extends Controller
         }
     }
 
-    // Bond Module
+    // List of Details
     public function BondIndex(Issuer $issuer)
     {
         // items per page
@@ -142,6 +143,7 @@ class MakerController extends Controller
         ]);
     }
 
+    // Bond Module
     public function BondCreate(Issuer $issuer)
     {
         $issuerInfo = $issuer;
@@ -194,8 +196,27 @@ class MakerController extends Controller
             'redemption.lockoutPeriods',
             'charts'
         ]);
+        
+        // Get related documents through the issuer
+        $relatedDocuments = null;
+        if ($bond->issuer) {
+            // Get the facilityInformation linked to this bond
+            $facilityCode = $bond->facility_code;
+            
+            if ($facilityCode) {
+                $facilityInfo = $bond->issuer->facilities()
+                    ->where('facility_code', $facilityCode)
+                    ->first();
+                    
+                if ($facilityInfo) {
+                    $relatedDocuments = $facilityInfo->documents()
+                        ->orderBy('upload_date', 'desc')
+                        ->paginate(10);
+                }
+            }
+        }
 
-        return view('maker.bond.show', compact('bond'));
+        return view('maker.bond.show', compact('bond', 'relatedDocuments'));
     }
 
     public function BondUploadForm()
@@ -273,6 +294,7 @@ class MakerController extends Controller
         ]);
     }
 
+    // Announcement Module
     public function AnnouncementCreate(Issuer $issuer)
     {
         $issuerInfo = $issuer;
@@ -346,6 +368,7 @@ class MakerController extends Controller
         return view('maker.announcement.show', compact('announcement'));
     }
 
+    // Document Module
     public function DocumentCreate(Issuer $issuer)
     {
         $facilities = FacilityInformation::all();
@@ -404,6 +427,7 @@ class MakerController extends Controller
     }
 
 
+    // Facility Information Module
     public function FacilityInfoCreate(Issuer $issuer)
     {
         $issuerInfo = $issuer;

@@ -41,6 +41,29 @@
     <div x-data="{ openSection: 'bonds' }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4 pb-6">
 
+            <div class="flex justify-end">
+                <x-custom-dropdown>
+                    <x-slot name="trigger">
+                        Create
+                    </x-slot>
+                    
+                    <x-slot name="content">
+                        <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            Bond
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            Announcement
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            Document
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            Facility Information
+                        </a>
+                    </x-slot>
+                </x-custom-dropdown>
+            </div>
+
             <!-- Bonds Accordion -->
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <button @click="openSection = openSection === 'bonds' ? null : 'bonds'" 
@@ -81,7 +104,7 @@
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('security-info.show', $bond) }}">
+                                        <a href="{{ route('bond-m.show', $bond) }}">
                                             {{ $bond->bond_sukuk_name }}
                                         </a>
                                     </div>

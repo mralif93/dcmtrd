@@ -59,7 +59,7 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        <div class="flex justify-end space-x-2">
+                                        <div class="flex justify-center space-x-2">
                                             <a href="{{ route('issuer-a.show', $issuer) }}" class="text-indigo-600 hover:text-indigo-900" title="View">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>

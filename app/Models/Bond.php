@@ -104,6 +104,15 @@ class Bond extends Model
         return $this->hasMany(Chart::class)->orderBy('period_from');
     }
 
+    public function facilityInformation()
+    {
+        // If there's a direct relationship (which I don't see in the schema)
+        return $this->belongsTo(FacilityInformation::class, 'facility_code', 'facility_code');
+        
+        // Or alternatively, if you need to go through the issuer
+        // return $this->issuer->facilityInformations()->where('facility_code', $this->facility_code);
+    }
+
     // Scopes
     public function scopeActive($query)
     {
