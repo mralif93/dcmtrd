@@ -41,7 +41,7 @@
     <div x-data="{ openSection: 'bonds' }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4 pb-6">
 
-            <div class="flex justify-end">
+            <div class="flex justify-end space-x-2">
                 <x-custom-dropdown>
                     <x-slot name="trigger">
                         Create
@@ -54,14 +54,26 @@
                         <a href="{{ route('announcement-m.create', $issuer) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                             Announcement
                         </a>
-                        <a href="{{ route('document-m.create', $issuer) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                            Document
-                        </a>
                         <a href="{{ route('facility-info-m.create', $issuer) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                             Facility Information
                         </a>
+                        <a href="{{ route('document-m.create', $issuer) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            Document
+                        </a>
                     </x-slot>
                 </x-custom-dropdown>
+
+                <x-custom-dropdown>
+                        <x-slot name="trigger">
+                            Upload
+                        </x-slot>
+                        
+                        <x-slot name="content">
+                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Bond
+                            </a>
+                        </x-slot>
+                    </x-custom-dropdown>
             </div>
 
             <!-- Bonds Accordion -->
@@ -77,8 +89,8 @@
                         </svg>
                     </div>
                 </button>
-                <div x-show="openSection === 'bonds'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
+                <div x-show="openSection === 'bonds'" x-collapse class="border-t border-gray-200 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Bond/Sukuk Name') }}</th>
@@ -177,8 +189,8 @@
                         </svg>
                     </div>
                 </button>
-                <div x-show="openSection === 'announcements'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
+                <div x-show="openSection === 'announcements'" x-collapse class="border-t border-gray-200 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Announce Date</th>
@@ -231,71 +243,6 @@
                 </div>
             </div>
 
-            <!-- Documents Accordion -->
-            <div class="bg-white shadow-sm sm:rounded-lg">
-                <button @click="openSection = openSection === 'documents' ? null : 'documents'" 
-                        class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-xl font-semibold">Related Documents</h3>
-                        <svg class="w-6 h-6 transform transition-transform" 
-                             :class="{ 'rotate-180': openSection === 'documents' }" 
-                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </div>
-                </button>
-                <div x-show="openSection === 'documents'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document Type</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document Name</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase flex justify-end">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse($documents as $document)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <span class="px-2 py-1 bg-gray-100 rounded-full text-xs">
-                                        {{ $document->document_type }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-900 max-w-xs">
-                                    <a href="{{ asset($document->file_path) }}"
-                                        class="text-indigo-600 hover:text-indigo-900"
-                                        target="_blank" download>
-                                        {{ $document->document_name }}
-                                    </a>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex justify-end">
-                                        <a href="{{ route('document-m.edit', $document) }}" class="text-yellow-600 hover:text-yellow-900">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="3" class="px-6 py-4 text-center text-gray-500">
-                                    No documents found
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-
-                    @if ($documents->hasPages())
-                        <div class="p-6 border-t">
-                            {{ $documents->links() }}
-                        </div>
-                    @endif
-                </div>
-            </div>
-
             <!-- Facility Information Accordion -->
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <button @click="openSection = openSection === 'facilities' ? null : 'facilities'" 
@@ -309,8 +256,8 @@
                         </svg>
                     </div>
                 </button>
-                <div x-show="openSection === 'facilities'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
+                <div x-show="openSection === 'facilities'" x-collapse class="border-t border-gray-200 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Facility Code</th>
@@ -366,6 +313,71 @@
                     @if ($facilities->hasPages())
                         <div class="p-6 border-t">
                             {{ $facilities->links() }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Documents Accordion -->
+            <div class="bg-white shadow-sm sm:rounded-lg">
+                <button @click="openSection = openSection === 'documents' ? null : 'documents'" 
+                        class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-semibold">Related Documents</h3>
+                        <svg class="w-6 h-6 transform transition-transform" 
+                             :class="{ 'rotate-180': openSection === 'documents' }" 
+                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </button>
+                <div x-show="openSection === 'documents'" x-collapse class="border-t border-gray-200overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase flex justify-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($documents as $document)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <span class="px-2 py-1 bg-gray-100 rounded-full text-xs">
+                                        {{ $document->document_type }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                                    <a href="{{ asset($document->file_path) }}"
+                                        class="text-indigo-600 hover:text-indigo-900"
+                                        target="_blank" download>
+                                        {{ $document->document_name }}
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex justify-end">
+                                        <a href="{{ route('document-m.edit', $document) }}" class="text-yellow-600 hover:text-yellow-900">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="3" class="px-6 py-4 text-center text-gray-500">
+                                    No documents found
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+
+                    @if ($documents->hasPages())
+                        <div class="p-6 border-t">
+                            {{ $documents->links() }}
                         </div>
                     @endif
                 </div>

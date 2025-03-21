@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('rating')->nullable();
             $table->string('category')->nullable();
             $table->string('principal')->nullable();
+            $table->string('islamic_concept')->nullable();
             $table->string('isin_code')->nullable();
             $table->string('stock_code')->nullable();
             $table->string('instrument_code')->nullable();

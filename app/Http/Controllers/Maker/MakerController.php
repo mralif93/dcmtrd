@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 // use Maatwebsite\Excel\Facades\Excel;
@@ -21,6 +22,8 @@ use App\Models\FacilityInformation;
 use App\Models\TrusteeFee;
 use App\Models\ComplianceCovenant;
 use App\Models\Portfolio;
+
+use App\Http\Requests\User\BondFormRequest;
 
 
 class MakerController extends Controller
@@ -161,17 +164,17 @@ class MakerController extends Controller
         return view('maker.bond.create', compact('issuers', 'issuerInfo'));
     }
 
-    public function BondStore(Request $request, Bond $bond)
+    public function BondStore(BondFormRequest $request, Bond $bond)
     {
-        $validated = $this->validateBond($request);
-
+        $validated = $request->validated();
+        
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'Pending';
 
         try {
             $bond = Bond::create($validated);
-            return redirect()->route('bond-m.show', $bond)->with('success', 'Bond created successfully');
+            return redirect()->route('bond-m.details', $bond->issuer)->with('success', 'Bond created successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
         }
@@ -183,13 +186,13 @@ class MakerController extends Controller
         return view('maker.bond.edit', compact('bond', 'issuers'));
     }
 
-    public function BondUpdate(Request $request, Bond $bond)
+    public function BondUpdate(BondFormRequest $request, Bond $bond)
     {
         $validated = $this->validateBond($request, $bond);
 
         try {
             $bond->update($validated);
-            return redirect()->route('bond-m.show', $bond)->with('success', 'Bond updated successfully');
+            return redirect()->route('bond-m.details', $bond->issuer)->with('success', 'Bond updated successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
         }
@@ -251,6 +254,7 @@ class MakerController extends Controller
             'rating' => 'nullable|string|max:50',
             'category' => 'nullable|string|max:100',
             'principal' => 'nullable|string|max:100',
+            'islamic_concept' => 'nullable|string|max:100',
             'isin_code' => [
                 'nullable',
                 'string',
@@ -295,7 +299,9 @@ class MakerController extends Controller
                 'nullable',
                 'string',
                 'max:50',
-                Rule::unique('bonds')->ignore($bond?->id)
+                // Changed to check if facility_code exists in facility_informations table
+                // rather than requiring uniqueness across all bonds
+                $bond ? 'exists:facility_informations,facility_code' : 'exists:facility_informations,facility_code'
             ],
             'status' => 'nullable|in:Active,Inactive,Matured,Pending',
             'remarks' => 'nullable|string',
@@ -318,17 +324,7 @@ class MakerController extends Controller
 
     public function AnnouncementStore(Request $request)
     {
-        $validated = $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
-            'category' => 'required|string|max:50',
-            'sub_category' => 'nullable|string|max:50',
-            'source' => 'required|string|max:100',
-            'announcement_date' => 'required|date',
-            'title' => 'required|string|max:200',
-            'description' => 'required|string',
-            'content' => 'required|string',
-            'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-        ]);
+        $validated = $this->validateAnnouncement($request);
 
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('attachments');
@@ -336,7 +332,7 @@ class MakerController extends Controller
 
         try {
             $announcement = Announcement::create($validated);
-            return redirect()->route('announcement-m.show', $announcement->issuer)->with('success', 'Announcement created successfully');
+            return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement created successfully');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error creating: ' . $e->getMessage()])->withInput();
         }
@@ -351,17 +347,7 @@ class MakerController extends Controller
     
     public function AnnouncementUpdate(Request $request, Announcement $announcement)
     {
-        $validated = $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
-            'category' => 'required|string|max:50',
-            'sub_category' => 'nullable|string|max:50',
-            'source' => 'required|string|max:100',
-            'announcement_date' => 'required|date',
-            'title' => 'required|string|max:200',
-            'description' => 'required|string',
-            'content' => 'required|string',
-            'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-        ]);
+        $validated = $this->validateAnnouncement($request);
 
         if ($request->hasFile('attachment')) {
             // Delete old attachment
@@ -373,7 +359,7 @@ class MakerController extends Controller
 
         try {
             $announcement->update($validated);
-            return redirect()->route('announcement-m.show', $announcement->issuer)->with('success', 'Announcement updated successfully');
+            return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement updated successfully');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
         }
@@ -385,6 +371,21 @@ class MakerController extends Controller
         return view('maker.announcement.show', compact('announcement'));
     }
 
+    protected function validateAnnouncement(Request $request)
+    {
+        return $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'category' => 'required|string|max:50',
+            'sub_category' => 'nullable|string|max:50',
+            'source' => 'required|string|max:100',
+            'announcement_date' => 'required|date',
+            'title' => 'required|string|max:200',
+            'description' => 'required|string',
+            'content' => 'required|string',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+    }
+
     // Document Module
     public function DocumentCreate(Issuer $issuer)
     {
@@ -394,19 +395,14 @@ class MakerController extends Controller
     
     public function DocumentStore(Request $request)
     {
-        $validated = $request->validate([
-            'facility_id' => 'required|exists:facility_informations,id',
-            'document_name' => 'required|max:200',
-            'document_type' => 'required|max:50',
-            'upload_date' => 'required|date',
-            'document_file' => 'required|file|mimes:pdf|max:2048'
-        ]);
+        $validated = $this->validateDocument($request);
 
         $file = $request->file('document_file');
         $validated['file_path'] = $file->store('documents');
 
         $relatedDocument = RelatedDocument::create($validated);
-        return redirect()->route('document-m.show', $relatedDocument)->with('success', 'Document created successfully');
+        $facility = FacilityInformation::findOrFail($validated['facility_id']);
+        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document created successfully');
     }
 
     public function DocumentEdit(RelatedDocument $document)
@@ -417,26 +413,20 @@ class MakerController extends Controller
 
     public function DocumentUpdate(Request $request, RelatedDocument $document)
     {
-        $relatedDocument = $document;
-        $validated = $request->validate([
-            'facility_id' => 'required|exists:facility_informations,id',
-            'document_name' => 'required|max:200',
-            'document_type' => 'required|max:50',
-            'upload_date' => 'required|date',
-            'document_file' => 'nullable|file|mimes:pdf|max:2048'
-        ]);
+        $validated = $this->validateDocument($request);
 
         if ($request->hasFile('document_file')) {
             // Delete old file
-            if ($relatedDocument->file_path) {
-                Storage::delete($relatedDocument->file_path);
+            if ($document->file_path) {
+                Storage::delete($document->file_path);
             }
             // Store new file
-            $validated['file_path'] = $request->file('file_path')->store('documents');
+            $validated['file_path'] = $request->file('document_file')->store('documents');
         }
 
-        $relatedDocument->update($validated);
-        return redirect()->route('document-m.show', $relatedDocument)->with('success', 'Document updated successfully');
+        $document->update($validated);
+        $facility = FacilityInformation::findOrFail($validated['facility_id']);
+        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document updated successfully');
     }
 
     public function DocumentShow ()
@@ -444,6 +434,16 @@ class MakerController extends Controller
         return view('maker.related-document.show');
     }
 
+    protected function validateDocument(Request $request)
+    {
+        return $request->validate([
+            'facility_id' => 'required|exists:facility_informations,id',
+            'document_name' => 'required|max:200',
+            'document_type' => 'required|max:50',
+            'upload_date' => 'required|date',
+            'document_file' => 'required|file|mimes:pdf|max:2048'
+        ]);
+    }
 
     // Facility Information Module
     public function FacilityInfoCreate(Issuer $issuer)
@@ -455,34 +455,13 @@ class MakerController extends Controller
 
     public function FacilityInfoStore(Request $request)
     {
-        $validated = $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
-            'facility_code' => 'required|unique:facility_informations|max:50',
-            'facility_number' => 'required|unique:facility_informations|max:50',
-            'facility_name' => 'required|max:100',
-            'principle_type' => 'required|max:50',
-            'islamic_concept' => 'nullable|max:100',
-            'maturity_date' => 'nullable|date',
-            'instrument' => 'nullable|max:50',
-            'instrument_type' => 'nullable|max:50',
-            'guaranteed' => 'nullable|boolean',
-            'total_guaranteed' => 'nullable|numeric|min:0',
-            'indicator' => 'nullable|max:50',
-            'facility_rating' => 'nullable|max:50',
-            'facility_amount' => 'nullable|numeric|min:0',
-            'available_limit' => 'nullable|numeric|min:0',
-            'outstanding_amount' => 'nullable|numeric|min:0',
-            'trustee_security_agent' => 'nullable|max:100',
-            'lead_arranger' => 'nullable|max:100',
-            'facility_agent' => 'nullable|max:100',
-            'availability_date' => 'nullable|date',
-        ]);
+        $validated = $this->validateFacilityInfo($request);
 
         // Set guaranteed to false if not present
         $validated['guaranteed'] = $request->has('guaranteed') ? true : false;
 
         $facilityInformation = FacilityInformation::create($validated);
-        return redirect()->route('facility-info-m.show', $facilityInformation)->with('success', 'Facility Information created successfully');
+        return redirect()->route('bond-m.details', $facilityInformation->issuer)->with('success', 'Facility Information created successfully');
     }
 
     public function FacilityInfoEdit(FacilityInformation $facility)
@@ -493,34 +472,13 @@ class MakerController extends Controller
 
     public function FacilityInfoUpdate(Request $request, FacilityInformation $facility)
     {
-        $validated = $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
-            'facility_code' => 'required|max:50|unique:facility_informations,facility_code,'.$facilityInformation->id,
-            'facility_number' => 'required|max:50|unique:facility_informations,facility_number,'.$facilityInformation->id,
-            'facility_name' => 'required|max:100',
-            'principle_type' => 'required|max:50',
-            'islamic_concept' => 'nullable|max:100',
-            'maturity_date' => 'nullable|date',
-            'instrument' => 'nullable|max:50',
-            'instrument_type' => 'nullable|max:50',
-            'guaranteed' => 'nullable|boolean',
-            'total_guaranteed' => 'nullable|numeric|min:0',
-            'indicator' => 'nullable|max:50',
-            'facility_rating' => 'nullable|max:50',
-            'facility_amount' => 'nullable|numeric|min:0',
-            'available_limit' => 'nullable|numeric|min:0',
-            'outstanding_amount' => 'nullable|numeric|min:0',
-            'trustee_security_agent' => 'nullable|max:100',
-            'lead_arranger' => 'nullable|max:100',
-            'facility_agent' => 'nullable|max:100',
-            'availability_date' => 'nullable|date',
-        ]);
+        $validated = $this->validateFacilityInfo($request, $facility);
 
         // Set guaranteed to false if not present
         $validated['guaranteed'] = $request->has('guaranteed') ? true : false;
 
-        $facilityInformation->update($validated);
-        return redirect()->route('facility-info-m.show', $facilityInformation)->with('success', 'Facility Information updated successfully');
+        $facility->update($validated);
+        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Facility Information updated successfully');
     }
 
     public function FacilityInfoShow(FacilityInformation $facility)
@@ -560,46 +518,48 @@ class MakerController extends Controller
         ]);
     }
 
+    protected function validateFacilityInfo(Request $request, FacilityInformation $facility = null)
+    {
+        return $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'facility_code' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_code,'.$facility->id : 'unique:facility_informations'),
+            'facility_number' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_number,'.$facility->id : 'unique:facility_informations'),
+            'facility_name' => 'required|max:100',
+            'principle_type' => 'required|max:50',
+            'islamic_concept' => 'nullable|max:100',
+            'maturity_date' => 'nullable|date',
+            'instrument' => 'nullable|max:50',
+            'instrument_type' => 'nullable|max:50',
+            'guaranteed' => 'nullable|boolean',
+            'total_guaranteed' => 'nullable|numeric|min:0',
+            'indicator' => 'nullable|max:50',
+            'facility_rating' => 'nullable|max:50',
+            'facility_amount' => 'nullable|numeric|min:0',
+            'available_limit' => 'nullable|numeric|min:0',
+            'outstanding_amount' => 'nullable|numeric|min:0',
+            'trustee_security_agent' => 'nullable|max:100',
+            'lead_arranger' => 'nullable|max:100',
+            'facility_agent' => 'nullable|max:100',
+            'availability_date' => 'nullable|date',
+        ]);
+    }
+
     // Trustee Fee
     public function TrusteeFeeCreate()
     {
-        $issuers = Issuer::orderBy('name')->get();
+        $issuers = Issuer::orderBy('issuer_name')->get();
         return view('maker.trustee-fee.create', compact('issuers'));
     }
 
     public function TrusteeFeeStore(Request $request)
     {
-        $validated = $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
-            'description' => 'required|string',
-            'trustee_fee_amount_1' => 'nullable|numeric',
-            'trustee_fee_amount_2' => 'nullable|numeric',
-            'start_anniversary_date' => 'required|date',
-            'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
-            'invoice_no' => 'required|string|unique:trustee_fees,invoice_no',
-            'month' => 'nullable|string|max:10',
-            'date' => 'nullable|integer|min:1|max:31',
-            'memo_to_fad' => 'nullable|date',
-            'date_letter_to_issuer' => 'nullable|date',
-            'first_reminder' => 'nullable|date',
-            'second_reminder' => 'nullable|date',
-            'third_reminder' => 'nullable|date',
-            'payment_received' => 'nullable|date',
-            'tt_cheque_no' => 'nullable|string|max:255',
-            'memo_receipt_to_fad' => 'nullable|date',
-            'receipt_to_issuer' => 'nullable|date',
-            'receipt_no' => 'nullable|string|max:255',
-            'prepared_by' => 'nullable|string|max:255',
-            'verified_by' => 'nullable|string|max:255',
-            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
-            'remarks' => 'nullable|string',
-        ]);
+        $validated = $this->validateTrusteeFee($request);
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'Draft';
 
-        TrusteeFee::create($request->all());
+        TrusteeFee::create($validated);
 
         return redirect()
             ->route('dashboard')
@@ -608,39 +568,15 @@ class MakerController extends Controller
 
     public function TrusteeFeeEdit(TrusteeFee $trusteeFee)
     {
-        $issuers = Issuer::orderBy('name')->get();
+        $issuers = Issuer::orderBy('issuer_name')->get();
         return view('maker.trustee-fee.edit', compact('trusteeFee', 'issuers'));
     }
 
     public function TrusteeFeeUpdate(Request $request, TrusteeFee $trusteeFee)
     {
-        $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
-            'description' => 'required|string',
-            'trustee_fee_amount_1' => 'nullable|numeric',
-            'trustee_fee_amount_2' => 'nullable|numeric',
-            'start_anniversary_date' => 'required|date',
-            'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
-            'invoice_no' => 'required|string|unique:trustee_fees,invoice_no,' . $trusteeFee->id,
-            'month' => 'nullable|string|max:10',
-            'date' => 'nullable|integer|min:1|max:31',
-            'memo_to_fad' => 'nullable|date',
-            'date_letter_to_issuer' => 'nullable|date',
-            'first_reminder' => 'nullable|date',
-            'second_reminder' => 'nullable|date',
-            'third_reminder' => 'nullable|date',
-            'payment_received' => 'nullable|date',
-            'tt_cheque_no' => 'nullable|string|max:255',
-            'memo_receipt_to_fad' => 'nullable|date',
-            'receipt_to_issuer' => 'nullable|date',
-            'receipt_no' => 'nullable|string|max:255',
-            'prepared_by' => 'nullable|string|max:255',
-            'verified_by' => 'nullable|string|max:255',
-            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
-            'remarks' => 'nullable|string',
-        ]);
+        $validated = $this->validateTrusteeFee($request, $trusteeFee);
 
-        $trusteeFee->update($request->all());
+        $trusteeFee->update($validated);
 
         return redirect()
             ->route('dashboard')
@@ -674,32 +610,51 @@ class MakerController extends Controller
         }
     }
 
+    protected function validateTrusteeFee(Request $request, TrusteeFee $trusteeFee = null)
+    {
+        return $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'description' => 'required|string',
+            'trustee_fee_amount_1' => 'nullable|numeric',
+            'trustee_fee_amount_2' => 'nullable|numeric',
+            'start_anniversary_date' => 'required|date',
+            'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
+            'invoice_no' => 'required|string|' . ($trusteeFee ? 'unique:trustee_fees,invoice_no,'.$trusteeFee->id : 'unique:trustee_fees'),
+            'month' => 'nullable|string|max:10',
+            'date' => 'nullable|integer|min:1|max:31',
+            'memo_to_fad' => 'nullable|date',
+            'date_letter_to_issuer' => 'nullable|date',
+            'first_reminder' => 'nullable|date',
+            'second_reminder' => 'nullable|date',
+            'third_reminder' => 'nullable|date',
+            'payment_received' => 'nullable|date',
+            'tt_cheque_no' => 'nullable|string|max:255',
+            'memo_receipt_to_fad' => 'nullable|date',
+            'receipt_to_issuer' => 'nullable|date',
+            'receipt_no' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
+            'remarks' => 'nullable|string',
+        ]);
+    }
+
     // Compliance Covenants
     public function ComplianceCreate()
     {
-        $issuers = Issuer::orderBy('name')->get();
+        $issuers = Issuer::orderBy('issuer_name')->get();
         return view('maker.compliance-covenant.create', compact('issuers'));
     }
 
     public function ComplianceStore(Request $request)
     {
-        $validated = $request->validate([
-            'issuer_short_name' => 'required|string|max:255',
-            'financial_year_end' => 'required|string|max:255',
-            'audited_financial_statements' => 'nullable|string|max:255',
-            'unaudited_financial_statements' => 'nullable|string|max:255',
-            'compliance_certificate' => 'nullable|string|max:255',
-            'finance_service_cover_ratio' => 'nullable|string|max:255',
-            'annual_budget' => 'nullable|string|max:255',
-            'computation_of_finance_to_ebitda' => 'nullable|string|max:255',
-            'ratio_information_on_use_of_proceeds' => 'nullable|string|max:255',
-        ]);
+        $validated = $this->validateCompliance($request);
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'Draft';
 
-        ComplianceCovenant::create($request->all());
+        $compliance = ComplianceCovenant::create($validated);
 
         return redirect()
             ->route('dashboard')
@@ -708,25 +663,15 @@ class MakerController extends Controller
 
     public function ComplianceEdit(ComplianceCovenant $compliance)
     {
-        $issuers = Issuer::orderBy('name')->get();
+        $issuers = Issuer::orderBy('issuer_name')->get();
         return view('maker.compliance-covenant.edit', compact('compliance', 'issuers'));
     }
 
     public function ComplianceUpdate(Request $request, ComplianceCovenant $compliance)
     {
-        $validated = $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
-            'financial_year_end' => 'required|string|max:255',
-            'audited_financial_statements' => 'nullable|string|max:255',
-            'unaudited_financial_statements' => 'nullable|string|max:255',
-            'compliance_certificate' => 'nullable|string|max:255',
-            'finance_service_cover_ratio' => 'nullable|string|max:255',
-            'annual_budget' => 'nullable|string|max:255',
-            'computation_of_finance_to_ebitda' => 'nullable|string|max:255',
-            'ratio_information_on_use_of_proceeds' => 'nullable|string|max:255',
-        ]);
+        $validated = $this->validateCompliance($request);
 
-        $compliance->update($request->all());
+        $compliance->update($validated);
 
         return redirect()
             ->route('dashboard')
@@ -747,6 +692,24 @@ class MakerController extends Controller
             ->with('success', 'Compliance covenant deleted successfully.');
     }
 
+    protected function validateCompliance(Request $request)
+    {
+        return $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'financial_year_end' => 'required|string|max:255',
+            'audited_financial_statements' => 'nullable|string|max:255',
+            'unaudited_financial_statements' => 'nullable|string|max:255',
+            'compliance_certificate' => 'nullable|string|max:255',
+            'finance_service_cover_ratio' => 'nullable|string|max:255',
+            'annual_budget' => 'nullable|string|max:255',
+            'computation_of_finance_to_ebitda' => 'nullable|string|max:255',
+            'ratio_information_on_use_of_proceeds' => 'nullable|string|max:255',
+            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+        ]);
+    }
 
     // REITs : Portfolio
     public function PortfolioCreate()
@@ -756,22 +719,51 @@ class MakerController extends Controller
 
     public function PortfolioStore(Request $request)
     {
+        $validated = $this->validatePortfolio($request);
+        
+        // Add prepared_by from authenticated user and set status to pending
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Draft';
+        
+        $portfolio = Portfolio::create($validated);
+        
         return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio created successfully');
     }
 
-    public function PortfolioEdit(Request $request, Portfolio $portfolio)
+    public function PortfolioEdit(Portfolio $portfolio)
     {
         return view('maker.portfolio.edit', compact('portfolio'));
     }
 
     public function PortfolioUpdate(Request $request, Portfolio $portfolio)
     {
+        $validated = $this->validatePortfolio($request, $portfolio);
+        
+        $portfolio->update($validated);
+        
         return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio updated successfully');
     }
 
     public function PortfolioShow(Portfolio $portfolio)
     {
-        return view('make.portfolio.show');
+        return view('maker.portfolio.show', compact('portfolio'));
     }
-
+    
+    protected function validatePortfolio(Request $request, Portfolio $portfolio = null)
+    {
+        return $request->validate([
+            'name' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'acquisition_date' => 'required|date',
+            'acquisition_cost' => 'required|numeric|min:0',
+            'market_value' => 'required|numeric|min:0',
+            'gross_floor_area' => 'nullable|numeric|min:0',
+            'net_lettable_area' => 'nullable|numeric|min:0',
+            'occupancy_rate' => 'nullable|numeric|between:0,100',
+            'property_type' => 'required|string|max:100',
+            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
+            'description' => 'nullable|string',
+            'remarks' => 'nullable|string',
+        ]);
+    }
 }

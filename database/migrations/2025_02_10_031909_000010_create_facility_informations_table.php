@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('lead_arranger')->nullable();
             $table->string('facility_agent')->nullable();
             $table->date('availability_date')->nullable();
+            $table->string('status')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();

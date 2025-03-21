@@ -19,6 +19,7 @@ class Bond extends Model
         'rating',
         'category',
         'principal',
+        'islamic_concept',
         'isin_code',
         'stock_code',
         'instrument_code',

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class ComplianceCovenant extends Model
 {
@@ -24,15 +25,39 @@ class ComplianceCovenant extends Model
         'annual_budget',
         'computation_of_finance_to_ebitda',
         'ratio_information_on_use_of_proceeds',
+        'status',
+        'prepared_by',
+        'verified_by',
+        'remarks',
+        'approval_datetime',
         'issuer_id'
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'approval_datetime' => 'datetime',
+    ];
+
+    /**
+     * Get the issuer that this compliance covenant belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function issuer()
+    {
+        return $this->belongsTo(Issuer::class);
+    }
 
     /**
      * Check if an issuer has completed all required documents
      *
      * @return bool
      */
-    public function isCompliant()
+    public function isCompliant(): bool
     {
         // Check if all document fields have values
         return !empty($this->audited_financial_statements) &&
@@ -49,7 +74,7 @@ class ComplianceCovenant extends Model
      *
      * @return array
      */
-    public function getMissingDocuments()
+    public function getMissingDocuments(): array
     {
         $missingDocuments = [];
         
@@ -85,15 +110,15 @@ class ComplianceCovenant extends Model
     }
 
     /**
-     * Scope a query to find issuers by name.
+     * Scope a query to find compliance records by issuer ID.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $issuerName
+     * @param int $issuerId
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeByIssuer($query, $issuerName)
+    public function scopeByIssuer(Builder $query, $issuerId): Builder
     {
-        return $query->where('issuer_short_name', $issuerName);
+        return $query->where('issuer_id', $issuerId);
     }
 
     /**
@@ -103,7 +128,7 @@ class ComplianceCovenant extends Model
      * @param string $year
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeByFinancialYear($query, $year)
+    public function scopeByFinancialYear(Builder $query, $year): Builder
     {
         return $query->where('financial_year_end', 'like', "%{$year}%");
     }
@@ -114,7 +139,7 @@ class ComplianceCovenant extends Model
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeCompliant($query)
+    public function scopeCompliant(Builder $query): Builder
     {
         return $query->whereNotNull('audited_financial_statements')
                     ->whereNotNull('unaudited_financial_statements')
@@ -131,7 +156,7 @@ class ComplianceCovenant extends Model
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeNonCompliant($query)
+    public function scopeNonCompliant(Builder $query): Builder
     {
         return $query->where(function($q) {
             $q->whereNull('audited_financial_statements')

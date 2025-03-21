@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->string('attachment')->nullable();
             $table->string('source')->nullable();
+            $table->string('status')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
