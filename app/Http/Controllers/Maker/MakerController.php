@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-// use Maatwebsite\Excel\Facades\Excel;
-// use App\Imports\BondImport;
-// use App\Imports\PaymentScheduleImport;
-// use App\Imports\RatingMovementsImport;
-// use App\Imports\TradingActivityImport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\BondImport;
+use App\Imports\PaymentScheduleImport;
+use App\Imports\RatingMovementsImport;
+use App\Imports\TradingActivityImport;
 use App\Models\Issuer;
 use App\Models\Bond;
 use App\Models\Announcement;
@@ -188,7 +188,7 @@ class MakerController extends Controller
 
     public function BondUpdate(BondFormRequest $request, Bond $bond)
     {
-        $validated = $this->validateBond($request, $bond);
+        $validated = $request->validated();
 
         try {
             $bond->update($validated);
@@ -232,18 +232,20 @@ class MakerController extends Controller
         return view('maker.bond.show', compact('bond', 'relatedDocuments'));
     }
 
-    public function BondUploadForm()
+    public function BondUploadForm(Issuer $issuer)
     {
-        return view('maker.bond.upload');
+        return view('maker.bond.upload', compact('issuer'));
     }
 
-    public function BondUploadStore(Bond $bond)
+    public function BondUploadStore(Request $request, Issuer $issuer)
     {
-        // $file = $request->file('bond_file');
+        $file = $request->file('bond_file');
 
-        // Excel::import(new BondImport, $file);
+        Excel::import(new BondImport, $file);
 
-        return back()->with('success', 'Bond data uploaded successfully!');
+        return redirect()
+            ->route('bond-m.details', $issuer)
+            ->with('success', 'Bond data uploaded successfully');
     }
 
     protected function validateBond(Request $request, Bond $bond = null)
@@ -544,6 +546,274 @@ class MakerController extends Controller
         ]);
     }
 
+    // Rating Movement Module
+    public function RatingMovementCreate(Bond $bond)
+    {
+        $bondInfo = $bond;
+        $bonds = Bond::active()->get();
+        return view('maker.rating-movement.create', compact('bonds', $bondInfo));
+    }
+
+    public function RatingMovementStore(Request $request)
+    {
+        $validated = $request->validate([
+            'bond_id' => 'required|exists:bonds,id',
+            'rating_agency' => 'required|string|max:100',
+            'effective_date' => 'required|date',
+            'rating_tenure' => 'required|string|max:50',
+            'rating' => 'required|string|max:50',
+            'rating_action' => 'required|string|max:50',
+            'rating_outlook' => 'required|string|max:50',
+            'rating_watch' => 'nullable|string|max:50',
+        ]);
+
+        try {
+            $rating = RatingMovement::create($validated);
+            return redirect()->route('bond-m.show', $rating->bond)->with('success', 'Rating movement created successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
+        }
+    }
+
+    public function RatingMovementShow(RatingMovement $rating)
+    {
+        $rating->load('bond.issuer');
+        return view('maker.rating-movement.show', compact('rating'));
+    }
+
+    public function RatingMovementEdit(RatingMovement $rating)
+    {
+        $bonds = Bond::active()->get();
+        return view('user.rating-movements.edit', compact('rating', 'bonds'));
+    }
+
+    public function RatingMovementUpdate(Request $request, RatingMovement $rating)
+    {
+        $validated = $request->validate([
+            'bond_id' => 'required|exists:bonds,id',
+            'rating_agency' => 'required|string|max:100',
+            'effective_date' => 'required|date',
+            'rating_tenure' => 'required|string|max:50',
+            'rating' => 'required|string|max:50',
+            'rating_action' => 'required|string|max:50',
+            'rating_outlook' => 'required|string|max:50',
+            'rating_watch' => 'nullable|string|max:50',
+        ]);
+
+        try {
+            $rating->update($validated);
+            return redirect()->route('bond-m.show', $rating->bond)->with('success', 'Rating movement updated successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
+        }
+    }
+
+    public function RatingMovementDestroy(RatingMovement $rating)
+    {
+        try {
+            $rating->delete();
+            return redirect()->route('dashboard')->with('success', 'Rating movement deleted successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
+        }
+    }
+
+    public function RatingMovementUploadForm(Bond $bond)
+    {
+        return view('maker.rating-movement.upload', compact('bond'));
+    }
+
+    public function RatingMovementUploadStore(Request $request, Bond $bond)
+    {
+        $file = $request->file('rating_movement_file');
+
+        Excel::import(new RatingMovementsImport, $file);
+
+        return redirect()
+            ->route('bond-m.show', $bond)
+            ->with('success', 'Rating Movements data uploaded successfully');
+    }
+
+    // Payment Schedule Module
+    public function PaymentScheduleCreate()
+    {
+        $bonds = Bond::active()->get();
+        return view('user.payment-schedules.create', compact('bonds'));
+    }
+
+    public function PaymentScheduleStore(Request $request)
+    {
+        $validated = $request->validate([
+            'bond_id' => 'required|exists:bonds,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'payment_date' => 'required|date',
+            'ex_date' => 'required|date',
+            'coupon_rate' => 'required|decimal:2|between:0,99.99',
+            'adjustment_date' => 'nullable|date',
+        ]);
+
+        try {
+            $paymentSchedule = PaymentSchedule::create($validated);
+            return redirect()->route('payment-schedules-info.show', $paymentSchedule)->with('success', 'Payment schedule created successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
+        }
+    }
+
+    public function PaymentScheduleShow(PaymentSchedule $payment_schedules_info)
+    {
+        $paymentSchedule = $payment_schedules_info;
+        $paymentSchedule->load('bond.issuer');
+        return view('user.payment-schedules.show', compact('paymentSchedule'));
+    }
+
+    public function PaymentScheduleEdit(PaymentSchedule $payment_schedules_info)
+    {
+        $paymentSchedule = $payment_schedules_info;
+        $bonds = Bond::active()->get();
+        return view('user.payment-schedules.edit', compact('paymentSchedule', 'bonds'));
+    }
+
+    public function PaymentScheduleUpdate(Request $request, PaymentSchedule $payment_schedules_info)
+    {
+        $paymentSchedule = $payment_schedules_info;
+        $validated = $request->validate([
+            'bond_id' => 'required|exists:bonds,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'payment_date' => 'required|date',
+            'ex_date' => 'required|date',
+            'coupon_rate' => 'required|decimal:2|between:0,99.99',
+            'adjustment_date' => 'nullable|date',
+        ]);
+
+        try{
+            $paymentSchedule->update($validated);
+            return redirect()->route('payment-schedules-info.show', $paymentSchedule)->with('success', 'Payment schedule updated successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
+        }
+    }
+
+    public function PaymentScheduleDestroy(PaymentSchedule $payment_schedules_info)
+    {
+        $paymentSchedule = $payment_schedules_info;
+
+        try {
+            $paymentSchedule->delete();
+            return redirect()->route('payment-schedules-info.index')>with('success', 'Payment schedule deleted successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
+        }
+    }
+
+    public function PaymentScheduleUploadForm(Bond $bond)
+    {
+        return view('maker.payment-schedule.upload', compact('bond'));
+    }
+
+    public function PaymentScheduleUploadStore(Request $request, Bond $bond)
+    {
+        $file = $request->file('payment_schedule_file');
+
+        Excel::import(new PaymentScheduleImport, $file);
+
+        return redirect()
+            ->route('bond-m.show', $bond)
+            ->with('success', 'Payment Schedule data uploaded successfully');
+    }
+
+    // Trading Activity Module
+    public function TradingActivityCreate()
+    {
+        $bonds = Bond::active()->get();
+        return view('make.trading-activity.create', compact('bonds'));
+    }
+
+    public function TradingActivityStore(Request $request)
+    {
+        $validated = $request->validate([
+            'bond_id' => 'required|exists:bonds,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'payment_date' => 'required|date',
+            'ex_date' => 'required|date',
+            'coupon_rate' => 'required|decimal:2|between:0,99.99',
+            'adjustment_date' => 'nullable|date',
+        ]);
+
+        try {
+            $paymentSchedule = PaymentSchedule::create($validated);
+            return redirect()->route('bond-m.show', $paymentSchedule->bond)->with('success', 'Payment schedule created successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
+        }
+    }
+
+    public function TradingActivityShow(PaymentSchedule $payment_schedules_info)
+    {
+        $paymentSchedule = $payment_schedules_info;
+        $paymentSchedule->load('bond.issuer');
+        return view('maker.trading-activity.show', compact('paymentSchedule'));
+    }
+
+    public function TradingActivityEdit(PaymentSchedule $payment_schedules_info)
+    {
+        $paymentSchedule = $payment_schedules_info;
+        $bonds = Bond::active()->get();
+        return view('maker.payment-schedules.edit', compact('paymentSchedule', 'bonds'));
+    }
+
+    public function TradingActivityUpdate(Request $request, PaymentSchedule $payment_schedules_info)
+    {
+        $paymentSchedule = $payment_schedules_info;
+        $validated = $request->validate([
+            'bond_id' => 'required|exists:bonds,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'payment_date' => 'required|date',
+            'ex_date' => 'required|date',
+            'coupon_rate' => 'required|decimal:2|between:0,99.99',
+            'adjustment_date' => 'nullable|date',
+        ]);
+
+        try{
+            $paymentSchedule->update($validated);
+            return redirect()->route('bond-m.show', $paymentSchedule->bond)->with('success', 'Payment schedule updated successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
+        }
+    }
+
+    public function TradingActivityDestroy(PaymentSchedule $payment_schedules_info)
+    {
+        $paymentSchedule = $payment_schedules_info;
+
+        try {
+            $paymentSchedule->delete();
+            return redirect()->route('dashboard')>with('success', 'Payment schedule deleted successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
+        }
+    }
+
+    public function TradingActivityUploadForm(Bond $bond)
+    {
+        return view('maker.trading-activity.upload', compact('bond'));
+    }
+
+    public function TradingActivityUploadStore(Request $request, Bond $bond)
+    {
+        $file = $request->file('trading_activity_file');
+
+        Excel::import(new TradingActivityImport, $file);
+
+        return redirect()
+            ->route('bond-m.show', $bond)
+            ->with('success', 'Trading Activity data uploaded successfully');
+    }
+
     // Trustee Fee
     public function TrusteeFeeCreate()
     {
@@ -588,7 +858,7 @@ class MakerController extends Controller
         return view('maker.trustee-fee.show', compact('trusteeFee'));
     }
 
-    public function destroy(TrusteeFee $trusteeFee)
+    public function TrusteeFeeDestroy(TrusteeFee $trusteeFee)
     {
         $trusteeFee->delete();
 

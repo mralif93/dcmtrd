@@ -68,7 +68,7 @@ class BondFormRequest extends FormRequest
             'facility_code' => 'nullable|string|max:255',
             
             // System info 
-            'status' => 'nullable|string|in:Active,Inactive,Pending,Matured',
+            'status' => 'nullable|string|in:Draft,Active,Inactive,Pending,Matured',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',

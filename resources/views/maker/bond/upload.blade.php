@@ -56,7 +56,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('bonds-info.upload-store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    <form action="{{ route('bond-m.upload-store', $issuer) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
 
                         <!-- File Selection Section -->

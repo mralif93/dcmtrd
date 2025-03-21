@@ -6,7 +6,7 @@
             </h2>
             
             <!-- Back Button -->
-            <a href="{{ route('bond-m.details', $bond) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
+            <a href="{{ route('bond-m.details', $bond->issuer) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -19,6 +19,21 @@
         <div x-data="{ openSection: 'bonds' }">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4 pb-6">
 
+                @if(session('success'))
+                    <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <h2 class="text-2xl font-bold">{{ $bond->bond_sukuk_name }} - {{ $bond->sub_name }}</h2>
                 <p>Issuer Name: {{ $bond->issuer->issuer_name }}</p>
 
@@ -30,9 +45,6 @@
                         </x-slot>
                         
                         <x-slot name="content">
-                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                                Bond Details
-                            </a>
                             <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                                 Rating Movement
                             </a>
@@ -54,16 +66,13 @@
                         </x-slot>
                         
                         <x-slot name="content">
-                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
-                                Bond Details
-                            </a>
-                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('rating-m.upload-form', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                                 Rating Movements
                             </a>
-                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('payment-m.upload-form', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                                 Payment Schedules
                             </a>
-                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('trading-m.upload-form', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                                 Trading Activities
                             </a>
                         </x-slot>
@@ -446,7 +455,7 @@
                     <button @click="openSection = openSection === 'redemption' ? null : 'redemption'" 
                             class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
                         <div class="flex justify-between items-center">
-                            <h3 class="text-xl font-semibold">Redemption</h3>
+                            <h3 class="text-xl font-semibold">Redemptions</h3>
                             <svg class="w-6 h-6 transform transition-transform" 
                                 :class="{ 'rotate-180': openSection === 'redemption' }" 
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -463,15 +472,15 @@
                                 <div class="space-y-4">
                                     <div class="grid grid-cols-2">
                                         <div class="font-medium">Allow Partial Call</div>
-                                        <div>{{ $bond->redemption->allow_partial_call ? 'Yes' : 'No' }}</div>
+                                        <div>{{ $bond->redemption?->allow_partial_call ? 'Yes' : 'No' }}</div>
                                     </div>
                                     <div class="grid grid-cols-2">
                                         <div class="font-medium">Last Call Date</div>
-                                        <div>{{ $bond->redemption->last_call_date ? $bond->redemption->last_call_date->format('d-M-Y') : '-' }}</div>
+                                        <div>{{ $bond->redemption?->last_call_date ? $bond->redemption->last_call_date->format('d-M-Y') : '-' }}</div>
                                     </div>
                                     <div class="grid grid-cols-2">
                                         <div class="font-medium">Redeem to Nearest Denomination</div>
-                                        <div>{{ $bond->redemption->redeem_nearest_denomination ? 'Yes' : 'No' }}</div>
+                                        <div>{{ $bond->redemption?->redeem_nearest_denomination ? 'Yes' : 'No' }}</div>
                                     </div>
                                 </div>
                             </div>

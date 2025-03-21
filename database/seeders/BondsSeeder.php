@@ -13,2954 +13,792 @@ class BondsSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed Issuers
+        // Seed Issuers with new data
         $issuers = [
-            [
-                'issuer_short_name' => 'ABMB',
-                'issuer_name' => 'Alliance Bank Malaysia Berhad',
-                'registration_number' => '198201008390',
-                'debenture' => 'Fixed Rate Subordinated Notes',
-                'trustee_role_1' => 'Bond Trustee',
-                'trustee_role_2' => 'Security Trustee',
-                'trust_deed_date' => '2023-01-20',
-                'trust_amount_escrow_sum' => '500000000.00',
-                'no_of_share' => '1000000',
-                'outstanding_size' => '500000000.00',
-                'status' => 'Pending',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => 'Sarah Abdullah',
-                'remarks' => 'Major local bank issuer with good compliance history',
-                'approval_datetime' => '2023-01-15 10:30:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_short_name' => 'CIMB',
-                'issuer_name' => 'CIMB Bank Berhad',
-                'registration_number' => '197201001799',
-                'debenture' => 'Medium Term Notes',
-                'trustee_role_1' => 'Bond Trustee',
-                'trustee_role_2' => 'Security Trustee',
-                'trust_deed_date' => '2022-11-05',
-                'trust_amount_escrow_sum' => '750000000.00',
-                'no_of_share' => '1500000',
-                'outstanding_size' => '750000000.00',
-                'status' => 'Active',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Regional bank with strong credit rating',
-                'approval_datetime' => '2022-10-20 14:15:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_short_name' => 'MBB',
-                'issuer_name' => 'Maybank Berhad',
-                'registration_number' => '196001000142',
-                'debenture' => 'Sukuk Wakalah',
-                'trustee_role_1' => 'Sukuk Trustee',
-                'trustee_role_2' => 'Security Trustee',
-                'trust_deed_date' => '2023-06-15',
-                'trust_amount_escrow_sum' => '1000000000.00',
-                'no_of_share' => '2000000',
-                'outstanding_size' => '1000000000.00',
-                'status' => 'Active',
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => 'Amir Hassan',
-                'remarks' => 'Largest bank in Malaysia with Islamic finance expertise',
-                'approval_datetime' => '2023-06-10 09:45:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_short_name' => 'PBB',
-                'issuer_name' => 'Public Bank Berhad',
-                'registration_number' => '196501000672',
-                'debenture' => 'Senior Notes',
-                'trustee_role_1' => 'Bond Trustee',
-                'trustee_role_2' => 'Security Trustee',
-                'trust_deed_date' => '2024-01-10',
-                'trust_amount_escrow_sum' => '600000000.00',
-                'no_of_share' => '1200000',
-                'outstanding_size' => '600000000.00',
-                'status' => 'Draft',
-                'prepared_by' => 'Kamal Ibrahim',
-                'verified_by' => null,
-                'remarks' => 'Conservative bank with strong retail presence, initial documentation',
-                'approval_datetime' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_short_name' => 'HLB',
-                'issuer_name' => 'Hong Leong Bank Berhad',
-                'registration_number' => '193401000023',
-                'debenture' => 'Medium Term Notes',
-                'trustee_role_1' => 'Bond Trustee',
-                'trustee_role_2' => 'Security Trustee',
-                'trust_deed_date' => '2023-03-25',
-                'trust_amount_escrow_sum' => '450000000.00',
-                'no_of_share' => '900000',
-                'outstanding_size' => '450000000.00',
-                'status' => 'Inactive',
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'remarks' => 'Part of Hong Leong Group conglomerate, discontinued program',
-                'approval_datetime' => '2023-03-20 13:40:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_short_name' => 'RHB',
-                'issuer_name' => 'RHB Bank Berhad',
-                'registration_number' => '196501000373',
-                'debenture' => 'Corporate Bonds',
-                'trustee_role_1' => 'Bond Trustee',
-                'trustee_role_2' => 'Security Trustee',
-                'trust_deed_date' => '2024-02-15',
-                'trust_amount_escrow_sum' => '800000000.00',
-                'no_of_share' => '1600000',
-                'outstanding_size' => '0.00',
-                'status' => 'Draft',
-                'prepared_by' => 'Nurul Izzah',
-                'verified_by' => null,
-                'remarks' => 'Initial draft of new program documentation',
-                'approval_datetime' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            ['issuer_short_name' => 'PIBB', 'issuer_name' => 'PUBLIC ISLAMIC BANK BERHAD', 'registration_number' => '14328-V'],
+            ['issuer_short_name' => 'RHBBANK', 'issuer_name' => 'RHB BANK BERHAD', 'registration_number' => '006171M'],
+            ['issuer_short_name' => 'JEP', 'issuer_name' => 'JIMAH EAST POWER SDN BHD', 'registration_number' => '1053111D'],
+            ['issuer_short_name' => 'SUNREIT MTN', 'issuer_name' => 'SUNREIT UNRATED BOND BERHAD', 'registration_number' => '977739X'],
+            ['issuer_short_name' => 'PRASARANA', 'issuer_name' => 'PRASARANA MALAYSIA BERHAD', 'registration_number' => '467220U'],
+            ['issuer_short_name' => 'SPG', 'issuer_name' => 'SOUTHERN POWER GENERATION SDN BHD', 'registration_number' => '1198060T'],
+            ['issuer_short_name' => 'PUBLIC', 'issuer_name' => 'PUBLIC BANK BERHAD', 'registration_number' => '006463H'],
+            ['issuer_short_name' => 'RHBA', 'issuer_name' => 'RHB ISLAMIC BANK BERHAD', 'registration_number' => '680329A'],
+            ['issuer_short_name' => 'MENARA ABS', 'issuer_name' => 'MENARA ABS BERHAD', 'registration_number' => '669499-X'],
+            ['issuer_short_name' => 'MALAKOFF POW', 'issuer_name' => 'MALAKOFF POWER BERHAD', 'registration_number' => '909003H'],
+            ['issuer_short_name' => 'SUKE', 'issuer_name' => 'PROJEK LINTASAN SUNGAI BESI-ULU KLANG SDN. BHD.', 'registration_number' => '942090U'],
+            ['issuer_short_name' => 'PNBMV', 'issuer_name' => 'PNB MERDEKA VENTURES SDN. BERHAD', 'registration_number' => '517991A'],
+            ['issuer_short_name' => 'TRUE ASCEND', 'issuer_name' => 'TRUE ASCEND SDN BHD', 'registration_number' => '1232851P'],
+            ['issuer_short_name' => 'RADIMAX', 'issuer_name' => 'RADIMAX GROUP SDN BHD', 'registration_number' => '219269-W'],
+            ['issuer_short_name' => 'CENDANA', 'issuer_name' => 'CENDANA SEJATI SDN BHD', 'registration_number' => '1051796P'],
+            ['issuer_short_name' => 'PLSA', 'issuer_name' => 'PROJEK LINTASAN SHAH ALAM SDN BHD', 'registration_number' => '654187M'],
+            ['issuer_short_name' => 'MASTEEL', 'issuer_name' => 'MALAYSIA STEEL WORKS (KL) BHD', 'registration_number' => '007878V'],
+            ['issuer_short_name' => 'BRECON', 'issuer_name' => 'BRECON SYNERGY SDN BHD', 'registration_number' => '1161345M'],
+            ['issuer_short_name' => 'AZRB CAPITAL', 'issuer_name' => 'AZRB CAPITAL SDN BHD', 'registration_number' => '1333273A'],
+            ['issuer_short_name' => 'AEON', 'issuer_name' => 'AEON CREDIT SERVICE (M) BERHAD', 'registration_number' => '412767-V'],
+            ['issuer_short_name' => 'TG EXCEL', 'issuer_name' => 'TG EXCELLENCE BERHAD', 'registration_number' => '201901033302'],
+            ['issuer_short_name' => 'HUME', 'issuer_name' => 'HUME CEMENT INDUSTRIES BERHAD', 'registration_number' => '198001008443'],
+            ['issuer_short_name' => 'FELDA', 'issuer_name' => 'FEDERAL LAND DEVELOPMENT AUTHORITY', 'registration_number' => '0'],
+            ['issuer_short_name' => 'CCB', 'issuer_name' => 'CELLCO CAPITAL BERHAD', 'registration_number' => '1388008K'],
+            ['issuer_short_name' => 'OSK RATED', 'issuer_name' => 'OSK RATED BOND SDN. BHD.', 'registration_number' => '1382748P'],
+            ['issuer_short_name' => 'KULIM TECH', 'issuer_name' => 'KULIM TECHNOLOGY PARK CORPORATION SDN.BHD.', 'registration_number' => '044351D'],
+            ['issuer_short_name' => 'MDV', 'issuer_name' => 'MALAYSIA DEBT VENTURES BERHAD', 'registration_number' => '578113-A'],
+            ['issuer_short_name' => 'TNBPGSB', 'issuer_name' => 'TNB POWER GENERATION SDN. BHD.', 'registration_number' => '1336401D'],
+            ['issuer_short_name' => 'TSM', 'issuer_name' => 'THP SURIA MEKAR SDN BHD', 'registration_number' => '419456K'],
+            ['issuer_short_name' => 'EMSB', 'issuer_name' => 'EDOTCO MALAYSIA SDN. BHD.', 'registration_number' => '198501016343'],
+            ['issuer_short_name' => 'ALAMFLORA', 'issuer_name' => 'ALAM FLORA SDN BHD', 'registration_number' => '789345-EE'],
+            ['issuer_short_name' => 'KUSB', 'issuer_name' => 'KWASA UTAMA SDN BHD', 'registration_number' => '201401013872'],
+            ['issuer_short_name' => 'WORLJWTE', 'issuer_name' => 'WORLWIDE JERAM WTE SDN BHD', 'registration_number' => '567890-GG'],
+            ['issuer_short_name' => 'WORLDGREEN', 'issuer_name' => 'WORLDWIDE ENVIROGREEN SDN BHD', 'registration_number' => '678901-HH'],
+            ['issuer_short_name' => 'UEM OLIVE', 'issuer_name' => 'UEM OLIVE CAPITAL BERHAD', 'registration_number' => '202301021212'],
+            ['issuer_short_name' => 'SDESB', 'issuer_name' => 'SIME DARBY ENTERPRISE SDN. BHD.', 'registration_number' => '202301022601'],
+            ['issuer_short_name' => 'GECM', 'issuer_name' => 'GREAT EASTERN CAPITAL (MALAYSIA) SDN BHD', 'registration_number' => '196601000153'],
+            ['issuer_short_name' => 'BLBRSB', 'issuer_name' => 'BERJAYA LANGKAWI BEACH RESORT SDN BHD', 'registration_number' => '232483P'],
+            ['issuer_short_name' => 'PANTAI', 'issuer_name' => 'PANTAI HOLDINGS SDN BHD', 'registration_number' => '197201000211'],
+            ['issuer_short_name' => 'KIM LOONG', 'issuer_name' => 'KIM LOONG RESOURCES BERHAD', 'registration_number' => '197501000991'],
+            ['issuer_short_name' => 'TDM', 'issuer_name' => 'TDM BERHAD', 'registration_number' => '196501000477'],
         ];
 
-        DB::table('issuers')->insert($issuers);
+        $issuersData = [];
+        foreach ($issuers as $issuer) {
+            $issuersData[] = [
+                'issuer_short_name' => $issuer['issuer_short_name'],
+                'issuer_name' => $issuer['issuer_name'],
+                'registration_number' => $issuer['registration_number'],
+                'debenture' => 'Medium Term Notes', // Default debenture type
+                'trustee_role_1' => 'Bond Trustee',
+                'trustee_role_2' => 'Security Trustee',
+                'trust_deed_date' => Carbon::now()->subMonths(rand(1, 24))->format('Y-m-d'), // Random past date
+                'trust_amount_escrow_sum' => rand(500000000, 1000000000) . '.00',
+                'no_of_share' => rand(1000000, 2000000),
+                'outstanding_size' => rand(500000000, 1000000000) . '.00',
+                'status' => 'Active',
+                'prepared_by' => 'System',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Auto-generated issuer data',
+                'approval_datetime' => Carbon::now()->subDays(rand(10, 60))->format('Y-m-d H:i:s'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
 
-        // Seed Bonds
-        $bonds = [
-            [
-                'bond_sukuk_name' => 'ABMB Subordinated Notes Series 1',
-                'sub_name' => 'Series 1',
-                'rating' => 'AA3',
-                'category' => 'Conventional',
-                'principal' => '500000000',
-                'isin_code' => 'MYA1000001',
-                'stock_code' => 'ABMB01',
-                'instrument_code' => 'ABM0125',
-                'sub_category' => 'Subordinated Notes',
-                'issue_date' => '2020-02-10',
-                'maturity_date' => '2030-02-10',
-                'coupon_rate' => 4.5000,
-                'coupon_type' => 'Fixed',
-                'coupon_frequency' => 'Semi-annual',
-                'day_count' => 'Actual/365',
-                'issue_tenure_years' => 10.0000,
-                'residual_tenure_years' => 5.0033,
-                'last_traded_yield' => 4.25,
-                'last_traded_price' => 101.50,
-                'last_traded_amount' => 5000000.00,
-                'last_traded_date' => '2025-02-01',
-                'coupon_accrual' => '2025-02-01',
-                'prev_coupon_payment_date' => '2024-08-10',
-                'first_coupon_payment_date' => '2020-08-10',
-                'next_coupon_payment_date' => '2025-02-10',
-                'last_coupon_payment_date' => '2030-02-10',
-                'amount_issued' => 500000000.00,
-                'amount_outstanding' => 500000000.00,
-                'lead_arranger' => 'Alliance Investment Bank',
-                'facility_agent' => 'Alliance Investment Bank',
-                'facility_code' => 'ABM-001',
-                'status' => 'Active',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => 'Sarah Abdullah',
-                'remarks' => 'Tier 2 capital instrument',
-                'approval_datetime' => '2020-01-15 10:30:00',
-                'issuer_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'bond_sukuk_name' => 'CIMB MTN Program 2022',
-                'sub_name' => 'Series 2',
-                'rating' => 'AAA',
-                'category' => 'Conventional',
-                'principal' => '750000000',
-                'isin_code' => 'MYA1000002',
-                'stock_code' => 'CIMB01',
-                'instrument_code' => 'CMB0227',
-                'sub_category' => 'Medium Term Notes',
-                'issue_date' => '2022-11-15',
-                'maturity_date' => '2027-11-15',
-                'coupon_rate' => 4.2500,
-                'coupon_type' => 'Fixed',
-                'coupon_frequency' => 'Quarterly',
-                'day_count' => 'Actual/365',
-                'issue_tenure_years' => 5.0000,
-                'residual_tenure_years' => 2.6890,
-                'last_traded_yield' => 4.10,
-                'last_traded_price' => 102.00,
-                'last_traded_amount' => 10000000.00,
-                'last_traded_date' => '2025-01-15',
-                'coupon_accrual' => '2025-01-15',
-                'prev_coupon_payment_date' => '2024-11-15',
-                'first_coupon_payment_date' => '2023-02-15',
-                'next_coupon_payment_date' => '2025-02-15',
-                'last_coupon_payment_date' => '2027-11-15',
-                'amount_issued' => 750000000.00,
-                'amount_outstanding' => 750000000.00,
-                'lead_arranger' => 'CIMB Investment Bank',
-                'facility_agent' => 'CIMB Investment Bank',
-                'facility_code' => 'CIMB-001',
-                'status' => 'Active',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Part of bank funding program',
-                'approval_datetime' => '2022-10-20 14:15:00',
-                'issuer_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'bond_sukuk_name' => 'Maybank Sukuk Wakalah 2023',
-                'sub_name' => 'Series 1',
-                'rating' => 'AAA',
-                'category' => 'Islamic',
-                'principal' => '1000000000',
-                'isin_code' => 'MYA1000003',
-                'stock_code' => 'MYBK01',
-                'instrument_code' => 'MBB0633',
-                'sub_category' => 'Sukuk Wakalah',
-                'issue_date' => '2023-06-30',
-                'maturity_date' => '2033-06-30',
-                'coupon_rate' => 5.0000,
-                'coupon_type' => 'Fixed',
-                'coupon_frequency' => 'Semi-annual',
-                'day_count' => 'Actual/365',
-                'issue_tenure_years' => 10.0000,
-                'residual_tenure_years' => 8.3890,
-                'last_traded_yield' => 4.95,
-                'last_traded_price' => 100.50,
-                'last_traded_amount' => 15000000.00,
-                'last_traded_date' => '2025-01-20',
-                'coupon_accrual' => '2025-01-20',
-                'prev_coupon_payment_date' => '2024-12-30',
-                'first_coupon_payment_date' => '2023-12-30',
-                'next_coupon_payment_date' => '2025-06-30',
-                'last_coupon_payment_date' => '2033-06-30',
-                'amount_issued' => 1000000000.00,
-                'amount_outstanding' => 1000000000.00,
-                'lead_arranger' => 'Maybank Investment Bank',
-                'facility_agent' => 'Maybank Investment Bank',
-                'facility_code' => 'MBB-001',
-                'status' => 'Active',
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => 'Amir Hassan',
-                'remarks' => 'Shariah-compliant funding instrument',
-                'approval_datetime' => '2023-06-10 09:45:00',
-                'issuer_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'bond_sukuk_name' => 'Public Bank Senior Notes 2024',
-                'sub_name' => 'Series 1',
-                'rating' => 'AA1',
-                'category' => 'Conventional',
-                'principal' => '600000000',
-                'isin_code' => 'MYA1000004',
-                'stock_code' => 'PBB01',
-                'instrument_code' => 'PBB0129',
-                'sub_category' => 'Senior Notes',
-                'issue_date' => '2024-01-15',
-                'maturity_date' => '2029-01-15',
-                'coupon_rate' => 4.7500,
-                'coupon_type' => 'Fixed',
-                'coupon_frequency' => 'Semi-annual',
-                'day_count' => 'Actual/365',
-                'issue_tenure_years' => 5.0000,
-                'residual_tenure_years' => 3.8219,
-                'last_traded_yield' => 4.65,
-                'last_traded_price' => 101.25,
-                'last_traded_amount' => 8000000.00,
-                'last_traded_date' => '2025-01-10',
-                'coupon_accrual' => '2025-01-10',
-                'prev_coupon_payment_date' => '2024-07-15',
-                'first_coupon_payment_date' => '2024-07-15',
-                'next_coupon_payment_date' => '2025-01-15',
-                'last_coupon_payment_date' => '2029-01-15',
-                'amount_issued' => 600000000.00,
-                'amount_outstanding' => 600000000.00,
-                'lead_arranger' => 'Public Investment Bank',
-                'facility_agent' => 'Public Investment Bank',
-                'facility_code' => 'PBB-001',
-                'status' => 'Pending',
-                'prepared_by' => 'Kamal Ibrahim',
-                'verified_by' => 'Mei Ling Tan',
-                'remarks' => 'Pending regulatory approval',
-                'approval_datetime' => null,
-                'issuer_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'bond_sukuk_name' => 'CIMB MTN Program 2022',
-                'sub_name' => 'Series 3',
-                'rating' => 'AAA',
-                'category' => 'Conventional',
-                'principal' => '500000000',
-                'isin_code' => 'MYA1000005',
-                'stock_code' => 'CIMB02',
-                'instrument_code' => 'CMB0327',
-                'sub_category' => 'Medium Term Notes',
-                'issue_date' => '2023-03-20',
-                'maturity_date' => '2027-03-20',
-                'coupon_rate' => 4.3500,
-                'coupon_type' => 'Fixed',
-                'coupon_frequency' => 'Quarterly',
-                'day_count' => 'Actual/365',
-                'issue_tenure_years' => 4.0000,
-                'residual_tenure_years' => 2.0027,
-                'last_traded_yield' => 4.20,
-                'last_traded_price' => 101.80,
-                'last_traded_amount' => 7500000.00,
-                'last_traded_date' => '2024-12-15',
-                'coupon_accrual' => '2024-12-15',
-                'prev_coupon_payment_date' => '2024-12-20',
-                'first_coupon_payment_date' => '2023-06-20',
-                'next_coupon_payment_date' => '2025-03-20',
-                'last_coupon_payment_date' => '2027-03-20',
-                'amount_issued' => 500000000.00,
-                'amount_outstanding' => 500000000.00,
-                'lead_arranger' => 'CIMB Investment Bank',
-                'facility_agent' => 'CIMB Investment Bank',
-                'facility_code' => 'CIMB-001',
-                'status' => 'Maturing',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Approaching final maturity',
-                'approval_datetime' => '2023-03-10 09:30:00',
-                'issuer_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'bond_sukuk_name' => 'Hong Leong MTN 2023',
-                'sub_name' => 'Series 1',
-                'rating' => 'AA2',
-                'category' => 'Conventional',
-                'principal' => '450000000',
-                'isin_code' => 'MYA1000006',
-                'stock_code' => 'HLB01',
-                'instrument_code' => 'HLB0328',
-                'sub_category' => 'Medium Term Notes',
-                'issue_date' => '2023-03-30',
-                'maturity_date' => '2028-03-30',
-                'coupon_rate' => 4.5000,
-                'coupon_type' => 'Fixed',
-                'coupon_frequency' => 'Annual',
-                'day_count' => 'Actual/365',
-                'issue_tenure_years' => 5.0000,
-                'residual_tenure_years' => 3.0301,
-                'last_traded_yield' => 4.40,
-                'last_traded_price' => 100.75,
-                'last_traded_amount' => 5500000.00,
-                'last_traded_date' => '2024-11-25',
-                'coupon_accrual' => '2024-11-25',
-                'prev_coupon_payment_date' => '2024-03-30',
-                'first_coupon_payment_date' => '2024-03-30',
-                'next_coupon_payment_date' => '2025-03-30',
-                'last_coupon_payment_date' => '2028-03-30',
-                'amount_issued' => 450000000.00,
-                'amount_outstanding' => 450000000.00,
-                'lead_arranger' => 'Hong Leong Investment Bank',
-                'facility_agent' => 'Hong Leong Investment Bank',
-                'facility_code' => 'HLB-001',
-                'status' => 'Redeemed',
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'remarks' => 'Early redemption exercised',
-                'approval_datetime' => '2023-03-20 13:40:00',
-                'issuer_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'bond_sukuk_name' => 'Maybank Sukuk Wakalah 2023',
-                'sub_name' => 'Series 2',
-                'rating' => 'AAA',
-                'category' => 'Islamic',
-                'principal' => '750000000',
-                'isin_code' => 'MYA1000007',
-                'stock_code' => 'MYBK02',
-                'instrument_code' => 'MBB0828',
-                'sub_category' => 'Sukuk Wakalah',
-                'issue_date' => '2023-08-15',
-                'maturity_date' => '2028-08-15',
-                'coupon_rate' => 4.8000,
-                'coupon_type' => 'Fixed',
-                'coupon_frequency' => 'Semi-annual',
-                'day_count' => 'Actual/365',
-                'issue_tenure_years' => 5.0000,
-                'residual_tenure_years' => 3.4110,
-                'last_traded_yield' => 4.75,
-                'last_traded_price' => 100.30,
-                'last_traded_amount' => 12000000.00,
-                'last_traded_date' => '2024-12-05',
-                'coupon_accrual' => '2024-12-05',
-                'prev_coupon_payment_date' => '2024-08-15',
-                'first_coupon_payment_date' => '2024-02-15',
-                'next_coupon_payment_date' => '2025-02-15',
-                'last_coupon_payment_date' => '2028-08-15',
-                'amount_issued' => 750000000.00,
-                'amount_outstanding' => 750000000.00,
-                'lead_arranger' => 'Maybank Investment Bank',
-                'facility_agent' => 'Maybank Investment Bank',
-                'facility_code' => 'MBB-002',
-                'status' => 'Suspended',
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => 'Amir Hassan',
-                'remarks' => 'Trading temporarily suspended pending corporate announcement',
-                'approval_datetime' => '2023-08-01 14:20:00',
-                'issuer_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'bond_sukuk_name' => 'Public Bank Senior Notes 2024',
-                'sub_name' => 'Series 2',
-                'rating' => 'AA1',
-                'category' => 'Conventional',
-                'principal' => '400000000',
-                'isin_code' => 'MYA1000008',
-                'stock_code' => 'PBB02',
-                'instrument_code' => 'PBB0126',
-                'sub_category' => 'Senior Notes',
-                'issue_date' => null,
-                'maturity_date' => null,
-                'coupon_rate' => 4.8500,
-                'coupon_type' => 'Fixed',
-                'coupon_frequency' => 'Semi-annual',
-                'day_count' => 'Actual/365',
-                'issue_tenure_years' => 2.0000,
-                'residual_tenure_years' => null,
-                'last_traded_yield' => null,
-                'last_traded_price' => null,
-                'last_traded_amount' => null,
-                'last_traded_date' => null,
-                'coupon_accrual' => null,
-                'prev_coupon_payment_date' => null,
-                'first_coupon_payment_date' => null,
-                'next_coupon_payment_date' => null,
-                'last_coupon_payment_date' => null,
-                'amount_issued' => 400000000.00,
-                'amount_outstanding' => 0.00,
-                'lead_arranger' => 'Public Investment Bank',
-                'facility_agent' => 'Public Investment Bank',
-                'facility_code' => 'PBB-001',
-                'status' => 'Draft',
-                'prepared_by' => 'Kamal Ibrahim',
-                'verified_by' => null,
-                'remarks' => 'Initial documentation for new issuance',
-                'approval_datetime' => null,
-                'issuer_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'bond_sukuk_name' => 'Alliance Bank Tier 2 Notes',
-                'sub_name' => 'Series 2',
-                'rating' => 'AA3',
-                'category' => 'Conventional',
-                'principal' => '300000000',
-                'isin_code' => 'MYA1000009',
-                'stock_code' => 'ABMB02',
-                'instrument_code' => 'ABM0230',
-                'sub_category' => 'Subordinated Notes',
-                'issue_date' => null,
-                'maturity_date' => null,
-                'coupon_rate' => 4.7500,
-                'coupon_type' => 'Fixed',
-                'coupon_frequency' => 'Semi-annual',
-                'day_count' => 'Actual/365',
-                'issue_tenure_years' => 7.0000,
-                'residual_tenure_years' => null,
-                'last_traded_yield' => null,
-                'last_traded_price' => null,
-                'last_traded_amount' => null,
-                'last_traded_date' => null,
-                'coupon_accrual' => null,
-                'prev_coupon_payment_date' => null,
-                'first_coupon_payment_date' => null,
-                'next_coupon_payment_date' => null,
-                'last_coupon_payment_date' => null,
-                'amount_issued' => 0.00,
-                'amount_outstanding' => 0.00,
-                'lead_arranger' => 'Alliance Investment Bank',
-                'facility_agent' => 'Alliance Investment Bank',
-                'facility_code' => 'ABM-001',
-                'status' => 'Draft',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => null,
-                'remarks' => 'Draft documentation for second series',
-                'approval_datetime' => null,
-                'issuer_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'bond_sukuk_name' => 'CIMB MTN Program 2022',
-                'sub_name' => 'Series 1',
-                'rating' => 'AAA',
-                'category' => 'Conventional',
-                'principal' => '650000000',
-                'isin_code' => 'MYA1000010',
-                'stock_code' => 'CIMB03',
-                'instrument_code' => 'CMB0225',
-                'sub_category' => 'Medium Term Notes',
-                'issue_date' => '2022-12-15',
-                'maturity_date' => '2025-12-15',
-                'coupon_rate' => 4.1000,
-                'coupon_type' => 'Fixed',
-                'coupon_frequency' => 'Quarterly',
-                'day_count' => 'Actual/365',
-                'issue_tenure_years' => 3.0000,
-                'residual_tenure_years' => 0.7397,
-                'last_traded_yield' => 4.05,
-                'last_traded_price' => 100.05,
-                'last_traded_amount' => 9500000.00,
-                'last_traded_date' => '2025-01-05',
-                'coupon_accrual' => '2025-01-05',
-                'prev_coupon_payment_date' => '2024-12-15',
-                'first_coupon_payment_date' => '2023-03-15',
-                'next_coupon_payment_date' => '2025-03-15',
-                'last_coupon_payment_date' => '2025-12-15',
-                'amount_issued' => 650000000.00,
-                'amount_outstanding' => 650000000.00,
-                'lead_arranger' => 'CIMB Investment Bank',
-                'facility_agent' => 'CIMB Investment Bank',
-                'facility_code' => 'CIMB-001',
-                'status' => 'Defaulted',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Technical default on covenant requirements',
-                'approval_datetime' => '2022-12-01 11:30:00',
-                'issuer_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        DB::table('issuers')->insert($issuersData);
+
+        // Create a sample bond for each issuer
+        $bonds = [];
+        $issuerIds = DB::table('issuers')->pluck('id', 'issuer_short_name')->toArray();
+        
+        // Define categories and sub-categories for bonds
+        $categories = ['Conventional', 'Islamic', 'Green Bond', 'Sukuk'];
+        $subCategories = [
+            'Medium Term Notes', 'Senior Notes', 'Subordinated Notes', 
+            'Sukuk Wakalah', 'Sukuk Murabahah', 'Green Sukuk',
+            'Corporate Bonds', 'Perpetual Bonds'
         ];
+        $statuses = ['Active', 'Pending', 'Maturing', 'Redeemed', 'Suspended', 'Draft', 'Defaulted'];
+        $ratings = ['AAA', 'AA1', 'AA2', 'AA3', 'A1', 'A2', 'A3', 'BBB1', 'BBB2', 'BBB3'];
+        $couponTypes = ['Fixed', 'Floating', 'Zero Coupon', 'Step-up'];
+        $couponFrequencies = ['Annual', 'Semi-annual', 'Quarterly', 'Monthly'];
+        
+        $bondCount = 1; // Counter for bond IDs
+        
+        foreach ($issuerIds as $shortName => $issuerId) {
+            // Generate 1-3 bonds per issuer
+            $numBonds = rand(1, 3);
+            
+            for ($i = 0; $i < $numBonds; $i++) {
+                $issueYear = rand(2020, 2024);
+                $issueMonth = rand(1, 12);
+                $issueDay = rand(1, 28);
+                $issueDate = "$issueYear-" . sprintf("%02d", $issueMonth) . "-" . sprintf("%02d", $issueDay);
+                
+                $tenor = rand(3, 15); // 3 to 15 year tenor
+                $maturityDate = Carbon::parse($issueDate)->addYears($tenor)->format('Y-m-d');
+                $currentDate = Carbon::now();
+                $residualTenor = Carbon::parse($issueDate)->diffInDays($maturityDate) / 365.0;
+                
+                $category = $categories[array_rand($categories)];
+                $subCategory = $subCategories[array_rand($subCategories)];
+                
+                if ($category == 'Islamic' || $category == 'Sukuk') {
+                    // Make sure Islamic bonds get Islamic sub-categories
+                    $subCategory = in_array($subCategory, ['Sukuk Wakalah', 'Sukuk Murabahah', 'Green Sukuk']) 
+                        ? $subCategory : 'Sukuk Wakalah';
+                }
+                
+                $couponRate = (rand(300, 650) / 100); // 3.00% to 6.50%
+                $principal = rand(3, 10) * 100000000; // 300M to 1B
+                
+                $status = $statuses[array_rand($statuses)];
+                // Set more recent bonds as active or pending
+                if ($issueYear >= 2023) {
+                    $status = rand(0, 1) ? 'Active' : 'Pending';
+                }
+                
+                // Generate ISIN and stock codes
+                $isinCode = 'MYA' . (1000000 + $bondCount);
+                $stockCode = substr($shortName, 0, 4) . sprintf("%02d", $i + 1);
+                $instrumentCode = substr($shortName, 0, 3) . sprintf("%02d", $issueMonth) . substr($maturityDate, 2, 2);
+                
+                $bonds[] = [
+                    'bond_sukuk_name' => $shortName . ' ' . $subCategory . ' ' . $issueYear,
+                    'sub_name' => 'Series ' . ($i + 1),
+                    'rating' => $ratings[array_rand($ratings)],
+                    'category' => $category,
+                    'principal' => $principal,
+                    'isin_code' => $isinCode,
+                    'stock_code' => $stockCode,
+                    'instrument_code' => $instrumentCode,
+                    'sub_category' => $subCategory,
+                    'issue_date' => $issueDate,
+                    'maturity_date' => $maturityDate,
+                    'coupon_rate' => $couponRate,
+                    'coupon_type' => $couponTypes[array_rand($couponTypes)],
+                    'coupon_frequency' => $couponFrequencies[array_rand($couponFrequencies)],
+                    'day_count' => 'Actual/365',
+                    'issue_tenure_years' => $tenor,
+                    'residual_tenure_years' => $residualTenor,
+                    'last_traded_yield' => $couponRate - (rand(-30, 30) / 100), // Random spread around coupon
+                    'last_traded_price' => 100 + (rand(-200, 200) / 100), // 98.00 to 102.00
+                    'last_traded_amount' => rand(5, 20) * 1000000, // 5M to 20M
+                    'last_traded_date' => Carbon::now()->subDays(rand(1, 60))->format('Y-m-d'),
+                    'coupon_accrual' => Carbon::now()->subDays(rand(1, 90))->format('Y-m-d'),
+                    'prev_coupon_payment_date' => Carbon::parse($issueDate)->addMonths($i * 3)->format('Y-m-d'),
+                    'first_coupon_payment_date' => Carbon::parse($issueDate)->addMonths(6)->format('Y-m-d'),
+                    'next_coupon_payment_date' => Carbon::now()->addMonths(rand(1, 6))->format('Y-m-d'),
+                    'last_coupon_payment_date' => $maturityDate,
+                    'amount_issued' => $principal,
+                    'amount_outstanding' => $status == 'Redeemed' ? 0 : $principal,
+                    'lead_arranger' => $shortName . ' Investment Bank',
+                    'facility_agent' => $shortName . ' Investment Bank',
+                    'facility_code' => $shortName . '-00' . ($i + 1),
+                    'status' => $status,
+                    'prepared_by' => 'System',
+                    'verified_by' => 'System Verifier',
+                    'remarks' => 'Auto-generated bond data',
+                    'approval_datetime' => Carbon::now()->subDays(rand(10, 60))->format('Y-m-d H:i:s'),
+                    'issuer_id' => $issuerId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+                
+                $bondCount++;
+            }
+        }
 
         DB::table('bonds')->insert($bonds);
 
-        // Seed Rating Movements
-        $ratingMovements = [
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2024-01-15',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AA3',
-                'rating_action' => 'Affirmed',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2023-01-20',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AA3',
-                'rating_action' => 'New',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'MARC',
-                'effective_date' => '2024-02-20',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AAA',
-                'rating_action' => 'Affirmed',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'MARC',
-                'effective_date' => '2023-02-15',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AAA',
-                'rating_action' => 'Affirmed',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'MARC',
-                'effective_date' => '2022-11-25',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AAA',
-                'rating_action' => 'New',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2024-07-05',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AAA',
-                'rating_action' => 'Affirmed',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2023-07-10',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AAA',
-                'rating_action' => 'New',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2024-02-10',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AA1',
-                'rating_action' => 'New',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'MARC',
-                'effective_date' => '2024-04-15',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AAA',
-                'rating_action' => 'Affirmed',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'MARC',
-                'effective_date' => '2023-04-20',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AAA',
-                'rating_action' => 'New',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2024-05-20',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AA2',
-                'rating_action' => 'Downgraded',
-                'rating_outlook' => 'Negative',
-                'rating_watch' => 'None',
-                'bond_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2023-06-15',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AA1',
-                'rating_action' => 'New',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2024-09-10',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AAA',
-                'rating_action' => 'Affirmed',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'Developing',
-                'bond_id' => 7,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2023-09-05',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AAA',
-                'rating_action' => 'New',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 7,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2024-12-10',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AA-',
-                'rating_action' => 'Downgraded',
-                'rating_outlook' => 'Negative',
-                'rating_watch' => 'Negative',
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2024-06-15',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'A+',
-                'rating_action' => 'Downgraded',
-                'rating_outlook' => 'Negative',
-                'rating_watch' => 'None',
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2023-12-20',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AA-',
-                'rating_action' => 'Downgraded',
-                'rating_outlook' => 'Negative',
-                'rating_watch' => 'None',
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'rating_agency' => 'RAM',
-                'effective_date' => '2022-12-15',
-                'rating_tenure' => 'Long Term',
-                'rating' => 'AA+',
-                'rating_action' => 'New',
-                'rating_outlook' => 'Stable',
-                'rating_watch' => 'None',
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
+        // Seed Rating Movements for a subset of bonds
+        $ratingMovements = [];
+        $bondIds = DB::table('bonds')->pluck('id')->toArray();
+        $ratingAgencies = ['RAM', 'MARC', 'Moody\'s', 'S&P', 'Fitch'];
+        $ratingActions = ['New', 'Affirmed', 'Upgraded', 'Downgraded'];
+        $ratingOutlooks = ['Stable', 'Positive', 'Negative', 'Developing'];
+        $ratingWatches = ['None', 'Positive', 'Negative', 'Developing'];
+        
+        foreach ($bondIds as $bondId) {
+            // Generate 1-3 rating movements for each bond
+            $numRatings = rand(1, 3);
+            $baseDate = Carbon::now()->subYears(2);
+            
+            for ($i = 0; $i < $numRatings; $i++) {
+                $ratingDate = $baseDate->copy()->addMonths($i * 6 + rand(0, 3));
+                $ratingAction = $i == 0 ? 'New' : $ratingActions[array_rand($ratingActions)];
+                
+                $ratingMovements[] = [
+                    'rating_agency' => $ratingAgencies[array_rand($ratingAgencies)],
+                    'effective_date' => $ratingDate->format('Y-m-d'),
+                    'rating_tenure' => 'Long Term',
+                    'rating' => $ratings[array_rand($ratings)],
+                    'rating_action' => $ratingAction,
+                    'rating_outlook' => $ratingOutlooks[array_rand($ratingOutlooks)],
+                    'rating_watch' => $ratingWatches[array_rand($ratingWatches)],
+                    'bond_id' => $bondId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
 
         DB::table('rating_movements')->insert($ratingMovements);
 
-        // Seed Payment Schedules
-        $paymentSchedules = [
-            // ABMB Subordinated Notes Series 1 (Bond ID 1) - Semi-annual
-            [
-                'start_date' => '2024-08-10',
-                'end_date' => '2025-02-09',
-                'payment_date' => '2025-02-10',
-                'ex_date' => '2025-02-03',
-                'coupon_rate' => 4.50,
-                'adjustment_date' => null,
-                'bond_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-02-10',
-                'end_date' => '2025-08-09',
-                'payment_date' => '2025-08-10',
-                'ex_date' => '2025-08-03',
-                'coupon_rate' => 4.50,
-                'adjustment_date' => null,
-                'bond_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-08-10',
-                'end_date' => '2026-02-09',
-                'payment_date' => '2026-02-10',
-                'ex_date' => '2026-02-03',
-                'coupon_rate' => 4.50,
-                'adjustment_date' => null,
-                'bond_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        // Seed Payment Schedules for active bonds
+        $paymentSchedules = [];
+        $activeBonds = DB::table('bonds')
+                          ->whereIn('status', ['Active', 'Maturing', 'Suspended'])
+                          ->get(['id', 'coupon_frequency', 'coupon_rate', 'issue_date', 'maturity_date']);
+        
+        foreach ($activeBonds as $bond) {
+            $interval = 12; // Default to annual
             
-            // CIMB MTN Program 2022 Series 2 (Bond ID 2) - Quarterly
-            [
-                'start_date' => '2024-11-15',
-                'end_date' => '2025-02-14',
-                'payment_date' => '2025-02-15',
-                'ex_date' => '2025-02-08',
-                'coupon_rate' => 4.25,
-                'adjustment_date' => null,
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-02-15',
-                'end_date' => '2025-05-14',
-                'payment_date' => '2025-05-15',
-                'ex_date' => '2025-05-08',
-                'coupon_rate' => 4.25,
-                'adjustment_date' => null,
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-05-15',
-                'end_date' => '2025-08-14',
-                'payment_date' => '2025-08-15',
-                'ex_date' => '2025-08-08',
-                'coupon_rate' => 4.25,
-                'adjustment_date' => null,
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-08-15',
-                'end_date' => '2025-11-14',
-                'payment_date' => '2025-11-15',
-                'ex_date' => '2025-11-08',
-                'coupon_rate' => 4.25,
-                'adjustment_date' => null,
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            if ($bond->coupon_frequency == 'Semi-annual') {
+                $interval = 6;
+            } elseif ($bond->coupon_frequency == 'Quarterly') {
+                $interval = 3;
+            } elseif ($bond->coupon_frequency == 'Monthly') {
+                $interval = 1;
+            }
             
-            // Maybank Sukuk Wakalah 2023 Series 1 (Bond ID 3) - Semi-annual
-            [
-                'start_date' => '2024-12-30',
-                'end_date' => '2025-06-29',
-                'payment_date' => '2025-06-30',
-                'ex_date' => '2025-06-23',
-                'coupon_rate' => 5.00,
-                'adjustment_date' => null,
-                'bond_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-06-30',
-                'end_date' => '2025-12-29',
-                'payment_date' => '2025-12-30',
-                'ex_date' => '2025-12-23',
-                'coupon_rate' => 5.00,
-                'adjustment_date' => null,
-                'bond_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            $issueDate = Carbon::parse($bond->issue_date);
+            $maturityDate = Carbon::parse($bond->maturity_date);
+            $currentDate = Carbon::now();
             
-            // Public Bank Senior Notes 2024 Series 1 (Bond ID 4) - Semi-annual
-            [
-                'start_date' => '2024-07-15',
-                'end_date' => '2025-01-14',
-                'payment_date' => '2025-01-15',
-                'ex_date' => '2025-01-08',
-                'coupon_rate' => 4.75,
-                'adjustment_date' => null,
-                'bond_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-01-15',
-                'end_date' => '2025-07-14',
-                'payment_date' => '2025-07-15',
-                'ex_date' => '2025-07-08',
-                'coupon_rate' => 4.75,
-                'adjustment_date' => null,
-                'bond_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            // Create past and future payment schedules
+            $paymentDate = $issueDate->copy();
             
-            // CIMB MTN Program 2022 Series 3 (Bond ID 5) - Quarterly
-            [
-                'start_date' => '2024-12-20',
-                'end_date' => '2025-03-19',
-                'payment_date' => '2025-03-20',
-                'ex_date' => '2025-03-13',
-                'coupon_rate' => 4.35,
-                'adjustment_date' => null,
-                'bond_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-03-20',
-                'end_date' => '2025-06-19',
-                'payment_date' => '2025-06-20',
-                'ex_date' => '2025-06-13',
-                'coupon_rate' => 4.35,
-                'adjustment_date' => null,
-                'bond_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Hong Leong MTN 2023 Series 1 (Bond ID 6) - Annual - Redeemed Bond
-            [
-                'start_date' => '2024-03-30',
-                'end_date' => '2025-03-29',
-                'payment_date' => '2025-03-30',
-                'ex_date' => '2025-03-23',
-                'coupon_rate' => 4.50,
-                'adjustment_date' => null,
-                'bond_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Maybank Sukuk Wakalah 2023 Series 2 (Bond ID 7) - Semi-annual - Suspended Bond
-            [
-                'start_date' => '2024-08-15',
-                'end_date' => '2025-02-14',
-                'payment_date' => '2025-02-15',
-                'ex_date' => '2025-02-08',
-                'coupon_rate' => 4.80,
-                'adjustment_date' => null,
-                'bond_id' => 7,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-02-15',
-                'end_date' => '2025-08-14',
-                'payment_date' => '2025-08-15',
-                'ex_date' => '2025-08-08',
-                'coupon_rate' => 4.80,
-                'adjustment_date' => null,
-                'bond_id' => 7,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // CIMB MTN Program 2022 Series 1 (Bond ID 10) - Quarterly - Defaulted Bond
-            [
-                'start_date' => '2024-12-15',
-                'end_date' => '2025-03-14',
-                'payment_date' => '2025-03-15',
-                'ex_date' => '2025-03-08',
-                'coupon_rate' => 4.10,
-                'adjustment_date' => null,
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-03-15',
-                'end_date' => '2025-06-14',
-                'payment_date' => '2025-06-15',
-                'ex_date' => '2025-06-08',
-                'coupon_rate' => 4.10,
-                'adjustment_date' => null,
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-06-15',
-                'end_date' => '2025-09-14',
-                'payment_date' => '2025-09-15',
-                'ex_date' => '2025-09-08',
-                'coupon_rate' => 4.10,
-                'adjustment_date' => null,
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2025-09-15',
-                'end_date' => '2025-12-14',
-                'payment_date' => '2025-12-15',
-                'ex_date' => '2025-12-08',
-                'coupon_rate' => 4.10,
-                'adjustment_date' => null,
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
+            while ($paymentDate->lte($maturityDate)) {
+                $startDate = $paymentDate->copy();
+                $paymentDate->addMonths($interval);
+                
+                if ($paymentDate->gte($currentDate->copy()->subMonths(6)) && 
+                    $paymentDate->lte($currentDate->copy()->addMonths(12))) {
+                    $paymentSchedules[] = [
+                        'start_date' => $startDate->format('Y-m-d'),
+                        'end_date' => $paymentDate->copy()->subDays(1)->format('Y-m-d'),
+                        'payment_date' => $paymentDate->format('Y-m-d'),
+                        'ex_date' => $paymentDate->copy()->subDays(7)->format('Y-m-d'),
+                        'coupon_rate' => $bond->coupon_rate,
+                        'adjustment_date' => null,
+                        'bond_id' => $bond->id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+        }
 
         DB::table('payment_schedules')->insert($paymentSchedules);
 
-        // Seed Redemptions
-        $redemptions = [
-            // Active bond
-            [
-                'last_call_date' => '2030-01-10',
-                'allow_partial_call' => true,
-                'redeem_nearest_denomination' => true,
-                'bond_id' => 1,
+        // Seed Redemptions and related tables
+        $redemptions = [];
+        $lockoutPeriods = [];
+        $callSchedules = [];
+        
+        $redemptionIndex = 1; // Counter for redemption IDs
+        
+        foreach ($activeBonds as $bond) {
+            $issueDate = Carbon::parse($bond->issue_date);
+            $maturityDate = Carbon::parse($bond->maturity_date);
+            
+            // Generate redemption
+            $allowPartialCall = rand(0, 1) ? true : false;
+            $redeemNearestDenomination = rand(0, 1) ? true : false;
+            
+            $redemptions[] = [
+                'last_call_date' => $maturityDate->copy()->subMonths(rand(0, 6))->format('Y-m-d'),
+                'allow_partial_call' => $allowPartialCall,
+                'redeem_nearest_denomination' => $redeemNearestDenomination,
+                'bond_id' => $bond->id,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
-            // Active bond
-            [
-                'last_call_date' => '2027-10-15',
-                'allow_partial_call' => false,
-                'redeem_nearest_denomination' => true,
-                'bond_id' => 2,
+            ];
+            
+            // Generate lockout period
+            $lockoutEndDate = $issueDate->copy()->addYears(rand(1, 3));
+            
+            $lockoutPeriods[] = [
+                'start_date' => $issueDate->format('Y-m-d'),
+                'end_date' => $lockoutEndDate->format('Y-m-d'),
+                'redemption_id' => $redemptionIndex,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
-            // Active bond
-            [
-                'last_call_date' => '2033-05-30',
-                'allow_partial_call' => true,
-                'redeem_nearest_denomination' => true,
-                'bond_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Pending bond
-            [
-                'last_call_date' => '2029-01-10',
-                'allow_partial_call' => false,
-                'redeem_nearest_denomination' => true,
-                'bond_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Maturing bond
-            [
-                'last_call_date' => '2027-03-15',
-                'allow_partial_call' => true,
-                'redeem_nearest_denomination' => true,
-                'bond_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Redeemed bond - early redemption already exercised
-            [
-                'last_call_date' => '2027-09-30',
-                'allow_partial_call' => false,
-                'redeem_nearest_denomination' => true,
-                'bond_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Suspended bond
-            [
-                'last_call_date' => '2028-07-15',
-                'allow_partial_call' => true,
-                'redeem_nearest_denomination' => true,
-                'bond_id' => 7,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Defaulted bond
-            [
-                'last_call_date' => '2025-11-15',
-                'allow_partial_call' => false,
-                'redeem_nearest_denomination' => false,
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
+            ];
+            
+            // Generate call schedules
+            $callStartDate = $lockoutEndDate->copy()->addDays(1);
+            $callEndDate = $callStartDate->copy()->addYears(1);
+            
+            while ($callEndDate->lt($maturityDate)) {
+                $callSchedules[] = [
+                    'start_date' => $callStartDate->format('Y-m-d'),
+                    'end_date' => $callEndDate->format('Y-m-d'),
+                    'call_price' => (100 + rand(0, 3) + (rand(0, 75) / 100)), // 100.00 to 103.75
+                    'redemption_id' => $redemptionIndex,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+                
+                $callStartDate = $callEndDate->copy()->addDays(1);
+                $callEndDate = $callStartDate->copy()->addYears(1);
+            }
+            
+            // Final call period to maturity
+            if ($callStartDate->lt($maturityDate)) {
+                $callSchedules[] = [
+                    'start_date' => $callStartDate->format('Y-m-d'),
+                    'end_date' => $maturityDate->format('Y-m-d'),
+                    'call_price' => (100 + (rand(0, 75) / 100)), // 100.00 to 100.75
+                    'redemption_id' => $redemptionIndex,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+            
+            $redemptionIndex++;
+        }
 
         DB::table('redemptions')->insert($redemptions);
-
-        // Seed Lockout Periods
-        $lockoutPeriods = [
-            // Active bond - ABMB (lockout ending soon)
-            [
-                'start_date' => '2020-02-10',
-                'end_date' => '2025-02-09',
-                'redemption_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Active bond - CIMB
-            [
-                'start_date' => '2022-11-15',
-                'end_date' => '2025-11-14',
-                'redemption_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Active bond - Maybank
-            [
-                'start_date' => '2023-06-30',
-                'end_date' => '2025-06-29',
-                'redemption_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Pending bond - Public Bank
-            [
-                'start_date' => '2024-01-15',
-                'end_date' => '2026-01-14',
-                'redemption_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Maturing bond - CIMB Series 3
-            [
-                'start_date' => '2023-03-20',
-                'end_date' => '2025-03-19',
-                'redemption_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Redeemed bond - Hong Leong
-            [
-                'start_date' => '2023-03-30',
-                'end_date' => '2025-03-29',
-                'redemption_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Suspended bond - Maybank Series 2
-            [
-                'start_date' => '2023-08-15',
-                'end_date' => '2025-08-14',
-                'redemption_id' => 7,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Defaulted bond - CIMB Series 1
-            [
-                'start_date' => '2022-12-15',
-                'end_date' => '2025-03-14',
-                'redemption_id' => 8,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
-
         DB::table('lockout_periods')->insert($lockoutPeriods);
-
-        // Seed Call Schedules
-        $callSchedules = [
-            // Active bond - ABMB (callable after lockout period ends)
-            [
-                'start_date' => '2025-02-10',
-                'end_date' => '2026-02-09',
-                'call_price' => 102.00,
-                'redemption_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2026-02-10',
-                'end_date' => '2027-02-09',
-                'call_price' => 101.50,
-                'redemption_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2027-02-10',
-                'end_date' => '2028-02-09',
-                'call_price' => 101.00,
-                'redemption_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2028-02-10',
-                'end_date' => '2030-01-10',
-                'call_price' => 100.50,
-                'redemption_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Active bond - CIMB
-            [
-                'start_date' => '2025-11-15',
-                'end_date' => '2026-11-14',
-                'call_price' => 101.00,
-                'redemption_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2026-11-15',
-                'end_date' => '2027-10-15',
-                'call_price' => 100.50,
-                'redemption_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Active bond - Maybank
-            [
-                'start_date' => '2025-06-30',
-                'end_date' => '2028-06-29',
-                'call_price' => 103.00,
-                'redemption_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2028-06-30',
-                'end_date' => '2031-06-29',
-                'call_price' => 101.50,
-                'redemption_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2031-06-30',
-                'end_date' => '2033-05-30',
-                'call_price' => 100.75,
-                'redemption_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Pending bond - Public Bank
-            [
-                'start_date' => '2026-01-15',
-                'end_date' => '2027-01-14',
-                'call_price' => 101.25,
-                'redemption_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2027-01-15',
-                'end_date' => '2029-01-10',
-                'call_price' => 100.75,
-                'redemption_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Maturing bond - CIMB Series 3
-            [
-                'start_date' => '2025-03-20',
-                'end_date' => '2026-03-19',
-                'call_price' => 101.50,
-                'redemption_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2026-03-20',
-                'end_date' => '2027-03-15',
-                'call_price' => 100.75,
-                'redemption_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Redeemed bond - Hong Leong (already called)
-            [
-                'start_date' => '2025-03-30',
-                'end_date' => '2026-03-29',
-                'call_price' => 102.00,
-                'redemption_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2026-03-30',
-                'end_date' => '2027-09-30',
-                'call_price' => 101.25,
-                'redemption_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Suspended bond - Maybank Series 2
-            [
-                'start_date' => '2025-08-15',
-                'end_date' => '2026-08-14',
-                'call_price' => 101.75,
-                'redemption_id' => 7,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'start_date' => '2026-08-15',
-                'end_date' => '2028-07-15',
-                'call_price' => 101.00,
-                'redemption_id' => 7,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Defaulted bond - CIMB Series 1
-            [
-                'start_date' => '2025-03-15',
-                'end_date' => '2025-11-15',
-                'call_price' => 100.50,
-                'redemption_id' => 8,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
-
         DB::table('call_schedules')->insert($callSchedules);
 
         // Seed Trading Activities
-        $tradingActivities = [
-            // Active bond - ABMB - regular trading
-            [
-                'trade_date' => '2025-01-05',
-                'input_time' => '09:30:00',
-                'amount' => 3000000.00,
-                'price' => 101.25,
-                'yield' => 4.30,
-                'value_date' => '2025-01-07',
-                'bond_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2025-01-15',
-                'input_time' => '10:30:00',
-                'amount' => 5000000.00,
-                'price' => 101.50,
-                'yield' => 4.25,
-                'value_date' => '2025-01-17',
-                'bond_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2025-01-28',
-                'input_time' => '14:45:00',
-                'amount' => 7000000.00,
-                'price' => 101.60,
-                'yield' => 4.20,
-                'value_date' => '2025-01-30',
-                'bond_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        $tradingActivities = [];
+        $activeBondIds = DB::table('bonds')
+                            ->whereIn('status', ['Active', 'Maturing', 'Suspended'])
+                            ->pluck('id')
+                            ->toArray();
+        
+        foreach ($activeBondIds as $bondId) {
+            // Generate 3-10 trading activities per bond
+            $numTrades = rand(3, 10);
+            $bond = DB::table('bonds')->where('id', $bondId)->first();
             
-            // Active bond - CIMB - high volume trading
-            [
-                'trade_date' => '2025-01-05',
-                'input_time' => '11:15:00',
-                'amount' => 4500000.00,
-                'price' => 101.75,
-                'yield' => 4.15,
-                'value_date' => '2025-01-07',
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2025-01-12',
-                'input_time' => '09:45:00',
-                'amount' => 8500000.00,
-                'price' => 101.90,
-                'yield' => 4.12,
-                'value_date' => '2025-01-14',
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2025-01-20',
-                'input_time' => '11:45:00',
-                'amount' => 10000000.00,
-                'price' => 102.00,
-                'yield' => 4.10,
-                'value_date' => '2025-01-22',
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2025-01-26',
-                'input_time' => '15:30:00',
-                'amount' => 12500000.00,
-                'price' => 102.10,
-                'yield' => 4.08,
-                'value_date' => '2025-01-28',
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Active bond - Maybank Sukuk - steady price
-            [
-                'trade_date' => '2025-01-10',
-                'input_time' => '10:15:00',
-                'amount' => 8000000.00,
-                'price' => 100.40,
-                'yield' => 4.96,
-                'value_date' => '2025-01-12',
-                'bond_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2025-01-18',
-                'input_time' => '13:20:00',
-                'amount' => 10000000.00,
-                'price' => 100.45,
-                'yield' => 4.95,
-                'value_date' => '2025-01-20',
-                'bond_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2025-01-25',
-                'input_time' => '14:15:00',
-                'amount' => 15000000.00,
-                'price' => 100.50,
-                'yield' => 4.95,
-                'value_date' => '2025-01-27',
-                'bond_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Pending bond - Public Bank - limited trading
-            [
-                'trade_date' => '2025-01-10',
-                'input_time' => '09:45:00',
-                'amount' => 8000000.00,
-                'price' => 101.25,
-                'yield' => 4.65,
-                'value_date' => '2025-01-12',
-                'bond_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Maturing bond - CIMB Series 3 - declining volume
-            [
-                'trade_date' => '2024-11-20',
-                'input_time' => '11:30:00',
-                'amount' => 10000000.00,
-                'price' => 101.60,
-                'yield' => 4.25,
-                'value_date' => '2024-11-22',
-                'bond_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2024-12-05',
-                'input_time' => '14:45:00',
-                'amount' => 9000000.00,
-                'price' => 101.70,
-                'yield' => 4.22,
-                'value_date' => '2024-12-07',
-                'bond_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2024-12-15',
-                'input_time' => '13:20:00',
-                'amount' => 7500000.00,
-                'price' => 101.80,
-                'yield' => 4.20,
-                'value_date' => '2024-12-17',
-                'bond_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Redeemed bond - Hong Leong - last trades before redemption
-            [
-                'trade_date' => '2024-10-15',
-                'input_time' => '09:30:00',
-                'amount' => 7500000.00,
-                'price' => 100.65,
-                'yield' => 4.42,
-                'value_date' => '2024-10-17',
-                'bond_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2024-11-05',
-                'input_time' => '10:45:00',
-                'amount' => 6000000.00,
-                'price' => 100.70,
-                'yield' => 4.41,
-                'value_date' => '2024-11-07',
-                'bond_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2024-11-25',
-                'input_time' => '10:15:00',
-                'amount' => 5500000.00,
-                'price' => 100.75,
-                'yield' => 4.40,
-                'value_date' => '2024-11-27',
-                'bond_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Suspended bond - Maybank Series 2 - trades before suspension
-            [
-                'trade_date' => '2024-11-20',
-                'input_time' => '13:45:00',
-                'amount' => 15000000.00,
-                'price' => 100.20,
-                'yield' => 4.77,
-                'value_date' => '2024-11-22',
-                'bond_id' => 7,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2024-12-05',
-                'input_time' => '15:30:00',
-                'amount' => 12000000.00,
-                'price' => 100.30,
-                'yield' => 4.75,
-                'value_date' => '2024-12-07',
-                'bond_id' => 7,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Defaulted bond - CIMB Series 1 - price collapse
-            [
-                'trade_date' => '2024-11-15',
-                'input_time' => '10:00:00',
-                'amount' => 12000000.00,
-                'price' => 100.25,
-                'yield' => 4.08,
-                'value_date' => '2024-11-17',
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2024-12-01',
-                'input_time' => '11:30:00',
-                'amount' => 10000000.00,
-                'price' => 95.50,
-                'yield' => 5.25,
-                'value_date' => '2024-12-03',
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2024-12-15',
-                'input_time' => '14:30:00',
-                'amount' => 8000000.00,
-                'price' => 85.75,
-                'yield' => 8.40,
-                'value_date' => '2024-12-17',
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'trade_date' => '2025-01-05',
-                'input_time' => '09:15:00',
-                'amount' => 9500000.00,
-                'price' => 70.25,
-                'yield' => 15.60,
-                'value_date' => '2025-01-07',
-                'bond_id' => 10,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
+            for ($i = 0; $i < $numTrades; $i++) {
+                $tradeDate = Carbon::now()->subDays(rand(1, 90));
+                $inputHour = rand(9, 16);
+                $inputMinute = rand(0, 59);
+                $inputTime = sprintf("%02d:%02d:00", $inputHour, $inputMinute);
+                
+                $price = 100 + (rand(-200, 200) / 100); // 98.00 to 102.00
+                $yield = $bond->coupon_rate - (rand(-50, 50) / 100); // +/- 0.5% from coupon
+                
+                $tradingActivities[] = [
+                    'trade_date' => $tradeDate->format('Y-m-d'),
+                    'input_time' => $inputTime,
+                    'amount' => rand(3, 20) * 1000000, // 3M to 20M
+                    'price' => $price,
+                    'yield' => $yield,
+                    'value_date' => $tradeDate->copy()->addDays(2)->format('Y-m-d'),
+                    'bond_id' => $bondId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
 
         DB::table('trading_activities')->insert($tradingActivities);
 
         // Seed Announcements
-        $announcements = [
-            // ABMB - Active Issuer
-            [
-                'announcement_date' => '2025-01-10',
-                'category' => 'Corporate',
-                'sub_category' => 'Financial Results',
-                'title' => 'Alliance Bank Quarterly Results',
-                'description' => 'Alliance Bank Malaysia Berhad announces Q4 2024 financial results',
-                'content' => 'Alliance Bank Malaysia Berhad today announced its financial results for the fourth quarter of 2024, reporting a net profit of RM500 million.',
-                'attachment' => 'abmb_q4_2024.pdf',
-                'source' => 'Bursa Malaysia',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => 'Sarah Abdullah',
-                'remarks' => 'Positive financial performance',
-                'approval_datetime' => '2025-01-09 14:30:00',
-                'issuer_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'announcement_date' => '2024-12-15',
-                'category' => 'Bond Specific',
-                'sub_category' => 'Coupon Payment',
-                'title' => 'Alliance Bank Announces Upcoming Coupon Payment',
-                'description' => 'Details of upcoming coupon payment for ABMB Subordinated Notes Series 1',
-                'content' => 'Alliance Bank Malaysia Berhad announces that the next coupon payment for its Subordinated Notes Series 1 will be made on February 10, 2025, at a rate of 4.50%.',
-                'attachment' => 'abmb_coupon_notice.pdf',
-                'source' => 'Trustee Notice',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => 'Sarah Abdullah',
-                'remarks' => 'Regular coupon payment announcement',
-                'approval_datetime' => '2024-12-14 10:15:00',
-                'issuer_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // CIMB - Active Issuer
-            [
-                'announcement_date' => '2025-01-15',
-                'category' => 'Corporate',
-                'sub_category' => 'Dividend',
-                'title' => 'CIMB Final Dividend Announcement',
-                'description' => 'CIMB Bank Berhad announces final dividend for financial year 2024',
-                'content' => 'CIMB Bank Berhad is pleased to announce a final dividend of 25 sen per share for the financial year ending 31 December 2024.',
-                'attachment' => 'cimb_dividend_2024.pdf',
-                'source' => 'Bursa Malaysia',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Annual dividend declaration',
-                'approval_datetime' => '2025-01-14 10:15:00',
-                'issuer_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'announcement_date' => '2024-12-18',
-                'category' => 'Rating',
-                'sub_category' => 'Rating Affirmation',
-                'title' => 'MARC Affirms CIMB Medium Term Notes Rating',
-                'description' => 'Rating agency MARC affirms AAA rating for CIMB MTN Program 2022',
-                'content' => 'MARC has affirmed the AAA rating of CIMB Bank Berhad\'s Medium Term Notes Program with a stable outlook, citing the bank\'s strong capital position and consistent financial performance.',
-                'attachment' => 'cimb_rating_2024.pdf',
-                'source' => 'MARC Ratings',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Positive rating affirmation',
-                'approval_datetime' => '2024-12-17 16:30:00',
-                'issuer_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'announcement_date' => '2024-12-10',
-                'category' => 'Credit Event',
-                'sub_category' => 'Default',
-                'title' => 'CIMB Announces Technical Default on Series 1 Notes',
-                'description' => 'CIMB Bank Berhad discloses technical covenant breach on Series 1 MTN',
-                'content' => 'CIMB Bank Berhad announces that its Series 1 Medium Term Notes have triggered a technical default due to a covenant breach related to the debt service coverage ratio. The bank is working with noteholders on a resolution.',
-                'attachment' => 'cimb_default_notice.pdf',
-                'source' => 'CIMB Bank Berhad',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Material covenant breach',
-                'approval_datetime' => '2024-12-09 18:45:00',
-                'issuer_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Maybank - Active Issuer
-            [
-                'announcement_date' => '2025-01-20',
-                'category' => 'Corporate',
-                'sub_category' => 'Corporate Exercise',
-                'title' => 'Maybank Sukuk Extension',
-                'description' => 'Maybank Berhad announces extension of Sukuk Wakalah program',
-                'content' => 'Maybank Berhad is pleased to announce the extension of its Sukuk Wakalah program by an additional RM5 billion, bringing the total program size to RM20 billion.',
-                'attachment' => 'maybank_sukuk_extension.pdf',
-                'source' => 'Bursa Malaysia',
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => 'Amir Hassan',
-                'remarks' => 'Program size expansion',
-                'approval_datetime' => '2025-01-19 15:45:00',
-                'issuer_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'announcement_date' => '2024-12-20',
-                'category' => 'Bond Specific',
-                'sub_category' => 'Trading Suspension',
-                'title' => 'Temporary Suspension of Maybank Sukuk Series 2 Trading',
-                'description' => 'Maybank announces temporary suspension of trading for Sukuk Wakalah Series 2',
-                'content' => 'Maybank Berhad announces a temporary suspension of trading for its Sukuk Wakalah Series 2 pending a material announcement related to the underlying assets of the Sukuk. Trading is expected to resume within 5 business days.',
-                'attachment' => 'maybank_suspension.pdf',
-                'source' => 'Bursa Malaysia',
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => 'Amir Hassan',
-                'remarks' => 'Temporary trading suspension',
-                'approval_datetime' => '2024-12-19 17:30:00',
-                'issuer_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Public Bank - Draft status
-            [
-                'announcement_date' => '2025-01-05',
-                'category' => 'Corporate',
-                'sub_category' => 'New Issuance',
-                'title' => 'Public Bank New Bond Issuance',
-                'description' => 'Public Bank Berhad announces new senior notes issuance',
-                'content' => 'Public Bank Berhad successfully completed the issuance of RM600 million Senior Notes under its RM5 billion Medium Term Note Program.',
-                'attachment' => 'pbb_new_issuance.pdf',
-                'source' => 'Bursa Malaysia',
-                'prepared_by' => 'Kamal Ibrahim',
-                'verified_by' => 'Mei Ling Tan',
-                'remarks' => 'New bond issuance',
-                'approval_datetime' => '2025-01-04 11:30:00',
-                'issuer_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'announcement_date' => '2025-01-25',
-                'category' => 'Bond Specific',
-                'sub_category' => 'Regulatory Approval',
-                'title' => 'Public Bank Awaiting Regulatory Approval',
-                'description' => 'Public Bank Berhad provides update on regulatory approval process for Series 1 Notes',
-                'content' => 'Public Bank Berhad provides an update that its Senior Notes Series 1 is still awaiting final regulatory approval. The bank expects to receive the approval within the next 20 business days.',
-                'attachment' => 'pbb_approval_update.pdf',
-                'source' => 'Public Bank Berhad',
-                'prepared_by' => 'Kamal Ibrahim',
-                'verified_by' => 'Mei Ling Tan',
-                'remarks' => 'Regulatory approval status update',
-                'approval_datetime' => '2025-01-24 14:45:00',
-                'issuer_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Hong Leong - Inactive status
-            [
-                'announcement_date' => '2024-12-10',
-                'category' => 'Corporate',
-                'sub_category' => 'Rating Action',
-                'title' => 'Hong Leong Bank Rating Update',
-                'description' => 'RAM downgrades Hong Leong Bank MTN rating',
-                'content' => 'RAM Ratings has downgraded Hong Leong Bank Medium Term Notes from AA1 to AA2 with negative outlook due to deteriorating asset quality metrics.',
-                'attachment' => 'hlb_rating_downgrade.pdf',
-                'source' => 'RAM Ratings',
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'remarks' => 'Rating downgrade announcement',
-                'approval_datetime' => '2024-12-09 16:20:00',
-                'issuer_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'announcement_date' => '2024-11-30',
-                'category' => 'Bond Specific',
-                'sub_category' => 'Early Redemption',
-                'title' => 'Hong Leong Bank Announces Early Redemption',
-                'description' => 'Hong Leong Bank Berhad to exercise early redemption option for its MTN 2023 Series 1',
-                'content' => 'Hong Leong Bank Berhad announces that it will exercise the early redemption option for its Medium Term Notes 2023 Series 1. The redemption will be effective on December 15, 2024, at a redemption price of 102.00.',
-                'attachment' => 'hlb_redemption_notice.pdf',
-                'source' => 'Hong Leong Bank Berhad',
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'remarks' => 'Early redemption notice',
-                'approval_datetime' => '2024-11-29 15:10:00',
-                'issuer_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        $announcements = [];
+        
+        // Get a subset of issuers for announcements
+        $issuersList = DB::table('issuers')->inRandomOrder()->limit(15)->get(['id', 'issuer_short_name']);
+        
+        $categories = ['Corporate', 'Bond Specific', 'Rating', 'Credit Event', 'Regulatory'];
+        $subCategories = [
+            'Financial Results', 'Dividend', 'New Issuance', 'Corporate Exercise',
+            'Coupon Payment', 'Trading Suspension', 'Regulatory Approval', 'Early Redemption',
+            'Rating Affirmation', 'Rating Action', 'Default', 'Covenant Breach'
         ];
+        
+        foreach ($issuersList as $issuer) {
+            // Generate 1-3 announcements per issuer
+            $numAnnouncements = rand(1, 3);
+            
+            for ($i = 0; $i < $numAnnouncements; $i++) {
+                $announcementDate = Carbon::now()->subDays(rand(1, 60));
+                $category = $categories[array_rand($categories)];
+                $subCategory = $subCategories[array_rand($subCategories)];
+                
+                $title = $issuer->issuer_short_name . ' ' . $subCategory . ' Announcement';
+                $description = 'Details regarding ' . $subCategory . ' for ' . $issuer->issuer_short_name;
+                
+                $announcements[] = [
+                    'announcement_date' => $announcementDate->format('Y-m-d'),
+                    'category' => $category,
+                    'sub_category' => $subCategory,
+                    'title' => $title,
+                    'description' => $description,
+                    'content' => 'This is an auto-generated announcement for ' . $issuer->issuer_short_name . 
+                                ' regarding ' . $subCategory . '. Detailed information would be provided here.',
+                    'attachment' => strtolower($issuer->issuer_short_name) . '_' . strtolower(str_replace(' ', '_', $subCategory)) . '.pdf',
+                    'source' => rand(0, 1) ? 'Bursa Malaysia' : $issuer->issuer_short_name,
+                    'prepared_by' => 'System',
+                    'verified_by' => rand(0, 1) ? 'System Verifier' : null,
+                    'remarks' => 'Auto-generated announcement',
+                    'approval_datetime' => $announcementDate->copy()->subDays(1)->format('Y-m-d H:i:s'),
+                    'issuer_id' => $issuer->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
 
         DB::table('announcements')->insert($announcements);
 
         // Seed Facility Informations
-        $facilityInformations = [
-            // Alliance Bank - Active facility
-            [
-                'facility_code' => 'ABM-001',
-                'facility_number' => 'ABMB/2020/001',
-                'facility_name' => 'Alliance Bank Subordinated Notes Program',
-                'principle_type' => 'Conventional',
-                'islamic_concept' => null,
-                'maturity_date' => '2030-02-10',
-                'instrument' => 'Subordinated Notes',
-                'instrument_type' => 'Tier 2 Capital',
-                'guaranteed' => false,
-                'total_guaranteed' => null,
-                'indicator' => 'Financial Institution',
-                'facility_rating' => 'AA3',
-                'facility_amount' => 1000000000.00,
-                'available_limit' => 200000000.00,
-                'outstanding_amount' => 800000000.00,
-                'trustee_security_agent' => 'AmanahRaya Trustees Berhad',
-                'lead_arranger' => 'Alliance Investment Bank',
-                'facility_agent' => 'Alliance Investment Bank',
-                'availability_date' => '2025-02-10',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => 'Sarah Abdullah',
-                'remarks' => 'Tier 2 capital issuance for regulatory capital requirements',
-                'approval_datetime' => '2020-01-05 10:30:00',
-                'issuer_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // CIMB - Active facility with multiple issuances
-            [
-                'facility_code' => 'CIMB-001',
-                'facility_number' => 'CIMB/2022/001',
-                'facility_name' => 'CIMB Medium Term Notes Program',
-                'principle_type' => 'Conventional',
-                'islamic_concept' => null,
-                'maturity_date' => '2027-11-15',
-                'instrument' => 'Medium Term Notes',
-                'instrument_type' => 'Senior Unsecured',
-                'guaranteed' => false,
-                'total_guaranteed' => null,
-                'indicator' => 'Financial Institution',
-                'facility_rating' => 'AAA',
-                'facility_amount' => 5000000000.00,
-                'available_limit' => 3100000000.00,
-                'outstanding_amount' => 1900000000.00,
-                'trustee_security_agent' => 'AmanahRaya Trustees Berhad',
-                'lead_arranger' => 'CIMB Investment Bank',
-                'facility_agent' => 'CIMB Investment Bank',
-                'availability_date' => '2030-11-15',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Multi-tranche funding program for general corporate purposes',
-                'approval_datetime' => '2022-10-25 14:15:00',
-                'issuer_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Maybank - Islamic facility
-            [
-                'facility_code' => 'MBB-001',
-                'facility_number' => 'MBB/2023/001',
-                'facility_name' => 'Maybank Sukuk Wakalah Program',
-                'principle_type' => 'Islamic',
-                'islamic_concept' => 'Wakalah',
-                'maturity_date' => '2033-06-30',
-                'instrument' => 'Sukuk',
-                'instrument_type' => 'Senior Unsecured',
-                'guaranteed' => false,
-                'total_guaranteed' => null,
-                'indicator' => 'Financial Institution',
-                'facility_rating' => 'AAA',
-                'facility_amount' => 15000000000.00,
-                'available_limit' => 13250000000.00,
-                'outstanding_amount' => 1750000000.00,
-                'trustee_security_agent' => 'AmanahRaya Trustees Berhad',
-                'lead_arranger' => 'Maybank Investment Bank',
-                'facility_agent' => 'Maybank Investment Bank',
-                'availability_date' => '2035-06-30',
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => 'Amir Hassan',
-                'remarks' => 'Shariah-compliant funding program for Islamic banking operations',
-                'approval_datetime' => '2023-06-20 09:45:00',
-                'issuer_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Public Bank - Pending bond
-            [
-                'facility_code' => 'PBB-001',
-                'facility_number' => 'PBB/2024/001',
-                'facility_name' => 'Public Bank Senior Notes Program',
-                'principle_type' => 'Conventional',
-                'islamic_concept' => null,
-                'maturity_date' => '2029-01-15',
-                'instrument' => 'Senior Notes',
-                'instrument_type' => 'Senior Unsecured',
-                'guaranteed' => false,
-                'total_guaranteed' => null,
-                'indicator' => 'Financial Institution',
-                'facility_rating' => 'AA1',
-                'facility_amount' => 3000000000.00,
-                'available_limit' => 2000000000.00,
-                'outstanding_amount' => 1000000000.00,
-                'trustee_security_agent' => 'AmanahRaya Trustees Berhad',
-                'lead_arranger' => 'Public Investment Bank',
-                'facility_agent' => 'Public Investment Bank',
-                'availability_date' => '2029-01-15',
-                'prepared_by' => 'Kamal Ibrahim',
-                'verified_by' => 'Mei Ling Tan',
-                'remarks' => 'New senior funding program awaiting final regulatory approval',
-                'approval_datetime' => '2024-01-05 11:20:00',
-                'issuer_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Hong Leong - Inactive/redeemed
-            [
-                'facility_code' => 'HLB-001',
-                'facility_number' => 'HLB/2023/001',
-                'facility_name' => 'Hong Leong Medium Term Notes Program',
-                'principle_type' => 'Conventional',
-                'islamic_concept' => null,
-                'maturity_date' => '2028-03-30',
-                'instrument' => 'Medium Term Notes',
-                'instrument_type' => 'Senior Unsecured',
-                'guaranteed' => false,
-                'total_guaranteed' => null,
-                'indicator' => 'Financial Institution',
-                'facility_rating' => 'AA2',
-                'facility_amount' => 2000000000.00,
-                'available_limit' => 2000000000.00,
-                'outstanding_amount' => 0.00,
-                'trustee_security_agent' => 'AmanahRaya Trustees Berhad',
-                'lead_arranger' => 'Hong Leong Investment Bank',
-                'facility_agent' => 'Hong Leong Investment Bank',
-                'availability_date' => '2028-03-30',
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'remarks' => 'All outstanding notes under this program have been redeemed',
-                'approval_datetime' => '2023-03-20 13:40:00',
-                'issuer_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // RHB - Draft status
-            [
-                'facility_code' => 'RHB-001',
-                'facility_number' => 'RHB/2025/001',
-                'facility_name' => 'RHB Corporate Bond Program',
-                'principle_type' => 'Conventional',
-                'islamic_concept' => null,
-                'maturity_date' => '2030-02-15',
-                'instrument' => 'Corporate Bonds',
-                'instrument_type' => 'Senior Unsecured',
-                'guaranteed' => false,
-                'total_guaranteed' => null,
-                'indicator' => 'Financial Institution',
-                'facility_rating' => 'AA2',
-                'facility_amount' => 2500000000.00,
-                'available_limit' => 2500000000.00,
-                'outstanding_amount' => 0.00,
-                'trustee_security_agent' => 'AmanahRaya Trustees Berhad',
-                'lead_arranger' => 'RHB Investment Bank',
-                'facility_agent' => 'RHB Investment Bank',
-                'availability_date' => '2030-02-15',
-                'prepared_by' => 'Nurul Izzah',
-                'verified_by' => null,
-                'remarks' => 'New program in draft stage, pending approval',
-                'approval_datetime' => null,
-                'issuer_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
+        $facilityInformations = [];
+        $issuerIds = DB::table('issuers')->pluck('id', 'issuer_short_name')->toArray();
+        
+        foreach ($issuerIds as $shortName => $issuerId) {
+            // Only create facility for some issuers
+            if (rand(0, 2) > 0) { // 2/3 chance to create facility
+                $facilityCode = $shortName . '-001';
+                $facilityNumber = $shortName . '/' . rand(2020, 2024) . '/001';
+                $facilityName = $shortName . ' ' . (rand(0, 1) ? 'Medium Term Notes Program' : 'Sukuk Program');
+                
+                $principleType = rand(0, 1) ? 'Conventional' : 'Islamic';
+                $islamicConcept = $principleType == 'Islamic' ? 
+                    (rand(0, 1) ? 'Wakalah' : 'Murabahah') : null;
+                
+                $maturityYear = rand(2025, 2035);
+                $maturityDate = $maturityYear . '-' . sprintf("%02d", rand(1, 12)) . '-' . sprintf("%02d", rand(1, 28));
+                
+                $instrument = $principleType == 'Islamic' ? 'Sukuk' : 
+                    (rand(0, 2) == 0 ? 'Medium Term Notes' : (rand(0, 1) ? 'Senior Notes' : 'Subordinated Notes'));
+                
+                $instrumentType = rand(0, 3) == 0 ? 'Tier 2 Capital' : 'Senior Unsecured';
+                $guaranteed = rand(0, 5) == 0; // 1/6 chance to be guaranteed
+                $totalGuaranteed = $guaranteed ? (rand(5, 10) * 100000000) . '.00' : null;
+                
+                $indicator = rand(0, 3) == 0 ? 'Corporate' : 'Financial Institution';
+                $facilityRating = $ratings[array_rand($ratings)];
+                
+                $facilityAmount = rand(10, 50) * 100000000 . '.00';
+                $availableLimit = rand(5, 10) * 100000000 . '.00';
+                $outstandingAmount = (floatval($facilityAmount) - floatval($availableLimit)) . '.00';
+                
+                $availabilityDate = $maturityDate;
+                
+                $facilityInformations[] = [
+                    'facility_code' => $facilityCode,
+                    'facility_number' => $facilityNumber,
+                    'facility_name' => $facilityName,
+                    'principle_type' => $principleType,
+                    'islamic_concept' => $islamicConcept,
+                    'maturity_date' => $maturityDate,
+                    'instrument' => $instrument,
+                    'instrument_type' => $instrumentType,
+                    'guaranteed' => $guaranteed,
+                    'total_guaranteed' => $totalGuaranteed,
+                    'indicator' => $indicator,
+                    'facility_rating' => $facilityRating,
+                    'facility_amount' => $facilityAmount,
+                    'available_limit' => $availableLimit,
+                    'outstanding_amount' => $outstandingAmount,
+                    'trustee_security_agent' => 'AmanahRaya Trustees Berhad',
+                    'lead_arranger' => $shortName . ' Investment Bank',
+                    'facility_agent' => $shortName . ' Investment Bank',
+                    'availability_date' => $availabilityDate,
+                    'prepared_by' => 'System',
+                    'verified_by' => rand(0, 1) ? 'System Verifier' : null,
+                    'remarks' => 'Auto-generated facility information',
+                    'approval_datetime' => Carbon::now()->subMonths(rand(1, 12))->format('Y-m-d H:i:s'),
+                    'issuer_id' => $issuerId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
 
         DB::table('facility_informations')->insert($facilityInformations);
 
         // Seed Related Documents
-        $relatedDocuments = [
-            [
-                'document_name' => 'Trust Deed',
-                'document_type' => 'Trust Deed',
-                'upload_date' => '2020-01-20',
-                'file_path' => 'documents/abmb/trust_deed.pdf',
-                'facility_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'document_name' => 'Information Memorandum',
-                'document_type' => 'Information Memorandum',
-                'upload_date' => '2020-01-25',
-                'file_path' => 'documents/abmb/im.pdf',
-                'facility_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'document_name' => 'Trust Deed',
-                'document_type' => 'Trust Deed',
-                'upload_date' => '2022-11-05',
-                'file_path' => 'documents/cimb/trust_deed.pdf',
-                'facility_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'document_name' => 'Information Memorandum',
-                'document_type' => 'Information Memorandum',
-                'upload_date' => '2022-11-10',
-                'file_path' => 'documents/cimb/im.pdf',
-                'facility_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'document_name' => 'Trust Deed',
-                'document_type' => 'Trust Deed',
-                'upload_date' => '2023-06-15',
-                'file_path' => 'documents/mbb/trust_deed.pdf',
-                'facility_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'document_name' => 'Information Memorandum',
-                'document_type' => 'Information Memorandum',
-                'upload_date' => '2023-06-20',
-                'file_path' => 'documents/mbb/im.pdf',
-                'facility_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        $relatedDocuments = [];
+        $facilityIds = DB::table('facility_informations')->pluck('id')->toArray();
+        
+        $documentTypes = [
+            'Trust Deed', 'Information Memorandum', 'Pricing Supplement', 
+            'Security Agreement', 'Offering Circular', 'Facility Agreement'
         ];
+        
+        foreach ($facilityIds as $facilityId) {
+            // Generate 1-3 documents per facility
+            $numDocuments = rand(1, 3);
+            $docTypes = array_rand($documentTypes, $numDocuments);
+            
+            if (!is_array($docTypes)) {
+                $docTypes = [$docTypes];
+            }
+            
+            foreach ($docTypes as $typeIndex) {
+                $docType = $documentTypes[$typeIndex];
+                $facilityInfo = DB::table('facility_informations')
+                                ->where('id', $facilityId)
+                                ->first(['facility_code']);
+                
+                $uploadDate = Carbon::now()->subMonths(rand(1, 24))->format('Y-m-d');
+                
+                $relatedDocuments[] = [
+                    'document_name' => $docType,
+                    'document_type' => $docType,
+                    'upload_date' => $uploadDate,
+                    'file_path' => 'documents/' . strtolower(str_replace('-', '_', $facilityInfo->facility_code)) . 
+                                '/' . strtolower(str_replace(' ', '_', $docType)) . '.pdf',
+                    'facility_id' => $facilityId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
 
         DB::table('related_documents')->insert($relatedDocuments);
 
         // Seed Charts
-        $charts = [
-            [
-                'availability_date' => '2025-02-01',
-                'approval_date_time' => '2025-01-31 15:30:00',
-                'chart_type' => 'Price History',
-                'chart_data' => json_encode([
-                    ['date' => '2024-08-01', 'price' => 100.25],
-                    ['date' => '2024-09-01', 'price' => 100.50],
-                    ['date' => '2024-10-01', 'price' => 100.75],
-                    ['date' => '2024-11-01', 'price' => 101.00],
-                    ['date' => '2024-12-01', 'price' => 101.25],
-                    ['date' => '2025-01-01', 'price' => 101.50],
-                ]),
-                'period_from' => '2024-08-01',
-                'period_to' => '2025-01-31',
-                'bond_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'availability_date' => '2025-02-01',
-                'approval_date_time' => '2025-01-31 16:15:00',
-                'chart_type' => 'Price History',
-                'chart_data' => json_encode([
-                    ['date' => '2024-08-01', 'price' => 99.75],
-                    ['date' => '2024-09-01', 'price' => 99.90],
-                    ['date' => '2024-10-01', 'price' => 100.00],
-                    ['date' => '2024-11-01', 'price' => 100.25],
-                    ['date' => '2024-12-01', 'price' => 100.40],
-                    ['date' => '2025-01-01', 'price' => 100.50],
-                ]),
-                'period_from' => '2024-08-01',
-                'period_to' => '2025-01-31',
-                'bond_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
+        $charts = [];
+        $activeBondIds = DB::table('bonds')
+                         ->whereIn('status', ['Active', 'Maturing'])
+                         ->pluck('id')
+                         ->toArray();
+        
+        $chartTypes = ['Price History', 'Yield History', 'Trading Volume', 'Spread Analysis'];
+        
+        foreach ($activeBondIds as $bondId) {
+            if (rand(0, 2) > 0) { // 2/3 chance to create chart
+                $chartType = $chartTypes[array_rand($chartTypes)];
+                
+                // Generate chart data based on type
+                $chartData = [];
+                $startDate = Carbon::now()->subMonths(6);
+                
+                for ($i = 0; $i < 6; $i++) { // 6 months of data
+                    $date = $startDate->copy()->addMonths($i)->format('Y-m-d');
+                    
+                    if ($chartType == 'Price History') {
+                        $value = 100 + (rand(-200, 200) / 100); // 98.00 to 102.00
+                        $chartData[] = ['date' => $date, 'price' => $value];
+                    } elseif ($chartType == 'Yield History') {
+                        $value = 4 + (rand(-100, 100) / 100); // 3.00 to 5.00
+                        $chartData[] = ['date' => $date, 'yield' => $value];
+                    } elseif ($chartType == 'Trading Volume') {
+                        $value = rand(5, 50) * 1000000; // 5M to 50M
+                        $chartData[] = ['date' => $date, 'volume' => $value];
+                    } else { // Spread Analysis
+                        $value = (rand(10, 100) / 100); // 0.10 to 1.00
+                        $chartData[] = ['date' => $date, 'spread' => $value];
+                    }
+                }
+                
+                $charts[] = [
+                    'availability_date' => Carbon::now()->format('Y-m-d'),
+                    'approval_date_time' => Carbon::now()->subDays(rand(1, 7))->format('Y-m-d H:i:s'),
+                    'chart_type' => $chartType,
+                    'chart_data' => json_encode($chartData),
+                    'period_from' => $startDate->format('Y-m-d'),
+                    'period_to' => Carbon::now()->format('Y-m-d'),
+                    'bond_id' => $bondId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
 
         DB::table('charts')->insert($charts);
 
         // Seed Trustee Fees
-        $trusteeFees = [
-            // Alliance Bank - Active issuer
-            [
-                'month' => 'Jan',
-                'date' => 15,
-                'description' => 'Annual Trustee Fee for Subordinated Notes',
-                'trustee_fee_amount_1' => 50000.00,
-                'trustee_fee_amount_2' => 25000.00, 
-                'start_anniversary_date' => '2024-01-20',
-                'end_anniversary_date' => '2025-01-19',
-                'memo_to_fad' => '2025-01-05',
-                'invoice_no' => 'INV-ABMB-2025-001',
-                'date_letter_to_issuer' => '2025-01-10',
-                'first_reminder' => '2025-02-10',
-                'second_reminder' => '2025-03-10',
-                'third_reminder' => null,
-                'payment_received' => '2025-02-01',
-                'tt_cheque_no' => 'TT-1234567',
-                'memo_receipt_to_fad' => '2025-02-05',
-                'receipt_to_issuer' => '2025-02-10',
-                'receipt_no' => 'RCPT-ABMB-2025-001',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => 'Sarah Abdullah',
-                'remarks' => 'Annual trustee fee for bond services',
-                'approval_datetime' => '2025-02-01 14:30:00',
-                'status' => 'Active',
-                'issuer_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'month' => 'Jan',
-                'date' => 15,
-                'description' => 'Annual Trustee Fee for Subordinated Notes',
-                'trustee_fee_amount_1' => 45000.00,
-                'trustee_fee_amount_2' => 22500.00, 
-                'start_anniversary_date' => '2023-01-20',
-                'end_anniversary_date' => '2024-01-19',
-                'memo_to_fad' => '2024-01-05',
-                'invoice_no' => 'INV-ABMB-2024-001',
-                'date_letter_to_issuer' => '2024-01-10',
-                'first_reminder' => '2024-02-10',
-                'second_reminder' => null,
-                'third_reminder' => null,
-                'payment_received' => '2024-02-01',
-                'tt_cheque_no' => 'TT-8765432',
-                'memo_receipt_to_fad' => '2024-02-05',
-                'receipt_to_issuer' => '2024-02-10',
-                'receipt_no' => 'RCPT-ABMB-2024-001',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => 'Sarah Abdullah',
-                'remarks' => 'Annual trustee fee for bond services',
-                'approval_datetime' => '2024-02-01 14:30:00',
-                'status' => 'Active',
-                'issuer_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // CIMB Bank - Active issuer
-            [
-                'month' => 'Feb',
-                'date' => 5,
-                'description' => 'Annual Trustee Fee for Medium Term Notes',
-                'trustee_fee_amount_1' => 75000.00,
-                'trustee_fee_amount_2' => 40000.00,
-                'start_anniversary_date' => '2024-11-05',
-                'end_anniversary_date' => '2025-11-04',
-                'memo_to_fad' => '2025-01-20',
-                'invoice_no' => 'INV-CIMB-2025-001',
-                'date_letter_to_issuer' => '2025-01-25',
-                'first_reminder' => null,
-                'second_reminder' => null,
-                'third_reminder' => null,
-                'payment_received' => '2025-02-15',
-                'tt_cheque_no' => 'TT-2345678',
-                'memo_receipt_to_fad' => '2025-02-20',
-                'receipt_to_issuer' => '2025-02-25',
-                'receipt_no' => 'RCPT-CIMB-2025-001',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Annual trustee fee for MTN program',
-                'approval_datetime' => '2025-02-15 10:15:00',
-                'status' => 'Active',
-                'issuer_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'month' => 'Feb',
-                'date' => 5,
-                'description' => 'Annual Trustee Fee for Medium Term Notes',
-                'trustee_fee_amount_1' => 70000.00,
-                'trustee_fee_amount_2' => 35000.00,
-                'start_anniversary_date' => '2023-11-05',
-                'end_anniversary_date' => '2024-11-04',
-                'memo_to_fad' => '2024-01-15',
-                'invoice_no' => 'INV-CIMB-2024-001',
-                'date_letter_to_issuer' => '2024-01-20',
-                'first_reminder' => null,
-                'second_reminder' => null,
-                'third_reminder' => null,
-                'payment_received' => '2024-02-10',
-                'tt_cheque_no' => 'TT-9876543',
-                'memo_receipt_to_fad' => '2024-02-15',
-                'receipt_to_issuer' => '2024-02-20',
-                'receipt_no' => 'RCPT-CIMB-2024-001',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Annual trustee fee for MTN program',
-                'approval_datetime' => '2024-02-10 11:30:00',
-                'status' => 'Active',
-                'issuer_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Maybank - Has pending fee
-            [
-                'month' => 'Jun',
-                'date' => 15,
-                'description' => 'Annual Trustee Fee for Sukuk Wakalah',
-                'trustee_fee_amount_1' => 60000.00,
-                'trustee_fee_amount_2' => 30000.00,
-                'start_anniversary_date' => '2024-06-15',
-                'end_anniversary_date' => '2025-06-14',
-                'memo_to_fad' => '2025-06-01',
-                'invoice_no' => 'INV-MBB-2025-001',
-                'date_letter_to_issuer' => '2025-06-05',
-                'first_reminder' => null,
-                'second_reminder' => null,
-                'third_reminder' => null,
-                'payment_received' => null,
-                'tt_cheque_no' => null,
-                'memo_receipt_to_fad' => null,
-                'receipt_to_issuer' => null,
-                'receipt_no' => null,
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => null,
-                'remarks' => 'Annual trustee fee for Sukuk Wakalah',
-                'approval_datetime' => null,
-                'status' => 'Pending',
-                'issuer_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'month' => 'Jun',
-                'date' => 15,
-                'description' => 'Annual Trustee Fee for Sukuk Wakalah',
-                'trustee_fee_amount_1' => 55000.00,
-                'trustee_fee_amount_2' => 27500.00,
-                'start_anniversary_date' => '2023-06-15',
-                'end_anniversary_date' => '2024-06-14',
-                'memo_to_fad' => '2024-06-01',
-                'invoice_no' => 'INV-MBB-2024-001',
-                'date_letter_to_issuer' => '2024-06-05',
-                'first_reminder' => '2024-07-05',
-                'second_reminder' => '2024-08-05',
-                'third_reminder' => null,
-                'payment_received' => '2024-08-15',
-                'tt_cheque_no' => 'TT-3456789',
-                'memo_receipt_to_fad' => '2024-08-20',
-                'receipt_to_issuer' => '2024-08-25',
-                'receipt_no' => 'RCPT-MBB-2024-001',
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => 'Amir Hassan',
-                'remarks' => 'Late payment of annual trustee fee',
-                'approval_datetime' => '2024-08-16 09:30:00',
-                'status' => 'Active',
-                'issuer_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Public Bank - Pending status
-            [
-                'month' => 'Jan',
-                'date' => 20,
-                'description' => 'Annual Trustee Fee for Senior Notes',
-                'trustee_fee_amount_1' => 45000.00,
-                'trustee_fee_amount_2' => 22500.00,
-                'start_anniversary_date' => '2025-01-10',
-                'end_anniversary_date' => '2026-01-09',
-                'memo_to_fad' => '2025-01-15',
-                'invoice_no' => 'INV-PBB-2025-001',
-                'date_letter_to_issuer' => '2025-01-20',
-                'first_reminder' => null,
-                'second_reminder' => null,
-                'third_reminder' => null,
-                'payment_received' => '2025-02-05',
-                'tt_cheque_no' => 'TT-3456789',
-                'memo_receipt_to_fad' => '2025-02-10',
-                'receipt_to_issuer' => '2025-02-15',
-                'receipt_no' => 'RCPT-PBB-2025-001',
-                'prepared_by' => 'Kamal Ibrahim',
-                'verified_by' => 'Mei Ling Tan',
-                'remarks' => 'Annual trustee fee for senior notes',
-                'approval_datetime' => '2025-02-05 11:30:00',
-                'status' => 'Active',
-                'issuer_id' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Hong Leong - Inactive status with early redemption
-            [
-                'month' => 'Mar',
-                'date' => 25,
-                'description' => 'Annual Trustee Fee for Medium Term Notes',
-                'trustee_fee_amount_1' => 40000.00,
-                'trustee_fee_amount_2' => 20000.00,
-                'start_anniversary_date' => '2024-03-25',
-                'end_anniversary_date' => '2025-03-24',
-                'memo_to_fad' => '2025-03-10',
-                'invoice_no' => 'INV-HLB-2025-001',
-                'date_letter_to_issuer' => '2025-03-15',
-                'first_reminder' => '2025-04-15',
-                'second_reminder' => null,
-                'third_reminder' => null,
-                'payment_received' => null,
-                'tt_cheque_no' => null,
-                'memo_receipt_to_fad' => null,
-                'receipt_to_issuer' => null,
-                'receipt_no' => null,
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'remarks' => 'Annual trustee fee for MTN program - early redemption adjustment pending',
-                'approval_datetime' => '2025-03-15 14:45:00',
-                'status' => 'Inactive',
-                'issuer_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'month' => 'Mar',
-                'date' => 25,
-                'description' => 'Annual Trustee Fee for Medium Term Notes',
-                'trustee_fee_amount_1' => 35000.00,
-                'trustee_fee_amount_2' => 17500.00,
-                'start_anniversary_date' => '2023-03-25',
-                'end_anniversary_date' => '2024-03-24',
-                'memo_to_fad' => '2024-03-10',
-                'invoice_no' => 'INV-HLB-2024-001',
-                'date_letter_to_issuer' => '2024-03-15',
-                'first_reminder' => null,
-                'second_reminder' => null,
-                'third_reminder' => null,
-                'payment_received' => '2024-04-05',
-                'tt_cheque_no' => 'TT-4567890',
-                'memo_receipt_to_fad' => '2024-04-10',
-                'receipt_to_issuer' => '2024-04-15',
-                'receipt_no' => 'RCPT-HLB-2024-001',
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'remarks' => 'Annual trustee fee for MTN program',
-                'approval_datetime' => '2024-04-06 10:15:00',
-                'status' => 'Inactive',
-                'issuer_id' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // CIMB - Defaulted bond special fee
-            [
-                'month' => 'Dec',
-                'date' => 20,
-                'description' => 'Special Trustee Fee for Default Management',
-                'trustee_fee_amount_1' => 30000.00,
-                'trustee_fee_amount_2' => 0.00,
-                'start_anniversary_date' => '2024-12-10',
-                'end_anniversary_date' => '2025-12-09',
-                'memo_to_fad' => '2024-12-15',
-                'invoice_no' => 'INV-CIMB-2024-002',
-                'date_letter_to_issuer' => '2024-12-20',
-                'first_reminder' => '2025-01-20',
-                'second_reminder' => null,
-                'third_reminder' => null,
-                'payment_received' => '2025-01-15',
-                'tt_cheque_no' => 'TT-5678901',
-                'memo_receipt_to_fad' => '2025-01-20',
-                'receipt_to_issuer' => '2025-01-25',
-                'receipt_no' => 'RCPT-CIMB-2024-002',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Special fee for trustee services related to default management',
-                'approval_datetime' => '2025-01-16 11:45:00',
-                'status' => 'Active',
-                'issuer_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // RHB - Draft status for new fee
-            [
-                'month' => 'Apr',
-                'date' => 10,
-                'description' => 'Annual Trustee Fee for New Bond Issuance',
-                'trustee_fee_amount_1' => 55000.00,
-                'trustee_fee_amount_2' => 27500.00,
-                'start_anniversary_date' => '2025-04-10',
-                'end_anniversary_date' => '2026-04-09',
-                'memo_to_fad' => null,
-                'invoice_no' => 'INV-RHB-2025-001',
-                'date_letter_to_issuer' => null,
-                'first_reminder' => null,
-                'second_reminder' => null,
-                'third_reminder' => null,
-                'payment_received' => null,
-                'tt_cheque_no' => null,
-                'memo_receipt_to_fad' => null,
-                'receipt_to_issuer' => null,
-                'receipt_no' => null,
-                'prepared_by' => 'Nurul Izzah',
-                'verified_by' => null,
-                'remarks' => 'Draft fee structure for proposed new bond issuance',
-                'approval_datetime' => null,
-                'status' => 'Draft',
-                'issuer_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // RHB - Rejected fee proposal
-            [
-                'month' => 'Jan', 
-                'date' => 15,
-                'description' => 'Annual Trustee Fee for Islamic Medium Term Notes',
-                'trustee_fee_amount_1' => 65000.00,
-                'trustee_fee_amount_2' => 32500.00,
-                'start_anniversary_date' => '2025-01-15',
-                'end_anniversary_date' => '2026-01-14',
-                'memo_to_fad' => '2025-01-05',
-                'invoice_no' => 'INV-RHB-2025-002',
-                'date_letter_to_issuer' => '2025-01-10',
-                'first_reminder' => null,
-                'second_reminder' => null,
-                'third_reminder' => null,
-                'payment_received' => null,
-                'tt_cheque_no' => null,
-                'memo_receipt_to_fad' => null,
-                'receipt_to_issuer' => null,
-                'receipt_no' => null,
-                'prepared_by' => 'Nurul Izzah',
-                'verified_by' => 'Mohd Azlan',
-                'remarks' => 'Fee proposal rejected by issuer due to budgetary constraints. Renegotiation required.',
-                'approval_datetime' => '2025-01-12 09:45:00',
-                'status' => 'Rejected',
-                'issuer_id' => 6,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
+        $trusteeFees = [];
+        $issuerIds = array_values(DB::table('issuers')->pluck('id')->toArray());
+        
+        $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $statuses = ['Active', 'Pending', 'Inactive', 'Draft', 'Rejected'];
+        
+        $currentYear = Carbon::now()->year;
+        $lastYear = $currentYear - 1;
+        
+        foreach ($issuerIds as $issuerId) {
+            // Only create fee for some issuers
+            if (rand(0, 1) == 1) { // 50% chance
+                // Current year fee
+                $month = $months[array_rand($months)];
+                $date = rand(1, 28);
+                $fee1 = rand(30, 80) * 1000;
+                $fee2 = $fee1 / 2;
+                
+                $startDate = Carbon::createFromFormat('Y-m-d', $currentYear . '-' . sprintf("%02d", array_search($month, $months) + 1) . '-' . sprintf("%02d", $date));
+                $endDate = $startDate->copy()->addYear()->subDay();
+                
+                $status = $statuses[array_rand($statuses)];
+                $paymentReceived = ($status == 'Active') ? $startDate->copy()->addDays(rand(10, 30))->format('Y-m-d') : null;
+                
+                $trusteeFees[] = [
+                    'month' => $month,
+                    'date' => $date,
+                    'description' => 'Annual Trustee Fee for ' . rand(0, 1) ? 'Medium Term Notes' : 'Sukuk',
+                    'trustee_fee_amount_1' => $fee1 . '.00',
+                    'trustee_fee_amount_2' => $fee2 . '.00',
+                    'start_anniversary_date' => $startDate->format('Y-m-d'),
+                    'end_anniversary_date' => $endDate->format('Y-m-d'),
+                    'memo_to_fad' => $startDate->copy()->subDays(rand(5, 15))->format('Y-m-d'),
+                    'invoice_no' => 'INV-' . substr(DB::table('issuers')->where('id', $issuerId)->value('issuer_short_name'), 0, 4) . '-' . $currentYear . '-001',
+                    'date_letter_to_issuer' => $startDate->copy()->subDays(rand(5, 10))->format('Y-m-d'),
+                    'first_reminder' => ($status != 'Active') ? $startDate->copy()->addMonths(1)->format('Y-m-d') : null,
+                    'second_reminder' => ($status != 'Active' && rand(0, 1) == 1) ? $startDate->copy()->addMonths(2)->format('Y-m-d') : null,
+                    'third_reminder' => null,
+                    'payment_received' => $paymentReceived,
+                    'tt_cheque_no' => $paymentReceived ? 'TT-' . rand(1000000, 9999999) : null,
+                    'memo_receipt_to_fad' => $paymentReceived ? Carbon::parse($paymentReceived)->addDays(rand(3, 7))->format('Y-m-d') : null,
+                    'receipt_to_issuer' => $paymentReceived ? Carbon::parse($paymentReceived)->addDays(rand(5, 10))->format('Y-m-d') : null,
+                    'receipt_no' => $paymentReceived ? 'RCPT-' . substr(DB::table('issuers')->where('id', $issuerId)->value('issuer_short_name'), 0, 4) . '-' . $currentYear . '-001' : null,
+                    'prepared_by' => 'System',
+                    'verified_by' => ($status == 'Active' || $status == 'Inactive') ? 'System Verifier' : null,
+                    'remarks' => 'Auto-generated trustee fee',
+                    'approval_datetime' => ($status == 'Active' || $status == 'Inactive') ? $startDate->copy()->format('Y-m-d H:i:s') : null,
+                    'status' => $status,
+                    'issuer_id' => $issuerId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+                
+                // Last year fee (always completed)
+                $lastYearMonth = $months[array_rand($months)];
+                $lastYearDate = rand(1, 28);
+                $lastYearFee1 = rand(30, 80) * 1000;
+                $lastYearFee2 = $lastYearFee1 / 2;
+                
+                $lastYearStartDate = Carbon::createFromFormat('Y-m-d', $lastYear . '-' . sprintf("%02d", array_search($lastYearMonth, $months) + 1) . '-' . sprintf("%02d", $lastYearDate));
+                $lastYearEndDate = $lastYearStartDate->copy()->addYear()->subDay();
+                $lastYearPaymentReceived = $lastYearStartDate->copy()->addDays(rand(10, 30))->format('Y-m-d');
+                
+                $trusteeFees[] = [
+                    'month' => $lastYearMonth,
+                    'date' => $lastYearDate,
+                    'description' => 'Annual Trustee Fee for ' . (rand(0, 1) ? 'Medium Term Notes' : 'Sukuk'),
+                    'trustee_fee_amount_1' => $lastYearFee1 . '.00',
+                    'trustee_fee_amount_2' => $lastYearFee2 . '.00',
+                    'start_anniversary_date' => $lastYearStartDate->format('Y-m-d'),
+                    'end_anniversary_date' => $lastYearEndDate->format('Y-m-d'),
+                    'memo_to_fad' => $lastYearStartDate->copy()->subDays(rand(5, 15))->format('Y-m-d'),
+                    'invoice_no' => 'INV-' . substr(DB::table('issuers')->where('id', $issuerId)->value('issuer_short_name'), 0, 4) . '-' . $lastYear . '-001',
+                    'date_letter_to_issuer' => $lastYearStartDate->copy()->subDays(rand(5, 10))->format('Y-m-d'),
+                    'first_reminder' => rand(0, 1) == 1 ? $lastYearStartDate->copy()->addMonths(1)->format('Y-m-d') : null,
+                    'second_reminder' => null,
+                    'third_reminder' => null,
+                    'payment_received' => $lastYearPaymentReceived,
+                    'tt_cheque_no' => 'TT-' . rand(1000000, 9999999),
+                    'memo_receipt_to_fad' => Carbon::parse($lastYearPaymentReceived)->addDays(rand(3, 7))->format('Y-m-d'),
+                    'receipt_to_issuer' => Carbon::parse($lastYearPaymentReceived)->addDays(rand(5, 10))->format('Y-m-d'),
+                    'receipt_no' => 'RCPT-' . substr(DB::table('issuers')->where('id', $issuerId)->value('issuer_short_name'), 0, 4) . '-' . $lastYear . '-001',
+                    'prepared_by' => 'System',
+                    'verified_by' => 'System Verifier',
+                    'remarks' => 'Auto-generated trustee fee (previous year)',
+                    'approval_datetime' => $lastYearStartDate->copy()->format('Y-m-d H:i:s'),
+                    'status' => 'Active',
+                    'issuer_id' => $issuerId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
 
         DB::table('trustee_fees')->insert($trusteeFees);
 
-        // Get all issuers to map short_name to id
-        $issuerMap = DB::table('issuers')
-            ->pluck('id', 'issuer_short_name')
-            ->toArray();
-
         // Seed Compliance Covenants
-        $complianceCovenants = [
-            // Alliance Bank - Active issuer with good compliance
-            [
-                'issuer_id' => $issuerMap['ABMB'],
-                'financial_year_end' => '2024-12-31',
-                'audited_financial_statements' => 'Received',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Received',
-                'finance_service_cover_ratio' => '1.5',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Received',
-                'ratio_information_on_use_of_proceeds' => 'Received',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => 'Sarah Abdullah',
-                'remarks' => 'All covenant requirements met',
-                'approval_datetime' => '2025-01-15 11:30:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['ABMB'],
-                'financial_year_end' => '2023-12-31',
-                'audited_financial_statements' => 'Received',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Received',
-                'finance_service_cover_ratio' => '1.4',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Received',
-                'ratio_information_on_use_of_proceeds' => 'Received',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => 'Sarah Abdullah',
-                'remarks' => 'All covenant requirements met',
-                'approval_datetime' => '2024-01-16 10:45:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // CIMB Bank - Active issuer with mixed compliance
-            [
-                'issuer_id' => $issuerMap['CIMB'],
-                'financial_year_end' => '2024-12-31',
-                'audited_financial_statements' => 'Received',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Received',
-                'finance_service_cover_ratio' => '1.7',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Received',
-                'ratio_information_on_use_of_proceeds' => 'Received',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'All covenant requirements met for Series 2 & 3',
-                'approval_datetime' => '2025-01-20 10:15:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['CIMB'],
-                'financial_year_end' => '2024-12-31',
-                'audited_financial_statements' => 'Received',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Not Compliant',
-                'finance_service_cover_ratio' => '1.1',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Received',
-                'ratio_information_on_use_of_proceeds' => 'Received',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'Series 1 in default due to FSCR below 1.2 covenant requirement',
-                'approval_datetime' => '2024-12-15 14:30:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['CIMB'],
-                'financial_year_end' => '2023-12-31',
-                'audited_financial_statements' => 'Received',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Received',
-                'finance_service_cover_ratio' => '1.6',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Received',
-                'ratio_information_on_use_of_proceeds' => 'Received',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Jason Wong',
-                'remarks' => 'All covenant requirements met',
-                'approval_datetime' => '2024-01-18 11:30:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Maybank - Active issuer with good compliance
-            [
-                'issuer_id' => $issuerMap['MBB'],
-                'financial_year_end' => '2024-12-31',
-                'audited_financial_statements' => 'Received',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Received',
-                'finance_service_cover_ratio' => '1.8',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Received',
-                'ratio_information_on_use_of_proceeds' => 'Received',
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => 'Amir Hassan',
-                'remarks' => 'All covenant requirements met',
-                'approval_datetime' => '2025-01-25 09:45:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['MBB'],
-                'financial_year_end' => '2023-12-31',
-                'audited_financial_statements' => 'Received',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Received',
-                'finance_service_cover_ratio' => '1.7',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Received',
-                'ratio_information_on_use_of_proceeds' => 'Received',
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => 'Amir Hassan',
-                'remarks' => 'All covenant requirements met',
-                'approval_datetime' => '2024-01-22 10:30:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Public Bank - Pending status with incomplete compliance
-            [
-                'issuer_id' => $issuerMap['PBB'],
-                'financial_year_end' => '2024-12-31',
-                'audited_financial_statements' => 'Pending',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Pending',
-                'finance_service_cover_ratio' => '1.6',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Received',
-                'ratio_information_on_use_of_proceeds' => 'Received',
-                'prepared_by' => 'Kamal Ibrahim',
-                'verified_by' => null,
-                'remarks' => 'Awaiting audited financial statements and completion of compliance certificate',
-                'approval_datetime' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['PBB'],
-                'financial_year_end' => '2023-12-31',
-                'audited_financial_statements' => 'Received',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Received',
-                'finance_service_cover_ratio' => '1.5',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Received',
-                'ratio_information_on_use_of_proceeds' => 'Received',
-                'prepared_by' => 'Kamal Ibrahim',
-                'verified_by' => 'Mei Ling Tan',
-                'remarks' => 'All covenant requirements met',
-                'approval_datetime' => '2024-01-25 11:45:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Hong Leong - Inactive status with deteriorating metrics
-            [
-                'issuer_id' => $issuerMap['HLB'],
-                'financial_year_end' => '2024-12-31',
-                'audited_financial_statements' => 'Received',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Received',
-                'finance_service_cover_ratio' => '1.4',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Received',
-                'ratio_information_on_use_of_proceeds' => 'Received',
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'remarks' => 'FSCR below covenant requirement of 1.5 - bond redeemed early',
-                'approval_datetime' => '2025-01-30 14:20:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['HLB'],
-                'financial_year_end' => '2023-12-31',
-                'audited_financial_statements' => 'Received',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Received',
-                'finance_service_cover_ratio' => '1.5',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Received',
-                'ratio_information_on_use_of_proceeds' => 'Received',
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'remarks' => 'Covenant requirements just met at minimum level',
-                'approval_datetime' => '2024-01-28 15:30:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // RHB - Draft status with minimal compliance info
-            [
-                'issuer_id' => $issuerMap['RHB'],
-                'financial_year_end' => '2024-12-31',
-                'audited_financial_statements' => 'Not Required',
-                'unaudited_financial_statements' => 'Received',
-                'compliance_certificate' => 'Not Required',
-                'finance_service_cover_ratio' => '1.7',
-                'annual_budget' => 'Received',
-                'computation_of_finance_to_ebitda' => 'Not Required',
-                'ratio_information_on_use_of_proceeds' => 'Not Required',
-                'prepared_by' => 'Nurul Izzah',
-                'verified_by' => null,
-                'remarks' => 'Pre-issuance compliance review for draft facility',
-                'approval_datetime' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
+        $complianceCovenants = [];
+        $issuerIds = array_values(DB::table('issuers')->pluck('id')->toArray());
+        
+        $complianceStatuses = ['Received', 'Pending', 'Not Compliant', 'Not Required'];
+        
+        $currentYear = Carbon::now()->year;
+        $lastYear = $currentYear - 1;
+        
+        foreach ($issuerIds as $issuerId) {
+            // Only create covenant for some issuers
+            if (rand(0, 2) > 0) { // 2/3 chance
+                // Current year covenant
+                $fscr = (rand(120, 180) / 100); // 1.2 to 1.8
+                $verifiedBy = rand(0, 2) > 0 ? 'System Verifier' : null; // 2/3 chance to be verified
+                
+                $complianceCovenants[] = [
+                    'issuer_id' => $issuerId,
+                    'financial_year_end' => $currentYear . '-12-31',
+                    'audited_financial_statements' => $complianceStatuses[array_rand($complianceStatuses)],
+                    'unaudited_financial_statements' => $complianceStatuses[array_rand($complianceStatuses)],
+                    'compliance_certificate' => $complianceStatuses[array_rand($complianceStatuses)],
+                    'finance_service_cover_ratio' => $fscr,
+                    'annual_budget' => $complianceStatuses[array_rand($complianceStatuses)],
+                    'computation_of_finance_to_ebitda' => $complianceStatuses[array_rand($complianceStatuses)],
+                    'ratio_information_on_use_of_proceeds' => $complianceStatuses[array_rand($complianceStatuses)],
+                    'prepared_by' => 'System',
+                    'verified_by' => $verifiedBy,
+                    'remarks' => 'Auto-generated compliance covenant',
+                    'approval_datetime' => $verifiedBy ? Carbon::now()->subDays(rand(10, 60))->format('Y-m-d H:i:s') : null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+                
+                // Last year covenant (always verified)
+                $lastYearFscr = (rand(120, 180) / 100); // 1.2 to 1.8
+                
+                $complianceCovenants[] = [
+                    'issuer_id' => $issuerId,
+                    'financial_year_end' => $lastYear . '-12-31',
+                    'audited_financial_statements' => 'Received',
+                    'unaudited_financial_statements' => 'Received',
+                    'compliance_certificate' => 'Received',
+                    'finance_service_cover_ratio' => $lastYearFscr,
+                    'annual_budget' => 'Received',
+                    'computation_of_finance_to_ebitda' => 'Received',
+                    'ratio_information_on_use_of_proceeds' => 'Received',
+                    'prepared_by' => 'System',
+                    'verified_by' => 'System Verifier',
+                    'remarks' => 'Auto-generated compliance covenant (previous year)',
+                    'approval_datetime' => Carbon::createFromFormat('Y-m-d', $lastYear . '-12-31')->addDays(rand(15, 45))->format('Y-m-d H:i:s'),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
 
         DB::table('compliance_covenants')->insert($complianceCovenants);
 
         // Seed Activity Diaries
-        $activityDiaries = [
-            // ABMB - Active issuer - Regular monitoring and compliance activities
-            [
-                'issuer_id' => $issuerMap['ABMB'],
-                'purpose' => 'Annual review meeting with issuer',
-                'letter_date' => '2025-01-15',
-                'due_date' => '2025-02-15',
-                'status' => 'Pending',
-                'remarks' => 'Scheduled annual review meeting to discuss compliance with trust deed covenants',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['ABMB'],
-                'purpose' => 'Coupon payment verification',
-                'letter_date' => '2025-01-20',
-                'due_date' => '2025-02-05',
-                'status' => 'In Progress',
-                'remarks' => 'Verification of upcoming coupon payment details with the paying agent',
-                'prepared_by' => 'Siti Zainab',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['ABMB'],
-                'purpose' => 'Trust deed amendment discussion',
-                'letter_date' => '2024-11-05',
-                'due_date' => '2024-12-05',
-                'status' => 'Completed',
-                'remarks' => 'Discussion with issuer regarding minor amendments to trust deed',
-                'prepared_by' => 'Jason Wong',
-                'verified_by' => 'Nurul Izzah',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['ABMB'],
-                'purpose' => 'Compliance certificate review',
-                'letter_date' => '2024-12-15',
-                'due_date' => '2025-01-15',
-                'status' => 'Completed',
-                'remarks' => 'Review of issuer compliance certificate for the previous quarter',
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => 'Amir Hassan',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['ABMB'],
-                'purpose' => 'Lockout period expiry notice',
-                'letter_date' => '2025-01-10',
-                'due_date' => '2025-02-09',
-                'status' => 'In Progress',
-                'remarks' => 'Preparation of notice to issuer regarding upcoming expiry of lockout period',
-                'prepared_by' => 'Sarah Abdullah',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // CIMB - Active issuer - Regular monitoring activities
-            [
-                'issuer_id' => $issuerMap['CIMB'],
-                'purpose' => 'Quarterly compliance check',
-                'letter_date' => '2024-12-10',
-                'due_date' => '2025-01-10',
-                'status' => 'Completed',
-                'remarks' => 'Completed quarterly compliance verification with all necessary documents received',
-                'prepared_by' => 'Michael Tan',
-                'verified_by' => 'Sarah Abdullah',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['CIMB'],
-                'purpose' => 'Rating update monitoring',
-                'letter_date' => '2025-01-25',
-                'due_date' => '2025-02-28',
-                'status' => 'Pending',
-                'remarks' => 'Monitor for upcoming rating review by MARC',
-                'prepared_by' => 'Amir Hassan',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['CIMB'],
-                'purpose' => 'Interest payment verification',
-                'letter_date' => '2025-01-30',
-                'due_date' => '2025-02-10',
-                'status' => 'Pending',
-                'remarks' => 'Verification of interest payment calculation before payment date',
-                'prepared_by' => 'David Lee',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Maybank - Active issuer - Islamic compliance focus
-            [
-                'issuer_id' => $issuerMap['MBB'],
-                'purpose' => 'Sukuk structure compliance review',
-                'letter_date' => '2024-12-15',
-                'due_date' => '2024-12-30',
-                'status' => 'Overdue',
-                'remarks' => 'Review of Sukuk structure compliance with Shariah principles',
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['MBB'],
-                'purpose' => 'Financial statement analysis',
-                'letter_date' => '2025-01-15',
-                'due_date' => '2025-03-15',
-                'status' => 'Pending',
-                'remarks' => 'Analysis of issuer year-end financial statements',
-                'prepared_by' => 'Rajesh Kumar',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['MBB'],
-                'purpose' => 'Due diligence meeting',
-                'letter_date' => '2025-02-01',
-                'due_date' => '2025-03-01',
-                'status' => 'Pending',
-                'remarks' => 'Scheduled meeting for annual due diligence review',
-                'prepared_by' => 'Sarah Abdullah',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['MBB'],
-                'purpose' => 'Shariah advisor consultation',
-                'letter_date' => '2025-01-05',
-                'due_date' => '2025-02-05',
-                'status' => 'In Progress',
-                'remarks' => 'Consultation with Shariah advisor regarding profit distribution mechanism',
-                'prepared_by' => 'Fatimah Zahra',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Public Bank - Pending approval status
-            [
-                'issuer_id' => $issuerMap['PBB'],
-                'purpose' => 'Initial due diligence review',
-                'letter_date' => '2025-01-20',
-                'due_date' => '2025-02-20',
-                'status' => 'In Progress',
-                'remarks' => 'Initial review of issuer compliance documentation for new bond',
-                'prepared_by' => 'Kamal Ibrahim',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['PBB'],
-                'purpose' => 'First coupon payment verification',
-                'letter_date' => '2025-01-05',
-                'due_date' => '2025-01-10',
-                'status' => 'Completed',
-                'remarks' => 'Verification of first coupon payment for new bond',
-                'prepared_by' => 'Mei Ling Tan',
-                'verified_by' => 'Kamal Ibrahim',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['PBB'],
-                'purpose' => 'Regulatory approval follow-up',
-                'letter_date' => '2025-01-25',
-                'due_date' => '2025-02-10',
-                'status' => 'In Progress',
-                'remarks' => 'Follow-up with regulatory authority on approval status',
-                'prepared_by' => 'Kamal Ibrahim',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['PBB'],
-                'purpose' => 'Documentation verification',
-                'letter_date' => '2025-01-15',
-                'due_date' => '2025-02-15',
-                'status' => 'In Progress',
-                'remarks' => 'Verification of legal documentation before final approval',
-                'prepared_by' => 'Mei Ling Tan',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // Hong Leong Bank - Inactive status (redeemed)
-            [
-                'issuer_id' => $issuerMap['HLB'],
-                'purpose' => 'Early redemption documentation',
-                'letter_date' => '2024-12-01',
-                'due_date' => '2024-12-31',
-                'status' => 'Completed',
-                'remarks' => 'Documentation for early redemption of bond',
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['HLB'],
-                'purpose' => 'Redemption notice to bondholders',
-                'letter_date' => '2024-11-15',
-                'due_date' => '2024-11-30',
-                'status' => 'Completed',
-                'remarks' => 'Preparation and distribution of early redemption notice to bondholders',
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['HLB'],
-                'purpose' => 'Final redemption payment verification',
-                'letter_date' => '2024-12-10',
-                'due_date' => '2024-12-15',
-                'status' => 'Completed',
-                'remarks' => 'Verification of early redemption payment calculations',
-                'prepared_by' => 'Lily Wong',
-                'verified_by' => 'Razak Yusof',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['HLB'],
-                'purpose' => 'Post-redemption documentation',
-                'letter_date' => '2024-12-20',
-                'due_date' => '2025-01-15',
-                'status' => 'Completed',
-                'remarks' => 'Completion of documentation following successful early redemption',
-                'prepared_by' => 'Razak Yusof',
-                'verified_by' => 'Nurul Izzah',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            
-            // RHB - Draft status
-            [
-                'issuer_id' => $issuerMap['RHB'],
-                'purpose' => 'Initial documentation review',
-                'letter_date' => '2025-01-05',
-                'due_date' => '2025-01-25',
-                'status' => 'In Progress',
-                'remarks' => 'Review of draft documentation for new bond issuance',
-                'prepared_by' => 'Nurul Izzah',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['RHB'],
-                'purpose' => 'Covenant structure consultation',
-                'letter_date' => '2025-01-10',
-                'due_date' => '2025-01-30',
-                'status' => 'In Progress',
-                'remarks' => 'Discussion with issuer regarding covenant structure',
-                'prepared_by' => 'Nurul Izzah',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'issuer_id' => $issuerMap['RHB'],
-                'purpose' => 'Draft term sheet review',
-                'letter_date' => '2025-01-15',
-                'due_date' => '2025-02-15',
-                'status' => 'In Progress',
-                'remarks' => 'Review of draft term sheet for proposed corporate bonds',
-                'prepared_by' => 'Nurul Izzah',
-                'verified_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        $activityDiaries = [];
+        $issuerIds = array_values(DB::table('issuers')->pluck('id')->toArray());
+        
+        $activityPurposes = [
+            'Annual review meeting with issuer',
+            'Coupon payment verification',
+            'Trust deed amendment discussion',
+            'Compliance certificate review',
+            'Quarterly compliance check',
+            'Rating update monitoring',
+            'Financial statement analysis',
+            'Due diligence meeting',
+            'Initial documentation review',
+            'Covenant structure consultation',
+            'Draft term sheet review',
+            'Shariah advisor consultation'
         ];
+        
+        $activityStatuses = ['Pending', 'In Progress', 'Completed', 'Overdue'];
+        
+        foreach ($issuerIds as $issuerId) {
+            // Generate 2-5 activities per issuer
+            $numActivities = rand(2, 5);
+            $activityIndices = array_rand($activityPurposes, $numActivities);
+            
+            if (!is_array($activityIndices)) {
+                $activityIndices = [$activityIndices];
+            }
+            
+            foreach ($activityIndices as $index) {
+                $purpose = $activityPurposes[$index];
+                $letterDate = Carbon::now()->subDays(rand(0, 60));
+                $dueDate = $letterDate->copy()->addDays(rand(15, 45));
+                $status = $activityStatuses[array_rand($activityStatuses)];
+                
+                // Make activities more realistic based on status
+                if ($status == 'Completed') {
+                    $dueDate = Carbon::now()->subDays(rand(1, 30));
+                } elseif ($status == 'Overdue') {
+                    $dueDate = Carbon::now()->subDays(rand(1, 15));
+                }
+                
+                $verifiedBy = ($status == 'Completed') ? 'System Verifier' : null;
+                
+                $activityDiaries[] = [
+                    'issuer_id' => $issuerId,
+                    'purpose' => $purpose,
+                    'letter_date' => $letterDate->format('Y-m-d'),
+                    'due_date' => $dueDate->format('Y-m-d'),
+                    'status' => $status,
+                    'remarks' => 'Auto-generated activity: ' . $purpose,
+                    'prepared_by' => 'System',
+                    'verified_by' => $verifiedBy,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
 
         DB::table('activity_diaries')->insert($activityDiaries);
     }

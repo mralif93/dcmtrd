@@ -395,6 +395,8 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/bond/{bond}/edit', [MakerController::class, 'BondEdit'])->name('bond-m.edit');
     Route::put('maker/bond/{bond}/update', [MakerController::class, 'BondUpdate'])->name('bond-m.update');
     Route::get('maker/bond/{bond}/show', [MakerController::class, 'BondShow'])->name('bond-m.show');
+    Route::get('maker/bond/{issuer}/upload', [MakerController::class, 'BondUploadForm'])->name('bond-m.upload-form');
+    Route::post('maker/bond/{issuer}/upload', [MakerController::class, 'BondUploadStore'])->name('bond-m.upload-store');
 
     // Announcement Module
     Route::get('maker/announcement/{issuer}/create', [MakerController::class, 'AnnouncementCreate'])->name('announcement-m.create');
@@ -417,6 +419,33 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/facility-info/{facility}/update', [MakerController::class, 'FacilityInfoUpdate'])->name('facility-info-m.update');
     Route::get('maker/facility-info/{facility}/show', [MakerController::class, 'FacilityInfoShow'])->name('facility-info-m.show');
 
+    // Rating Movement Module
+    Route::get('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementCreate'])->name('rating-m.create');
+    Route::post('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementStore'])->name('rating-m.store');
+    Route::get('maker/rating-movement/{rating}/edit', [MakerController::class, 'RatingMovementEdit'])->name('rating-m.edit');
+    Route::put('maker/rating-movement/{rating}/update', [MakerController::class, 'RatingMovementUpdate'])->name('rating-m.update');
+    Route::get('maker/rating-movement/{rating}/show', [MakerController::class, 'RatingMovementShow'])->name('rating-m.show');
+    Route::get('maker/rating-movement/{bond}/upload', [MakerController::class, 'RatingMovementUploadForm'])->name('rating-m.upload-form');
+    Route::post('maker/rating-movement/{bond}/upload', [MakerController::class, 'RatingMovementUploadStore'])->name('rating-m.upload-store');
+
+    // Payment Schedule Module
+    Route::get('maker/payment-schedule/{bond}/create', [MakerController::class, 'PaymentScheduleCreate'])->name('payment-m.create');
+    Route::post('maker/payment-schedule/{bond}/create', [MakerController::class, 'PaymentScheduleStore'])->name('payment-m.store');
+    Route::get('maker/payment-schedule/{rating}/edit', [MakerController::class, 'PaymentScheduleEdit'])->name('payment-m.edit');
+    Route::put('maker/payment-schedule/{rating}/update', [MakerController::class, 'PaymentScheduleUpdate'])->name('payment-m.update');
+    Route::get('maker/payment-schedule/{rating}/show', [MakerController::class, 'PaymentScheduleShow'])->name('payment-m.show');
+    Route::get('maker/payment-schedule/{bond}/upload', [MakerController::class, 'PaymentScheduleUploadForm'])->name('payment-m.upload-form');
+    Route::post('maker/payment-schedule/{bond}/upload', [MakerController::class, 'PaymentScheduleUploadStore'])->name('payment-m.upload-store');
+
+    // Trading Activity Module
+    Route::get('maker/trading-activity/{bond}/create', [MakerController::class, 'TradingActivityCreate'])->name('trading-m.create');
+    Route::post('maker/trading-activity/{bond}/create', [MakerController::class, 'TradingActivityStore'])->name('trading-m.store');
+    Route::get('maker/trading-activity/{rating}/edit', [MakerController::class, 'TradingActivityEdit'])->name('trading-m.edit');
+    Route::put('maker/trading-activity/{rating}/update', [MakerController::class, 'TradingActivityUpdate'])->name('trading-m.update');
+    Route::get('maker/trading-activity/{rating}/show', [MakerController::class, 'TradingActivityShow'])->name('trading-m.show');
+    Route::get('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadForm'])->name('trading-m.upload-form');
+    Route::post('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadStore'])->name('trading-m.upload-store');
+    
     // Trustee Fee Module
     Route::get('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeCreate'])->name('trustee-fee-m.create');
     Route::post('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeStore'])->name('trustee-fee-m.store');

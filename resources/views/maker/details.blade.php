@@ -69,7 +69,7 @@
                         </x-slot>
                         
                         <x-slot name="content">
-                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('bond-m.upload-form', $issuer) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                                 Bond
                             </a>
                         </x-slot>

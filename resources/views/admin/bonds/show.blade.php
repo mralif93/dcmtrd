@@ -205,7 +205,7 @@
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Approval Date/Time</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->approval_date_time->format('d/m/Y H:i A') }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bond->approval_date_time?->format('d/m/Y H:i A') }}</dd>
                             </div>
                         </div>
                         <div class="space-y-4">
