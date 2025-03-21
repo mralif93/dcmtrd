@@ -26,7 +26,7 @@
                 <!-- Header Section -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">Compliance Covenant Information</h3>
-                    <div class="flex space-x-2">
+                    <!-- <div class="flex space-x-2">
                         <a href="{{ route('compliance-covenant-m.edit', $compliance) }}" 
                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +34,7 @@
                             </svg>
                             Edit
                         </a>
-                    </div>
+                    </div> -->
                 </div>
 
                 <!-- Status Banner -->

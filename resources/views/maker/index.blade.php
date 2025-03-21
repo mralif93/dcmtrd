@@ -153,6 +153,7 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee Amount</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anniversary Period</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                             </thead>
@@ -181,6 +182,14 @@
                                             {{ $fee->payment_received ? 'Paid' : 'Unpaid' }}
                                         </span>
                                     </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            {{ $fee->status == 'Active' ? 'bg-green-100 text-green-800' : 
+                                            ($fee->status == 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                            ($fee->status == 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
+                                            {{ $fee->status }}
+                                        </span>
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end space-x-2">
                                             <a href="{{ route('trustee-fee-m.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
@@ -203,13 +212,25 @@
                                                     </svg>
                                                 </button>
                                             </form> -->
+                                            @if ($fee->status == 'Draft')
+                                            <a href="{{ route('trustee-fee-m.approval', $fee) }}" 
+                                               class="text-indigo-600 hover:text-indigo-900" 
+                                               title="Approve"
+                                               onclick="confirmApproval(event, '{{ $fee->issuer->issuer_name }}')">
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-5m0 0l-2 2m2-2l2 2" />
+                                                </svg>
+                                            </a>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
                                 @endforeach
                                 @if($trustee_fees->count() === 0)
                                 <tr>
-                                    <td colspan="6" class="px-6 py-4 text-center">
+                                    <td colspan="7" class="px-6 py-4 text-center">
                                         <div class="text-sm text-gray-500">No trustee fees found.</div>
                                     </td>
                                 </tr>

@@ -21,8 +21,11 @@ class ApproverController extends Controller
 {
     public function index()
     {
-        $issuers = Issuer::query()->where('status', 'Pending')->latest()->paginate(10);
-        return view('approver.index', compact('issuers'));
+        $issuers = Issuer::query()->whereIn('status', ['Pending', 'Active'])->latest()->paginate(10);
+        $trustee_fees = TrusteeFee::query()->whereIn('status', ['Pending', 'Active'])->latest()->paginate(10);
+        $covenants = ComplianceCovenant::query()->latest()->paginate(10);
+        $portfolios = Portfolio::query()->latest()->paginate(10);
+        return view('approver.index', compact('issuers', 'trustee_fees', 'covenants', 'portfolios'));
     }
 
     public function IssuerEdit(Issuer $issuer)
@@ -233,6 +236,46 @@ class ApproverController extends Controller
     public function TrusteeFeeShow(TrusteeFee $trusteeFee)
     {
         return view('approver.trustee-fee.show', compact('trusteeFee'));
+    }
+
+    /**
+     * Approve the Trustee Fee
+     */
+    public function TrusteeFeeApprove(TrusteeFee $trusteeFee)
+    {
+        try {
+            $trusteeFee->update([
+                'status' => 'Active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+            
+            return redirect()->route('dashboard')->with('success', 'Trustee Fee approved successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error approving issuer: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Reject the Trustee Fee
+     */
+    public function TrusteeFeeReject(Request $request, TrusteeFee $trusteeFee)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $trusteeFee->update([
+                'status' => 'Rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+            
+            return redirect()->route('dashboard')->with('success', 'Trustee Fee rejected successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error rejecting issuer: ' . $e->getMessage());
+        }
     }
 
     // Compliance Covenant Module

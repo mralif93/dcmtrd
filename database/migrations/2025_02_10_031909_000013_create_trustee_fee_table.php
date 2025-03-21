@@ -31,6 +31,7 @@ return new class extends Migration
             $table->date('memo_receipt_to_fad')->nullable();
             $table->date('receipt_to_issuer')->nullable();
             $table->string('receipt_no')->nullable();
+            $table->string('status')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();

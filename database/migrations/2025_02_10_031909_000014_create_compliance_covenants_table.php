@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('annual_budget')->nullable();
             $table->string('computation_of_finance_to_ebitda')->nullable();
             $table->string('ratio_information_on_use_of_proceeds')->nullable();
+            $table->string('status')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();

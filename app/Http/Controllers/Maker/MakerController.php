@@ -23,8 +23,8 @@ class MakerController extends Controller
     // List of Issuers and Portfolio
     public function index()
     {
-        $issuers = Issuer::query()->whereIn('status', ['Active', 'Draft'])->latest()->paginate(10);
-        $trustee_fees = TrusteeFee::query()->latest()->paginate(10);
+        $issuers = Issuer::query()->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])->latest()->paginate(10);
+        $trustee_fees = TrusteeFee::query()->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])->latest()->paginate(10);
         $covenants = ComplianceCovenant::query()->latest()->paginate(10);
         $portfolios = Portfolio::query()->latest()->paginate(10);
         return view('maker.index', compact('issuers', 'trustee_fees', 'covenants', 'portfolios'));
@@ -582,6 +582,7 @@ class MakerController extends Controller
             'receipt_no' => 'nullable|string|max:255',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
+            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
             'remarks' => 'nullable|string',
         ]);
 
@@ -591,7 +592,8 @@ class MakerController extends Controller
 
         TrusteeFee::create($request->all());
 
-        return redirect()->route('dashboard')
+        return redirect()
+            ->route('dashboard')
             ->with('success', 'Trustee fee created successfully.');
     }
 
@@ -625,12 +627,14 @@ class MakerController extends Controller
             'receipt_no' => 'nullable|string|max:255',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
+            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
             'remarks' => 'nullable|string',
         ]);
 
         $trusteeFee->update($request->all());
 
-        return redirect()->route('dashboard')
+        return redirect()
+            ->route('dashboard')
             ->with('success', 'Trustee fee updated successfully.');
     }
 
@@ -643,8 +647,22 @@ class MakerController extends Controller
     {
         $trusteeFee->delete();
 
-        return redirect()->route('trustee-fee-m.index')
+        return redirect()->route('dashboard')
             ->with('success', 'Trustee fee deleted successfully.');
+    }
+
+    public function SubmitApprovalTrusteeFee(TrusteeFee $trusteeFee)
+    {
+        try {
+            $trusteeFee->update([
+                'status' => 'Pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+            
+            return redirect()->route('dashboard')->with('success', 'Trustee Fee submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
     }
 
     // Compliance Covenants
@@ -656,7 +674,7 @@ class MakerController extends Controller
 
     public function ComplianceStore(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'issuer_short_name' => 'required|string|max:255',
             'financial_year_end' => 'required|string|max:255',
             'audited_financial_statements' => 'nullable|string|max:255',
@@ -668,17 +686,14 @@ class MakerController extends Controller
             'ratio_information_on_use_of_proceeds' => 'nullable|string|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return redirect()
-                ->route('compliance-covenant.create')
-                ->withErrors($validator)
-                ->withInput();
-        }
+        // Add prepared_by from authenticated user and set status to pending
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Draft';
 
         ComplianceCovenant::create($request->all());
 
         return redirect()
-            ->route('compliance-covenant-m.index')
+            ->route('dashboard')
             ->with('success', 'Compliance covenant created successfully.');
     }
 
@@ -690,7 +705,7 @@ class MakerController extends Controller
 
     public function ComplianceUpdate(Request $request, ComplianceCovenant $compliance)
     {
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'issuer_id' => 'required|exists:issuers,id',
             'financial_year_end' => 'required|string|max:255',
             'audited_financial_statements' => 'nullable|string|max:255',
@@ -702,17 +717,10 @@ class MakerController extends Controller
             'ratio_information_on_use_of_proceeds' => 'nullable|string|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return redirect()
-                ->route('compliance-covenant-m.edit', $compliance->id)
-                ->withErrors($validator)
-                ->withInput();
-        }
-
         $compliance->update($request->all());
 
         return redirect()
-            ->route('compliance-covenant-m.index')
+            ->route('dashboard')
             ->with('success', 'Compliance covenant updated successfully.');
     }
 
@@ -726,7 +734,7 @@ class MakerController extends Controller
         $compliance->delete();
 
         return redirect()
-            ->route('compliance-covenant-m.index')
+            ->route('dashboard')
             ->with('success', 'Compliance covenant deleted successfully.');
     }
 

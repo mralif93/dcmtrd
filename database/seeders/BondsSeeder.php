@@ -2114,6 +2114,7 @@ class BondsSeeder extends Seeder
                 'verified_by' => 'Sarah Abdullah',
                 'remarks' => 'Annual trustee fee for bond services',
                 'approval_datetime' => '2025-02-01 14:30:00',
+                'status' => 'Active',
                 'issuer_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -2141,6 +2142,7 @@ class BondsSeeder extends Seeder
                 'verified_by' => 'Sarah Abdullah',
                 'remarks' => 'Annual trustee fee for bond services',
                 'approval_datetime' => '2024-02-01 14:30:00',
+                'status' => 'Active',
                 'issuer_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -2170,6 +2172,7 @@ class BondsSeeder extends Seeder
                 'verified_by' => 'Jason Wong',
                 'remarks' => 'Annual trustee fee for MTN program',
                 'approval_datetime' => '2025-02-15 10:15:00',
+                'status' => 'Active',
                 'issuer_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -2197,12 +2200,13 @@ class BondsSeeder extends Seeder
                 'verified_by' => 'Jason Wong',
                 'remarks' => 'Annual trustee fee for MTN program',
                 'approval_datetime' => '2024-02-10 11:30:00',
+                'status' => 'Active',
                 'issuer_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             
-            // Maybank - Active issuer
+            // Maybank - Has pending fee
             [
                 'month' => 'Jun',
                 'date' => 15,
@@ -2226,6 +2230,7 @@ class BondsSeeder extends Seeder
                 'verified_by' => null,
                 'remarks' => 'Annual trustee fee for Sukuk Wakalah',
                 'approval_datetime' => null,
+                'status' => 'Pending',
                 'issuer_id' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -2253,6 +2258,7 @@ class BondsSeeder extends Seeder
                 'verified_by' => 'Amir Hassan',
                 'remarks' => 'Late payment of annual trustee fee',
                 'approval_datetime' => '2024-08-16 09:30:00',
+                'status' => 'Active',
                 'issuer_id' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -2282,6 +2288,7 @@ class BondsSeeder extends Seeder
                 'verified_by' => 'Mei Ling Tan',
                 'remarks' => 'Annual trustee fee for senior notes',
                 'approval_datetime' => '2025-02-05 11:30:00',
+                'status' => 'Active',
                 'issuer_id' => 4,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -2311,6 +2318,7 @@ class BondsSeeder extends Seeder
                 'verified_by' => 'Razak Yusof',
                 'remarks' => 'Annual trustee fee for MTN program - early redemption adjustment pending',
                 'approval_datetime' => '2025-03-15 14:45:00',
+                'status' => 'Inactive',
                 'issuer_id' => 5,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -2338,6 +2346,7 @@ class BondsSeeder extends Seeder
                 'verified_by' => 'Razak Yusof',
                 'remarks' => 'Annual trustee fee for MTN program',
                 'approval_datetime' => '2024-04-06 10:15:00',
+                'status' => 'Inactive',
                 'issuer_id' => 5,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -2367,7 +2376,68 @@ class BondsSeeder extends Seeder
                 'verified_by' => 'Jason Wong',
                 'remarks' => 'Special fee for trustee services related to default management',
                 'approval_datetime' => '2025-01-16 11:45:00',
+                'status' => 'Active',
                 'issuer_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            
+            // RHB - Draft status for new fee
+            [
+                'month' => 'Apr',
+                'date' => 10,
+                'description' => 'Annual Trustee Fee for New Bond Issuance',
+                'trustee_fee_amount_1' => 55000.00,
+                'trustee_fee_amount_2' => 27500.00,
+                'start_anniversary_date' => '2025-04-10',
+                'end_anniversary_date' => '2026-04-09',
+                'memo_to_fad' => null,
+                'invoice_no' => 'INV-RHB-2025-001',
+                'date_letter_to_issuer' => null,
+                'first_reminder' => null,
+                'second_reminder' => null,
+                'third_reminder' => null,
+                'payment_received' => null,
+                'tt_cheque_no' => null,
+                'memo_receipt_to_fad' => null,
+                'receipt_to_issuer' => null,
+                'receipt_no' => null,
+                'prepared_by' => 'Nurul Izzah',
+                'verified_by' => null,
+                'remarks' => 'Draft fee structure for proposed new bond issuance',
+                'approval_datetime' => null,
+                'status' => 'Draft',
+                'issuer_id' => 6,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            
+            // RHB - Rejected fee proposal
+            [
+                'month' => 'Jan', 
+                'date' => 15,
+                'description' => 'Annual Trustee Fee for Islamic Medium Term Notes',
+                'trustee_fee_amount_1' => 65000.00,
+                'trustee_fee_amount_2' => 32500.00,
+                'start_anniversary_date' => '2025-01-15',
+                'end_anniversary_date' => '2026-01-14',
+                'memo_to_fad' => '2025-01-05',
+                'invoice_no' => 'INV-RHB-2025-002',
+                'date_letter_to_issuer' => '2025-01-10',
+                'first_reminder' => null,
+                'second_reminder' => null,
+                'third_reminder' => null,
+                'payment_received' => null,
+                'tt_cheque_no' => null,
+                'memo_receipt_to_fad' => null,
+                'receipt_to_issuer' => null,
+                'receipt_no' => null,
+                'prepared_by' => 'Nurul Izzah',
+                'verified_by' => 'Mohd Azlan',
+                'remarks' => 'Fee proposal rejected by issuer due to budgetary constraints. Renegotiation required.',
+                'approval_datetime' => '2025-01-12 09:45:00',
+                'status' => 'Rejected',
+                'issuer_id' => 6,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -2375,11 +2445,16 @@ class BondsSeeder extends Seeder
 
         DB::table('trustee_fees')->insert($trusteeFees);
 
+        // Get all issuers to map short_name to id
+        $issuerMap = DB::table('issuers')
+            ->pluck('id', 'issuer_short_name')
+            ->toArray();
+
         // Seed Compliance Covenants
         $complianceCovenants = [
             // Alliance Bank - Active issuer with good compliance
             [
-                'issuer_short_name' => 'ABMB',
+                'issuer_id' => $issuerMap['ABMB'],
                 'financial_year_end' => '2024-12-31',
                 'audited_financial_statements' => 'Received',
                 'unaudited_financial_statements' => 'Received',
@@ -2396,7 +2471,7 @@ class BondsSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'issuer_short_name' => 'ABMB',
+                'issuer_id' => $issuerMap['ABMB'],
                 'financial_year_end' => '2023-12-31',
                 'audited_financial_statements' => 'Received',
                 'unaudited_financial_statements' => 'Received',
@@ -2415,7 +2490,7 @@ class BondsSeeder extends Seeder
             
             // CIMB Bank - Active issuer with mixed compliance
             [
-                'issuer_short_name' => 'CIMB',
+                'issuer_id' => $issuerMap['CIMB'],
                 'financial_year_end' => '2024-12-31',
                 'audited_financial_statements' => 'Received',
                 'unaudited_financial_statements' => 'Received',
@@ -2432,7 +2507,7 @@ class BondsSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'issuer_short_name' => 'CIMB',
+                'issuer_id' => $issuerMap['CIMB'],
                 'financial_year_end' => '2024-12-31',
                 'audited_financial_statements' => 'Received',
                 'unaudited_financial_statements' => 'Received',
@@ -2449,7 +2524,7 @@ class BondsSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'issuer_short_name' => 'CIMB',
+                'issuer_id' => $issuerMap['CIMB'],
                 'financial_year_end' => '2023-12-31',
                 'audited_financial_statements' => 'Received',
                 'unaudited_financial_statements' => 'Received',
@@ -2468,7 +2543,7 @@ class BondsSeeder extends Seeder
             
             // Maybank - Active issuer with good compliance
             [
-                'issuer_short_name' => 'MBB',
+                'issuer_id' => $issuerMap['MBB'],
                 'financial_year_end' => '2024-12-31',
                 'audited_financial_statements' => 'Received',
                 'unaudited_financial_statements' => 'Received',
@@ -2485,7 +2560,7 @@ class BondsSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'issuer_short_name' => 'MBB',
+                'issuer_id' => $issuerMap['MBB'],
                 'financial_year_end' => '2023-12-31',
                 'audited_financial_statements' => 'Received',
                 'unaudited_financial_statements' => 'Received',
@@ -2504,7 +2579,7 @@ class BondsSeeder extends Seeder
             
             // Public Bank - Pending status with incomplete compliance
             [
-                'issuer_short_name' => 'PBB',
+                'issuer_id' => $issuerMap['PBB'],
                 'financial_year_end' => '2024-12-31',
                 'audited_financial_statements' => 'Pending',
                 'unaudited_financial_statements' => 'Received',
@@ -2521,7 +2596,7 @@ class BondsSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'issuer_short_name' => 'PBB',
+                'issuer_id' => $issuerMap['PBB'],
                 'financial_year_end' => '2023-12-31',
                 'audited_financial_statements' => 'Received',
                 'unaudited_financial_statements' => 'Received',
@@ -2540,7 +2615,7 @@ class BondsSeeder extends Seeder
             
             // Hong Leong - Inactive status with deteriorating metrics
             [
-                'issuer_short_name' => 'HLB',
+                'issuer_id' => $issuerMap['HLB'],
                 'financial_year_end' => '2024-12-31',
                 'audited_financial_statements' => 'Received',
                 'unaudited_financial_statements' => 'Received',
@@ -2557,7 +2632,7 @@ class BondsSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'issuer_short_name' => 'HLB',
+                'issuer_id' => $issuerMap['HLB'],
                 'financial_year_end' => '2023-12-31',
                 'audited_financial_statements' => 'Received',
                 'unaudited_financial_statements' => 'Received',
@@ -2576,7 +2651,7 @@ class BondsSeeder extends Seeder
             
             // RHB - Draft status with minimal compliance info
             [
-                'issuer_short_name' => 'RHB',
+                'issuer_id' => $issuerMap['RHB'],
                 'financial_year_end' => '2024-12-31',
                 'audited_financial_statements' => 'Not Required',
                 'unaudited_financial_statements' => 'Received',

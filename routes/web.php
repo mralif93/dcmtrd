@@ -420,9 +420,11 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     // Trustee Fee Module
     Route::get('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeCreate'])->name('trustee-fee-m.create');
     Route::post('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeStore'])->name('trustee-fee-m.store');
-    Route::get('maker/trustee-fee/{trustee_fee}/edit', [MakerController::class, 'TrusteeFeeEdit'])->name('trustee-fee-m.edit');
-    Route::put('maker/trustee-fee/{trustee_fee}/update', [MakerController::class, 'TrusteeFeeUpdate'])->name('trustee-fee-m.update');
-    Route::get('maker/trustee-fee/{trustee_fee}/show', [MakerController::class, 'TrusteeFeeShow'])->name('trustee-fee-m.show');
+    Route::get('maker/trustee-fee/{trusteeFee}/edit', [MakerController::class, 'TrusteeFeeEdit'])->name('trustee-fee-m.edit');
+    Route::put('maker/trustee-fee/{trusteeFee}/update', [MakerController::class, 'TrusteeFeeUpdate'])->name('trustee-fee-m.update');
+    Route::get('maker/trustee-fee/{trusteeFee}/show', [MakerController::class, 'TrusteeFeeShow'])->name('trustee-fee-m.show');
+    Route::get('maker/trustee-fee/{trusteeFee}/submit-for-approval', [MakerController::class, 'SubmitApprovalTrusteeFee'])->name('trustee-fee-m.approval');
+
 
     // Compliance Covenant Module
     Route::get('maker/compliance-covenant/create', [MakerController::class, 'ComplianceCreate'])->name('compliance-covenant-m.create');
@@ -458,6 +460,8 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
 
     // Trustee Fee Module
     Route::get('approver/trustee-fee/{trustee_fee}/show', [ApproverController::class, 'TrusteeFeeShow'])->name('trustee-fee-a.show');
+    Route::post('approver/trustee-fee/{trustee_fee}/approve', [ApproverController::class, 'TrusteeFeeApprove'])->name('trustee-fee-a.approve');
+    Route::post('approver/trustee-fee/{trustee_fee}/reject', [ApproverController::class, 'TrusteeFeeReject'])->name('trustee-fee-a.reject');
 
     // Compliance Covenant Module
     Route::get('approver/compliance-covenant/{compliance}/show', [ApproverController::class, 'ComplianceShow'])->name('compliance-covenant-a.show');

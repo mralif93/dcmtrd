@@ -37,6 +37,44 @@
                     </div>
                 </div>
 
+                <!-- Status Section -->
+                <div class="border-t border-gray-200">
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Status</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {{ $trusteeFee->status == 'Active' ? 'bg-green-100 text-green-800' : 
+                                       ($trusteeFee->status == 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                       ($trusteeFee->status == 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
+                                    {{ $trusteeFee->status }}
+                                </span>
+                            </dd>
+                        </div>
+                        
+                        @if($trusteeFee->prepared_by)
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $trusteeFee->prepared_by }}</dd>
+                        </div>
+                        @endif
+                        
+                        @if($trusteeFee->verified_by)
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $trusteeFee->verified_by }}</dd>
+                        </div>
+                        @endif
+                        
+                        @if($trusteeFee->approval_datetime)
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ \Carbon\Carbon::parse($trusteeFee->approval_datetime)->format('d/m/Y H:i') }}</dd>
+                        </div>
+                        @endif
+                    </dl>
+                </div>
+
                 <!-- Basic Information Section -->
                 <div class="border-t border-gray-200">
                     <dl>
