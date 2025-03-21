@@ -21,7 +21,7 @@ class ApproverController extends Controller
 {
     public function index()
     {
-        $issuers = Issuer::query()->whereIn('status', ['Pending', 'Active'])->latest()->paginate(10);
+        $issuers = Issuer::query()->whereIn('status', ['Pending', 'Active', 'Rejected'])->latest()->paginate(10);
         $trustee_fees = TrusteeFee::query()->whereIn('status', ['Pending', 'Active'])->latest()->paginate(10);
         $covenants = ComplianceCovenant::query()->latest()->paginate(10);
         $portfolios = Portfolio::query()->latest()->paginate(10);

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('activity_diaries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
             $table->text('purpose')->nullable();
             $table->date('letter_date')->nullable();
             $table->date('due_date')->nullable();

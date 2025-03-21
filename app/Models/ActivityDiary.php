@@ -16,7 +16,7 @@ class ActivityDiary extends Model
      * @var array
      */
     protected $fillable = [
-        'bond_id',
+        'issuer_id',
         'purpose',
         'letter_date',
         'due_date',
@@ -37,10 +37,10 @@ class ActivityDiary extends Model
     ];
 
     /**
-     * Get the bond that owns the activity diary entry.
+     * Get the issuer that owns the activity diary entry.
      */
-    public function bond()
+    public function issuer()
     {
-        return $this->belongsTo(Bond::class);
+        return $this->belongsTo(Issuer::class);
     }
 }

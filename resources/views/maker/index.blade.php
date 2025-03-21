@@ -102,7 +102,7 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                                 </svg>
                                             </a>
-                                            @if ($issuer->status == 'Draft')
+                                            @if ($issuer->status == 'Draft' or $issuer->status == 'Rejected')
                                             <a href="{{ route('issuer-m.approval', $issuer) }}" 
                                                class="text-indigo-600 hover:text-indigo-900" 
                                                title="Approve"
@@ -161,7 +161,10 @@
                                 @foreach($trustee_fees as $fee)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">{{ $fee->issuer->issuer_short_name }}</div>
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ $fee->issuer->issuer_name }}
+                                            <p>{{ $fee->description }}</p>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $fee->invoice_no }}</div>
@@ -271,7 +274,7 @@
                                 @forelse($covenants as $covenant)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">{{ $covenant->issuer_short_name }}</div>
+                                        <div class="text-sm font-medium text-gray-900">{{ $covenant->issuer }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $covenant->financial_year_end }}</div>

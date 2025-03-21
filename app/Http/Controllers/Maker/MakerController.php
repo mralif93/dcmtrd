@@ -8,6 +8,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+// use Maatwebsite\Excel\Facades\Excel;
+// use App\Imports\BondImport;
+// use App\Imports\PaymentScheduleImport;
+// use App\Imports\RatingMovementsImport;
+// use App\Imports\TradingActivityImport;
 use App\Models\Issuer;
 use App\Models\Bond;
 use App\Models\Announcement;
@@ -231,7 +236,11 @@ class MakerController extends Controller
 
     public function BondUploadStore(Bond $bond)
     {
-        return view('maker.bond.show');
+        // $file = $request->file('bond_file');
+
+        // Excel::import(new BondImport, $file);
+
+        return back()->with('success', 'Bond data uploaded successfully!');
     }
 
     protected function validateBond(Request $request, Bond $bond = null)
