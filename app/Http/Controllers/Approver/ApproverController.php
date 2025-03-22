@@ -143,65 +143,87 @@ class ApproverController extends Controller
         ]);
     }
 
+    /**
+     * Show bond details with optimized performance.
+     */
     public function BondShow(Bond $bond)
     {
-        // 1. Selective loading with specific columns based on schema
+        // STRATEGY 1: Load only what's shown on initial page view
+        // Deferred loading for elements that might not be immediately visible
+        
+        // Get bare minimum data first to render the page quickly
         $bond->load([
-            // Load only essential issuer fields
-            'issuer:id,issuer_name,issuer_short_name,registration_number',
-            
-            // Load rating movements with key fields
-            'ratingMovements:id,bond_id,rating_agency,effective_date,rating,rating_outlook',
-            
-            // Load payment schedules with essential date fields
-            'paymentSchedules:id,bond_id,start_date,end_date,payment_date,coupon_rate',
-            
-            // Load most recent trading activities with query optimization
+            'issuer:id,issuer_name,issuer_short_name',
+            // Only get the 3 most recent rating movements
+            'ratingMovements' => function($q) { 
+                $q->select('id', 'bond_id', 'rating', 'effective_date')
+                ->orderBy('effective_date', 'desc')
+                ->limit(3); 
+            },
+            // Only load upcoming payment schedules
+            'paymentSchedules' => function($q) {
+                $q->select('id', 'bond_id', 'payment_date', 'coupon_rate')
+                ->where('payment_date', '>=', now())
+                ->orderBy('payment_date')
+                ->limit(3);
+            },
+            // Only most recent trading activity
             'tradingActivities' => function($q) {
                 $q->select('id', 'bond_id', 'trade_date', 'price', 'yield', 'amount')
-                  ->latest('trade_date')
-                  ->take(10);
+                ->latest('trade_date')
+                ->limit(5);
             },
-            
-            // Load redemption with minimal fields
-            'redemption:id,bond_id,last_call_date,allow_partial_call',
-            
-            // Load call schedules with optimized fields
-            'redemption.callSchedules:id,redemption_id,start_date,end_date,call_price',
-            
-            // Load lockout periods with optimized fields
-            'redemption.lockoutPeriods:id,redemption_id,start_date,end_date',
-            
-            // Load charts with essential fields
-            'charts:id,bond_id,chart_type,chart_data,period_from,period_to'
         ]);
         
-        // 2. Use query cache for frequently accessed data
+        // STRATEGY 2: Perform manual efficient query for related documents
+        // Skip nested relationships entirely
         $relatedDocuments = null;
-        $facilityCode = $bond->facility_code;
-        
-        if ($bond->issuer_id && $facilityCode) {
-            // 3. Direct join query instead of nested queries for better performance
-            $relatedDocuments = DB::table('related_documents')
-                ->select('related_documents.*')
-                ->join('facility_informations', 'facility_informations.id', '=', 'related_documents.facility_id')
-                ->where('facility_informations.facility_code', $facilityCode)
-                ->where('facility_informations.issuer_id', $bond->issuer_id)
-                ->orderBy('related_documents.upload_date', 'desc')
-                ->paginate(10);
-                
-            // 4. Add cache for this query if it's frequently accessed
-            // $relatedDocuments = Cache::remember("bond_{$bond->id}_documents", 3600, function() use ($facilityCode, $bond) {
-            //     return DB::table('related_documents')...
-            // });
+        if ($bond->facility_code) {
+            // Direct DB query with specific columns and indexes
+            $relatedDocuments = DB::table('related_documents AS rd')
+                ->join('facility_informations AS fi', 'fi.id', '=', 'rd.facility_id')
+                ->select('rd.id', 'rd.document_name', 'rd.document_type', 'rd.upload_date', 'rd.file_path')
+                ->where('fi.facility_code', $bond->facility_code)
+                ->where('fi.issuer_id', $bond->issuer_id)
+                ->orderBy('rd.upload_date', 'desc')
+                ->limit(5) // Use limit instead of paginate for faster response
+                ->get();
         }
         
-        // 5. Consider adding view data caching for frequently accessed bonds
-        // For example: Cache::remember("bond_view_{$bond->id}", 3600, function() use ($bond, $relatedDocuments) {
-        //     return ['bond' => $bond, 'relatedDocuments' => $relatedDocuments];
-        // });
-    
-        return view('approver.bond.show', compact('bond', 'relatedDocuments'));
+        // STRATEGY 3: Use separate AJAX endpoints for heavy data
+        // Instead of loading redemption data here, create a separate endpoint
+        // Then load it via AJAX after the page renders
+        
+        // STRATEGY 4: Tell the view which parts of the bond object to render immediately
+        // and which parts to defer
+        $viewData = [
+            'bond' => $bond,
+            'relatedDocuments' => $relatedDocuments,
+            'showFullData' => false // Flag for view to know to show minimal UI initially
+        ];
+        
+        return view('approver.bond.show', $viewData);
+    }
+
+    /**
+     * Get additional bond data via AJAX after initial page load
+     */
+    public function getBondAdditionalData($bondId)
+    {
+        $bond = Bond::findOrFail($bondId);
+        
+        // Load the heavier relationships only when requested
+        $bond->load([
+            'redemption:id,bond_id,last_call_date',
+            'redemption.callSchedules:id,redemption_id,start_date,end_date,call_price',
+            'redemption.lockoutPeriods:id,redemption_id,start_date,end_date',
+            'charts:id,bond_id,chart_type,period_from,period_to'
+        ]);
+        
+        return response()->json([
+            'redemption' => $bond->redemption,
+            'charts' => $bond->charts
+        ]);
     }
 
     // Announcement Module
