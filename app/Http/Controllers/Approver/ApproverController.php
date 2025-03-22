@@ -143,35 +143,36 @@ class ApproverController extends Controller
 
     public function BondShow(Bond $bond)
     {
+        // 1. Use selective loading with specific columns
         $bond->load([
-            'issuer',
-            'ratingMovements',
-            'paymentSchedules',
-            'tradingActivities' => fn($q) => $q->latest()->limit(10),
-            'redemption.callSchedules',
-            'redemption.lockoutPeriods',
-            'charts'
+            'issuer:id,name,company_id', // Only load needed columns
+            'ratingMovements:id,bond_id,rating,date', // Only essential fields
+            'paymentSchedules:id,bond_id,date,amount',
+            'tradingActivities' => function($q) {
+                $q->select('id', 'bond_id', 'price', 'volume', 'date', 'trader_id')
+                  ->latest()
+                  ->limit(10);
+            },
+            'redemption:id,bond_id', // Load parent relationship
+            'redemption.callSchedules:id,redemption_id,date,price',
+            'redemption.lockoutPeriods:id,redemption_id,start_date,end_date',
+            'charts:id,bond_id,chart_type,data' // Only needed fields
         ]);
         
-        // Get related documents through the issuer
+        // 2. Optimize related documents query with a single join
         $relatedDocuments = null;
-        if ($bond->issuer) {
-            // Get the facilityInformation linked to this bond
-            $facilityCode = $bond->facility_code;
-            
-            if ($facilityCode) {
-                $facilityInfo = $bond->issuer->facilities()
-                    ->where('facility_code', $facilityCode)
-                    ->first();
-                    
-                if ($facilityInfo) {
-                    $relatedDocuments = $facilityInfo->documents()
-                        ->orderBy('upload_date', 'desc')
-                        ->paginate(10);
-                }
-            }
+        $facilityCode = $bond->facility_code;
+        
+        if ($bond->issuer_id && $facilityCode) {
+            // Use a join for better performance instead of nested queries
+            $relatedDocuments = Document::select('documents.*')
+                ->join('facilities', 'facilities.id', '=', 'documents.facility_id')
+                ->where('facilities.facility_code', $facilityCode)
+                ->where('facilities.issuer_id', $bond->issuer_id)
+                ->orderBy('documents.upload_date', 'desc')
+                ->paginate(10);
         }
-
+    
         return view('approver.bond.show', compact('bond', 'relatedDocuments'));
     }
 
