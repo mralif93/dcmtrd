@@ -7,6 +7,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use App\Models\Issuer;
 use App\Models\Bond;
@@ -143,35 +145,61 @@ class ApproverController extends Controller
 
     public function BondShow(Bond $bond)
     {
-        // 1. Use selective loading with specific columns
+        // 1. Selective loading with specific columns based on schema
         $bond->load([
-            'issuer:id,name,company_id', // Only load needed columns
-            'ratingMovements:id,bond_id,rating,date', // Only essential fields
-            'paymentSchedules:id,bond_id,date,amount',
+            // Load only essential issuer fields
+            'issuer:id,issuer_name,issuer_short_name,registration_number',
+            
+            // Load rating movements with key fields
+            'ratingMovements:id,bond_id,rating_agency,effective_date,rating,rating_outlook',
+            
+            // Load payment schedules with essential date fields
+            'paymentSchedules:id,bond_id,start_date,end_date,payment_date,coupon_rate',
+            
+            // Load most recent trading activities with query optimization
             'tradingActivities' => function($q) {
-                $q->select('id', 'bond_id', 'price', 'volume', 'date', 'trader_id')
-                  ->latest()
-                  ->limit(10);
+                $q->select('id', 'bond_id', 'trade_date', 'price', 'yield', 'amount')
+                  ->latest('trade_date')
+                  ->take(10);
             },
-            'redemption:id,bond_id', // Load parent relationship
-            'redemption.callSchedules:id,redemption_id,date,price',
+            
+            // Load redemption with minimal fields
+            'redemption:id,bond_id,last_call_date,allow_partial_call',
+            
+            // Load call schedules with optimized fields
+            'redemption.callSchedules:id,redemption_id,start_date,end_date,call_price',
+            
+            // Load lockout periods with optimized fields
             'redemption.lockoutPeriods:id,redemption_id,start_date,end_date',
-            'charts:id,bond_id,chart_type,data' // Only needed fields
+            
+            // Load charts with essential fields
+            'charts:id,bond_id,chart_type,chart_data,period_from,period_to'
         ]);
         
-        // 2. Optimize related documents query with a single join
+        // 2. Use query cache for frequently accessed data
         $relatedDocuments = null;
         $facilityCode = $bond->facility_code;
         
         if ($bond->issuer_id && $facilityCode) {
-            // Use a join for better performance instead of nested queries
-            $relatedDocuments = Document::select('documents.*')
-                ->join('facilities', 'facilities.id', '=', 'documents.facility_id')
-                ->where('facilities.facility_code', $facilityCode)
-                ->where('facilities.issuer_id', $bond->issuer_id)
-                ->orderBy('documents.upload_date', 'desc')
+            // 3. Direct join query instead of nested queries for better performance
+            $relatedDocuments = DB::table('related_documents')
+                ->select('related_documents.*')
+                ->join('facility_informations', 'facility_informations.id', '=', 'related_documents.facility_id')
+                ->where('facility_informations.facility_code', $facilityCode)
+                ->where('facility_informations.issuer_id', $bond->issuer_id)
+                ->orderBy('related_documents.upload_date', 'desc')
                 ->paginate(10);
+                
+            // 4. Add cache for this query if it's frequently accessed
+            // $relatedDocuments = Cache::remember("bond_{$bond->id}_documents", 3600, function() use ($facilityCode, $bond) {
+            //     return DB::table('related_documents')...
+            // });
         }
+        
+        // 5. Consider adding view data caching for frequently accessed bonds
+        // For example: Cache::remember("bond_view_{$bond->id}", 3600, function() use ($bond, $relatedDocuments) {
+        //     return ['bond' => $bond, 'relatedDocuments' => $relatedDocuments];
+        // });
     
         return view('approver.bond.show', compact('bond', 'relatedDocuments'));
     }
