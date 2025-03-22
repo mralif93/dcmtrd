@@ -45,16 +45,26 @@
                         </x-slot>
                         
                         <x-slot name="content">
-                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('rating-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                                 Rating Movement
                             </a>
-                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('payment-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                                 Payment Schedule
                             </a>
-                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            @if(!$bond->redemption)
+                            <a href="{{ route('redemption-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                                 Redemption
                             </a>
-                            <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            @endif
+                            @if($bond->redemption)
+                            <a href="{{ route('call-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Call Schedule
+                            </a>
+                            <a href="{{ route('lockout-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                                Lockout Period
+                            </a>
+                            @endif
+                            <a href="{{ route('trading-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                                 Trading Activity
                             </a>
                         </x-slot>
@@ -366,6 +376,7 @@
                                         <th class="py-3 px-4 text-left">Rating Action</th>
                                         <th class="py-3 px-4 text-left">Rating Outlook</th>
                                         <th class="py-3 px-4 text-left">Rating Watch</th>
+                                        <th class="py-3 px-4 text-right">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -379,11 +390,20 @@
                                                 <td class="py-3 px-4">{{ $ratingMovement->rating_action ?? '-' }}</td>
                                                 <td class="py-3 px-4">{{ $ratingMovement->rating_outlook ?? '-' }}</td>
                                                 <td class="py-3 px-4">{{ $ratingMovement->rating_watch ?? 'Not Applicable' }}</td>
+                                                <td class="py-3 px-4">
+                                                    <div class="flex justify-end">
+                                                        <a href="{{ route('rating-m.edit', $ratingMovement) }}" class="text-yellow-600 hover:text-yellow-900">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                            </svg>
+                                                        </a>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td colspan="7" class="py-3 px-4 text-center">No rating movements found</td>
+                                            <td colspan="8" class="py-3 px-4 text-center">No rating movements found</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -417,6 +437,7 @@
                                         <th class="py-3 px-4 text-left">Ex-Date</th>
                                         <th class="py-3 px-4 text-left">Coupon Rate</th>
                                         <th class="py-3 px-4 text-left">Adjustment Date</th>
+                                        <th class="py-3 px-4 text-right">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -430,6 +451,15 @@
                                                 <td class="py-3 px-4">{{ $schedule->ex_date ? $schedule->ex_date->format('d-M-Y') : '-' }}</td>
                                                 <td class="py-3 px-4">{{ $schedule->coupon_rate ? number_format($schedule->coupon_rate, 2) : '-' }}</td>
                                                 <td class="py-3 px-4">{{ $schedule->adjustment_date ? $schedule->adjustment_date->format('d-M-Y') : '-' }}</td>
+                                                <td class="py-3 px-4">
+                                                    <div class="flex justify-end">
+                                                        <a href="{{ route('payment-m.edit', $schedule) }}" class="text-yellow-600 hover:text-yellow-900">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                            </svg>
+                                                        </a>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     @else
@@ -466,7 +496,16 @@
                     <div x-show="openSection === 'redemption'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
                         <!-- Main Redemption Info -->
                         <div class="mb-8">
-                            <h3 class="text-2xl font-semibold text-gray-700 mb-4">Redemption</h3>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-2xl font-semibold text-gray-700">Redemption</h3>
+                                @if($bond->redemption)
+                                <a href="{{ route('redemption-m.edit', $bond->redemption) }}" class="text-yellow-600 hover:text-yellow-900">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </a>
+                                @endif
+                            </div>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-4">
@@ -497,6 +536,7 @@
                                             <th class="py-3 px-4 text-left">Start Date</th>
                                             <th class="py-3 px-4 text-left">End Date</th>
                                             <th class="py-3 px-4 text-left">Call Price</th>
+                                            <th class="py-3 px-4 text-right">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -506,11 +546,20 @@
                                                     <td class="py-3 px-4">{{ $callSchedule->start_date ? $callSchedule->start_date->format('d-M-Y') : '-' }}</td>
                                                     <td class="py-3 px-4">{{ $callSchedule->end_date ? $callSchedule->end_date->format('d-M-Y') : '-' }}</td>
                                                     <td class="py-3 px-4">{{ $callSchedule->call_price ? number_format($callSchedule->call_price, 2) : '-' }}</td>
+                                                    <td class="py-3 px-4">
+                                                        <div class="flex justify-end">
+                                                            <a href="{{ route('call-m.edit', $callSchedule) }}" class="text-yellow-600 hover:text-yellow-900">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                </svg>
+                                                            </a>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="3" class="py-3 px-4 text-center">No data available in table</td>
+                                                <td colspan="4" class="py-3 px-4 text-center">No data available in table</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -528,6 +577,7 @@
                                         <tr class="bg-gray-200 text-gray-700 font-semibold">
                                             <th class="py-3 px-4 text-left">Start Date</th>
                                             <th class="py-3 px-4 text-left">End Date</th>
+                                            <th class="py-3 px-4 text-right">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -536,11 +586,20 @@
                                                 <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray-100' }}">
                                                     <td class="py-3 px-4">{{ $lockoutPeriod->start_date ? $lockoutPeriod->start_date->format('d-M-Y') : '-' }}</td>
                                                     <td class="py-3 px-4">{{ $lockoutPeriod->end_date ? $lockoutPeriod->end_date->format('d-M-Y') : '-' }}</td>
+                                                    <td class="py-3 px-4">
+                                                        <div class="flex justify-end">
+                                                            <a href="{{ route('lockout-m.edit', $lockoutPeriod) }}" class="text-yellow-600 hover:text-yellow-900">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                </svg>
+                                                            </a>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="2" class="py-3 px-4 text-center">No data available in table</td>
+                                                <td colspan="3" class="py-3 px-4 text-center">No data available in table</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -574,6 +633,7 @@
                                         <th class="py-3 px-4 text-left">Price</th>
                                         <th class="py-3 px-4 text-left">Yield (%)</th>
                                         <th class="py-3 px-4 text-left">Value Date</th>
+                                        <th class="py-3 px-4 text-right">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -586,6 +646,15 @@
                                                 <td class="py-3 px-4">{{ $activity->price ? number_format($activity->price, 2) : '-' }}</td>
                                                 <td class="py-3 px-4">{{ $activity->yield ? number_format($activity->yield, 2) : '-' }}</td>
                                                 <td class="py-3 px-4">{{ $activity->value_date ? $activity->value_date->format('d-M-Y') : '-' }}</td>
+                                                <td class="py-3 px-4">
+                                                    <div class="flex justify-end">
+                                                        <a href="{{ route('trading-m.edit', $activity) }}" class="text-yellow-600 hover:text-yellow-900">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                            </svg>
+                                                        </a>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     @else

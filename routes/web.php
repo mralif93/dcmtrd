@@ -431,18 +431,45 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     // Payment Schedule Module
     Route::get('maker/payment-schedule/{bond}/create', [MakerController::class, 'PaymentScheduleCreate'])->name('payment-m.create');
     Route::post('maker/payment-schedule/{bond}/create', [MakerController::class, 'PaymentScheduleStore'])->name('payment-m.store');
-    Route::get('maker/payment-schedule/{rating}/edit', [MakerController::class, 'PaymentScheduleEdit'])->name('payment-m.edit');
-    Route::put('maker/payment-schedule/{rating}/update', [MakerController::class, 'PaymentScheduleUpdate'])->name('payment-m.update');
-    Route::get('maker/payment-schedule/{rating}/show', [MakerController::class, 'PaymentScheduleShow'])->name('payment-m.show');
+    Route::get('maker/payment-schedule/{payment}/edit', [MakerController::class, 'PaymentScheduleEdit'])->name('payment-m.edit');
+    Route::put('maker/payment-schedule/{payment}/update', [MakerController::class, 'PaymentScheduleUpdate'])->name('payment-m.update');
+    Route::get('maker/payment-schedule/{payment}/show', [MakerController::class, 'PaymentScheduleShow'])->name('payment-m.show');
     Route::get('maker/payment-schedule/{bond}/upload', [MakerController::class, 'PaymentScheduleUploadForm'])->name('payment-m.upload-form');
     Route::post('maker/payment-schedule/{bond}/upload', [MakerController::class, 'PaymentScheduleUploadStore'])->name('payment-m.upload-store');
+
+    // Redemption Module
+    Route::get('maker/redemption/{bond}/create', [MakerController::class, 'RedemptionCreate'])->name('redemption-m.create');
+    Route::post('maker/redemption/{bond}/create', [MakerController::class, 'RedemptionStore'])->name('redemption-m.store');
+    Route::get('maker/redemption/{redemption}/edit', [MakerController::class, 'RedemptionEdit'])->name('redemption-m.edit');
+    Route::put('maker/redemption/{redemption}/update', [MakerController::class, 'RedemptionUpdate'])->name('redemption-m.update');
+    Route::get('maker/redemption/{redemption}/show', [MakerController::class, 'RedemptionShow'])->name('redemption-m.show');
+    Route::get('maker/redemption/{bond}/upload', [MakerController::class, 'RedemptionUploadForm'])->name('redemption-m.upload-form');
+    Route::post('maker/redemption/{bond}/upload', [MakerController::class, 'RedemptionUploadStore'])->name('redemption-m.upload-store');
+
+    // Call Schedule Module
+    Route::get('maker/call-schedule/{bond}/create', [MakerController::class, 'CallScheduleCreate'])->name('call-m.create');
+    Route::post('maker/call-schedule/{bond}/create', [MakerController::class, 'CallScheduleStore'])->name('call-m.store');
+    Route::get('maker/call-schedule/{call}/edit', [MakerController::class, 'CallScheduleEdit'])->name('call-m.edit');
+    Route::put('maker/call-schedule/{call}/update', [MakerController::class, 'CallScheduleUpdate'])->name('call-m.update');
+    Route::get('maker/call-schedule/{call}/show', [MakerController::class, 'CallScheduleShow'])->name('call-m.show');
+    Route::get('maker/call-schedule/{bond}/upload', [MakerController::class, 'CallScheduleUploadForm'])->name('call-m.upload-form');
+    Route::post('maker/call-schedule/{bond}/upload', [MakerController::class, 'CallScheduleUploadStore'])->name('call-m.upload-store');
+
+    // Lockout Period Module
+    Route::get('maker/lockout-period/{bond}/create', [MakerController::class, 'LockoutPeriodCreate'])->name('lockout-m.create');
+    Route::post('maker/lockout-period/{bond}/create', [MakerController::class, 'LockoutPeriodStore'])->name('lockout-m.store');
+    Route::get('maker/lockout-period/{lockout}/edit', [MakerController::class, 'LockoutPeriodEdit'])->name('lockout-m.edit');
+    Route::put('maker/lockout-period/{lockout}/update', [MakerController::class, 'LockoutPeriodUpdate'])->name('lockout-m.update');
+    Route::get('maker/lockout-period/{lockout}/show', [MakerController::class, 'LockoutPeriodShow'])->name('lockout-m.show');
+    Route::get('maker/lockout-period/{bond}/upload', [MakerController::class, 'LockoutPeriodUploadForm'])->name('lockout-m.upload-form');
+    Route::post('maker/lockout-period/{bond}/upload', [MakerController::class, 'LockoutPeriodUploadStore'])->name('lockout-m.upload-store');
 
     // Trading Activity Module
     Route::get('maker/trading-activity/{bond}/create', [MakerController::class, 'TradingActivityCreate'])->name('trading-m.create');
     Route::post('maker/trading-activity/{bond}/create', [MakerController::class, 'TradingActivityStore'])->name('trading-m.store');
-    Route::get('maker/trading-activity/{rating}/edit', [MakerController::class, 'TradingActivityEdit'])->name('trading-m.edit');
-    Route::put('maker/trading-activity/{rating}/update', [MakerController::class, 'TradingActivityUpdate'])->name('trading-m.update');
-    Route::get('maker/trading-activity/{rating}/show', [MakerController::class, 'TradingActivityShow'])->name('trading-m.show');
+    Route::get('maker/trading-activity/{trading}/edit', [MakerController::class, 'TradingActivityEdit'])->name('trading-m.edit');
+    Route::put('maker/trading-activity/{trading}/update', [MakerController::class, 'TradingActivityUpdate'])->name('trading-m.update');
+    Route::get('maker/trading-activity/{trading}/show', [MakerController::class, 'TradingActivityShow'])->name('trading-m.show');
     Route::get('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadForm'])->name('trading-m.upload-form');
     Route::post('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadStore'])->name('trading-m.upload-store');
     

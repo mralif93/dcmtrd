@@ -19,6 +19,12 @@ use App\Models\Bond;
 use App\Models\Announcement;
 use App\Models\RelatedDocument;
 use App\Models\FacilityInformation;
+use App\Models\RatingMovement;
+use App\Models\PaymentSchedule;
+use App\Models\Redemption;
+use App\Models\CallSchedule;
+use App\Models\LockoutPeriod;
+use App\Models\TradingActivity;
 use App\Models\TrusteeFee;
 use App\Models\ComplianceCovenant;
 use App\Models\Portfolio;
@@ -550,8 +556,9 @@ class MakerController extends Controller
     public function RatingMovementCreate(Bond $bond)
     {
         $bondInfo = $bond;
-        $bonds = Bond::active()->get();
-        return view('maker.rating-movement.create', compact('bonds', $bondInfo));
+        $issuerId = $bondInfo->issuer->id;
+        $bonds = Bond::where('issuer_id', $issuerId)->get();
+        return view('maker.rating-movement.create', compact('bonds', 'bondInfo'));
     }
 
     public function RatingMovementStore(Request $request)
@@ -561,9 +568,9 @@ class MakerController extends Controller
             'rating_agency' => 'required|string|max:100',
             'effective_date' => 'required|date',
             'rating_tenure' => 'required|string|max:50',
-            'rating' => 'required|string|max:50',
-            'rating_action' => 'required|string|max:50',
-            'rating_outlook' => 'required|string|max:50',
+            'rating' => 'nullable|string|max:50',
+            'rating_action' => 'nullable|string|max:50',
+            'rating_outlook' => 'nullable|string|max:50',
             'rating_watch' => 'nullable|string|max:50',
         ]);
 
@@ -583,8 +590,9 @@ class MakerController extends Controller
 
     public function RatingMovementEdit(RatingMovement $rating)
     {
-        $bonds = Bond::active()->get();
-        return view('user.rating-movements.edit', compact('rating', 'bonds'));
+        $issuerId = $rating->bond->issuer->id;
+        $bonds = Bond::where('issuer_id', $issuerId)->get();
+        return view('maker.rating-movement.edit', compact('rating', 'bonds'));
     }
 
     public function RatingMovementUpdate(Request $request, RatingMovement $rating)
@@ -594,9 +602,9 @@ class MakerController extends Controller
             'rating_agency' => 'required|string|max:100',
             'effective_date' => 'required|date',
             'rating_tenure' => 'required|string|max:50',
-            'rating' => 'required|string|max:50',
-            'rating_action' => 'required|string|max:50',
-            'rating_outlook' => 'required|string|max:50',
+            'rating' => 'nullable|string|max:50',
+            'rating_action' => 'nullable|string|max:50',
+            'rating_outlook' => 'nullable|string|max:50',
             'rating_watch' => 'nullable|string|max:50',
         ]);
 
@@ -635,10 +643,12 @@ class MakerController extends Controller
     }
 
     // Payment Schedule Module
-    public function PaymentScheduleCreate()
+    public function PaymentScheduleCreate(Bond $bond)
     {
-        $bonds = Bond::active()->get();
-        return view('user.payment-schedules.create', compact('bonds'));
+        $bondInfo = $bond;
+        $issuerId = $bond->issuer->id;
+        $bonds = Bond::where('issuer_id', $issuerId)->get();
+        return view('maker.payment-schedule.create', compact('bonds', 'bondInfo'));
     }
 
     public function PaymentScheduleStore(Request $request)
@@ -648,36 +658,34 @@ class MakerController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'payment_date' => 'required|date',
-            'ex_date' => 'required|date',
-            'coupon_rate' => 'required|decimal:2|between:0,99.99',
+            'ex_date' => 'nullable|date',
+            'coupon_rate' => 'nullable|decimal:2|between:0,99.99',
             'adjustment_date' => 'nullable|date',
         ]);
 
         try {
-            $paymentSchedule = PaymentSchedule::create($validated);
-            return redirect()->route('payment-schedules-info.show', $paymentSchedule)->with('success', 'Payment schedule created successfully');
+            $payment = PaymentSchedule::create($validated);
+            return redirect()->route('bond-m.show', $payment->bond)->with('success', 'Payment schedule created successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
         }
     }
 
-    public function PaymentScheduleShow(PaymentSchedule $payment_schedules_info)
+    public function PaymentScheduleShow(PaymentSchedule $payment)
     {
-        $paymentSchedule = $payment_schedules_info;
         $paymentSchedule->load('bond.issuer');
-        return view('user.payment-schedules.show', compact('paymentSchedule'));
+        return view('maker.payment-schedule.show', compact('paymentSchedule'));
     }
 
-    public function PaymentScheduleEdit(PaymentSchedule $payment_schedules_info)
+    public function PaymentScheduleEdit(PaymentSchedule $payment)
     {
-        $paymentSchedule = $payment_schedules_info;
-        $bonds = Bond::active()->get();
-        return view('user.payment-schedules.edit', compact('paymentSchedule', 'bonds'));
+        $issuerId = $payment->bond->issuer->id;
+        $bonds = Bond::where('issuer_id', $issuerId)->get();
+        return view('maker.payment-schedule.edit', compact('payment', 'bonds'));
     }
 
-    public function PaymentScheduleUpdate(Request $request, PaymentSchedule $payment_schedules_info)
+    public function PaymentScheduleUpdate(Request $request, PaymentSchedule $payment)
     {
-        $paymentSchedule = $payment_schedules_info;
         $validated = $request->validate([
             'bond_id' => 'required|exists:bonds,id',
             'start_date' => 'required|date',
@@ -689,19 +697,17 @@ class MakerController extends Controller
         ]);
 
         try{
-            $paymentSchedule->update($validated);
-            return redirect()->route('payment-schedules-info.show', $paymentSchedule)->with('success', 'Payment schedule updated successfully');
+            $payment->update($validated);
+            return redirect()->route('bond-m.show', $payment->bond)->with('success', 'Payment schedule updated successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
         }
     }
 
-    public function PaymentScheduleDestroy(PaymentSchedule $payment_schedules_info)
+    public function PaymentScheduleDestroy(PaymentSchedule $payment)
     {
-        $paymentSchedule = $payment_schedules_info;
-
         try {
-            $paymentSchedule->delete();
+            $payment->delete();
             return redirect()->route('payment-schedules-info.index')>with('success', 'Payment schedule deleted successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
@@ -724,63 +730,288 @@ class MakerController extends Controller
             ->with('success', 'Payment Schedule data uploaded successfully');
     }
 
-    // Trading Activity Module
-    public function TradingActivityCreate()
+    // Redemption Module
+    public function RedemptionCreate(Bond $bond)
     {
-        $bonds = Bond::active()->get();
-        return view('make.trading-activity.create', compact('bonds'));
+        $bondInfo = $bond;
+        $issuerId = $bond->issuer->id;
+        $bonds = Bond::where('issuer_id', $issuerId)->get();
+        return view('maker.redemption.create', compact('bonds', 'bondInfo'));
+    }
+
+    public function RedemptionStore(Request $request)
+    {
+        $request->merge([
+            'allow_partial_call' => $request->has('allow_partial_call'),
+            'redeem_nearest_denomination' => $request->has('redeem_nearest_denomination')
+        ]);
+
+        $validated = $request->validate([
+            'bond_id' => 'required|exists:bonds,id',
+            'allow_partial_call' => 'nullable|boolean',
+            'last_call_date' => 'required|date',
+            'redeem_nearest_denomination' => 'nullable|boolean'
+        ]);
+
+        try {
+            $redemption = Redemption::create($validated);
+            return redirect()->route('bond-m.show', $redemption->bond)->with('success', 'Redemption created successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
+        }
+    }
+
+    public function RedemptionShow(Redemption $redemption)
+    {
+        $redemption->load('bond.issuer');
+        return view('maker.redemption.show', compact('redemption'));
+    }
+
+    public function RedemptionEdit(Redemption $redemption)
+    {
+        $issuerId = $redemption->bond->issuer->id;
+        $bonds = Bond::where('issuer_id', $issuerId)->get();
+        return view('maker.redemption.edit', compact('redemption', 'bonds'));
+    }
+
+    public function RedemptionUpdate(Request $request, Redemption $redemption)
+    {
+        $request->merge([
+            'allow_partial_call' => $request->has('allow_partial_call'),
+            'redeem_nearest_denomination' => $request->has('redeem_nearest_denomination')
+        ]);
+
+        $validated = $request->validate([
+            'bond_id' => 'required|exists:bonds,id',
+            'allow_partial_call' => 'nullable|boolean',
+            'last_call_date' => 'required|date',
+            'redeem_nearest_denomination' => 'nullable|boolean'
+        ]);
+
+        try{
+            $redemption->update($validated);
+            return redirect()->route('bond-m.show', $redemption->bond)->with('success', 'Redemption updated successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
+        }
+    }
+
+    public function RedemptionDestroy(Redemption $redemption)
+    {
+        try {
+            $redemption->delete();
+            return redirect()->route('bond-m.show', $redemption->bond)>with('success', 'Redemption deleted successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
+        }
+    }
+
+    // Call Schedule Module
+    public function CallScheduleCreate(Bond $bond)
+    {
+        $redemptions = Redemption::where('bond_id', $bond->id)->get();
+        return view('maker.call-schedule.create', compact('redemptions', 'bond'));
+    }
+
+    public function CallScheduleStore(Request $request)
+    {
+        $validated = $request->validate([
+            'redemption_id' => 'required|exists:redemptions,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'call_price' => 'nullable|numeric|min:0|max:99999999999999.99',
+        ]);
+
+        // Check for overlapping schedules
+        $exists = CallSchedule::where('redemption_id', $validated['redemption_id'])
+            ->where(function ($query) use ($validated) {
+                $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
+                      ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
+            })
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(['schedule' => 'A call schedule already exists for this period'])->withInput();
+        }
+
+        try {
+            $call = CallSchedule::create($validated);
+            return redirect()->route('bond-m.show', $call->redemption->bond)->with('success', 'Call schedule created successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error creating: ' . $e->getMessage());
+        }
+    }
+
+    public function CallScheduleShow(CallSchedule $call)
+    {
+        $schedule->load('redemption.bond');
+        return view('maker.call-schedule.show', compact('call'));
+    }
+
+    public function CallScheduleEdit(CallSchedule $call)
+    {
+        $redemptions = Redemption::where('bond_id', $call->redemption->bond->id)->get();
+        return view('maker.call-schedule.edit', compact('call', 'redemptions'));
+    }
+
+    public function CallScheduleUpdate(Request $request, CallSchedule $call)
+    {
+        $validated = $request->validate([
+            'redemption_id' => 'required|exists:redemptions,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'call_price' => 'nullable|numeric|min:0|max:99999999999999.99',
+        ]);
+
+        // Check for overlapping schedules excluding current
+        $exists = CallSchedule::where('redemption_id', $validated['redemption_id'])
+            ->where('id', '!=', $call->id)
+            ->where(function ($query) use ($validated) {
+                $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
+                      ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
+            })
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(['schedule' => 'A call schedule already exists for this period'])->withInput();
+        }
+
+        try {
+            $call->update($validated);
+            return redirect()->route('bond-m.show', $call->redemption->bond)->with('success', 'Call schedule updated successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error updating: ' . $e->getMessage());
+        }
+    }
+
+    public function CallScheduleDestroy(CallSchedule $call)
+    {
+        try {
+            $call->delete();
+            return redirect()->route('dashboard')->with('success', 'Call schedule deleted successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error deleting: ' . $e->getMessage());
+        }
+    }
+
+    // Lockout Period Module
+    public function LockoutPeriodCreate(Bond $bond)
+    {
+        $redemptions = Redemption::where('bond_id', $bond->redemption->bond->id)->get();
+        return view('maker.lockout-period.create', compact('redemptions', 'bond'));
+    }
+
+    public function LockoutPeriodStore(Request $request)
+    {
+        $validated = $request->validate([
+            'redemption_id' => 'required|exists:redemptions,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+
+        try {
+            $lock = LockoutPeriod::create($validated);
+            return redirect()->route('bond-m.show', $lock->redemption->bond)->with('success', 'Lockout period created successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error creating: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    public function LockoutPeriodShow(LockoutPeriod $lockout)
+    {
+        $period = $lockout->load('redemption.bond');
+        return view('maker.lockout-periods.show', compact('period'));
+    }
+
+    public function LockoutPeriodEdit(LockoutPeriod $lockout)
+    {
+        $redemptions = Redemption::where('bond_id', $lockout->redemption->bond->id)->get();
+        return view('maker.lockout-period.edit', compact('lockout', 'redemptions'));
+    }
+
+    public function LockoutPeriodUpdate(Request $request, LockoutPeriod $lockout)
+    {
+        $validated = $request->validate([
+            'redemption_id' => 'required|exists:redemptions,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+
+        try {
+            $lockout->update($validated);
+            return redirect()->route('bond-m.show', $lockout->redemption->bond)->with('success', 'Lockout period updated successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    public function LockoutPeriodDestroy(LockoutPeriod $lockout)
+    {
+        $lockoutPeriod = $lockout_periods_info;
+
+        try {
+            $lockoutPeriod->delete();
+            return redirect()->route('lockout-periods-info.index')->with('success', 'Lockout period deleted successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error deleting: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    // Trading Activity Module
+    public function TradingActivityCreate(Bond $bond)
+    {
+        $bondInfo = $bond;
+        $bonds = Bond::where('issuer_id', $bond->issuer->id)->get();
+        return view('maker.trading-activity.create', compact('bonds', 'bondInfo'));
     }
 
     public function TradingActivityStore(Request $request)
     {
         $validated = $request->validate([
             'bond_id' => 'required|exists:bonds,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'payment_date' => 'required|date',
-            'ex_date' => 'required|date',
-            'coupon_rate' => 'required|decimal:2|between:0,99.99',
-            'adjustment_date' => 'nullable|date',
+            'trade_date' => 'required|date',
+            'input_time' => 'required|date_format:H:i:s',
+            'amount' => 'nullable|numeric|min:0.01|max:999999999999.99',
+            'price' => 'nullable|numeric|min:0.0001|max:9999.9999',
+            'yield' => 'nullable|numeric|min:0.01|max:100.00',
+            'value_date' => 'nullable|date|after:trade_date',
         ]);
 
         try {
-            $paymentSchedule = PaymentSchedule::create($validated);
-            return redirect()->route('bond-m.show', $paymentSchedule->bond)->with('success', 'Payment schedule created successfully');
+            $trading = TradingActivity::create($validated);
+            return redirect()->route('bond-m.show', $trading->bond)->with('success', 'Trading activity created successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
         }
     }
 
-    public function TradingActivityShow(PaymentSchedule $payment_schedules_info)
+    public function TradingActivityShow(TradingActivity $trading)
     {
-        $paymentSchedule = $payment_schedules_info;
-        $paymentSchedule->load('bond.issuer');
-        return view('maker.trading-activity.show', compact('paymentSchedule'));
+        $trading->load('bond.issuer');
+        return view('maker.trading-activity.show', compact('trading'));
     }
 
-    public function TradingActivityEdit(PaymentSchedule $payment_schedules_info)
+    public function TradingActivityEdit(TradingActivity $trading)
     {
-        $paymentSchedule = $payment_schedules_info;
-        $bonds = Bond::active()->get();
-        return view('maker.payment-schedules.edit', compact('paymentSchedule', 'bonds'));
+        $bonds = Bond::where('issuer_id', $trading->bond->issuer->id)->get();
+        return view('maker.trading-activity.edit', compact('trading', 'bonds'));
     }
 
-    public function TradingActivityUpdate(Request $request, PaymentSchedule $payment_schedules_info)
+    public function TradingActivityUpdate(Request $request, TradingActivity $trading)
     {
-        $paymentSchedule = $payment_schedules_info;
         $validated = $request->validate([
             'bond_id' => 'required|exists:bonds,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'payment_date' => 'required|date',
-            'ex_date' => 'required|date',
-            'coupon_rate' => 'required|decimal:2|between:0,99.99',
-            'adjustment_date' => 'nullable|date',
+            'trade_date' => 'required|date',
+            'input_time' => 'nullable|date_format:H:i:s',
+            'amount' => 'nullable|numeric|min:0.01|max:999999999999.99',
+            'price' => 'nullable|numeric|min:0.0001|max:9999.9999',
+            'yield' => 'nullable|numeric|min:0.01|max:100.00',
+            'value_date' => 'nullable|date|after:trade_date',
         ]);
 
         try{
-            $paymentSchedule->update($validated);
-            return redirect()->route('bond-m.show', $paymentSchedule->bond)->with('success', 'Payment schedule updated successfully');
+            $trading->update($validated);
+            return redirect()->route('bond-m.show', $trading->bond)->with('success', 'Trading activity updated successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
         }
