@@ -415,15 +415,15 @@
                                 <div class="space-y-4">
                                     <div class="grid grid-cols-2">
                                         <div class="font-medium">Allow Partial Call</div>
-                                        <div>{{ $bond->redemption->allow_partial_call ? 'Yes' : 'No' }}</div>
+                                        <div>{{ $bond->redemption?->allow_partial_call ? 'Yes' : 'No' }}</div>
                                     </div>
                                     <div class="grid grid-cols-2">
                                         <div class="font-medium">Last Call Date</div>
-                                        <div>{{ $bond->redemption->last_call_date ? $bond->redemption->last_call_date->format('d-M-Y') : '-' }}</div>
+                                        <div>{{ $bond->redemption?->last_call_date ? $bond->redemption->last_call_date->format('d-M-Y') : '-' }}</div>
                                     </div>
                                     <div class="grid grid-cols-2">
                                         <div class="font-medium">Redeem to Nearest Denomination</div>
-                                        <div>{{ $bond->redemption->redeem_nearest_denomination ? 'Yes' : 'No' }}</div>
+                                        <div>{{ $bond->redemption?->redeem_nearest_denomination ? 'Yes' : 'No' }}</div>
                                     </div>
                                 </div>
                             </div>
