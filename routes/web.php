@@ -498,8 +498,8 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/issuer/{issuer}/edit', [ApproverController::class, 'IssuerEdit'])->name('issuer-a.edit');
     Route::put('approver/issuer/{issuer}/update', [ApproverController::class, 'IssuerUpdate'])->name('issuer-a.update');
     Route::get('approver/issuer/{issuer}/show', [ApproverController::class, 'IssuerShow'])->name('issuer-a.show');
-    Route::post('approver/{issuer}/approve', [ApproverController::class, 'approve'])->name('issuer-a.approve');
-    Route::post('approver/{issuer}/reject', [ApproverController::class, 'reject'])->name('issuer-a.reject');
+    Route::post('approver/{issuer}/approve', [ApproverController::class, 'IssuerApprove'])->name('issuer-a.approve');
+    Route::post('approver/{issuer}/reject', [ApproverController::class, 'IssuerReject'])->name('issuer-a.reject');
     
     // Bond Module
     Route::get('approver/{issuer}/details', [ApproverController::class, 'BondIndex'])->name('bond-a.details');

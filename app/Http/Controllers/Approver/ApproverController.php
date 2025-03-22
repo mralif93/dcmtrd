@@ -51,9 +51,6 @@ class ApproverController extends Controller
         return view('approver.issuer.show', compact('issuer'));
     }
 
-    /**
-     * Validate issuer data based on schema
-     */
     protected function validateIssuer(Request $request, Issuer $issuer = null)
     {
         return $request->validate([
@@ -75,7 +72,7 @@ class ApproverController extends Controller
     /**
      * Approve the issuer
      */
-    public function approve(Issuer $issuer)
+    public function IssuerApprove(Issuer $issuer)
     {
         try {
             $issuer->update([
@@ -93,7 +90,7 @@ class ApproverController extends Controller
     /**
      * Reject the issuer
      */
-    public function reject(Request $request, Issuer $issuer)
+    public function IssuerReject(Request $request, Issuer $issuer)
     {
         $request->validate([
             'rejection_reason' => 'required|string|max:255',
@@ -185,7 +182,7 @@ class ApproverController extends Controller
         return view('approver.announcement.show', compact('announcement'));
     }
 
-    // Related Document & FInancials Module
+    // Related Document & Financial Module
     public function DocumentShow ()
     {
         return view('approver.related-document.show');
@@ -235,9 +232,6 @@ class ApproverController extends Controller
         return view('approver.trustee-fee.show', compact('trusteeFee'));
     }
 
-    /**
-     * Approve the Trustee Fee
-     */
     public function TrusteeFeeApprove(TrusteeFee $trusteeFee)
     {
         try {
@@ -253,9 +247,6 @@ class ApproverController extends Controller
         }
     }
 
-    /**
-     * Reject the Trustee Fee
-     */
     public function TrusteeFeeReject(Request $request, TrusteeFee $trusteeFee)
     {
         $request->validate([
