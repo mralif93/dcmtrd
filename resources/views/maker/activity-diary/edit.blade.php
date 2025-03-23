@@ -122,31 +122,6 @@
                             </div>
                         </div>
                         
-                        <!-- Additional Information Section -->
-                        <div class="border-b border-gray-200 pb-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
-                            <div class="grid grid-cols-1 gap-6">
-                                <div>
-                                    <label for="remarks" class="block text-sm font-medium text-gray-700">Remarks</label>
-                                    <textarea id="remarks" name="remarks" rows="3" 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks') ?? $activity->remarks }}</textarea>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Verification Section -->
-                        <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Verification</h3>
-                            <div class="grid grid-cols-1 gap-6">
-                                <div>
-                                    <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified By</label>
-                                    <input type="text" name="verified_by" id="verified_by" 
-                                        value="{{ old('verified_by') ?? $activity->verified_by }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                            </div>
-                        </div>
-                        
                         <!-- System Information -->
                         <div>
                             <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
@@ -163,12 +138,44 @@
                                         {{ $activity->updated_at->format('M j, Y H:i') }}
                                     </dd>
                                 </div>
+                                @if($activity->prepared_by)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
                                     <dd class="mt-1 text-sm text-gray-900">
-                                        {{ $activity->prepared_by ?? 'N/A' }}
+                                        {{ $activity->prepared_by }}
                                     </dd>
                                 </div>
+                                @endif
+                                @if($activity->verified_by)
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $activity->verified_by }}
+                                    </dd>
+                                </div>
+                                @endif
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Status</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $activity->status }}
+                                    </dd>
+                                </div>
+                                @if($activity->approval_datetime)
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ \Carbon\Carbon::parse($activity->approval_datetime)->format('d/m/Y H:i') }}
+                                    </dd>
+                                </div>
+                                @endif
+                                @if($activity->remarks)
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $activity->remarks }}
+                                    </dd>
+                                </div>
+                                @endif
                             </dl>
                         </div>
                     </div>
