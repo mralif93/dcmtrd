@@ -85,15 +85,15 @@
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <!-- Issuer Search Field -->
+                            <!-- Facility Search Field -->
                             <div>
-                                <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer</label>
-                                <select name="issuer_id" id="issuer_id" 
+                                <label for="facility_information_id" class="block text-sm font-medium text-gray-700">Facility</label>
+                                <select name="facility_information_id" id="facility_information_id" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">All Issuers</option>
-                                    @foreach($issuers as $issuer)
-                                        <option value="{{ $issuer->id }}" @selected(request('issuer_id') == $issuer->id)>
-                                            {{ $issuer->issuer_short_name }} - {{ $issuer->issuer_name }}
+                                    <option value="">All Facilities</option>
+                                    @foreach($facilities as $facility)
+                                        <option value="{{ $facility->id }}" @selected(request('facility_information_id') == $facility->id)>
+                                            {{ $facility->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -121,7 +121,7 @@
                                     Search
                                 </button>
 
-                                @if(request('issuer_id') || request('month'))
+                                @if(request('facility_information_id') || request('month'))
                                     <a href="{{ route('trustee-fee-a.index') }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
                                         Clear
                                     </a>
@@ -136,7 +136,7 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Facility</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee Amount</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anniversary Period</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -149,7 +149,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
                                         <a href="{{ route('trustee-fee-a.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $fee->issuer->issuer_short_name }} - {{ $fee->issuer->issuer_name }}
+                                            {{ $fee->facility->name }}
                                             <p>({{ $fee->description  }})</p>
                                         </a>
                                     </div>

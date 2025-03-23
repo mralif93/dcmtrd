@@ -278,12 +278,18 @@ class ApproverController extends Controller
     }
 
     // Trustee Fee Module
+     /**
+     * Display a listing of the trustee fees.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function TrusteeFeeIndex(Request $request)
     {
-        $query = TrusteeFee::with('issuer');
+        $query = TrusteeFee::with('facility');
         
-        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
-            $query->where('issuer_id', $request->issuer_id);
+        if ($request->has('facility_information_id') && !empty($request->facility_information_id)) {
+            $query->where('facility_information_id', $request->facility_information_id);
         }
         
         if ($request->has('invoice_no') && !empty($request->invoice_no)) {
@@ -296,24 +302,36 @@ class ApproverController extends Controller
         
         if ($request->has('payment_status') && !empty($request->payment_status)) {
             if ($request->payment_status === 'paid') {
-                $query->whereNotNull('payment_received');
+                $query->paid(); // Using the scope defined in the model
             } elseif ($request->payment_status === 'unpaid') {
-                $query->whereNull('payment_received');
+                $query->unpaid(); // Using the scope defined in the model
             }
         }
         
-        // Get all issuers for the dropdown
-        $issuers = Issuer::orderBy('name')->get();
+        // Get all facilities for the dropdown
+        $facilities = FacilityInformation::orderBy('name')->get();
         
         $trustee_fees = $query->latest()->paginate(10);
-        return view('approver.trustee-fee.index', compact('trustee_fees', 'issuers'));
+        return view('approver.trustee-fee.index', compact('trustee_fees', 'facilities'));
     }
 
+    /**
+     * Display the specified trustee fee.
+     *
+     * @param  \App\Models\TrusteeFee  $trusteeFee
+     * @return \Illuminate\Http\Response
+     */
     public function TrusteeFeeShow(TrusteeFee $trusteeFee)
     {
         return view('approver.trustee-fee.show', compact('trusteeFee'));
     }
 
+    /**
+     * Approve the specified trustee fee.
+     *
+     * @param  \App\Models\TrusteeFee  $trusteeFee
+     * @return \Illuminate\Http\Response
+     */
     public function TrusteeFeeApprove(TrusteeFee $trusteeFee)
     {
         try {
@@ -325,10 +343,17 @@ class ApproverController extends Controller
             
             return redirect()->route('dashboard')->with('success', 'Trustee Fee approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving issuer: ' . $e->getMessage());
+            return back()->with('error', 'Error approving trustee fee: ' . $e->getMessage());
         }
     }
 
+    /**
+     * Reject the specified trustee fee.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\TrusteeFee  $trusteeFee
+     * @return \Illuminate\Http\Response
+     */
     public function TrusteeFeeReject(Request $request, TrusteeFee $trusteeFee)
     {
         $request->validate([
@@ -344,7 +369,7 @@ class ApproverController extends Controller
             
             return redirect()->route('dashboard')->with('success', 'Trustee Fee rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting issuer: ' . $e->getMessage());
+            return back()->with('error', 'Error rejecting trustee fee: ' . $e->getMessage());
         }
     }
 

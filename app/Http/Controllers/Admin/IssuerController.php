@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Issuer;
+use App\Models\FacilityInformation;
 
 class IssuerController extends Controller
 {
@@ -128,5 +129,18 @@ class IssuerController extends Controller
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Get all facilities for a given issuer
+     *
+     * @param  \App\Models\Issuer  $issuer
+     * @return \Illuminate\Http\Response
+     */
+    public function getFacilities(Issuer $issuer)
+    {
+        return FacilityInformation::where('issuer_id', $issuer->id)
+            ->select('id', 'facility_code', 'name')
+            ->get();
     }
 }

@@ -45,7 +45,7 @@
 
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
-                    <form method="GET" action="{{ route('trustee-fees.search') }}">
+                    <form method="GET">
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <!-- Issuer Search Field -->
                             <div>
@@ -53,9 +53,23 @@
                                 <select name="issuer_id" id="issuer_id" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">All Issuers</option>
-                                    @foreach($issuers ?? [] as $issuer)
+                                    @foreach($issuers as $issuer)
                                         <option value="{{ $issuer->id }}" @selected(request('issuer_id') == $issuer->id)>
                                             {{ $issuer->issuer_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Facility Search Field -->
+                            <div>
+                                <label for="facility_information_id" class="block text-sm font-medium text-gray-700">Facility</label>
+                                <select name="facility_information_id" id="facility_information_id" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">All Facilities</option>
+                                    @foreach($facilities as $facility)
+                                        <option value="{{ $facility->id }}" data-issuer="{{ $facility->issuer_id }}" @selected(request('facility_information_id') == $facility->id)>
+                                            {{ $facility->facility_code }} - {{ $facility->facility_name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -101,6 +115,12 @@
                                     </svg>
                                     Search
                                 </button>
+
+                                @if(request('issuer_id') || request('facility_information_id') || request('invoice_no') || request('month') || request('payment_status'))
+                                    <a href="{{ route('trustee-fees.index') }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </form>
@@ -111,11 +131,9 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice No</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer/Facility</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee Amount</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anniversary Period</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -123,10 +141,11 @@
                             @foreach($trustee_fees as $fee)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $fee->issuer->name ?? 'N/A' }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $fee->invoice_no }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $fee->facility->issuer->issuer_name ?? 'N/A' }}</div>
+                                    <div class="text-sm text-gray-500">
+                                        <span class="font-medium">{{ $fee->facility->facility_code ?? '' }}</span>
+                                        {{ $fee->facility->name ?? 'N/A' }}
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">
@@ -142,13 +161,6 @@
                                         {{ $fee->start_anniversary_date->format('d/m/Y') }} - 
                                         {{ $fee->end_anniversary_date->format('d/m/Y') }}
                                     </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
-                                        $fee->payment_received ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                    }}">
-                                        {{ $fee->payment_received ? 'Paid' : 'Unpaid' }}
-                                    </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
@@ -187,4 +199,32 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const issuerFilter = document.getElementById('issuer_id');
+            const facilitySelect = document.getElementById('facility_information_id');
+            const facilityOptions = Array.from(facilitySelect.options);
+            
+            // Filter facilities when issuer is selected
+            issuerFilter.addEventListener('change', function() {
+                const selectedIssuerId = this.value;
+                
+                // Reset facility dropdown
+                facilitySelect.innerHTML = '<option value="">All Facilities</option>';
+                
+                // Filter and add matching facilities
+                facilityOptions.forEach(option => {
+                    if (!selectedIssuerId || option.dataset.issuer === selectedIssuerId) {
+                        facilitySelect.appendChild(option.cloneNode(true));
+                    }
+                });
+            });
+
+            // Initial filter based on selected issuer
+            if (issuerFilter.value) {
+                issuerFilter.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
 </x-app-layout>

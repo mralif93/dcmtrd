@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\TrusteeFee;
 use App\Models\Issuer;
+use App\Models\TrusteeFee;
+use App\Models\FacilityInformation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -16,11 +17,47 @@ class TrusteeFeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $trustee_fees = TrusteeFee::with('issuer')->latest()->paginate(10);
-        $issuers = Issuer::all();
-        return view('admin.trustee-fees.index', compact('trustee_fees', 'issuers'));
+        // Use the proper relationship - facility.issuer instead of direct issuer
+        $query = TrusteeFee::with(['facility', 'facility.issuer']);
+
+        // Filter by facility_information_id if provided
+        if ($request->has('facility_information_id') && !empty($request->facility_information_id)) {
+            $query->where('facility_information_id', $request->facility_information_id);
+        }
+
+        // Filter by issuer_id through the facility relationship
+        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
+            $query->whereHas('facility', function($q) use ($request) {
+                $q->where('issuer_id', $request->issuer_id);
+            });
+        }
+
+        if ($request->has('invoice_no') && !empty($request->invoice_no)) {
+            $query->where('invoice_no', 'LIKE', '%' . $request->invoice_no . '%');
+        }
+
+        if ($request->has('month') && !empty($request->month)) {
+            $query->where('month', $request->month);
+        }
+
+        if ($request->has('payment_status') && !empty($request->payment_status)) {
+            if ($request->payment_status === 'paid') {
+                $query->whereNotNull('payment_received');
+            } elseif ($request->payment_status === 'unpaid') {
+                $query->whereNull('payment_received');
+            }
+        }
+
+        // Get all issuers for the dropdown
+        $issuers = Issuer::orderBy('issuer_name')->get();
+
+        // Get facilities for dropdown if needed
+        $facilities = FacilityInformation::orderBy('facility_name')->get();
+
+        $trustee_fees = $query->latest()->paginate(10);
+        return view('admin.trustee-fees.index', compact('trustee_fees', 'facilities', 'issuers'));
     }
 
     /**
@@ -31,7 +68,8 @@ class TrusteeFeeController extends Controller
     public function create()
     {
         $issuers = Issuer::all();
-        return view('admin.trustee-fees.create', compact('issuers'));
+        $facilities = FacilityInformation::all();
+        return view('admin.trustee-fees.create', compact('facilities', 'issuers'));
     }
 
     /**
@@ -43,7 +81,7 @@ class TrusteeFeeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
+            'facility_information_id' => 'required|exists:facility_informations,id',
             'description' => 'required|string',
             'trustee_fee_amount_1' => 'required|numeric',
             'trustee_fee_amount_2' => 'nullable|numeric',
@@ -65,6 +103,7 @@ class TrusteeFeeController extends Controller
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
+            'status' => 'nullable|string',
         ]);
 
         // Set default values for prepared_by if not provided
@@ -86,7 +125,7 @@ class TrusteeFeeController extends Controller
      */
     public function show(TrusteeFee $trusteeFee)
     {
-        $trusteeFee->load('issuer');
+        $trusteeFee->load('facility');
         return view('admin.trustee-fees.show', compact('trusteeFee'));
     }
 
@@ -99,7 +138,8 @@ class TrusteeFeeController extends Controller
     public function edit(TrusteeFee $trusteeFee)
     {
         $issuers = Issuer::all();
-        return view('admin.trustee-fees.edit', compact('trusteeFee', 'issuers'));
+        $facilities = FacilityInformation::all();
+        return view('admin.trustee-fees.edit', compact('trusteeFee', 'facilities', 'issuers'));
     }
 
     /**
@@ -112,7 +152,7 @@ class TrusteeFeeController extends Controller
     public function update(Request $request, TrusteeFee $trusteeFee)
     {
         $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
+            'facility_information_id' => 'required|exists:facility_informations,id',
             'description' => 'required|string',
             'trustee_fee_amount_1' => 'required|numeric',
             'trustee_fee_amount_2' => 'nullable|numeric',
@@ -134,6 +174,7 @@ class TrusteeFeeController extends Controller
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
+            'status' => 'nullable|string',
         ]);
 
         // Set approval datetime if not already set and payment is received
@@ -169,10 +210,10 @@ class TrusteeFeeController extends Controller
      */
     public function search(Request $request)
     {
-        $query = TrusteeFee::with('issuer');
+        $query = TrusteeFee::with('facility');
         
-        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
-            $query->where('issuer_id', $request->issuer_id);
+        if ($request->has('facility_information_id') && !empty($request->facility_information_id)) {
+            $query->where('facility_information_id', $request->facility_information_id);
         }
         
         if ($request->has('invoice_no') && !empty($request->invoice_no)) {
@@ -192,9 +233,9 @@ class TrusteeFeeController extends Controller
         }
         
         $trustee_fees = $query->latest()->paginate(10);
-        $issuers = Issuer::all();
+        $facilities = FacilityInformation::all();
         
-        return view('admin.trustee-fees.index', compact('trustee_fees', 'issuers'));
+        return view('admin.trustee-fees.index', compact('trustee_fees', 'facilities'));
     }
     
     /**
@@ -205,7 +246,7 @@ class TrusteeFeeController extends Controller
      */
     public function report(Request $request)
     {
-        $query = TrusteeFee::with('issuer');
+        $query = TrusteeFee::with('facility');
         
         if ($request->has('start_date') && !empty($request->start_date)) {
             $query->whereDate('created_at', '>=', $request->start_date);
@@ -215,8 +256,8 @@ class TrusteeFeeController extends Controller
             $query->whereDate('created_at', '<=', $request->end_date);
         }
         
-        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
-            $query->where('issuer_id', $request->issuer_id);
+        if ($request->has('facility_information_id') && !empty($request->facility_information_id)) {
+            $query->where('facility_information_id', $request->facility_information_id);
         }
         
         if ($request->has('payment_status') && !empty($request->payment_status)) {
@@ -241,14 +282,14 @@ class TrusteeFeeController extends Controller
         
         $total_unpaid = $total_fees - $total_paid;
         
-        $issuers = Issuer::all();
+        $facilities = FacilityInformation::all();
         
         return view('admin.trustee-fees.report', compact(
             'trustee_fees', 
             'total_fees', 
             'total_paid', 
             'total_unpaid',
-            'issuers'
+            'facilities'
         ));
     }
 
@@ -259,7 +300,7 @@ class TrusteeFeeController extends Controller
      */
     public function trashed()
     {
-        $trashedFees = TrusteeFee::with('issuer')->onlyTrashed()->latest()->paginate(10);
+        $trashedFees = TrusteeFee::with('facility')->onlyTrashed()->latest()->paginate(10);
         return view('admin.trustee-fees.trashed', compact('trashedFees'));
     }
 
