@@ -454,14 +454,21 @@ class BondsSeeder extends Seeder
         DB::table('announcements')->insert($announcements);
 
         // Seed Facility Informations
+        // Define possible ratings for facilities
+        $ratings = [
+            'AAA', 'AA+', 'AA', 'AA-', 'A+', 'A', 'A-', 
+            'BBB+', 'BBB', 'BBB-', 'BB+', 'BB'
+        ];
+
+        // Seed Facility Informations
         $facilityInformations = [];
         $issuerIds = DB::table('issuers')->pluck('id', 'issuer_short_name')->toArray();
         
         foreach ($issuerIds as $shortName => $issuerId) {
             // Only create facility for some issuers
             if (rand(0, 2) > 0) { // 2/3 chance to create facility
-                $facilityCode = $shortName . '-001';
-                $facilityNumber = $shortName . '/' . rand(2020, 2024) . '/001';
+                $facilityCode = $shortName . '-' . sprintf("%03d", rand(1, 999));
+                $facilityNumber = $shortName . '/' . rand(2020, 2024) . '/' . sprintf("%03d", rand(1, 999));
                 $facilityName = $shortName . ' ' . (rand(0, 1) ? 'Medium Term Notes Program' : 'Sukuk Program');
                 
                 $principleType = rand(0, 1) ? 'Conventional' : 'Islamic';
@@ -476,19 +483,23 @@ class BondsSeeder extends Seeder
                 
                 $instrumentType = rand(0, 3) == 0 ? 'Tier 2 Capital' : 'Senior Unsecured';
                 $guaranteed = rand(0, 5) == 0; // 1/6 chance to be guaranteed
-                $totalGuaranteed = $guaranteed ? (rand(5, 10) * 100000000) . '.00' : null;
+                $totalGuaranteed = $guaranteed ? (rand(5, 10) * 100000000) : null;
                 
                 $indicator = rand(0, 3) == 0 ? 'Corporate' : 'Financial Institution';
                 $facilityRating = $ratings[array_rand($ratings)];
                 
-                $facilityAmount = rand(10, 50) * 100000000 . '.00';
-                $availableLimit = rand(5, 10) * 100000000 . '.00';
-                $outstandingAmount = (floatval($facilityAmount) - floatval($availableLimit)) . '.00';
+                $facilityAmount = rand(10, 50) * 100000000;
+                $availableLimit = rand(5, 10) * 100000000;
+                $outstandingAmount = ($facilityAmount - $availableLimit);
                 
-                $availabilityDate = $maturityDate;
+                $availabilityYear = rand(2023, 2024);
+                $availabilityDate = $availabilityYear . '-' . sprintf("%02d", rand(1, 12)) . '-' . sprintf("%02d", rand(1, 28));
+                
+                $status = rand(0, 10) > 8 ? 'Inactive' : 'Active';
                 
                 $facilityInformations[] = [
                     'facility_code' => $facilityCode,
+                    'issuer_short_name' => $shortName,
                     'facility_number' => $facilityNumber,
                     'facility_name' => $facilityName,
                     'principle_type' => $principleType,
@@ -507,10 +518,11 @@ class BondsSeeder extends Seeder
                     'lead_arranger' => $shortName . ' Investment Bank',
                     'facility_agent' => $shortName . ' Investment Bank',
                     'availability_date' => $availabilityDate,
+                    'status' => $status,
                     'prepared_by' => 'System',
                     'verified_by' => rand(0, 1) ? 'System Verifier' : null,
                     'remarks' => 'Auto-generated facility information',
-                    'approval_datetime' => Carbon::now()->subMonths(rand(1, 12))->format('Y-m-d H:i:s'),
+                    'approval_datetime' => Carbon::now()->subMonths(rand(1, 12)),
                     'issuer_id' => $issuerId,
                     'created_at' => now(),
                     'updated_at' => now(),
