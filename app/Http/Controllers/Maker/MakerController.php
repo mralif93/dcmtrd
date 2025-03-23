@@ -1526,7 +1526,7 @@ class MakerController extends Controller
      * @param  \App\Models\ActivityDiary  $activity
      * @return \Illuminate\Http\Response
      */
-    public function updateStatus(Request $request, ActivityDiary $activity)
+    public function ActivityUpdateStatus(Request $request, ActivityDiary $activity)
     {
         $validated = $request->validate([
             'status' => ['required', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
