@@ -494,9 +494,14 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/activity-diary', [MakerController::class, 'ActivityIndex'])->name('activity-diary-m.index');
     Route::get('maker/activity-diary/create', [MakerController::class, 'ActivityCreate'])->name('activity-diary-m.create');
     Route::post('maker/activity-diary/create', [MakerController::class, 'ActivityStore'])->name('activity-diary-m.store');
-    Route::get('maker/activity-diary/{compliance}/edit', [MakerController::class, 'ActivityEdit'])->name('activity-diary-m.edit');
-    Route::put('maker/activity-diary/{compliance}/update', [MakerController::class, 'ActivityUpdate'])->name('activity-diary-m.update');
-    Route::get('maker/activity-diary/{compliance}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-m.show');
+    Route::get('maker/activity-diary/{activity}/edit', [MakerController::class, 'ActivityEdit'])->name('activity-diary-m.edit');
+    Route::put('maker/activity-diary/{activity}/update', [MakerController::class, 'ActivityUpdate'])->name('activity-diary-m.update');
+    Route::get('maker/activity-diary/{activity}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-m.show');
+    Route::delete('maker/activity-diary/{activity}', [MakerController::class, 'ActivityDestroy'])->name('activity-diary-m.destroy');
+    Route::patch('maker/activity-diary/{activity}/status', [MakerController::class, 'ActivityUpdateStatus'])->name('activity-diary-m.update-status');
+    Route::get('maker/activity-diary/by-issuer/{issuerId}', [MakerController::class, 'ActivityGetByIssuer'])->name('activity-diary-m.by-issuer');
+    Route::get('maker/activity-diary/upcoming', [MakerController::class, 'ActivityUpcoming'])->name('activity-diary-m.upcoming');
+    Route::get('maker/activity-diary/export', [MakerController::class, 'ActivityExportActivities'])->name('activity-diary-m.export');
 });
 
 // Approver routes

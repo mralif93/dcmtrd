@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Activity Diaries Management') }}
+            {{ __('Upcoming Activity Diaries') }}
         </h2>
     </x-slot>
 
@@ -24,7 +24,7 @@
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg font-medium text-gray-900">Activity Diaries</h3>
+                    <h3 class="text-lg font-medium text-gray-900">Upcoming Activity Diaries (Due in the next 7 days)</h3>
                     <div class="flex gap-2">
                         <a href="{{ route('activity-diary-m.create') }}" 
                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -38,8 +38,8 @@
 
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
-                    <form method="GET" action="{{ route('activity-diary-m.index') }}">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <form method="GET" action="{{ route('activity-diary-m.upcoming') }}">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <!-- Issuer Filter -->
                             <div>
                                 <label for="issuer" class="block text-sm font-medium text-gray-700">Issuer</label>
@@ -56,19 +56,11 @@
                                     <option value="">All Status</option>
                                     <option value="pending" @selected(request('status') === 'pending')>Pending</option>
                                     <option value="in_progress" @selected(request('status') === 'in_progress')>In Progress</option>
-                                    <option value="completed" @selected(request('status') === 'completed')>Completed</option>
                                     <option value="overdue" @selected(request('status') === 'overdue')>Overdue</option>
                                     <option value="compiled" @selected(request('status') === 'compiled')>Compiled</option>
                                     <option value="notification" @selected(request('status') === 'notification')>Notification</option>
                                     <option value="passed" @selected(request('status') === 'passed')>Passed</option>
                                 </select>
-                            </div>
-
-                            <!-- Date Range Filter -->
-                            <div>
-                                <label for="due_date" class="block text-sm font-medium text-gray-700">Due Date</label>
-                                <input type="date" name="due_date" id="due_date" value="{{ request('due_date') }}" 
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
 
                             <!-- Filter Button -->
@@ -89,11 +81,11 @@
                 <div class="bg-white border-b border-gray-200">
                     <nav class="flex -mb-px">
                         <a href="{{ route('activity-diary-m.index') }}" 
-                           class="border-indigo-500 text-indigo-600 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm">
+                           class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm">
                             All Activities
                         </a>
                         <a href="{{ route('activity-diary-m.upcoming') }}" 
-                           class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm">
+                           class="border-indigo-500 text-indigo-600 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm">
                             Upcoming
                         </a>
                     </nav>
@@ -107,6 +99,7 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Days Left</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -122,6 +115,14 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">{{ $activity->due_date ? $activity->due_date->format('d/m/Y') : '-' }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @php
+                                        $remainingDays = \Carbon\Carbon::now()->startOfDay()->diffInDays($activity->due_date, false);
+                                    @endphp
+                                    <div class="text-sm {{ $remainingDays < 0 ? 'text-red-600 font-bold' : ($remainingDays <= 2 ? 'text-orange-600 font-medium' : 'text-gray-900') }}">
+                                        {{ $remainingDays < 0 ? 'Overdue by ' . abs($remainingDays) . ' days' : $remainingDays . ' days' }}
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
@@ -148,22 +149,23 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                             </svg>
                                         </a>
-                                        <!-- <form action="{{ route('activity-diary-m.destroy', $activity) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this activity diary?');" class="inline">
+                                        <form action="{{ route('activity-diary-m.update-status', $activity) }}" method="POST" class="inline">
                                             @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900">
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" value="completed">
+                                            <button type="submit" onclick="return confirm('Mark this activity as completed?');" class="text-green-600 hover:text-green-900">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                                 </svg>
                                             </button>
-                                        </form> -->
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-4 text-center">
-                                    <div class="text-sm text-gray-500">No activity diaries found</div>
+                                <td colspan="6" class="px-6 py-4 text-center">
+                                    <div class="text-sm text-gray-500">No upcoming activity diaries found</div>
                                 </td>
                             </tr>
                             @endforelse

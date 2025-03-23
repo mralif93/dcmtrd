@@ -63,7 +63,7 @@
                     title="Activity Dairy"
                     icon="calendar"
                     :count="$activityDairyCount ?? 0"
-                    href="#"
+                    :href="route('activity-diary-m.index')"
                     color="bg-blue-100"
                 />
 

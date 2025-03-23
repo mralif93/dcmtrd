@@ -1314,26 +1314,65 @@ class MakerController extends Controller
     }
 
     // Activity Diary
-    public function ActivityIndex()
+    /**
+     * Display a listing of activity diaries.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function ActivityIndex(Request $request)
     {
-        $activities = ActivityDiary::with('bond.issuer')->latest()->paginate(10);
+        $query = ActivityDiary::with('issuer');
+        
+        // Apply filters if provided
+        if ($request->filled('issuer')) {
+            $query->whereHas('issuer', function($q) use ($request) {
+                $q->where('issuer_name', 'like', '%' . $request->issuer . '%')
+                  ->orWhere('issuer_short_name', 'like', '%' . $request->issuer . '%');
+            });
+        }
+        
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        if ($request->filled('due_date')) {
+            $query->whereDate('due_date', $request->due_date);
+        }
+        
+        $activities = $query->latest()->paginate(10)->withQueryString();
+        
         return view('maker.activity-diary.index', compact('activities'));
     }
 
+    /**
+     * Show the form for creating a new activity diary.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function ActivityCreate()
     {
-        $bonds = Bond::with('issuer')->get();
-        return view('maker.activity-diary.create', compact('bonds'));
+        $issuers = Issuer::all();
+        return view('maker.activity-diary.create', compact('issuers'));
     }
 
+    /**
+     * Store a newly created activity diary in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function ActivityStore(Request $request)
     {
         $validated = $request->validate([
-            'bond_id' => 'required|exists:bonds,id',
+            'issuer_id' => 'required|exists:issuers,id',
             'purpose' => 'nullable|string',
             'letter_date' => 'nullable|date',
             'due_date' => 'nullable|date',
-            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue'])],
+            'extension_date_1' => 'nullable|date',
+            'extension_note_1' => 'nullable|string',
+            'extension_date_2' => 'nullable|date',
+            'extension_note_2' => 'nullable|string',
+            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
             'remarks' => 'nullable|string',
         ]);
 
@@ -1346,28 +1385,57 @@ class MakerController extends Controller
             ->with('success', 'Activity diary created successfully');
     }
 
+    /**
+     * Display the specified activity diary.
+     *
+     * @param  \App\Models\ActivityDiary  $activity
+     * @return \Illuminate\Http\Response
+     */
     public function ActivityShow(ActivityDiary $activity)
     {
+        $activity->load('issuer');
         return view('maker.activity-diary.show', compact('activity'));
     }
 
+    /**
+     * Show the form for editing the specified activity diary.
+     *
+     * @param  \App\Models\ActivityDiary  $activity
+     * @return \Illuminate\Http\Response
+     */
     public function ActivityEdit(ActivityDiary $activity)
     {
-        $bonds = Bond::with('issuer')->get();
-        return view('maker.activity-diary.edit', compact('activity', 'bonds'));
+        $issuers = Issuer::all();
+        return view('maker.activity-diary.edit', compact('activity', 'issuers'));
     }
 
+    /**
+     * Update the specified activity diary in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\ActivityDiary  $activity
+     * @return \Illuminate\Http\Response
+     */
     public function ActivityUpdate(Request $request, ActivityDiary $activity)
     {
         $validated = $request->validate([
-            'bond_id' => 'required|exists:bonds,id',
+            'issuer_id' => 'required|exists:issuers,id',
             'purpose' => 'nullable|string',
             'letter_date' => 'nullable|date',
             'due_date' => 'nullable|date',
-            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue'])],
+            'extension_date_1' => 'nullable|date',
+            'extension_note_1' => 'nullable|string',
+            'extension_date_2' => 'nullable|date',
+            'extension_note_2' => 'nullable|string',
+            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
             'remarks' => 'nullable|string',
             'verified_by' => 'nullable|string',
         ]);
+
+        // Handle approval if status is changed to completed
+        if (($request->input('status') === 'completed') && ($activity->status !== 'completed')) {
+            $validated['approval_datetime'] = now();
+        }
 
         $activity->update($validated);
 
@@ -1376,6 +1444,12 @@ class MakerController extends Controller
             ->with('success', 'Activity diary updated successfully');
     }
 
+    /**
+     * Remove the specified activity diary from storage.
+     *
+     * @param  \App\Models\ActivityDiary  $activity
+     * @return \Illuminate\Http\Response
+     */
     public function ActivityDestroy(ActivityDiary $activity)
     {
         $activity->delete();
@@ -1383,6 +1457,138 @@ class MakerController extends Controller
         return redirect()
             ->route('activity-diary-m.index')
             ->with('success', 'Activity diary deleted successfully');
+    }
+
+    /**
+     * Display a listing of activity diaries by issuer ID.
+     *
+     * @param  int  $issuerId
+     * @return \Illuminate\Http\Response
+     */
+    public function ActivityGetByIssuer($issuerId, Request $request)
+    {
+        $issuer = Issuer::findOrFail($issuerId);
+        $query = ActivityDiary::where('issuer_id', $issuerId);
+        
+        // Apply filters if provided
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        if ($request->filled('due_date')) {
+            $query->whereDate('due_date', $request->due_date);
+        }
+        
+        $activities = $query->latest()->paginate(10)->withQueryString();
+        
+        return view('maker.activity-diary.by-issuer', compact('activities', 'issuer'));
+    }
+
+    /**
+     * Display a listing of upcoming due activity diaries.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function ActivityUpcoming(Request $request)
+    {
+        $today = now()->format('Y-m-d');
+        $nextWeek = now()->addDays(7)->format('Y-m-d');
+        
+        $query = ActivityDiary::with('issuer')
+            ->whereBetween('due_date', [$today, $nextWeek])
+            ->where('status', '!=', 'completed');
+        
+        // Apply filters if provided
+        if ($request->filled('issuer')) {
+            $query->whereHas('issuer', function($q) use ($request) {
+                $q->where('issuer_name', 'like', '%' . $request->issuer . '%')
+                  ->orWhere('issuer_short_name', 'like', '%' . $request->issuer . '%');
+            });
+        }
+        
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        $activities = $query->latest()->paginate(10)->withQueryString();
+        
+        return view('maker.activity-diary.upcoming', compact('activities'));
+    }
+
+    /**
+     * Update the status of the activity diary.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\ActivityDiary  $activity
+     * @return \Illuminate\Http\Response
+     */
+    public function updateStatus(Request $request, ActivityDiary $activity)
+    {
+        $validated = $request->validate([
+            'status' => ['required', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
+        ]);
+
+        // Handle approval datetime if status is changing to completed
+        if ($validated['status'] === 'completed' && $activity->status !== 'completed') {
+            $activity->update([
+                'status' => $validated['status'],
+                'approval_datetime' => now()
+            ]);
+        } else {
+            $activity->update(['status' => $validated['status']]);
+        }
+
+        return redirect()->back()->with('success', 'Activity diary status updated successfully');
+    }
+
+    /**
+     * Export activities to CSV.
+     *
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function ActivityExportActivities()
+    {
+        $activities = ActivityDiary::with('issuer')->get();
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="activities.csv"',
+        ];
+        
+        $callback = function() use ($activities) {
+            $file = fopen('php://output', 'w');
+            
+            // Add CSV headers
+            fputcsv($file, [
+                'ID', 'Issuer', 'Purpose', 'Letter Date', 'Due Date', 
+                'Extension Date 1', 'Extension Note 1', 
+                'Extension Date 2', 'Extension Note 2',
+                'Status', 'Remarks', 'Prepared By', 'Verified By', 'Approval Date'
+            ]);
+            
+            // Add data rows
+            foreach ($activities as $activity) {
+                fputcsv($file, [
+                    $activity->id,
+                    $activity->issuer->name ?? 'N/A',
+                    $activity->purpose,
+                    $activity->letter_date ? $activity->letter_date->format('Y-m-d') : null,
+                    $activity->due_date ? $activity->due_date->format('Y-m-d') : null,
+                    $activity->extension_date_1 ? $activity->extension_date_1->format('Y-m-d') : null,
+                    $activity->extension_note_1,
+                    $activity->extension_date_2 ? $activity->extension_date_2->format('Y-m-d') : null,
+                    $activity->extension_note_2,
+                    $activity->status,
+                    $activity->remarks,
+                    $activity->prepared_by,
+                    $activity->verified_by,
+                    $activity->approval_datetime ? $activity->approval_datetime->format('Y-m-d H:i:s') : null
+                ]);
+            }
+            
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers);
     }
 
     // REITs : Portfolio
