@@ -743,7 +743,7 @@ class BondsSeeder extends Seeder
         // Seed Activity Diaries
         $activityDiaries = [];
         $issuerIds = array_values(DB::table('issuers')->pluck('id')->toArray());
-        
+
         $activityPurposes = [
             'Annual review meeting with issuer',
             'Coupon payment verification',
@@ -758,9 +758,9 @@ class BondsSeeder extends Seeder
             'Draft term sheet review',
             'Shariah advisor consultation'
         ];
-        
-        $activityStatuses = ['Pending', 'In Progress', 'Completed', 'Overdue'];
-        
+
+        $activityStatuses = ['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'];
+
         foreach ($issuerIds as $issuerId) {
             // Generate 2-5 activities per issuer
             $numActivities = rand(2, 5);
@@ -777,23 +777,54 @@ class BondsSeeder extends Seeder
                 $status = $activityStatuses[array_rand($activityStatuses)];
                 
                 // Make activities more realistic based on status
-                if ($status == 'Completed') {
+                if ($status == 'completed') {
                     $dueDate = Carbon::now()->subDays(rand(1, 30));
-                } elseif ($status == 'Overdue') {
+                } elseif ($status == 'overdue') {
                     $dueDate = Carbon::now()->subDays(rand(1, 15));
+                } elseif ($status == 'compiled') {
+                    $dueDate = Carbon::now()->subDays(rand(5, 25));
+                } elseif ($status == 'notification') {
+                    $dueDate = Carbon::now()->addDays(rand(5, 15));
+                } elseif ($status == 'passed') {
+                    $dueDate = Carbon::now()->subDays(rand(10, 40));
                 }
                 
-                $verifiedBy = ($status == 'Completed') ? 'System Verifier' : null;
+                $verifiedBy = in_array($status, ['completed', 'compiled', 'passed']) ? 'System Verifier' : null;
+                $approvalDateTime = in_array($status, ['completed', 'compiled', 'passed']) ? Carbon::now()->subDays(rand(1, 10)) : null;
+                
+                // Add extensions with 30% probability
+                $hasExtension1 = (rand(1, 10) <= 3);
+                $hasExtension2 = $hasExtension1 && (rand(1, 10) <= 3);
+                
+                $extensionDate1 = null;
+                $extensionNote1 = null;
+                $extensionDate2 = null;
+                $extensionNote2 = null;
+                
+                if ($hasExtension1) {
+                    $extensionDate1 = $dueDate->copy()->addDays(rand(10, 20))->format('Y-m-d');
+                    $extensionNote1 = 'Extension requested due to ' . ['internal review', 'documentation delay', 'issuer request', 'market conditions'][rand(0, 3)];
+                }
+                
+                if ($hasExtension2) {
+                    $extensionDate2 = Carbon::parse($extensionDate1)->addDays(rand(10, 20))->format('Y-m-d');
+                    $extensionNote2 = 'Additional extension required for ' . ['further analysis', 'awaiting board approval', 'regulatory consultation', 'market changes'][rand(0, 3)];
+                }
                 
                 $activityDiaries[] = [
                     'issuer_id' => $issuerId,
                     'purpose' => $purpose,
                     'letter_date' => $letterDate->format('Y-m-d'),
                     'due_date' => $dueDate->format('Y-m-d'),
+                    'extension_date_1' => $extensionDate1,
+                    'extension_note_1' => $extensionNote1,
+                    'extension_date_2' => $extensionDate2,
+                    'extension_note_2' => $extensionNote2,
                     'status' => $status,
                     'remarks' => 'Auto-generated activity: ' . $purpose,
                     'prepared_by' => 'System',
                     'verified_by' => $verifiedBy,
+                    'approval_datetime' => $approvalDateTime,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
