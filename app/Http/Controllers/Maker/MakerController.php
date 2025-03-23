@@ -1117,7 +1117,7 @@ class MakerController extends Controller
         }
         
         // Get all issuers for the dropdown
-        $issuers = Issuer::orderBy('name')->get();
+        $issuers = Issuer::orderBy('issuer_name')->get();
         
         $trustee_fees = $query->latest()->paginate(10);
         return view('maker.trustee-fee.index', compact('trustee_fees', 'issuers'));
