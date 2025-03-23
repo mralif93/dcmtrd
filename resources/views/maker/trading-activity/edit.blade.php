@@ -74,7 +74,7 @@
                                 <div>
                                     <label for="input_time" class="block text-sm font-medium text-gray-700">Trade Time *</label>
                                     <input type="time" name="input_time" id="input_time" step="1" 
-                                        value="{{ old('input_time', $trading->input_time->format('H:i:s')) }}" required
+                                        value="{{ old('input_time', $trading->input_time?->format('H:i:s')) }}" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
                                                {{ $errors->has('input_time') ? 'border-red-300' : '' }}">
                                     @error('input_time')
@@ -89,9 +89,9 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Pricing Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label for="amount" class="block text-sm font-medium text-gray-700">Amount (RM million) *</label>
+                                    <label for="amount" class="block text-sm font-medium text-gray-700">Amount (RM million)</label>
                                     <input type="number" step="0.01" name="amount" id="amount" 
-                                        value="{{ old('amount', $trading->amount) }}" required
+                                        value="{{ old('amount', $trading->amount) }}"
                                         placeholder="Enter amount in millions"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
                                                {{ $errors->has('amount') ? 'border-red-300' : '' }}">
@@ -100,9 +100,9 @@
                                     @enderror
                                 </div>
                                 <div>
-                                    <label for="price" class="block text-sm font-medium text-gray-700">Price *</label>
+                                    <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
                                     <input type="number" step="0.0001" name="price" id="price" 
-                                        value="{{ old('price', $trading->price) }}" required
+                                        value="{{ old('price', $trading->price) }}"
                                         placeholder="Enter price per unit"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
                                                {{ $errors->has('price') ? 'border-red-300' : '' }}">
@@ -111,9 +111,9 @@
                                     @enderror
                                 </div>
                                 <div>
-                                    <label for="yield" class="block text-sm font-medium text-gray-700">Yield (%) *</label>
+                                    <label for="yield" class="block text-sm font-medium text-gray-700">Yield (%)</label>
                                     <input type="number" step="0.01" name="yield" id="yield" 
-                                        value="{{ old('yield', $trading->yield) }}" required
+                                        value="{{ old('yield', $trading->yield) }}"
                                         placeholder="Enter yield percentage"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
                                                {{ $errors->has('yield') ? 'border-red-300' : '' }}">
@@ -122,9 +122,9 @@
                                     @enderror
                                 </div>
                                 <div>
-                                    <label for="value_date" class="block text-sm font-medium text-gray-700">Value Date *</label>
+                                    <label for="value_date" class="block text-sm font-medium text-gray-700">Value Date</label>
                                     <input type="date" name="value_date" id="value_date" 
-                                        value="{{ old('value_date', $trading->value_date->format('Y-m-d')) }}" required
+                                        value="{{ old('value_date', $trading->value_date?->format('Y-m-d')) }}"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500
                                                {{ $errors->has('value_date') ? 'border-red-300' : '' }}">
                                     @error('value_date')
