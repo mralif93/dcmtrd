@@ -40,15 +40,15 @@
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET" action="{{ route('trustee-fees-info.index') }}">
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <!-- Issuer Search Field -->
+                            <!-- Facility Search Field -->
                             <div>
-                                <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer</label>
-                                <select name="issuer_id" id="issuer_id" 
+                                <label for="facility_information_id" class="block text-sm font-medium text-gray-700">Facility</label>
+                                <select name="facility_information_id" id="facility_information_id" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">All Issuers</option>
-                                    @foreach($issuers as $issuer)
-                                        <option value="{{ $issuer->id }}" @selected(request('issuer_id') == $issuer->id)>
-                                            {{ $issuer->issuer_short_name }} - {{ $issuer->issuer_name }}
+                                    <option value="">All Facilities</option>
+                                    @foreach($facilities as $facility)
+                                        <option value="{{ $facility->id }}" @selected(request('facility_information_id') == $facility->id)>
+                                            {{ $facility->facility_code }} - {{ $facility->facility_name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -104,11 +104,10 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice No</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Facility / Issuer</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee Amount</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anniversary Period</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -116,10 +115,9 @@
                             @foreach($trustee_fees as $fee)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $fee->issuer->issuer_short_name }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $fee->invoice_no }}</div>
+                                    {{ $fee->facility?->facility_code }} - {{ $fee->facility?->facility_name }}
+                                    <p class="text-xs text-gray-500">{{ $fee->facility?->issuer->issuer_short_name }} - {{ $fee->facility?->issuer->issuer_name }}</p>
+                                    <p class="text-xs text-gray-700 mt-1">{{ $fee->description }}</p>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">RM {{ number_format($fee->getTotalAmount(), 2) }}</div>
@@ -131,10 +129,11 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
-                                        $fee->payment_received ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                    }}">
-                                        {{ $fee->payment_received ? 'Paid' : 'Unpaid' }}
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        {{ $fee->status == 'Active' ? 'bg-green-100 text-green-800' : 
+                                        ($fee->status == 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                        ($fee->status == 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        {{ $fee->status }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

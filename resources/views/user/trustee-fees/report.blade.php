@@ -46,13 +46,13 @@
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
 
-                            <!-- Issuer Filter -->
+                            <!-- Facility Filter -->
                             <div>
-                                <label for="issuer" class="block text-sm font-medium text-gray-700">Issuer</label>
-                                <input type="text" name="issuer" id="issuer" 
-                                       value="{{ request('issuer') }}" 
+                                <label for="facility" class="block text-sm font-medium text-gray-700">Facility</label>
+                                <input type="text" name="facility" id="facility" 
+                                       value="{{ request('facility') }}" 
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                       placeholder="Search issuer...">
+                                       placeholder="Search facility...">
                             </div>
 
                             <!-- Payment Status Filter -->
@@ -114,7 +114,7 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Facility</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice No</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee Amount</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anniversary Period</th>
@@ -126,7 +126,7 @@
                             @forelse($trustee_fees as $fee)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $fee->issuer->name }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $fee->facility->name }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">{{ $fee->invoice_no }}</div>
@@ -176,15 +176,15 @@
                     <div class="text-sm text-gray-500 print:border-t print:pt-4">
                         <p>Report generated on: {{ now()->format('d/m/Y H:i') }}</p>
                         <p>Filters applied: 
-                            @if(request('start_date') || request('end_date') || request('issuer') || request('payment_status'))
+                            @if(request('start_date') || request('end_date') || request('facility') || request('payment_status'))
                                 @if(request('start_date'))
                                     Start Date: {{ request('start_date') }}
                                 @endif
                                 @if(request('end_date'))
                                     End Date: {{ request('end_date') }}
                                 @endif
-                                @if(request('issuer'))
-                                    Issuer: {{ request('issuer') }}
+                                @if(request('facility'))
+                                    Facility: {{ request('facility') }}
                                 @endif
                                 @if(request('payment_status'))
                                     Payment Status: {{ ucfirst(request('payment_status')) }}

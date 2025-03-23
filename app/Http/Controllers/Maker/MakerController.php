@@ -1137,8 +1137,12 @@ class MakerController extends Controller
 
     public function TrusteeFeeCreate()
     {
+        // Get all issuers for the dropdown
         $issuers = Issuer::orderBy('issuer_name')->get();
+
+        // Get facilities for dropdown if needed
         $facilities = FacilityInformation::orderBy('facility_name')->get();
+        
         return view('maker.trustee-fee.create', compact('issuers', 'facilities'));
     }
 
