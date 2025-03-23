@@ -108,6 +108,9 @@
                                 <select name="status" id="status" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">All Status</option>
+                                    <option value="Draft" @selected(request('status') === 'Draft')>Draft</option>
+                                    <option value="Active" @selected(request('status') === 'Active')>Active</option>
+                                    <option value="Rejected" @selected(request('status') === 'Rejected')>Rejected</option>
                                     <option value="pending" @selected(request('status') === 'pending')>Pending</option>
                                     <option value="in_progress" @selected(request('status') === 'in_progress')>In Progress</option>
                                     <option value="completed" @selected(request('status') === 'completed')>Completed</option>
@@ -169,7 +172,11 @@
                             @forelse($activities as $activity)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $activity->issuer->issuer_short_name ?? 'N/A' }}</div>
+                                    <div class="text-sm text-gray-900">
+                                    <a href="{{ route('activity-diary-m.show', $activity) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        {{ $activity->issuer->issuer_short_name ?? 'N/A' }} - {{ $activity->issuer->issuer_name ?? 'N/A' }}
+                                    </a>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-sm text-gray-900">{{ Str::limit($activity->purpose, 50) }}</div>
@@ -191,6 +198,18 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
+                                        @if ($activity->status == 'Draft' or $activity->status == 'Rejected')
+                                        <a href="{{ route('activity-diary-m.approval', $activity) }}" 
+                                            class="text-indigo-600 hover:text-indigo-900" 
+                                            title="Submit for Approval"
+                                            onclick="confirmApproval(event, '{{ $activity->issuer->issuer_name }}')">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-5m0 0l-2 2m2-2l2 2" />
+                                            </svg>
+                                        </a>
+                                        @endif
                                         <a href="{{ route('activity-diary-m.show', $activity) }}" class="text-indigo-600 hover:text-indigo-900">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>

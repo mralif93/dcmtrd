@@ -1319,6 +1319,22 @@ class MakerController extends Controller
         }
     }
 
+    public function SubmitApprovalActivityDiary(ActivityDiary $activity)
+    {
+        try {
+            $activity->update([
+                'status' => 'Pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+            
+            return redirect()
+                ->route('activity-diary-m.show', $activity)
+                ->with('success', 'Activity diary submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
+    }
+
     protected function validateCompliance(Request $request)
     {
         return $request->validate([
@@ -1606,7 +1622,7 @@ class MakerController extends Controller
             'extension_note_1' => 'nullable|string',
             'extension_date_2' => 'nullable|date',
             'extension_note_2' => 'nullable|string',
-            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
+            'status' => ['nullable', 'string', Rule::in(['draft', 'active', 'rejected', 'pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
             'remarks' => 'nullable|string',
             'verified_by' => 'nullable|string',
         ]);

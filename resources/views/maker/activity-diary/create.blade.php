@@ -37,7 +37,7 @@
                         <!-- Basic Information Section -->
                         <div class="border-b border-gray-200 pb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-1 gap-1">
                                 <div>
                                     <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
                                     <select id="issuer_id" name="issuer_id" required
@@ -51,19 +51,6 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                    <select id="status" name="status" 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                        <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                                        <option value="overdue" {{ old('status') == 'overdue' ? 'selected' : '' }}>Overdue</option>
-                                        <option value="compiled" {{ old('status') == 'compiled' ? 'selected' : '' }}>Compiled</option>
-                                        <option value="notification" {{ old('status') == 'notification' ? 'selected' : '' }}>Notification</option>
-                                        <option value="passed" {{ old('status') == 'passed' ? 'selected' : '' }}>Passed</option>
-                                    </select>
-                                </div>
-                                <div class="md:col-span-2">
                                     <label for="purpose" class="block text-sm font-medium text-gray-700">Purpose *</label>
                                     <textarea id="purpose" name="purpose" rows="3" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('purpose') }}</textarea>
