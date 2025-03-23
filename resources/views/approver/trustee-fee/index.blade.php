@@ -30,17 +30,17 @@
                         </a>
 
                         <!-- Trustee Fee -->
-                        <a href="{{ route('trustee-fee-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <a href="{{ route('trustee-fee-a.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Trustee Fee') }}
                         </a>
 
                         <!-- Compliance Covenant -->
-                        <a href="{{ route('compliance-covenant-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <a href="{{ route('compliance-covenant-a.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Compliance Covenant') }}
                         </a>
 
                         <!-- Activity Diary -->
-                        <a href="{{ route('activity-diary-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <a href="{{ route('activity-diary-a.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Activity Diary') }}
                         </a>
 
@@ -58,16 +58,6 @@
             </div>
         </div>
     </x-slot>
-
-    <script>
-        function confirmApproval(event, value) {
-            event.preventDefault();
-            if (confirm(`Are you confirm to submit the trustee fee "${value}" for approval?`)) {
-                // If confirmed, proceed to the approval page
-                window.location.href = event.currentTarget.href;
-            }
-        }
-    </script>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -89,21 +79,12 @@
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">Trustee Fees</h3>
-                    <div class="flex gap-2">
-                        <a href="{{ route('trustee-fee-m.create') }}" 
-                           class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            Add New Fee
-                        </a>
-                    </div>
                 </div>
 
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
-                    <form method="GET" action="{{ route('trustee-fee-m.index') }}">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <form method="GET">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <!-- Issuer Search Field -->
                             <div>
                                 <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer</label>
@@ -118,14 +99,6 @@
                                 </select>
                             </div>
 
-                            <!-- Invoice Number Filter -->
-                            <div>
-                                <label for="invoice_no" class="block text-sm font-medium text-gray-700">Invoice No</label>
-                                <input type="text" name="invoice_no" id="invoice_no" value="{{ request('invoice_no') }}" 
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
-                                       placeholder="Invoice number...">
-                            </div>
-
                             <!-- Month Filter -->
                             <div>
                                 <label for="month" class="block text-sm font-medium text-gray-700">Month</label>
@@ -138,17 +111,6 @@
                                 </select>
                             </div>
 
-                            <!-- Payment Status Filter -->
-                            <div>
-                                <label for="payment_status" class="block text-sm font-medium text-gray-700">Payment Status</label>
-                                <select name="payment_status" id="payment_status" 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">All Status</option>
-                                    <option value="paid" @selected(request('payment_status') === 'paid')>Paid</option>
-                                    <option value="unpaid" @selected(request('payment_status') === 'unpaid')>Unpaid</option>
-                                </select>
-                            </div>
-
                             <!-- Filter Button -->
                             <div class="flex items-end">
                                 <button type="submit" 
@@ -158,6 +120,12 @@
                                     </svg>
                                     Search
                                 </button>
+
+                                @if(request('issuer_id') || request('month'))
+                                    <a href="{{ route('trustee-fee-a.index') }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </form>
@@ -180,9 +148,9 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('trustee-fee-m.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('trustee-fee-a.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
                                             {{ $fee->issuer->issuer_short_name }} - {{ $fee->issuer->issuer_name }}
-                                            <p>{{ $fee->description }}</p>
+                                            <p>({{ $fee->description  }})</p>
                                         </a>
                                     </div>
                                 </td>
@@ -197,35 +165,18 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ $fee->status == 'Active' ? 'bg-green-100 text-green-800' : 
-                                        ($fee->status == 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                        ($fee->status == 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
-                                        {{ $fee->status }}
-                                    </span>
+                                            {{ $fee->status == 'Active' ? 'bg-green-100 text-green-800' : 
+                                            ($fee->status == 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                            ($fee->status == 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
+                                            {{ $fee->status }}
+                                        </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        @if ($fee->status == 'Draft' or $fee->status == 'Rejected')
-                                        <a href="{{ route('trustee-fee-m.approval', $fee) }}" 
-                                            class="text-indigo-600 hover:text-indigo-900" 
-                                            title="Submit for Approval"
-                                            onclick="confirmApproval(event, '{{ $fee->issuer->issuer_name }}')">
-                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-5m0 0l-2 2m2-2l2 2" />
-                                            </svg>
-                                        </a>
-                                        @endif
-                                        <a href="{{ route('trustee-fee-m.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <a href="{{ route('trustee-fee-a.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                            </svg>
-                                        </a>
-                                        <a href="{{ route('trustee-fee-m.edit', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                             </svg>
                                         </a>
                                     </div>

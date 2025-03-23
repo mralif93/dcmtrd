@@ -82,6 +82,20 @@
                     </dl>
                 </div>
 
+                <!-- Remarks Section -->
+                @if($issuer->remarks)
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Remarks</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:px-6">
+                            <p class="text-sm text-gray-900">{{ $issuer->remarks }}</p>
+                        </div>
+                    </dl>
+                </div>
+                @endif
+
                 <!-- Basic Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
@@ -148,20 +162,6 @@
                         </div>
                     </dl>
                 </div>
-
-                <!-- Remarks Section -->
-                @if($issuer->remarks)
-                <div class="border-t border-gray-200">
-                    <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Remarks</h3>
-                    </div>
-                    <dl>
-                        <div class="bg-gray-50 px-4 py-5 sm:px-6">
-                            <p class="text-sm text-gray-900">{{ $issuer->remarks }}</p>
-                        </div>
-                    </dl>
-                </div>
-                @endif
 
                 <!-- System Information Section -->
                 <div class="border-t border-gray-200">

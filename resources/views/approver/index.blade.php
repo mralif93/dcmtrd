@@ -1,8 +1,62 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Approver Dashboard') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Approver Dashboard') }}
+            </h2>
+
+            <!-- Dropdown Menu -->
+            <div class="relative" x-data="{ open: false }">
+                <button @click="open = !open" class="flex items-center text-gray-700 px-3 py-2 text-sm font-medium rounded-md bg-white border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none">
+                    <span>{{ __('Menu') }}</span>
+                    <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                <div x-show="open" 
+                    @click.away="open = false" 
+                    class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="transform opacity-0 scale-95"
+                    x-transition:enter-end="transform opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-75"
+                    x-transition:leave-start="transform opacity-100 scale-100"
+                    x-transition:leave-end="transform opacity-0 scale-95">
+                    <div class="py-1">
+                        <!-- Dashboard -->
+                        <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Dashboard') }}
+                        </a>
+
+                        <!-- Trustee Fee -->
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Trustee Fee') }}
+                        </a>
+
+                        <!-- Compliance Covenant -->
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Compliance Covenant') }}
+                        </a>
+
+                        <!-- Activity Diary -->
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Activity Diary') }}
+                        </a>
+
+                        <!-- Audit Log -->
+                        <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Audit Log') }}
+                        </a>
+
+                        <!-- Reports -->
+                        <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Reports') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </x-slot>
 
     <div class="py-12">
@@ -14,13 +68,13 @@
             </div>
 
             <!-- Cards -->
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <!-- Trustee Fees -->
                 <x-dashboard-card
                     title="Trustee Fees"
                     icon="receipt-refund"
                     :count="$trusteeFeesCount ?? 0"
-                    :href="route('trustee-fees-info.index')"
+                    :href="route('trustee-fee-a.index')"
                     color="bg-blue-100"
                 />
 
@@ -42,6 +96,7 @@
                     color="bg-blue-100"
                 />
 
+                <div class="hidden">
                 <!-- Audit Log -->
                 <x-dashboard-card
                     title="Audit Log"
@@ -59,6 +114,7 @@
                     href="#"
                     color="bg-blue-100"
                 />
+                </div>
             </div>
 
 
@@ -70,8 +126,8 @@
 
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
-                    <form method="GET" action="{{ route('issuers-info.index') }}">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <form method="GET">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <!-- Issuer Name Search Field -->
                             <div>
                                 <label for="search" class="block text-sm font-medium text-gray-700">Search</label>

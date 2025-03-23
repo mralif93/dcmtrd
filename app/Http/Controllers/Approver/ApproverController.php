@@ -278,6 +278,37 @@ class ApproverController extends Controller
     }
 
     // Trustee Fee Module
+    public function TrusteeFeeIndex(Request $request)
+    {
+        $query = TrusteeFee::with('issuer');
+        
+        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
+            $query->where('issuer_id', $request->issuer_id);
+        }
+        
+        if ($request->has('invoice_no') && !empty($request->invoice_no)) {
+            $query->where('invoice_no', 'LIKE', '%' . $request->invoice_no . '%');
+        }
+        
+        if ($request->has('month') && !empty($request->month)) {
+            $query->where('month', $request->month);
+        }
+        
+        if ($request->has('payment_status') && !empty($request->payment_status)) {
+            if ($request->payment_status === 'paid') {
+                $query->whereNotNull('payment_received');
+            } elseif ($request->payment_status === 'unpaid') {
+                $query->whereNull('payment_received');
+            }
+        }
+        
+        // Get all issuers for the dropdown
+        $issuers = Issuer::orderBy('name')->get();
+        
+        $trustee_fees = $query->latest()->paginate(10);
+        return view('approver.trustee-fee.index', compact('trustee_fees', 'issuers'));
+    }
+
     public function TrusteeFeeShow(TrusteeFee $trusteeFee)
     {
         return view('approver.trustee-fee.show', compact('trusteeFee'));

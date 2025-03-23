@@ -154,7 +154,7 @@ class MakerController extends Controller
             'trust_amount_escrow_sum' => 'nullable|string|max:255',
             'no_of_share' => 'nullable|string|max:255',
             'outstanding_size' => 'nullable|string|max:255',
-            'status' => 'nullable|in:Active,Inactive,Pending,Rejected',
+            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
             'remarks' => 'nullable|string',
         ]);
     }

@@ -155,34 +155,6 @@
                             </div>
                         </div>
 
-                        <!-- Status Section (Admin may want to change status) -->
-                        <div class="border-b border-gray-200 pb-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Status</h3>
-                            <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="" {{ old('status', $issuer->status) == '' ? 'selected' : '' }}>-- Please choose status --</option>
-                                    <option value="Draft" {{ old('status', $issuer->status) == 'Draft' ? 'selected' : '' }}>Draft</option>
-                                    <option value="Active" {{ old('status', $issuer->status) == 'Active' ? 'selected' : '' }}>Active</option>
-                                    <option value="Pending" {{ old('status', $issuer->status) == 'Pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="Rejected" {{ old('status', $issuer->status) == 'Rejected' ? 'selected' : '' }}>Rejected</option>
-                                    <option value="Inactive" {{ old('status', $issuer->status) == 'Inactive' ? 'selected' : '' }}>Inactive</option>
-                                </select>
-                                @error('status')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div class="mt-4">
-                                <label for="remarks" class="block text-sm font-medium text-gray-700">Remarks</label>
-                                <textarea name="remarks" id="remarks" rows="3" 
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks', $issuer->remarks) }}</textarea>
-                                @error('remarks')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-
                         <!-- System Information -->
                         <div>
                             <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
@@ -215,11 +187,25 @@
                                     </dd>
                                 </div>
                                 @endif
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Status</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $issuer->status }}
+                                    </dd>
+                                </div>
                                 @if($issuer->approval_datetime)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
                                     <dd class="mt-1 text-sm text-gray-900">
                                         {{ \Carbon\Carbon::parse($issuer->approval_datetime)->format('d/m/Y H:i') }}
+                                    </dd>
+                                </div>
+                                @endif
+                                @if($issuer->remarks)
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $issuer->remarks }}
                                     </dd>
                                 </div>
                                 @endif

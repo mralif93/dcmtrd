@@ -193,67 +193,61 @@
                             </div>
                         </div>
 
-                        <!-- Additional Information Section -->
-                        <div class="border-b border-gray-200 pb-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="prepared_by" class="block text-sm font-medium text-gray-700">Prepared By</label>
-                                    <input type="text" name="prepared_by" id="prepared_by" 
-                                        value="{{ old('prepared_by', $trusteeFee->prepared_by) }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <div>
-                                    <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified By</label>
-                                    <input type="text" name="verified_by" id="verified_by" 
-                                        value="{{ old('verified_by', $trusteeFee->verified_by) }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label for="remarks" class="block text-sm font-medium text-gray-700">Remarks</label>
-                                    <textarea name="remarks" id="remarks" rows="3"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks', $trusteeFee->remarks) }}</textarea>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- System Information -->
-                        <div class="space-y-6 py-6 border-b border-gray-200">
-                            <h3 class="text-lg font-medium text-gray-900">System Information</h3>
-                            
-                            <!-- Row 1: Status, Approval Date/Time -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
+                            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
                                 <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-700">Status *</label>
-                                    <select name="status" id="status" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">-- Select Status --</option>
-                                        <option value="Draft" @selected(old('status', $trusteeFee->status) == 'Draft')>Draft</option>
-                                        <option value="Active" @selected(old('status', $trusteeFee->status) == 'Active')>Active</option>
-                                        <option value="Inactive" @selected(old('status', $trusteeFee->status) == 'Inactive')>Inactive</option>
-                                        <option value="Pending" @selected(old('status', $trusteeFee->status) == 'Pending')>Pending</option>
-                                        <option value="Matured" @selected(old('status', $trusteeFee->status) == 'Matured')>Matured</option>
-                                    </select>
+                                    <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $trusteeFee->created_at->format('M j, Y H:i') }}
+                                    </dd>
                                 </div>
                                 <div>
-                                    <label for="approval_datetime" class="block text-sm font-medium text-gray-700">Approval Date/Time *</label>
-                                    <input type="datetime-local" name="approval_datetime" id="approval_datetime"
-                                        value="{{ old('approval_datetime', optional($trusteeFee->approval_datetime)->format('Y-m-d\TH:i')) }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $trusteeFee->updated_at->format('M j, Y H:i') }}
+                                    </dd>
                                 </div>
-                            </div>
-
-                            <!-- Row 2: System Metadata -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                @if($trusteeFee->prepared_by)
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Created At</label>
-                                    <div class="mt-1 text-sm text-gray-600">{{ $trusteeFee->created_at->format('d/m/Y H:i A') }}</div>
+                                    <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $trusteeFee->prepared_by }}
+                                    </dd>
                                 </div>
+                                @endif
+                                @if($trusteeFee->verified_by)
                                 <div>
-                                <label class="block text-sm font-medium text-gray-700">Last Updated</label>
-                                    <div class="mt-1 text-sm text-gray-600">{{ $trusteeFee->updated_at->format('d/m/Y H:i A') }}</div>
+                                    <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $trusteeFee->verified_by }}
+                                    </dd>
                                 </div>
-                            </div>
+                                @endif
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Status</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $trusteeFee->status }}
+                                    </dd>
+                                </div>
+                                @if($trusteeFee->approval_datetime)
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ \Carbon\Carbon::parse($trusteeFee->approval_datetime)->format('d/m/Y H:i') }}
+                                    </dd>
+                                </div>
+                                @endif
+                                @if($trusteeFee->remarks)
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $trusteeFee->remarks }}
+                                    </dd>
+                                </div>
+                                @endif
+                            </dl>
                         </div>
                     </div>
 

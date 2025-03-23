@@ -497,7 +497,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/activity-diary/{activity}/edit', [MakerController::class, 'ActivityEdit'])->name('activity-diary-m.edit');
     Route::put('maker/activity-diary/{activity}/update', [MakerController::class, 'ActivityUpdate'])->name('activity-diary-m.update');
     Route::get('maker/activity-diary/{activity}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-m.show');
-    Route::delete('maker/activity-diary/{activity}', [MakerController::class, 'ActivityDestroy'])->name('activity-diary-m.destroy');
+    // Route::delete('maker/activity-diary/{activity}', [MakerController::class, 'ActivityDestroy'])->name('activity-diary-m.destroy');
     Route::patch('maker/activity-diary/{activity}/status', [MakerController::class, 'ActivityUpdateStatus'])->name('activity-diary-m.update-status');
     Route::get('maker/activity-diary/by-issuer/{issuerId}', [MakerController::class, 'ActivityGetByIssuer'])->name('activity-diary-m.by-issuer');
     Route::get('maker/activity-diary/upcoming', [MakerController::class, 'ActivityUpcoming'])->name('activity-diary-m.upcoming');
@@ -529,10 +529,33 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/facility-info/{facility}/show', [ApproverController::class, 'FacilityInfoShow'])->name('facility-info-a.show');
 
     // Trustee Fee Module
-    Route::get('approver/trustee-fee/{trustee_fee}/show', [ApproverController::class, 'TrusteeFeeShow'])->name('trustee-fee-a.show');
+    Route::get('approver/trustee-fee', [ApproverController::class, 'TrusteeFeeIndex'])->name('trustee-fee-a.index');
+    // Route::get('approver/trustee-fee/create', [MakerController::class, 'TrusteeFeeCreate'])->name('trustee-fee-a.create');
+    // Route::post('approver/trustee-fee/create', [MakerController::class, 'TrusteeFeeStore'])->name('trustee-fee-a.store');
+    // Route::get('approver/trustee-fee/{trusteeFee}/edit', [MakerController::class, 'TrusteeFeeEdit'])->name('trustee-fee-a.edit');
+    // Route::put('approver/trustee-fee/{trusteeFee}/update', [MakerController::class, 'TrusteeFeeUpdate'])->name('trustee-fee-a.update');
+    Route::get('approver/trustee-fee/{trusteeFee}/show', [ApproverController::class, 'TrusteeFeeShow'])->name('trustee-fee-a.show');
     Route::post('approver/trustee-fee/{trustee_fee}/approve', [ApproverController::class, 'TrusteeFeeApprove'])->name('trustee-fee-a.approve');
     Route::post('approver/trustee-fee/{trustee_fee}/reject', [ApproverController::class, 'TrusteeFeeReject'])->name('trustee-fee-a.reject');
 
     // Compliance Covenant Module
-    Route::get('approver/compliance-covenant/{compliance}/show', [ApproverController::class, 'ComplianceShow'])->name('compliance-covenant-a.show');
+    Route::get('approver/compliance-covenant', [MakerController::class, 'ComplianceIndex'])->name('compliance-covenant-a.index');
+    // Route::get('approver/compliance-covenant/create', [MakerController::class, 'ComplianceCreate'])->name('compliance-covenant-a.create');
+    // Route::post('approver/compliance-covenant/create', [MakerController::class, 'ComplianceStore'])->name('compliance-covenant-a.store');
+    // Route::get('approver/compliance-covenant/{compliance}/edit', [MakerController::class, 'ComplianceEdit'])->name('compliance-covenant-a.edit');
+    // Route::put('approver/compliance-covenant/{compliance}/update', [MakerController::class, 'ComplianceUpdate'])->name('compliance-covenant-a.update');
+    Route::get('approver/compliance-covenant/{compliance}/show', [MakerController::class, 'ComplianceShow'])->name('compliance-covenant-a.show');
+
+    // Activity Diary Module
+    Route::get('approver/activity-diary', [MakerController::class, 'ActivityIndex'])->name('activity-diary-a.index');
+    // Route::get('approver/activity-diary/create', [MakerController::class, 'ActivityCreate'])->name('activity-diary-a.create');
+    // Route::post('approver/activity-diary/create', [MakerController::class, 'ActivityStore'])->name('activity-diary-a.store');
+    // Route::get('approver/activity-diary/{activity}/edit', [MakerController::class, 'ActivityEdit'])->name('activity-diary-a.edit');
+    // Route::put('approver/activity-diary/{activity}/update', [MakerController::class, 'ActivityUpdate'])->name('activity-diary-a.update');
+    Route::get('approver/activity-diary/{activity}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-a.show');
+    // Route::delete('approver/activity-diary/{activity}', [MakerController::class, 'ActivityDestroy'])->name('activity-diary-a.destroy');
+    Route::patch('approver/activity-diary/{activity}/status', [MakerController::class, 'ActivityUpdateStatus'])->name('activity-diary-a.update-status');
+    Route::get('approver/activity-diary/by-issuer/{issuerId}', [MakerController::class, 'ActivityGetByIssuer'])->name('activity-diary-a.by-issuer');
+    Route::get('approver/activity-diary/upcoming', [MakerController::class, 'ActivityUpcoming'])->name('activity-diary-a.upcoming');
+    Route::get('approver/activity-diary/export', [MakerController::class, 'ActivityExportActivities'])->name('activity-diary-a.export');
 });
