@@ -55,7 +55,6 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bond</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
@@ -67,10 +66,7 @@
                             @forelse($activityDiaries as $diary)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $diary->bond->bond_sukuk_name }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $diary->bond->issuer->issuer_short_name }}</div>
+                                    <div class="text-sm text-gray-900">{{ $diary->issuer->issuer_short_name ?? $diary->issuer->issuer_name }}</div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-sm text-gray-900">{{ Str::limit($diary->purpose, 50) }}</div>
@@ -97,7 +93,10 @@
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
                                         $diary->status == 'completed' ? 'bg-green-100 text-green-800' : 
                                         ($diary->status == 'overdue' ? 'bg-red-100 text-red-800' : 
-                                        ($diary->status == 'in_progress' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800')) 
+                                        ($diary->status == 'in_progress' ? 'bg-blue-100 text-blue-800' : 
+                                        ($diary->status == 'compiled' ? 'bg-purple-100 text-purple-800' : 
+                                        ($diary->status == 'notification' ? 'bg-orange-100 text-orange-800' : 
+                                        ($diary->status == 'passed' ? 'bg-teal-100 text-teal-800' : 'bg-yellow-100 text-yellow-800'))))) 
                                     }}">
                                         {{ ucfirst(str_replace('_', ' ', $diary->status ?? 'pending')) }}
                                     </span>
@@ -130,7 +129,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center">
+                                <td colspan="5" class="px-6 py-4 text-center">
                                     <div class="text-sm text-gray-500">No upcoming activity diaries found</div>
                                 </td>
                             </tr>

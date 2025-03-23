@@ -40,14 +40,6 @@
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET" action="{{ route('activity-diaries.index') }}">
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <!-- Bond Search Field -->
-                            <div>
-                                <label for="bond" class="block text-sm font-medium text-gray-700">Bond</label>
-                                <input type="text" name="bond" id="bond" value="{{ request('bond') }}" 
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
-                                       placeholder="Bond name...">
-                            </div>
-
                             <!-- Issuer Filter -->
                             <div>
                                 <label for="issuer" class="block text-sm font-medium text-gray-700">Issuer</label>
@@ -56,16 +48,23 @@
                                        placeholder="Issuer name...">
                             </div>
 
+                            <!-- Purpose Filter -->
+                            <div>
+                                <label for="purpose" class="block text-sm font-medium text-gray-700">Purpose</label>
+                                <input type="text" name="purpose" id="purpose" value="{{ request('purpose') }}" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                                       placeholder="Purpose...">
+                            </div>
+
                             <!-- Status Filter -->
                             <div>
                                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
                                 <select name="status" id="status" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">All Status</option>
-                                    <option value="pending" @selected(request('status') === 'pending')>Pending</option>
-                                    <option value="in_progress" @selected(request('status') === 'in_progress')>In Progress</option>
-                                    <option value="completed" @selected(request('status') === 'completed')>Completed</option>
-                                    <option value="overdue" @selected(request('status') === 'overdue')>Overdue</option>
+                                    <option value="passed" @selected(request('status') === 'passed')>Passed</option>
+                                    <option value="complied" @selected(request('status') === 'complied')>Complied</option>
+                                    <option value="notification" @selected(request('status') === 'notification')>Notification</option>
                                 </select>
                             </div>
 
@@ -109,10 +108,9 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bond</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Dates</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -121,24 +119,40 @@
                             @forelse($activityDiaries as $diary)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $diary->bond->bond_sukuk_name }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $diary->bond->issuer->issuer_short_name }}</div>
+                                    <div class="text-sm text-gray-900">{{ $diary->issuer->issuer_short_name }}</div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-sm text-gray-900">{{ Str::limit($diary->purpose, 50) }}</div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $diary->due_date ? $diary->due_date->format('d/m/Y') : '-' }}</div>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm space-y-1">
+                                        @if($diary->due_date)
+                                            <div class="{{ $diary->due_date->isPast() && !in_array($diary->status, ['complied', 'passed']) ? 'text-red-600 font-bold' : '' }}">
+                                                {{ $diary->due_date->format('d-M-y') }}
+                                            </div>
+                                        @endif
+                                        
+                                        @if($diary->extension_date_1)
+                                            <div class="text-sm {{ $diary->extension_date_1->isPast() && !in_array($diary->status, ['complied', 'passed']) ? 'text-red-600 font-bold' : '' }}">
+                                                {{ $diary->extension_date_1->format('d-M-y') }}
+                                                <span class="text-xs text-gray-500">{{ $diary->extension_note_1 }}</span>
+                                            </div>
+                                        @endif
+                                        
+                                        @if($diary->extension_date_2)
+                                            <div class="text-sm {{ $diary->extension_date_2->isPast() && !in_array($diary->status, ['complied', 'passed']) ? 'text-red-600 font-bold' : '' }}">
+                                                {{ $diary->extension_date_2->format('d-M-y') }}
+                                                <span class="text-xs text-gray-500">{{ $diary->extension_note_2 }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
-                                        $diary->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                        ($diary->status == 'overdue' ? 'bg-red-100 text-red-800' : 
-                                        ($diary->status == 'in_progress' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800')) 
+                                        $diary->status == 'complied' ? 'bg-green-100 text-green-800' : 
+                                        ($diary->status == 'notification' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800') 
                                     }}">
-                                        {{ ucfirst(str_replace('_', ' ', $diary->status ?? 'pending')) }}
+                                        {{ ucfirst($diary->status ?? '') }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -168,7 +182,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center">
+                                <td colspan="5" class="px-6 py-4 text-center">
                                     <div class="text-sm text-gray-500">No activity diaries found</div>
                                 </td>
                             </tr>

@@ -40,13 +40,13 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label for="bond_id" class="block text-sm font-medium text-gray-700">Bond *</label>
-                                    <select id="bond_id" name="bond_id" required
+                                    <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
+                                    <select id="issuer_id" name="issuer_id" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">-- Select Bond --</option>
-                                        @foreach($bonds as $bond)
-                                            <option value="{{ $bond->id }}" {{ (old('bond_id') ?? $activityDiary->bond_id) == $bond->id ? 'selected' : '' }}>
-                                                {{ $bond->bond_sukuk_name }} ({{ $bond->issuer->issuer_short_name }})
+                                        <option value="">-- Select Issuer --</option>
+                                        @foreach($issuers as $issuer)
+                                            <option value="{{ $issuer->id }}" {{ (old('issuer_id') ?? $activityDiary->issuer_id) == $issuer->id ? 'selected' : '' }}>
+                                                {{ $issuer->issuer_name }} ({{ $issuer->issuer_short_name }})
                                             </option>
                                         @endforeach
                                     </select>
@@ -55,10 +55,10 @@
                                     <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
                                     <select id="status" name="status" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="pending" {{ (old('status') ?? $activityDiary->status) == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="in_progress" {{ (old('status') ?? $activityDiary->status) == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                        <option value="completed" {{ (old('status') ?? $activityDiary->status) == 'completed' ? 'selected' : '' }}>Completed</option>
-                                        <option value="overdue" {{ (old('status') ?? $activityDiary->status) == 'overdue' ? 'selected' : '' }}>Overdue</option>
+                                        <option value="">Select Status</option>
+                                        <option value="passed" {{ (old('status') ?? $activityDiary->status) == 'passed' ? 'selected' : '' }}>Passed</option>
+                                        <option value="complied" {{ (old('status') ?? $activityDiary->status) == 'complied' ? 'selected' : '' }}>Complied</option>
+                                        <option value="notification" {{ (old('status') ?? $activityDiary->status) == 'notification' ? 'selected' : '' }}>Notification</option>
                                     </select>
                                 </div>
                                 <div class="md:col-span-2">
@@ -84,6 +84,41 @@
                                     <input type="date" name="due_date" id="due_date" 
                                         value="{{ old('due_date') ?? ($activityDiary->due_date ? $activityDiary->due_date->format('Y-m-d') : '') }}"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                            
+                            <!-- Extension Dates -->
+                            <div class="mt-6 border-t border-gray-200 pt-4">
+                                <h4 class="text-md font-medium text-gray-700 mb-4">Extension Dates (Optional)</h4>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                                    <div>
+                                        <label for="extension_date_1" class="block text-sm font-medium text-gray-700">1st Extension Date</label>
+                                        <input type="date" name="extension_date_1" id="extension_date_1" 
+                                            value="{{ old('extension_date_1') ?? ($activityDiary->extension_date_1 ? $activityDiary->extension_date_1->format('Y-m-d') : '') }}"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label for="extension_note_1" class="block text-sm font-medium text-gray-700">1st Extension Note</label>
+                                        <input type="text" name="extension_note_1" id="extension_note_1" 
+                                            value="{{ old('extension_note_1') ?? $activityDiary->extension_note_1 ?? '(1st Extension)' }}"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="extension_date_2" class="block text-sm font-medium text-gray-700">2nd Extension Date</label>
+                                        <input type="date" name="extension_date_2" id="extension_date_2" 
+                                            value="{{ old('extension_date_2') ?? ($activityDiary->extension_date_2 ? $activityDiary->extension_date_2->format('Y-m-d') : '') }}"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label for="extension_note_2" class="block text-sm font-medium text-gray-700">2nd Extension Note</label>
+                                        <input type="text" name="extension_note_2" id="extension_note_2" 
+                                            value="{{ old('extension_note_2') ?? $activityDiary->extension_note_2 ?? '(2nd Extension)' }}"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    </div>
                                 </div>
                             </div>
                         </div>

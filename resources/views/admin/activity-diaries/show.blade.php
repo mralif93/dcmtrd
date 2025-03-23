@@ -37,30 +37,25 @@
                     </div>
                 </div>
 
-                <!-- Bond Information Section -->
+                <!-- Issuer Information Section -->
                 <div class="border-t border-gray-200">
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Bond</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $activityDiary->bond->bond_sukuk_name }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Issuer</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $activityDiary->issuer->issuer_name }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Issuer</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $activityDiary->bond->issuer->issuer_name }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Issuer Short Name</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $activityDiary->issuer->issuer_short_name }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Issuer Short Name</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $activityDiary->bond->issuer->issuer_short_name }}</dd>
-                        </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
-                                    $activityDiary->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                    ($activityDiary->status == 'overdue' ? 'bg-red-100 text-red-800' : 
-                                    ($activityDiary->status == 'in_progress' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800')) 
+                                    $activityDiary->status == 'complied' ? 'bg-green-100 text-green-800' : 
+                                    ($activityDiary->status == 'notification' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800') 
                                 }}">
-                                    {{ ucfirst(str_replace('_', ' ', $activityDiary->status ?? 'pending')) }}
+                                    {{ ucfirst($activityDiary->status ?? 'pending') }}
                                 </span>
                             </dd>
                         </div>
@@ -81,10 +76,45 @@
                             <dt class="text-sm font-medium text-gray-500">Letter Date</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $activityDiary->letter_date ? $activityDiary->letter_date->format('d/m/Y') : 'N/A' }}</dd>
                         </div>
+                        
+                        <!-- Due Date with Extensions -->
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Due Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $activityDiary->due_date ? $activityDiary->due_date->format('d/m/Y') : 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Due Dates</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <div class="space-y-2">
+                                    @if($activityDiary->due_date)
+                                        <div>
+                                            <span class="{{ $activityDiary->due_date->isPast() && !in_array($activityDiary->status, ['complied', 'passed']) ? 'text-red-600 font-bold' : '' }}">
+                                                {{ $activityDiary->due_date->format('d-M-y') }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                    
+                                    @if($activityDiary->extension_date_1)
+                                        <div>
+                                            <span class="{{ $activityDiary->extension_date_1->isPast() && !in_array($activityDiary->status, ['complied', 'passed']) ? 'text-red-600 font-bold' : '' }}">
+                                                {{ $activityDiary->extension_date_1->format('d-M-y') }}
+                                            </span>
+                                            <span class="text-gray-500 ml-2">{{ $activityDiary->extension_note_1 }}</span>
+                                        </div>
+                                    @endif
+                                    
+                                    @if($activityDiary->extension_date_2)
+                                        <div>
+                                            <span class="{{ $activityDiary->extension_date_2->isPast() && !in_array($activityDiary->status, ['complied', 'passed']) ? 'text-red-600 font-bold' : '' }}">
+                                                {{ $activityDiary->extension_date_2->format('d-M-y') }}
+                                            </span>
+                                            <span class="text-gray-500 ml-2">{{ $activityDiary->extension_note_2 }}</span>
+                                        </div>
+                                    @endif
+                                    
+                                    @if(!$activityDiary->due_date && !$activityDiary->extension_date_1 && !$activityDiary->extension_date_2)
+                                        <div>N/A</div>
+                                    @endif
+                                </div>
+                            </dd>
                         </div>
+
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Remarks</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $activityDiary->remarks ?? 'N/A' }}</dd>
@@ -127,7 +157,7 @@
                 </div>
 
                 <!-- Status Update Section (if not completed) -->
-                @if($activityDiary->status != 'completed')
+                @if(!in_array($activityDiary->status, ['complied', 'passed']))
                     <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
                         <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Quick Update</h3>
                         <form action="{{ route('activity-diaries.update-status', $activityDiary) }}" method="POST" class="flex items-center">
@@ -135,10 +165,9 @@
                             @method('PATCH')
                             
                             <select name="status" class="mr-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                <option value="pending" {{ $activityDiary->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="in_progress" {{ $activityDiary->status == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                <option value="completed">Mark as Completed</option>
-                                <option value="overdue" {{ $activityDiary->status == 'overdue' ? 'selected' : '' }}>Overdue</option>
+                                <option value="notification" {{ $activityDiary->status == 'notification' ? 'selected' : '' }}>Notification</option>
+                                <option value="passed">Mark as Passed</option>
+                                <option value="complied">Mark as Complied</option>
                             </select>
                             
                             <button type="submit" 
@@ -159,7 +188,7 @@
                             </svg>
                             Back to List
                         </a>
-                        <form action="{{ route('activity-diaries-.destroy', $activityDiary) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this activity diary?');">
+                        <form action="{{ route('activity-diaries.destroy', $activityDiary) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this activity diary?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" 

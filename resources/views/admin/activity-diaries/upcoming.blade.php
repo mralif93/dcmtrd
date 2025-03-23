@@ -55,10 +55,9 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bond</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Dates</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -67,39 +66,67 @@
                             @forelse($activityDiaries as $diary)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $diary->bond->bond_sukuk_name }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $diary->bond->issuer->issuer_short_name }}</div>
+                                    <div class="text-sm text-gray-900">{{ $diary->issuer->issuer_short_name }}</div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-sm text-gray-900">{{ Str::limit($diary->purpose, 50) }}</div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($diary->due_date)
-                                        <span class="{{ $diary->due_date->isPast() ? 'text-red-600 font-bold' : '' }}">
-                                            {{ $diary->due_date->format('d/m/Y') }}
-                                        </span>
-                                        @if($diary->due_date->isPast())
-                                            <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full ml-1">Overdue</span>
-                                        @elseif($diary->due_date->isToday())
-                                            <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full ml-1">Today</span>
-                                        @else
-                                            <span class="text-xs text-gray-500 ml-1">
-                                                (in {{ $diary->due_date->diffInDays(now()) }} days)
-                                            </span>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm space-y-1">
+                                        @if($diary->due_date)
+                                            <div class="{{ $diary->due_date->isPast() ? 'text-red-600 font-bold' : '' }}">
+                                                {{ $diary->due_date->format('d-M-y') }}
+                                                @if($diary->due_date->isPast())
+                                                    <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full ml-1">Overdue</span>
+                                                @elseif($diary->due_date->isToday())
+                                                    <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full ml-1">Today</span>
+                                                @else
+                                                    <span class="text-xs text-gray-500 ml-1">
+                                                        (in {{ $diary->due_date->diffInDays(now()) }} days)
+                                                    </span>
+                                                @endif
+                                            </div>
                                         @endif
-                                    @else
-                                        <div class="text-sm text-gray-900">-</div>
-                                    @endif
+                                        
+                                        @if($diary->extension_date_1)
+                                            <div class="text-sm {{ $diary->extension_date_1->isPast() ? 'text-red-600 font-bold' : '' }}">
+                                                {{ $diary->extension_date_1->format('d-M-y') }}
+                                                <span class="text-xs text-gray-500">{{ $diary->extension_note_1 }}</span>
+                                                @if($diary->extension_date_1->isPast())
+                                                    <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full ml-1">Overdue</span>
+                                                @elseif($diary->extension_date_1->isToday())
+                                                    <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full ml-1">Today</span>
+                                                @else
+                                                    <span class="text-xs text-gray-500 ml-1">
+                                                        (in {{ $diary->extension_date_1->diffInDays(now()) }} days)
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        @endif
+                                        
+                                        @if($diary->extension_date_2)
+                                            <div class="text-sm {{ $diary->extension_date_2->isPast() ? 'text-red-600 font-bold' : '' }}">
+                                                {{ $diary->extension_date_2->format('d-M-y') }}
+                                                <span class="text-xs text-gray-500">{{ $diary->extension_note_2 }}</span>
+                                                @if($diary->extension_date_2->isPast())
+                                                    <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full ml-1">Overdue</span>
+                                                @elseif($diary->extension_date_2->isToday())
+                                                    <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full ml-1">Today</span>
+                                                @else
+                                                    <span class="text-xs text-gray-500 ml-1">
+                                                        (in {{ $diary->extension_date_2->diffInDays(now()) }} days)
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
-                                        $diary->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                        ($diary->status == 'overdue' ? 'bg-red-100 text-red-800' : 
-                                        ($diary->status == 'in_progress' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800')) 
+                                        $diary->status == 'complied' ? 'bg-green-100 text-green-800' : 
+                                        ($diary->status == 'notification' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800') 
                                     }}">
-                                        {{ ucfirst(str_replace('_', ' ', $diary->status ?? 'pending')) }}
+                                        {{ ucfirst($diary->status ?? '') }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -118,8 +145,8 @@
                                         <form action="{{ route('activity-diaries.update-status', $diary) }}" method="POST" class="inline">
                                             @csrf
                                             @method('PATCH')
-                                            <input type="hidden" name="status" value="completed">
-                                            <button type="submit" class="text-green-600 hover:text-green-900" onclick="return confirm('Mark this activity as completed?');">
+                                            <input type="hidden" name="status" value="complied">
+                                            <button type="submit" class="text-green-600 hover:text-green-900" onclick="return confirm('Mark this activity as complied?');">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                                 </svg>
@@ -130,7 +157,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center">
+                                <td colspan="5" class="px-6 py-4 text-center">
                                     <div class="text-sm text-gray-500">No upcoming activity diaries found</div>
                                 </td>
                             </tr>

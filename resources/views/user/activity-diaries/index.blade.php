@@ -40,14 +40,6 @@
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET" action="{{ route('activity-diaries-info.index') }}">
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <!-- Bond Search Field -->
-                            <div>
-                                <label for="bond" class="block text-sm font-medium text-gray-700">Bond</label>
-                                <input type="text" name="bond" id="bond" value="{{ request('bond') }}" 
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
-                                       placeholder="Bond name...">
-                            </div>
-
                             <!-- Issuer Filter -->
                             <div>
                                 <label for="issuer" class="block text-sm font-medium text-gray-700">Issuer</label>
@@ -66,6 +58,9 @@
                                     <option value="in_progress" @selected(request('status') === 'in_progress')>In Progress</option>
                                     <option value="completed" @selected(request('status') === 'completed')>Completed</option>
                                     <option value="overdue" @selected(request('status') === 'overdue')>Overdue</option>
+                                    <option value="compiled" @selected(request('status') === 'compiled')>Compiled</option>
+                                    <option value="notification" @selected(request('status') === 'notification')>Notification</option>
+                                    <option value="passed" @selected(request('status') === 'passed')>Passed</option>
                                 </select>
                             </div>
 
@@ -109,7 +104,6 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bond</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
@@ -121,10 +115,7 @@
                             @forelse($activityDiaries as $diary)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $diary->bond->bond_sukuk_name }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $diary->bond->issuer->issuer_short_name }}</div>
+                                    <div class="text-sm text-gray-900">{{ $diary->issuer->issuer_short_name ?? $diary->issuer->issuer_name }}</div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-sm text-gray-900">{{ Str::limit($diary->purpose, 50) }}</div>
@@ -168,7 +159,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center">
+                                <td colspan="5" class="px-6 py-4 text-center">
                                     <div class="text-sm text-gray-500">No activity diaries found</div>
                                 </td>
                             </tr>

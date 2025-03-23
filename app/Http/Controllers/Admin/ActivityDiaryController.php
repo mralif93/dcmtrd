@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityDiary;
-use App\Models\Bond;
+use App\Models\Issuer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -18,7 +18,7 @@ class ActivityDiaryController extends Controller
      */
     public function index()
     {
-        $activityDiaries = ActivityDiary::with('bond.issuer')->latest()->paginate(10);
+        $activityDiaries = ActivityDiary::with('issuer')->latest()->paginate(10);
         return view('admin.activity-diaries.index', compact('activityDiaries'));
     }
 
@@ -29,8 +29,8 @@ class ActivityDiaryController extends Controller
      */
     public function create()
     {
-        $bonds = Bond::with('issuer')->get();
-        return view('admin.activity-diaries.create', compact('bonds'));
+        $issuers = Issuer::all();
+        return view('admin.activity-diaries.create', compact('issuers'));
     }
 
     /**
@@ -42,11 +42,15 @@ class ActivityDiaryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'bond_id' => 'required|exists:bonds,id',
+            'issuer_id' => 'required|exists:issuers,id',
             'purpose' => 'nullable|string',
             'letter_date' => 'nullable|date',
             'due_date' => 'nullable|date',
-            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue'])],
+            'extension_date_1' => 'nullable|date',
+            'extension_note_1' => 'nullable|string',
+            'extension_date_2' => 'nullable|date',
+            'extension_note_2' => 'nullable|string',
+            'status' => ['nullable', 'string', Rule::in(['passed', 'complied', 'notification'])],
             'remarks' => 'nullable|string',
         ]);
 
@@ -64,9 +68,9 @@ class ActivityDiaryController extends Controller
      * @param  \App\Models\ActivityDiary  $activityDiary
      * @return \Illuminate\Http\Response
      */
-    public function show(ActivityDiary $activity_diaries_info)
+    public function show(ActivityDiary $activityDiary)
     {
-        $activityDiary = $activity_diaries_info;
+        $activityDiary->load('issuer');
         return view('admin.activity-diaries.show', compact('activityDiary'));
     }
 
@@ -76,11 +80,10 @@ class ActivityDiaryController extends Controller
      * @param  \App\Models\ActivityDiary  $activityDiary
      * @return \Illuminate\Http\Response
      */
-    public function edit(ActivityDiary $activity_diaries_info)
+    public function edit(ActivityDiary $activityDiary)
     {
-        $activityDiary = $activity_diaries_info;
-        $bonds = Bond::with('issuer')->get();
-        return view('admin.activity-diaries.edit', compact('activityDiary', 'bonds'));
+        $issuers = Issuer::all();
+        return view('admin.activity-diaries.edit', compact('activityDiary', 'issuers'));
     }
 
     /**
@@ -93,11 +96,15 @@ class ActivityDiaryController extends Controller
     public function update(Request $request, ActivityDiary $activityDiary)
     {
         $validated = $request->validate([
-            'bond_id' => 'required|exists:bonds,id',
+            'issuer_id' => 'required|exists:issuers,id',
             'purpose' => 'nullable|string',
             'letter_date' => 'nullable|date',
             'due_date' => 'nullable|date',
-            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue'])],
+            'extension_date_1' => 'nullable|date',
+            'extension_note_1' => 'nullable|string',
+            'extension_date_2' => 'nullable|date',
+            'extension_note_2' => 'nullable|string',
+            'status' => ['nullable', 'string', Rule::in(['passed', 'complied', 'notification'])],
             'remarks' => 'nullable|string',
             'verified_by' => 'nullable|string',
         ]);
@@ -106,6 +113,36 @@ class ActivityDiaryController extends Controller
 
         return redirect()->route('activity-diaries.index')
             ->with('success', 'Activity diary updated successfully');
+    }
+
+    /**
+     * Add an extension to an activity diary.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\ActivityDiary  $activityDiary
+     * @return \Illuminate\Http\Response
+     */
+    public function addExtension(Request $request, ActivityDiary $activityDiary)
+    {
+        $validated = $request->validate([
+            'extension_date' => 'required|date',
+            'extension_note' => 'nullable|string',
+        ]);
+        
+        // Check which extension slot to fill
+        if (!$activityDiary->extension_date_1) {
+            $activityDiary->extension_date_1 = $validated['extension_date'];
+            $activityDiary->extension_note_1 = $validated['extension_note'] ?? '(1st Extension)';
+        } elseif (!$activityDiary->extension_date_2) {
+            $activityDiary->extension_date_2 = $validated['extension_date'];
+            $activityDiary->extension_note_2 = $validated['extension_note'] ?? '(2nd Extension)';
+        } else {
+            return redirect()->back()->with('error', 'Cannot add more than two extensions.');
+        }
+        
+        $activityDiary->save();
+        
+        return redirect()->back()->with('success', 'Extension added successfully');
     }
 
     /**
@@ -118,22 +155,22 @@ class ActivityDiaryController extends Controller
     {
         $activityDiary->delete();
 
-        return redirect()->route('activity-diaries-info.index')
+        return redirect()->route('activity-diaries.index')
             ->with('success', 'Activity diary deleted successfully');
     }
 
     /**
-     * Display a listing of activity diaries by bond ID.
+     * Display a listing of activity diaries by issuer ID.
      *
-     * @param  int  $bondId
+     * @param  int  $issuerId
      * @return \Illuminate\Http\Response
      */
-    public function getByBond($bondId)
+    public function getByIssuer($issuerId)
     {
-        $bond = Bond::with('issuer')->findOrFail($bondId);
-        $activityDiaries = ActivityDiary::where('bond_id', $bondId)->latest()->paginate(10);
+        $issuer = Issuer::findOrFail($issuerId);
+        $activityDiaries = ActivityDiary::where('issuer_id', $issuerId)->latest()->paginate(10);
         
-        return view('admin.activity-diaries.by-bond', compact('activityDiaries', 'bond'));
+        return view('admin.activity-diaries.by-issuer', compact('activityDiaries', 'issuer'));
     }
 
     /**
@@ -146,9 +183,14 @@ class ActivityDiaryController extends Controller
         $today = now()->format('Y-m-d');
         $nextWeek = now()->addDays(7)->format('Y-m-d');
         
-        $activityDiaries = ActivityDiary::with('bond.issuer')
-            ->whereBetween('due_date', [$today, $nextWeek])
-            ->where('status', '!=', 'completed')
+        // Get activities where any of the due dates fall within the next week
+        $activityDiaries = ActivityDiary::with('issuer')
+            ->where(function($query) use ($today, $nextWeek) {
+                $query->whereBetween('due_date', [$today, $nextWeek])
+                      ->orWhereBetween('extension_date_1', [$today, $nextWeek])
+                      ->orWhereBetween('extension_date_2', [$today, $nextWeek]);
+            })
+            ->whereNotIn('status', ['complied', 'passed'])
             ->latest()
             ->paginate(10);
         
@@ -162,11 +204,10 @@ class ActivityDiaryController extends Controller
      * @param  \App\Models\ActivityDiary  $activityDiary
      * @return \Illuminate\Http\Response
      */
-    public function updateStatus(Request $request, ActivityDiary $activity_diaries_info)
+    public function updateStatus(Request $request, ActivityDiary $activityDiary)
     {
-        $activityDiary = $activity_diaries_info;
         $validated = $request->validate([
-            'status' => ['required', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue'])],
+            'status' => ['required', 'string', Rule::in(['passed', 'complied', 'notification'])],
         ]);
 
         $activityDiary->update($validated);

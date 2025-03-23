@@ -4,7 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityDiary;
-use App\Models\Bond;
+use App\Models\Issuer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -18,7 +18,7 @@ class UserActivityDiaryController extends Controller
      */
     public function index()
     {
-        $activityDiaries = ActivityDiary::with('bond.issuer')->latest()->paginate(10);
+        $activityDiaries = ActivityDiary::with('issuer')->latest()->paginate(10);
         return view('user.activity-diaries.index', compact('activityDiaries'));
     }
 
@@ -29,8 +29,8 @@ class UserActivityDiaryController extends Controller
      */
     public function create()
     {
-        $bonds = Bond::with('issuer')->get();
-        return view('user.activity-diaries.create', compact('bonds'));
+        $issuers = Issuer::all();
+        return view('user.activity-diaries.create', compact('issuers'));
     }
 
     /**
@@ -42,11 +42,15 @@ class UserActivityDiaryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'bond_id' => 'required|exists:bonds,id',
+            'issuer_id' => 'required|exists:issuers,id',
             'purpose' => 'nullable|string',
             'letter_date' => 'nullable|date',
             'due_date' => 'nullable|date',
-            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue'])],
+            'extension_date_1' => 'nullable|date',
+            'extension_note_1' => 'nullable|string',
+            'extension_date_2' => 'nullable|date',
+            'extension_note_2' => 'nullable|string',
+            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
             'remarks' => 'nullable|string',
         ]);
 
@@ -66,8 +70,8 @@ class UserActivityDiaryController extends Controller
      */
     public function show(ActivityDiary $activity_diaries_info)
     {
-        $activityDiary = $activity_diaries_info;
-        return view('user.activity-diaries.show', compact('activityDiary'));
+        $activity_diary = $activity_diaries_info;
+        return view('user.activity-diaries.show', compact('activity_diary'));
     }
 
     /**
@@ -78,9 +82,8 @@ class UserActivityDiaryController extends Controller
      */
     public function edit(ActivityDiary $activity_diaries_info)
     {
-        $activityDiary = $activity_diaries_info;
-        $bonds = Bond::with('issuer')->get();
-        return view('user.activity-diaries.edit', compact('activityDiary', 'bonds'));
+        $issuers = Issuer::all();
+        return view('user.activity-diaries.edit', compact('activity_diary', 'issuers'));
     }
 
     /**
@@ -90,19 +93,23 @@ class UserActivityDiaryController extends Controller
      * @param  \App\Models\ActivityDiary  $activityDiary
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ActivityDiary $activityDiary)
+    public function update(Request $request, ActivityDiary $activity_diaries_info)
     {
         $validated = $request->validate([
-            'bond_id' => 'required|exists:bonds,id',
+            'issuer_id' => 'required|exists:issuers,id',
             'purpose' => 'nullable|string',
             'letter_date' => 'nullable|date',
             'due_date' => 'nullable|date',
-            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue'])],
+            'extension_date_1' => 'nullable|date',
+            'extension_note_1' => 'nullable|string',
+            'extension_date_2' => 'nullable|date',
+            'extension_note_2' => 'nullable|string',
+            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
             'remarks' => 'nullable|string',
             'verified_by' => 'nullable|string',
         ]);
 
-        $activityDiary->update($validated);
+        $activity_diaries_info->update($validated);
 
         return redirect()->route('activity-diaries-info.index')
             ->with('success', 'Activity diary updated successfully');
@@ -114,26 +121,26 @@ class UserActivityDiaryController extends Controller
      * @param  \App\Models\ActivityDiary  $activityDiary
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ActivityDiary $activityDiary)
+    public function destroy(ActivityDiary $activity_diaries_info)
     {
-        $activityDiary->delete();
+        $activity_diaries_info->delete();
 
         return redirect()->route('activity-diaries-info.index')
             ->with('success', 'Activity diary deleted successfully');
     }
 
     /**
-     * Display a listing of activity diaries by bond ID.
+     * Display a listing of activity diaries by issuer ID.
      *
-     * @param  int  $bondId
+     * @param  int  $issuerId
      * @return \Illuminate\Http\Response
      */
-    public function getByBond($bondId)
+    public function getByIssuer($issuerId)
     {
-        $bond = Bond::with('issuer')->findOrFail($bondId);
-        $activityDiaries = ActivityDiary::where('bond_id', $bondId)->latest()->paginate(10);
+        $issuer = Issuer::findOrFail($issuerId);
+        $activityDiaries = ActivityDiary::where('issuer_id', $issuerId)->latest()->paginate(10);
         
-        return view('user.activity-diaries.by-bond', compact('activityDiaries', 'bond'));
+        return view('user.activity-diaries.by-issuer', compact('activityDiaries', 'issuer'));
     }
 
     /**
@@ -146,7 +153,7 @@ class UserActivityDiaryController extends Controller
         $today = now()->format('Y-m-d');
         $nextWeek = now()->addDays(7)->format('Y-m-d');
         
-        $activityDiaries = ActivityDiary::with('bond.issuer')
+        $activityDiaries = ActivityDiary::with('issuer')
             ->whereBetween('due_date', [$today, $nextWeek])
             ->where('status', '!=', 'completed')
             ->latest()
@@ -164,12 +171,11 @@ class UserActivityDiaryController extends Controller
      */
     public function updateStatus(Request $request, ActivityDiary $activity_diaries_info)
     {
-        $activityDiary = $activity_diaries_info;
         $validated = $request->validate([
-            'status' => ['required', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue'])],
+            'status' => ['required', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
         ]);
 
-        $activityDiary->update($validated);
+        $activity_diaries_info->update($validated);
 
         return redirect()->back()->with('success', 'Activity diary status updated successfully');
     }
