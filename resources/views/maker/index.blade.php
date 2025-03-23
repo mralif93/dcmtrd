@@ -5,7 +5,7 @@
                 {{ __('Maker Dashboard') }}
             </h2>
 
-            <!-- Reports Dropdown Menu -->
+            <!-- Dropdown Menu -->
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open" class="flex items-center text-gray-700 px-3 py-2 text-sm font-medium rounded-md bg-white border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none">
                     <span>{{ __('Menu') }}</span>
@@ -24,6 +24,11 @@
                     x-transition:leave-start="transform opacity-100 scale-100"
                     x-transition:leave-end="transform opacity-0 scale-95">
                     <div class="py-1">
+                        <!-- Dashboard -->
+                        <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Dashboard') }}
+                        </a>
+
                         <!-- Trustee Fee -->
                         <a href="{{ route('trustee-fee-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Trustee Fee') }}
