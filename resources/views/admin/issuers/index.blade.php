@@ -62,9 +62,11 @@
                                 @endif
                                 <select name="status" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500" onchange="this.form.submit()">
                                     <option value="">Filter by Status</option>
+                                    <option value="Draft" {{ request('status') == 'Draft' ? 'selected' : '' }}>Draft</option>
                                     <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
                                     <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
                                     <option value="Rejected" {{ request('status') == 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                                    <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
                                 </select>
                             </form>
                         </div>

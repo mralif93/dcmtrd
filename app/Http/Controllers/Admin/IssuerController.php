@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Issuer;
 use App\Models\FacilityInformation;
+use Illuminate\Validation\Rule;
 
 class IssuerController extends Controller
 {
@@ -41,14 +42,23 @@ class IssuerController extends Controller
     }
 
     /**
-     * Store a newly created resource (with explicit fields and validation fixes).
+     * Validate issuer data
+     * 
+     * @param Request $request
+     * @param Issuer|null $issuer
+     * @return array
      */
-    public function store(Request $request)
+    protected function validateIssuer(Request $request, ?Issuer $issuer = null)
     {
-        $validated = $request->validate([
-            'issuer_short_name' => 'nullable|string|max:50',
-            'issuer_name' => 'required|string|max:100',
-            'registration_number' => 'required' . ($issuer ? '|unique:issuers,registration_number,'.$issuer->id : '|unique:issuers'),
+        return $request->validate([
+            'issuer_short_name' => 'required|string|max:255',
+            'issuer_name' => 'required|string|max:255',
+            'registration_number' => [
+                'required',
+                'string',
+                'max:255',
+                $issuer ? Rule::unique('issuers')->ignore($issuer->id) : Rule::unique('issuers')
+            ],
             'debenture' => 'nullable|string|max:255',
             'trustee_role_1' => 'nullable|string|max:255',
             'trustee_role_2' => 'nullable|string|max:255',
@@ -62,10 +72,18 @@ class IssuerController extends Controller
             'approval_datetime' => 'nullable|date',
             'remarks' => 'nullable|string',
         ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $this->validateIssuer($request);
 
         try {
             $issuer = Issuer::create($validated);
-            return redirect()->route('issuers.show', $issuer)->with('success', 'Issuer created successfully.');
+            return redirect()->route('admin.issuers.show', $issuer)->with('success', 'Issuer created successfully.');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error creating: ' . $e->getMessage());
         }
@@ -88,31 +106,15 @@ class IssuerController extends Controller
     }
 
     /**
-     * Update the specified resource (with validation fixes).
+     * Update the specified resource in storage.
      */
     public function update(Request $request, Issuer $issuer)
     {
-        $validated = $request->validate([
-            'issuer_short_name' => 'nullable|string|max:50',
-            'issuer_name' => 'required|string|max:100',
-            'registration_number' => 'required' . ($issuer ? '|unique:issuers,registration_number,'.$issuer->id : '|unique:issuers'),
-            'debenture' => 'nullable|string|max:255',
-            'trustee_role_1' => 'nullable|string|max:255',
-            'trustee_role_2' => 'nullable|string|max:255',
-            'trust_deed_date' => 'nullable|date',
-            'trust_amount_escrow_sum' => 'nullable|string|max:255',
-            'no_of_share' => 'nullable|string|max:255',
-            'outstanding_size' => 'nullable|string|max:255',
-            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
-            'prepared_by' => 'nullable|string|max:255',
-            'verified_by' => 'nullable|string|max:255',
-            'approval_datetime' => 'nullable|date',
-            'remarks' => 'nullable|string',
-        ]);
+        $validated = $this->validateIssuer($request, $issuer);
 
         try {
             $issuer->update($validated);
-            return redirect()->route('issuers.show', $issuer)->with('success', 'Issuer updated successfully.');
+            return redirect()->route('admin.issuers.show', $issuer)->with('success', 'Issuer updated successfully.');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
         }
@@ -125,7 +127,7 @@ class IssuerController extends Controller
     {
         try {
             $issuer->delete();
-            return redirect()->route('issuers.index')->with('success', 'Issuer deleted successfully.');
+            return redirect()->route('admin.issuers.index')->with('success', 'Issuer deleted successfully.');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
         }
