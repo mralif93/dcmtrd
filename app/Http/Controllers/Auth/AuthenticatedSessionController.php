@@ -57,6 +57,9 @@ class AuthenticatedSessionController extends Controller
             // Only update last login if 2FA is NOT required
             $user->update(['last_login_at' => now()]);
 
+            // Make sure you're regenerating the session after login
+            $request->session()->regenerate();
+
 
             // Redirect based on user role
             // return redirect()->route('main');

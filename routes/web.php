@@ -368,11 +368,21 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
 
 // Legal routes
 Route::middleware(['auth', 'two-factor', 'role:legal'])->group(function () {
+    // Welcome
+    Route::get('/welcome', function() {
+        return view('welcome');
+    })->name('main');
+
     Route::get('/legal/dashboard', [LegalController::class, 'index'])->name('legal.dashboard');
 });
 
 // Compliance routes
 Route::middleware(['auth', 'two-factor', 'role:compliance'])->group(function () {
+    // Welcome
+    Route::get('/welcome', function() {
+        return view('welcome');
+    })->name('main');
+
     Route::get('/compliance/dashboard', [ComplianceController::class, 'index'])->name('compliance.dashboard');
 });
 
