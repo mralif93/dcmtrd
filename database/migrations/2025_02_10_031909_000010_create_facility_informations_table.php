@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('facility_informations', function (Blueprint $table) {
             $table->id();
             $table->string('facility_code')->unique();
+            $table->string('issuer_short_name')->nullable();
             $table->string('facility_number');
             $table->string('facility_name');
             $table->string('principle_type')->nullable();

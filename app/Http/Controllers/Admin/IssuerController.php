@@ -46,21 +46,21 @@ class IssuerController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'issuer_short_name' => 'required|string|max:50|unique:issuers',
+            'issuer_short_name' => 'nullable|string|max:50',
             'issuer_name' => 'required|string|max:100',
-            'registration_number' => 'required|unique:issuers',
-            'debenture' => 'nullable|string|max:100',
-            'trustee_role_1' => 'nullable|string|max:100',
-            'trustee_role_2' => 'nullable|string|max:100',
-            'trust_deed_date' => 'required|date',
-            'trust_amount_escrow_sum' => 'nullable|string|max:100',
-            'no_of_share' => 'nullable|string|max:100',
-            'outstanding_size' => 'nullable|string|max:100',
-            'status' => 'nullable|string|max:50',
-            'prepared_by' => 'nullable|string|max:100',
-            'verified_by' => 'nullable|string|max:100',
-            'remarks' => 'nullable|string',
+            'registration_number' => 'required' . ($issuer ? '|unique:issuers,registration_number,'.$issuer->id : '|unique:issuers'),
+            'debenture' => 'nullable|string|max:255',
+            'trustee_role_1' => 'nullable|string|max:255',
+            'trustee_role_2' => 'nullable|string|max:255',
+            'trust_deed_date' => 'nullable|date',
+            'trust_amount_escrow_sum' => 'nullable|string|max:255',
+            'no_of_share' => 'nullable|string|max:255',
+            'outstanding_size' => 'nullable|string|max:255',
+            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
             'approval_datetime' => 'nullable|date',
+            'remarks' => 'nullable|string',
         ]);
 
         try {
@@ -93,21 +93,21 @@ class IssuerController extends Controller
     public function update(Request $request, Issuer $issuer)
     {
         $validated = $request->validate([
-            'issuer_short_name' => 'required|string|max:50|unique:issuers,issuer_short_name,' . $issuer->id,
+            'issuer_short_name' => 'nullable|string|max:50',
             'issuer_name' => 'required|string|max:100',
-            'registration_number' => 'required|unique:issuers,registration_number,' . $issuer->id,
-            'debenture' => 'nullable|string|max:100',
-            'trustee_role_1' => 'nullable|string|max:100',
-            'trustee_role_2' => 'nullable|string|max:100',
-            'trust_deed_date' => 'required|date',
-            'trust_amount_escrow_sum' => 'nullable|string|max:100',
-            'no_of_share' => 'nullable|string|max:100',
-            'outstanding_size' => 'nullable|string|max:100',
-            'status' => 'nullable|string|max:50',
-            'prepared_by' => 'nullable|string|max:100',
-            'verified_by' => 'nullable|string|max:100',
-            'remarks' => 'nullable|string',
+            'registration_number' => 'required' . ($issuer ? '|unique:issuers,registration_number,'.$issuer->id : '|unique:issuers'),
+            'debenture' => 'nullable|string|max:255',
+            'trustee_role_1' => 'nullable|string|max:255',
+            'trustee_role_2' => 'nullable|string|max:255',
+            'trust_deed_date' => 'nullable|date',
+            'trust_amount_escrow_sum' => 'nullable|string|max:255',
+            'no_of_share' => 'nullable|string|max:255',
+            'outstanding_size' => 'nullable|string|max:255',
+            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
             'approval_datetime' => 'nullable|date',
+            'remarks' => 'nullable|string',
         ]);
 
         try {

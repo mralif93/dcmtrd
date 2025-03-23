@@ -180,7 +180,7 @@ class UserIssuerController extends Controller
     protected function validateIssuer(Request $request, Issuer $issuer = null)
     {
         return $request->validate([
-            'issuer_short_name' => 'required|string|max:50' . ($issuer ? '|unique:issuers,issuer_short_name,'.$issuer->id : '|unique:issuers'),
+            'issuer_short_name' => 'nullable|string|max:50',
             'issuer_name' => 'required|string|max:100',
             'registration_number' => 'required' . ($issuer ? '|unique:issuers,registration_number,'.$issuer->id : '|unique:issuers'),
             'debenture' => 'nullable|string|max:255',
@@ -190,7 +190,10 @@ class UserIssuerController extends Controller
             'trust_amount_escrow_sum' => 'nullable|string|max:255',
             'no_of_share' => 'nullable|string|max:255',
             'outstanding_size' => 'nullable|string|max:255',
-            'status' => 'nullable|in:Active,Inactive,Pending,Rejected',
+            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'approval_datetime' => 'nullable|date',
             'remarks' => 'nullable|string',
         ]);
     }

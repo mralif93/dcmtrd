@@ -39,20 +39,31 @@
                         <h3 class="text-lg font-medium text-gray-900">General Information</h3>
 
                         <!-- Row 1: Issuer -->
-                        <div>
-                            <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
-                            <select name="issuer_id" id="issuer_id" required
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="issuer_short_name" class="block text-sm font-medium text-gray-700">Issuer Short Name</label>
+                                <input type="text" name="issuer_short_name" id="issuer_short_name" 
+                                    value="{{ old('issuer_short_name') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Select Issuer</option>
-                                @foreach($issuers as $issuer)
-                                    <option value="{{ $issuer->id }}" @selected(old('issuer_id', $issuerInfo->id) == $issuer->id)>
-                                        {{ $issuer->issuer_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('issuer_id')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                                @error('issuer_short_name')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
+                                <select name="issuer_id" id="issuer_id" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Select Issuer</option>
+                                    @foreach($issuers as $issuer)
+                                        <option value="{{ $issuer->id }}" @selected(old('issuer_id', $issuerInfo->id) == $issuer->id)>
+                                            {{ $issuer->issuer_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('issuer_id')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
                         <!-- Row 2: Facility Name -->
@@ -78,9 +89,9 @@
                                 @enderror
                             </div>
                             <div>
-                                <label for="facility_number" class="block text-sm font-medium text-gray-700">Facility Number *</label>
+                                <label for="facility_number" class="block text-sm font-medium text-gray-700">Facility Number</label>
                                 <input type="text" name="facility_number" id="facility_number" 
-                                    value="{{ old('facility_number') }}" required
+                                    value="{{ old('facility_number') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('facility_number')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -91,18 +102,18 @@
                         <!-- Row 4: Principle & Islamic Concept -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="principle_type" class="block text-sm font-medium text-gray-700">Principle *</label>
+                                <label for="principle_type" class="block text-sm font-medium text-gray-700">Principle</label>
                                 <input type="text" name="principle_type" id="principle_type" 
-                                    value="{{ old('principle_type') }}" required
+                                    value="{{ old('principle_type') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('principle_type')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                             <div>
-                                <label for="islamic_concept" class="block text-sm font-medium text-gray-700">Islamic Concept *</label>
+                                <label for="islamic_concept" class="block text-sm font-medium text-gray-700">Islamic Concept</label>
                                 <input type="text" name="islamic_concept" id="islamic_concept" 
-                                    value="{{ old('islamic_concept') }}" required
+                                    value="{{ old('islamic_concept') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('islamic_concept')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -112,9 +123,9 @@
 
                         <!-- Row 5: Maturity Date -->
                         <div>
-                            <label for="maturity_date" class="block text-sm font-medium text-gray-700">Maturity Date *</label>
+                            <label for="maturity_date" class="block text-sm font-medium text-gray-700">Maturity Date</label>
                             <input type="date" name="maturity_date" id="maturity_date" 
-                                value="{{ old('maturity_date') }}" required
+                                value="{{ old('maturity_date') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @error('maturity_date')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -124,18 +135,18 @@
                         <!-- Row 6: Instrument & Instrument Type -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="instrument" class="block text-sm font-medium text-gray-700">Instrument *</label>
+                                <label for="instrument" class="block text-sm font-medium text-gray-700">Instrument</label>
                                 <input type="text" name="instrument" id="instrument" 
-                                    value="{{ old('instrument') }}" required
+                                    value="{{ old('instrument') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('instrument')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                             <div>
-                                <label for="instrument_type" class="block text-sm font-medium text-gray-700">Instrument Type *</label>
+                                <label for="instrument_type" class="block text-sm font-medium text-gray-700">Instrument Type</label>
                                 <input type="text" name="instrument_type" id="instrument_type" 
-                                    value="{{ old('instrument_type') }}" required
+                                    value="{{ old('instrument_type') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('instrument_type')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -160,9 +171,9 @@
                                 @enderror
                             </div>
                             <div>
-                                <label for="total_guaranteed" class="block text-sm font-medium text-gray-700">Total Guaranteed (RM) *</label>
+                                <label for="total_guaranteed" class="block text-sm font-medium text-gray-700">Total Guaranteed (RM)</label>
                                 <input type="number" name="total_guaranteed" id="total_guaranteed" 
-                                    value="{{ old('total_guaranteed') }}" required
+                                    value="{{ old('total_guaranteed') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('total_guaranteed')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -173,18 +184,18 @@
                         <!-- Row 8: Indicator & Facility Rating -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="indicator" class="block text-sm font-medium text-gray-700">Indicator *</label>
+                                <label for="indicator" class="block text-sm font-medium text-gray-700">Indicator</label>
                                 <input type="text" name="indicator" id="indicator" 
-                                    value="{{ old('indicator') }}" required
+                                    value="{{ old('indicator') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('indicator')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                             <div>
-                                <label for="facility_rating" class="block text-sm font-medium text-gray-700">Facility Rating *</label>
+                                <label for="facility_rating" class="block text-sm font-medium text-gray-700">Facility Rating</label>
                                 <input type="text" name="facility_rating" id="facility_rating" 
-                                    value="{{ old('facility_rating') }}" required
+                                    value="{{ old('facility_rating') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('facility_rating')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -202,16 +213,16 @@
                             <div>
                                 <label for="facility_amount" class="block text-sm font-medium text-gray-700">Facility Amount (RM) *</label>
                                 <input type="number" name="facility_amount" id="facility_amount" 
-                                    value="{{ old('facility_amount') }}" required
+                                    value="{{ old('facility_amount') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('facility_amount')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                             <div>
-                                <label for="available_limit" class="block text-sm font-medium text-gray-700">Available Limit (RM) *</label>
+                                <label for="available_limit" class="block text-sm font-medium text-gray-700">Available Limit (RM)</label>
                                 <input type="number" name="available_limit" id="available_limit" 
-                                    value="{{ old('available_limit') }}" required
+                                    value="{{ old('available_limit') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('available_limit')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -221,9 +232,9 @@
 
                         <!-- Row 2: Trustee/Security Agent -->
                         <div>
-                            <label for="trustee_security_agent" class="block text-sm font-medium text-gray-700">Trustee/Security Agent *</label>
+                            <label for="trustee_security_agent" class="block text-sm font-medium text-gray-700">Trustee/Security Agent</label>
                             <input type="text" name="trustee_security_agent" id="trustee_security_agent" 
-                                value="{{ old('trustee_security_agent') }}" required
+                                value="{{ old('trustee_security_agent') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @error('trustee_security_agent')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -235,16 +246,16 @@
                             <div>
                                 <label for="lead_arranger" class="block text-sm font-medium text-gray-700">Lead Arranger (LA) *</label>
                                 <input type="text" name="lead_arranger" id="lead_arranger" 
-                                    value="{{ old('lead_arranger') }}" required
+                                    value="{{ old('lead_arranger') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('lead_arranger')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                             <div>
-                                <label for="availability_date" class="block text-sm font-medium text-gray-700">Availability *</label>
+                                <label for="availability_date" class="block text-sm font-medium text-gray-700">Availability</label>
                                 <input type="date" name="availability_date" id="availability_date" 
-                                    value="{{ old('availability_date') }}" required
+                                    value="{{ old('availability_date') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('availability_date')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -255,18 +266,18 @@
                         <!-- Row 4: Outstanding & Facility Agent -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="outstanding_amount" class="block text-sm font -medium text-gray-700">Outstanding (RM) *</label>
+                                <label for="outstanding_amount" class="block text-sm font -medium text-gray-700">Outstanding (RM)</label>
                                 <input type="number" name="outstanding_amount" id="outstanding_amount" 
-                                    value="{{ old('outstanding_amount') }}" required
+                                    value="{{ old('outstanding_amount') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('outstanding_amount')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                             <div>
-                                <label for="facility_agent" class="block text-sm font-medium text-gray-700">Facility Agent (FA) *</label>
+                                <label for="facility_agent" class="block text-sm font-medium text-gray-700">Facility Agent (FA)</label>
                                 <input type="text" name="facility_agent" id="facility_agent" 
-                                    value="{{ old('facility_agent') }}" required
+                                    value="{{ old('facility_agent') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('facility_agent')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -277,7 +288,7 @@
 
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
-                        <a href="{{ route('bond-m.details', $issuer) }}" 
+                        <a href="{{ route('bond-m.details', $issuerInfo) }}" 
                             class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>

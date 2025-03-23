@@ -17,6 +17,7 @@ class FacilityInformation extends Model
     protected $table = 'facility_informations';
 
     protected $fillable = [
+        'issuer_short_name',
         'facility_code',
         'facility_number',
         'facility_name',
