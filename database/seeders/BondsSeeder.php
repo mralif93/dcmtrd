@@ -58,8 +58,36 @@ class BondsSeeder extends Seeder
             ['issuer_short_name' => 'TDM', 'issuer_name' => 'TDM BERHAD', 'registration_number' => '196501000477'],
         ];
 
+        // Define possible status values
+        $statusOptions = ['Active', 'Pending', 'Rejected', 'Inactive'];
+
         $issuersData = [];
         foreach ($issuers as $issuer) {
+            // Select a random status with different probabilities
+            $rand = rand(1, 100);
+            if ($rand <= 70) {
+                $status = 'Active'; // 70% chance
+            } elseif ($rand <= 90) {
+                $status = 'Pending'; // 20% chance
+            } elseif ($rand <= 95) {
+                $status = 'Rejected'; // 5% chance
+            } else {
+                $status = 'Inactive'; // 5% chance
+            }
+            
+            // Adjust verified_by and approval_datetime based on status
+            $verifiedBy = 'System Verifier';
+            $approvalDatetime = Carbon::now()->subDays(rand(10, 60))->format('Y-m-d H:i:s');
+            $remarks = 'Auto-generated issuer data';
+            
+            if ($status === 'Pending') {
+                $verifiedBy = null;
+                $approvalDatetime = null;
+            } elseif ($status === 'Rejected') {
+                $remarks = 'Rejected due to incomplete documentation';
+                $approvalDatetime = null;
+            }
+
             $issuersData[] = [
                 'issuer_short_name' => $issuer['issuer_short_name'],
                 'issuer_name' => $issuer['issuer_name'],
@@ -71,11 +99,11 @@ class BondsSeeder extends Seeder
                 'trust_amount_escrow_sum' => rand(500000000, 1000000000) . '.00',
                 'no_of_share' => rand(1000000, 2000000),
                 'outstanding_size' => rand(500000000, 1000000000) . '.00',
-                'status' => 'Active',
+                'status' => $status,
                 'prepared_by' => 'System',
-                'verified_by' => 'System Verifier',
-                'remarks' => 'Auto-generated issuer data',
-                'approval_datetime' => Carbon::now()->subDays(rand(10, 60))->format('Y-m-d H:i:s'),
+                'verified_by' => $verifiedBy,
+                'remarks' => $remarks,
+                'approval_datetime' => $approvalDatetime,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

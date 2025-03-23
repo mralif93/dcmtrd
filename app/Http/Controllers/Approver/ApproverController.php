@@ -341,7 +341,7 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
             
-            return redirect()->route('dashboard')->with('success', 'Trustee Fee approved successfully.');
+            return redirect()->route('trustee-fee-a.index')->with('success', 'Trustee Fee approved successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error approving trustee fee: ' . $e->getMessage());
         }
@@ -367,7 +367,7 @@ class ApproverController extends Controller
                 'remarks' => $request->input('rejection_reason'),
             ]);
             
-            return redirect()->route('dashboard')->with('success', 'Trustee Fee rejected successfully.');
+            return redirect()->route('trustee-fee-a.index')->with('success', 'Trustee Fee rejected successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error rejecting trustee fee: ' . $e->getMessage());
         }
