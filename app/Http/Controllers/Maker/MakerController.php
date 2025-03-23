@@ -717,8 +717,8 @@ class MakerController extends Controller
 
     public function PaymentScheduleShow(PaymentSchedule $payment)
     {
-        $paymentSchedule->load('bond.issuer');
-        return view('maker.payment-schedule.show', compact('paymentSchedule'));
+        $payment->load('bond.issuer');
+        return view('maker.payment-schedule.show', compact('payment'));
     }
 
     public function PaymentScheduleEdit(PaymentSchedule $payment)
@@ -888,7 +888,7 @@ class MakerController extends Controller
 
     public function CallScheduleShow(CallSchedule $call)
     {
-        $schedule->load('redemption.bond');
+        $call->load('redemption.bond');
         return view('maker.call-schedule.show', compact('call'));
     }
 
@@ -964,7 +964,7 @@ class MakerController extends Controller
     public function LockoutPeriodShow(LockoutPeriod $lockout)
     {
         $period = $lockout->load('redemption.bond');
-        return view('maker.lockout-periods.show', compact('period'));
+        return view('maker.lockout-period.show', compact('period'));
     }
 
     public function LockoutPeriodEdit(LockoutPeriod $lockout)

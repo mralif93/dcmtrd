@@ -106,11 +106,11 @@
                                     {{ $bond->last_traded_amount ? number_format($bond->last_traded_amount, 2) : __('N/A') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ number_format($bond->o_s_amount, 2) }}
+                                    {{ number_format($bond->amount_outstanding, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full">
-                                        {{ number_format($bond->residual_tenure, 2) }} yrs
+                                        {{ number_format($bond->residual_tenure_years) }} yrs
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">

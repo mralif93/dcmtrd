@@ -391,7 +391,13 @@
                                                 <td class="py-3 px-4">{{ $ratingMovement->rating_outlook ?? '-' }}</td>
                                                 <td class="py-3 px-4">{{ $ratingMovement->rating_watch ?? 'Not Applicable' }}</td>
                                                 <td class="py-3 px-4">
-                                                    <div class="flex justify-end">
+                                                    <div class="flex justify-end space-x-2">
+                                                        <a href="{{ route('rating-m.show', $ratingMovement) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
+                                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                            </svg>
+                                                        </a>
                                                         <a href="{{ route('rating-m.edit', $ratingMovement) }}" class="text-yellow-600 hover:text-yellow-900">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -452,7 +458,13 @@
                                                 <td class="py-3 px-4">{{ $schedule->coupon_rate ? number_format($schedule->coupon_rate, 2) : '-' }}</td>
                                                 <td class="py-3 px-4">{{ $schedule->adjustment_date ? $schedule->adjustment_date->format('d-M-Y') : '-' }}</td>
                                                 <td class="py-3 px-4">
-                                                    <div class="flex justify-end">
+                                                    <div class="flex justify-end space-x-2">
+                                                        <a href="{{ route('payment-m.show', $schedule) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
+                                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                            </svg>
+                                                        </a>
                                                         <a href="{{ route('payment-m.edit', $schedule) }}" class="text-yellow-600 hover:text-yellow-900">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -499,11 +511,19 @@
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-2xl font-semibold text-gray-700">Redemption</h3>
                                 @if($bond->redemption)
-                                <a href="{{ route('redemption-m.edit', $bond->redemption) }}" class="text-yellow-600 hover:text-yellow-900">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                </a>
+                                <div class="flex justify-end space-x-2">
+                                    <a href="{{ route('redemption-m.show', $bond->redemption) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="{{ route('redemption-m.edit', $bond->redemption) }}" class="text-yellow-600 hover:text-yellow-900">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </a>
+                                </div>
                                 @endif
                             </div>
                             
@@ -547,7 +567,13 @@
                                                     <td class="py-3 px-4">{{ $callSchedule->end_date ? $callSchedule->end_date->format('d-M-Y') : '-' }}</td>
                                                     <td class="py-3 px-4">{{ $callSchedule->call_price ? number_format($callSchedule->call_price, 2) : '-' }}</td>
                                                     <td class="py-3 px-4">
-                                                        <div class="flex justify-end">
+                                                        <div class="flex justify-end space-x-2">
+                                                            <a href="{{ route('call-m.show', $callSchedule) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
+                                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                                </svg>
+                                                            </a>
                                                             <a href="{{ route('call-m.edit', $callSchedule) }}" class="text-yellow-600 hover:text-yellow-900">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -587,7 +613,13 @@
                                                     <td class="py-3 px-4">{{ $lockoutPeriod->start_date ? $lockoutPeriod->start_date->format('d-M-Y') : '-' }}</td>
                                                     <td class="py-3 px-4">{{ $lockoutPeriod->end_date ? $lockoutPeriod->end_date->format('d-M-Y') : '-' }}</td>
                                                     <td class="py-3 px-4">
-                                                        <div class="flex justify-end">
+                                                        <div class="flex justify-end space-x-2">
+                                                            <a href="{{ route('lockout-m.show', $lockoutPeriod) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
+                                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                                </svg>
+                                                            </a>
                                                             <a href="{{ route('lockout-m.edit', $lockoutPeriod) }}" class="text-yellow-600 hover:text-yellow-900">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -647,7 +679,13 @@
                                                 <td class="py-3 px-4">{{ $activity->yield ? number_format($activity->yield, 2) : '-' }}</td>
                                                 <td class="py-3 px-4">{{ $activity->value_date ? $activity->value_date->format('d-M-Y') : '-' }}</td>
                                                 <td class="py-3 px-4">
-                                                    <div class="flex justify-end">
+                                                    <div class="flex justify-end space-x-2">
+                                                        <a href="{{ route('trading-m.show', $activity) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
+                                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                            </svg>
+                                                        </a>
                                                         <a href="{{ route('trading-m.edit', $activity) }}" class="text-yellow-600 hover:text-yellow-900">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
