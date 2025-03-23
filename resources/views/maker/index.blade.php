@@ -159,8 +159,8 @@
 
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
-                    <form method="GET" action="{{ route('dashboard') }}">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <form method="GET">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <!-- Issuer Name Search Field -->
                             <div>
                                 <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
