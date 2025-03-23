@@ -41,10 +41,8 @@ use App\Http\Requests\User\BondFormRequest;
 
 class MakerController extends Controller
 {
-    // List of Issuers and Portfolio
     public function index(Request $request)
     {
-        // Start with a base query
         $query = Issuer::query();
         
         // Apply search filter

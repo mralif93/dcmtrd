@@ -160,7 +160,7 @@
                                 </button>
                                 
                                 @if(request('search') || request('status'))
-                                    <a href="{{ route('issuers-info.index') }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">
+                                    <a href="{{ route('issuers-info.index') }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
                                         Clear
                                     </a>
                                 @endif

@@ -21,27 +21,55 @@ use App\Models\Portfolio;
 
 class ApproverController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $issuers = Issuer::query()->whereIn('status', ['Pending', 'Active', 'Rejected'])->latest()->paginate(10);
-        return view('approver.index', compact('issuers'));
+        $query = Issuer::query();
+
+        // Apply search filter
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('issuer_name', 'LIKE', '%' . $search . '%')
+                ->orWhere('issuer_short_name', 'LIKE', '%' . $search . '%')
+                ->orWhere('registration_number', 'LIKE', '%' . $search . '%');
+            });
+        }
+        
+        // Apply status filter
+        if ($request->has('status') && !empty($request->status)) {
+            $query->where('status', $request->status);
+        }
+        
+        // Get filtered issuers with latest first and paginate
+        $issuers = $query->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])
+                        ->latest()
+                        ->paginate(10)
+                        ->withQueryString();
+
+        $portfolios = Portfolio::query()->latest()->paginate(10);
+
+        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
+            $result = DB::select("
+                SELECT 
+                    (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
+                    (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
+                    (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count
+            ");
+            return (array) $result[0];
+        });
+
+        return view('approver.index', [
+            'issuers' => $issuers,
+            'portfolios' => $portfolios,
+            'trusteeFeesCount' => $counts['trustee_fees_count'],
+            'complianceCovenantCount' => $counts['compliance_covenants_count'],
+            'activityDairyCount' => $counts['activity_diaries_count'],
+        ]);
     }
 
     public function IssuerEdit(Issuer $issuer)
     {
         return view('approver.issuer.edit', compact('issuer'));
-    }
-
-    public function IssuerUpdate(Request $request, Issuer $issuer)
-    {
-        $validated = $this->validateIssuer($request, $issuer);
-
-        try {
-            $issuer->update($validated);
-            return redirect()->route('issuer.show', $issuer)->with('success', 'Issuer updated successfully.');
-        } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error updating issuer: ' . $e->getMessage());
-        }
     }
 
     public function IssuerShow(Issuer $issuer)
@@ -51,24 +79,6 @@ class ApproverController extends Controller
             $issuer->load('bonds');
         }
         return view('approver.issuer.show', compact('issuer'));
-    }
-
-    protected function validateIssuer(Request $request, Issuer $issuer = null)
-    {
-        return $request->validate([
-            'issuer_short_name' => 'required|string|max:50' . ($issuer ? '|unique:issuers,issuer_short_name,'.$issuer->id : '|unique:issuers'),
-            'issuer_name' => 'required|string|max:100',
-            'registration_number' => 'required' . ($issuer ? '|unique:issuers,registration_number,'.$issuer->id : '|unique:issuers'),
-            'debenture' => 'nullable|string|max:255',
-            'trustee_role_1' => 'nullable|string|max:255',
-            'trustee_role_2' => 'nullable|string|max:255',
-            'trust_deed_date' => 'nullable|date',
-            'trust_amount_escrow_sum' => 'nullable|string|max:255',
-            'no_of_share' => 'nullable|string|max:255',
-            'outstanding_size' => 'nullable|string|max:255',
-            'status' => 'nullable|in:Active,Inactive,Pending,Rejected',
-            'remarks' => 'nullable|string',
-        ]);
     }
 
     /**
