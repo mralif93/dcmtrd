@@ -60,7 +60,7 @@
                         </div>
                         
                         <!-- Documents Section -->
-                        <div class="border-b border-gray-200 pb-6">
+                        <div>
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Document Submissions</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>

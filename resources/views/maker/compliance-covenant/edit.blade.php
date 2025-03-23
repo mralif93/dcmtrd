@@ -132,6 +132,44 @@
                                         {{ $compliance->updated_at->format('M j, Y H:i') }}
                                     </dd>
                                 </div>
+                                @if($compliance->prepared_by)
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $compliance->prepared_by }}
+                                    </dd>
+                                </div>
+                                @endif
+                                @if($compliance->verified_by)
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $compliance->verified_by }}
+                                    </dd>
+                                </div>
+                                @endif
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Status</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $compliance->status ?? 'N/A' }}
+                                    </dd>
+                                </div>
+                                @if($compliance->approval_datetime)
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ \Carbon\Carbon::parse($compliance->approval_datetime)->format('d/m/Y H:i') }}
+                                    </dd>
+                                </div>
+                                @endif
+                                @if($compliance->remarks)
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">
+                                        {{ $compliance->remarks }}
+                                    </dd>
+                                </div>
+                                @endif
                             </dl>
                         </div>
                     </div>

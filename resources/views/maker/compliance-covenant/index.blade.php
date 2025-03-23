@@ -157,10 +157,11 @@
                                     <div class="text-sm text-gray-900">{{ $covenant->financial_year_end }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ 
-                                        $covenant->isCompliant() ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                    }}">
-                                        {{ $covenant->isCompliant() ? 'Compliant' : 'Non-Compliant' }}
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        {{ $covenant->status == 'Active' ? 'bg-green-100 text-green-800' : 
+                                        ($covenant->status == 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                        ($covenant->status == 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        {{ $covenant->status }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">

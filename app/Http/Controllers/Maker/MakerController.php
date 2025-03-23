@@ -1388,20 +1388,11 @@ class MakerController extends Controller
      */
     public function ActivityStore(Request $request)
     {
-        $validated = $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
-            'purpose' => 'nullable|string',
-            'letter_date' => 'nullable|date',
-            'due_date' => 'nullable|date',
-            'extension_date_1' => 'nullable|date',
-            'extension_note_1' => 'nullable|string',
-            'extension_date_2' => 'nullable|date',
-            'extension_note_2' => 'nullable|string',
-            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
-            'remarks' => 'nullable|string',
-        ]);
+        $validated = $this->validateActivity($request);
 
-        $validated['prepared_by'] = Auth::user()->name ?? $request->input('prepared_by');
+        // Add prepared_by from authenticated user and set status to pending
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Draft';
 
         $activity = ActivityDiary::create($validated);
 
@@ -1443,19 +1434,7 @@ class MakerController extends Controller
      */
     public function ActivityUpdate(Request $request, ActivityDiary $activity)
     {
-        $validated = $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
-            'purpose' => 'nullable|string',
-            'letter_date' => 'nullable|date',
-            'due_date' => 'nullable|date',
-            'extension_date_1' => 'nullable|date',
-            'extension_note_1' => 'nullable|string',
-            'extension_date_2' => 'nullable|date',
-            'extension_note_2' => 'nullable|string',
-            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
-            'remarks' => 'nullable|string',
-            'verified_by' => 'nullable|string',
-        ]);
+        $validated = $this->validateActivity($request);
 
         // Handle approval if status is changed to completed
         if (($request->input('status') === 'completed') && ($activity->status !== 'completed')) {
@@ -1614,6 +1593,23 @@ class MakerController extends Controller
         };
         
         return response()->stream($callback, 200, $headers);
+    }
+
+    protected function validateActivity(Request $request)
+    {
+        return $validated = $request->validate([
+            'issuer_id' => 'required|exists:issuers,id',
+            'purpose' => 'nullable|string',
+            'letter_date' => 'nullable|date',
+            'due_date' => 'nullable|date',
+            'extension_date_1' => 'nullable|date',
+            'extension_note_1' => 'nullable|string',
+            'extension_date_2' => 'nullable|date',
+            'extension_note_2' => 'nullable|string',
+            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
+            'remarks' => 'nullable|string',
+            'verified_by' => 'nullable|string',
+        ]);
     }
 
     // REITs : Portfolio

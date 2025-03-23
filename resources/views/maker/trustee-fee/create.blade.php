@@ -156,7 +156,7 @@
                         </div>
 
                         <!-- Payment Information Section -->
-                        <div class="border-b border-gray-200 pb-6">
+                        <div>
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Payment Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -188,30 +188,6 @@
                                     <input type="text" name="receipt_no" id="receipt_no" 
                                         value="{{ old('receipt_no') }}"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Additional Information Section -->
-                        <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="prepared_by" class="block text-sm font-medium text-gray-700">Prepared By</label>
-                                    <input type="text" name="prepared_by" id="prepared_by" 
-                                        value="{{ old('prepared_by') }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <div>
-                                    <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified By</label>
-                                    <input type="text" name="verified_by" id="verified_by" 
-                                        value="{{ old('verified_by') }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label for="remarks" class="block text-sm font-medium text-gray-700">Remarks</label>
-                                    <textarea name="remarks" id="remarks" rows="3"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks') }}</textarea>
                                 </div>
                             </div>
                         </div>
