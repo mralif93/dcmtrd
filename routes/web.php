@@ -378,6 +378,12 @@ Route::middleware(['auth', 'two-factor', 'role:compliance'])->group(function () 
 
 // Maker routes
 Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
+    // Welcome
+    Route::get('/welcome', function() {
+        return view('welcome');
+    })->name('main');
+
+    // Dashboard
     Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
 
     // Issuer Module
@@ -508,6 +514,12 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
 
 // Approver routes
 Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
+    // Welcome
+    Route::get('/welcome', function() {
+        return view('welcome');
+    })->name('main');
+
+    // Dashboard
     Route::get('/approver/dashboard', [ApproverController::class, 'index'])->name('approver.dashboard');
 
     // Issuer Module

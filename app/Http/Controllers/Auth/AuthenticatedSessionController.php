@@ -59,7 +59,7 @@ class AuthenticatedSessionController extends Controller
 
 
             // Redirect based on user role
-            return redirect()->route('main');
+            // return redirect()->route('main');
         }
     
         // If authentication fails, redirect back with an error message

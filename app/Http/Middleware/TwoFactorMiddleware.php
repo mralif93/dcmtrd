@@ -40,7 +40,7 @@ class TwoFactorMiddleware
         if ($request->routeIs('two-factor.show') || $request->routeIs('two-factor.verify')) {
             // Redirect away from 2FA pages if not needed
             if (!$user->two_factor_enabled || $user->two_factor_verified) {
-                return redirect()->route('dashboard');
+                return redirect()->route('main');
             }
         }
         
