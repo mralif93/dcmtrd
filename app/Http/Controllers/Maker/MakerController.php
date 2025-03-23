@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Maker;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +16,8 @@ use App\Imports\BondImport;
 use App\Imports\PaymentScheduleImport;
 use App\Imports\RatingMovementsImport;
 use App\Imports\TradingActivityImport;
+
+// Bonds
 use App\Models\Issuer;
 use App\Models\Bond;
 use App\Models\Announcement;
@@ -27,6 +31,9 @@ use App\Models\LockoutPeriod;
 use App\Models\TradingActivity;
 use App\Models\TrusteeFee;
 use App\Models\ComplianceCovenant;
+use App\Models\ActivityDiary;
+
+// REITs
 use App\Models\Portfolio;
 
 use App\Http\Requests\User\BondFormRequest;
@@ -37,11 +44,25 @@ class MakerController extends Controller
     // List of Issuers and Portfolio
     public function index()
     {
+        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
+            $result = DB::select("
+                SELECT 
+                    (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
+                    (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
+                    (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count
+            ");
+            return (array) $result[0];
+        });
+
         $issuers = Issuer::query()->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])->latest()->paginate(10);
-        $trustee_fees = TrusteeFee::query()->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])->latest()->paginate(10);
-        $covenants = ComplianceCovenant::query()->latest()->paginate(10);
         $portfolios = Portfolio::query()->latest()->paginate(10);
-        return view('maker.index', compact('issuers', 'trustee_fees', 'covenants', 'portfolios'));
+        return view('maker.index', [
+            'issuers' => $issuers,
+            'portfolios' => $portfolios,
+            'trusteeFeesCount' => $counts['trustee_fees_count'],
+            'complianceCovenantCount' => $counts['compliance_covenants_count'],
+            'activityDairyCount' => $counts['activity_diaries_count'],
+        ]);
     }
 
     // Issuer Module
@@ -1046,6 +1067,37 @@ class MakerController extends Controller
     }
 
     // Trustee Fee
+    public function TrusteeFeeIndex(Request $request, )
+    {
+        $query = TrusteeFee::with('issuer');
+        
+        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
+            $query->where('issuer_id', $request->issuer_id);
+        }
+        
+        if ($request->has('invoice_no') && !empty($request->invoice_no)) {
+            $query->where('invoice_no', 'LIKE', '%' . $request->invoice_no . '%');
+        }
+        
+        if ($request->has('month') && !empty($request->month)) {
+            $query->where('month', $request->month);
+        }
+        
+        if ($request->has('payment_status') && !empty($request->payment_status)) {
+            if ($request->payment_status === 'paid') {
+                $query->whereNotNull('payment_received');
+            } elseif ($request->payment_status === 'unpaid') {
+                $query->whereNull('payment_received');
+            }
+        }
+        
+        // Get all issuers for the dropdown
+        $issuers = Issuer::orderBy('name')->get();
+        
+        $trustee_fees = $query->latest()->paginate(10);
+        return view('maker.trustee-fee.index', compact('trustee_fees', 'issuers'));
+    }
+
     public function TrusteeFeeCreate()
     {
         $issuers = Issuer::orderBy('issuer_name')->get();
@@ -1063,7 +1115,7 @@ class MakerController extends Controller
         TrusteeFee::create($validated);
 
         return redirect()
-            ->route('dashboard')
+            ->route('trustee-fee-m.show', $trusteeFee)
             ->with('success', 'Trustee fee created successfully.');
     }
 
@@ -1080,7 +1132,7 @@ class MakerController extends Controller
         $trusteeFee->update($validated);
 
         return redirect()
-            ->route('dashboard')
+            ->route('trustee-fee-m.show', $trusteeFee)
             ->with('success', 'Trustee fee updated successfully.');
     }
 
@@ -1093,7 +1145,8 @@ class MakerController extends Controller
     {
         $trusteeFee->delete();
 
-        return redirect()->route('dashboard')
+        return redirect()
+            ->route('trustee-fee-m.index')
             ->with('success', 'Trustee fee deleted successfully.');
     }
 
@@ -1105,7 +1158,9 @@ class MakerController extends Controller
                 'prepared_by' => Auth::user()->name,
             ]);
             
-            return redirect()->route('dashboard')->with('success', 'Trustee Fee submitted for approval successfully.');
+            return redirect()
+                ->route('trustee-fee-m.show', $trusteeFee)
+                ->with('success', 'Trustee Fee submitted for approval successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
@@ -1141,6 +1196,36 @@ class MakerController extends Controller
     }
 
     // Compliance Covenants
+    public function ComplianceIndex(Request $request)
+    {
+        $query = ComplianceCovenant::query();
+
+        // Search by issuer short name
+        if ($request->has('issuer_short_name') && !empty($request->issuer_short_name)) {
+            $query->where('issuer_short_name', 'LIKE', '%' . $request->issuer_short_name . '%');
+        }
+
+        // Search by financial year end
+        if ($request->has('financial_year_end') && !empty($request->financial_year_end)) {
+            $query->where('financial_year_end', 'LIKE', '%' . $request->financial_year_end . '%');
+        }
+
+        // Filter by compliance status
+        if ($request->has('status')) {
+            if ($request->status === 'compliant') {
+                $query->compliant();
+            } elseif ($request->status === 'non_compliant') {
+                $query->nonCompliant();
+            }
+        }
+
+        // Get results with pagination
+        $covenants = $query->latest()->paginate(10);
+        $covenants->appends($request->all());
+        
+        return view('maker.compliance-covenant.index', compact('covenants'));
+    }
+
     public function ComplianceCreate()
     {
         $issuers = Issuer::orderBy('issuer_name')->get();
@@ -1158,7 +1243,7 @@ class MakerController extends Controller
         $compliance = ComplianceCovenant::create($validated);
 
         return redirect()
-            ->route('dashboard')
+            ->route('compliance-covenant-m.show', $compliance)
             ->with('success', 'Compliance covenant created successfully.');
     }
 
@@ -1175,7 +1260,7 @@ class MakerController extends Controller
         $compliance->update($validated);
 
         return redirect()
-            ->route('dashboard')
+            ->route('compliance-covenant-m.show', $compliance)
             ->with('success', 'Compliance covenant updated successfully.');
     }
 
@@ -1191,6 +1276,22 @@ class MakerController extends Controller
         return redirect()
             ->route('dashboard')
             ->with('success', 'Compliance covenant deleted successfully.');
+    }
+
+    public function SubmitApprovalCompliance(ComplianceCovenant $compliance)
+    {
+        try {
+            $compliance->update([
+                'status' => 'Pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+            
+            return redirect()
+                ->route('compliance-covenant-m.show', $compliance)
+                ->with('success', 'Compliance Covenant submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
     }
 
     protected function validateCompliance(Request $request)
@@ -1210,6 +1311,78 @@ class MakerController extends Controller
             'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
         ]);
+    }
+
+    // Activity Diary
+    public function ActivityIndex()
+    {
+        $activities = ActivityDiary::with('bond.issuer')->latest()->paginate(10);
+        return view('maker.activity-diary.index', compact('activities'));
+    }
+
+    public function ActivityCreate()
+    {
+        $bonds = Bond::with('issuer')->get();
+        return view('maker.activity-diary.create', compact('bonds'));
+    }
+
+    public function ActivityStore(Request $request)
+    {
+        $validated = $request->validate([
+            'bond_id' => 'required|exists:bonds,id',
+            'purpose' => 'nullable|string',
+            'letter_date' => 'nullable|date',
+            'due_date' => 'nullable|date',
+            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue'])],
+            'remarks' => 'nullable|string',
+        ]);
+
+        $validated['prepared_by'] = Auth::user()->name ?? $request->input('prepared_by');
+
+        $activity = ActivityDiary::create($validated);
+
+        return redirect()
+            ->route('activity-diary-m.show', $activity)
+            ->with('success', 'Activity diary created successfully');
+    }
+
+    public function ActivityShow(ActivityDiary $activity)
+    {
+        return view('maker.activity-diary.show', compact('activity'));
+    }
+
+    public function ActivityEdit(ActivityDiary $activity)
+    {
+        $bonds = Bond::with('issuer')->get();
+        return view('maker.activity-diary.edit', compact('activity', 'bonds'));
+    }
+
+    public function ActivityUpdate(Request $request, ActivityDiary $activity)
+    {
+        $validated = $request->validate([
+            'bond_id' => 'required|exists:bonds,id',
+            'purpose' => 'nullable|string',
+            'letter_date' => 'nullable|date',
+            'due_date' => 'nullable|date',
+            'status' => ['nullable', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue'])],
+            'remarks' => 'nullable|string',
+            'verified_by' => 'nullable|string',
+        ]);
+
+        $activity->update($validated);
+
+        return redirect()
+            ->route('activity-diary-m.show', $activity)
+            ->with('success', 'Activity diary updated successfully');
+    }
+
+    public function ActivityDestroy(ActivityDiary $activity)
+    {
+        $activity->delete();
+
+        return redirect()
+            ->route('activity-diary-m.index')
+            ->with('success', 'Activity diary deleted successfully');
     }
 
     // REITs : Portfolio

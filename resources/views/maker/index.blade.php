@@ -45,7 +45,7 @@
                     title="Trustee Fees"
                     icon="receipt-refund"
                     :count="$trusteeFeesCount ?? 0"
-                    :href="route('trustee-fees-info.index')"
+                    :href="route('trustee-fee-m.index')"
                     color="bg-blue-100"
                 />
 
@@ -54,7 +54,7 @@
                     title="Compliance Covenants"
                     icon="document-check"
                     :count="$complianceCovenantCount ?? 0"
-                    :href="route('compliance-covenants-info.index')"
+                    :href="route('compliance-covenant-m.index')"
                     color="bg-blue-100"
                 />
 
@@ -63,7 +63,7 @@
                     title="Activity Dairy"
                     icon="calendar"
                     :count="$activityDairyCount ?? 0"
-                    :href="route('activity-diaries-info.index')"
+                    href="#"
                     color="bg-blue-100"
                 />
 
@@ -76,6 +76,7 @@
                     color="bg-blue-100"
                 />
 
+                <div class="hidden">
                 <!-- Reports -->
                 <x-dashboard-card
                     title="Reports"
@@ -84,6 +85,7 @@
                     href="#"
                     color="bg-blue-100"
                 />
+                </div>
             </div>
 
             <!-- Issuers -->

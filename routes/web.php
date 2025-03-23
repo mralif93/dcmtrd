@@ -474,6 +474,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::post('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadStore'])->name('trading-m.upload-store');
     
     // Trustee Fee Module
+    Route::get('maker/trustee-fee', [MakerController::class, 'TrusteeFeeIndex'])->name('trustee-fee-m.index');
     Route::get('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeCreate'])->name('trustee-fee-m.create');
     Route::post('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeStore'])->name('trustee-fee-m.store');
     Route::get('maker/trustee-fee/{trusteeFee}/edit', [MakerController::class, 'TrusteeFeeEdit'])->name('trustee-fee-m.edit');
@@ -481,13 +482,21 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/trustee-fee/{trusteeFee}/show', [MakerController::class, 'TrusteeFeeShow'])->name('trustee-fee-m.show');
     Route::get('maker/trustee-fee/{trusteeFee}/submit-for-approval', [MakerController::class, 'SubmitApprovalTrusteeFee'])->name('trustee-fee-m.approval');
 
-
     // Compliance Covenant Module
+    Route::get('maker/compliance-covenant', [MakerController::class, 'ComplianceIndex'])->name('compliance-covenant-m.index');
     Route::get('maker/compliance-covenant/create', [MakerController::class, 'ComplianceCreate'])->name('compliance-covenant-m.create');
     Route::post('maker/compliance-covenant/create', [MakerController::class, 'ComplianceStore'])->name('compliance-covenant-m.store');
     Route::get('maker/compliance-covenant/{compliance}/edit', [MakerController::class, 'ComplianceEdit'])->name('compliance-covenant-m.edit');
     Route::put('maker/compliance-covenant/{compliance}/update', [MakerController::class, 'ComplianceUpdate'])->name('compliance-covenant-m.update');
     Route::get('maker/compliance-covenant/{compliance}/show', [MakerController::class, 'ComplianceShow'])->name('compliance-covenant-m.show');
+
+    // Activity Diary Module
+    Route::get('maker/activity-diary', [MakerController::class, 'ActivityIndex'])->name('activity-diary-m.index');
+    Route::get('maker/activity-diary/create', [MakerController::class, 'ActivityCreate'])->name('activity-diary-m.create');
+    Route::post('maker/activity-diary/create', [MakerController::class, 'ActivityStore'])->name('activity-diary-m.store');
+    Route::get('maker/activity-diary/{compliance}/edit', [MakerController::class, 'ActivityEdit'])->name('activity-diary-m.edit');
+    Route::put('maker/activity-diary/{compliance}/update', [MakerController::class, 'ActivityUpdate'])->name('activity-diary-m.update');
+    Route::get('maker/activity-diary/{compliance}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-m.show');
 });
 
 // Approver routes
