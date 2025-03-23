@@ -37,7 +37,7 @@
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET" action="{{ route('users.index') }}">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <!-- Search Field -->
                             <div>
                                 <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
