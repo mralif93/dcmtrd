@@ -695,12 +695,16 @@ class BondsSeeder extends Seeder
         if (count($trusteeFees) > 0) {
             DB::table('trustee_fees')->insert($trusteeFees);
         }
-
+        
         // Seed Compliance Covenants
         $complianceCovenants = [];
         $issuerIds = array_values(DB::table('issuers')->pluck('id')->toArray());
         
-        $complianceStatuses = ['Received', 'Pending', 'Not Compliant', 'Not Required'];
+        // Document statuses (to align with string fields in migration)
+        $documentStatuses = ['Received', 'Pending', 'Not Compliant', 'Not Required'];
+        
+        // Record statuses
+        $recordStatuses = ['Draft', 'Active', 'Inactive', 'Pending', 'Rejected'];
         
         $currentYear = Carbon::now()->year;
         $lastYear = $currentYear - 1;
@@ -712,43 +716,58 @@ class BondsSeeder extends Seeder
                 $fscr = (rand(120, 180) / 100); // 1.2 to 1.8
                 $verifiedBy = rand(0, 2) > 0 ? 'System Verifier' : null; // 2/3 chance to be verified
                 
+                // Generate random status for documents
+                $currentYearDocStatuses = [
+                    'audited_financial_statements' => $documentStatuses[array_rand($documentStatuses)],
+                    'unaudited_financial_statements' => $documentStatuses[array_rand($documentStatuses)],
+                    'compliance_certificate' => $documentStatuses[array_rand($documentStatuses)],
+                    'annual_budget' => $documentStatuses[array_rand($documentStatuses)],
+                    'computation_of_finance_to_ebitda' => $documentStatuses[array_rand($documentStatuses)],
+                    'ratio_information_on_use_of_proceeds' => $documentStatuses[array_rand($documentStatuses)]
+                ];
+                
+                // Assign status randomly from all options for testing purposes
+                $status = $recordStatuses[array_rand($recordStatuses)];
+                
                 $complianceCovenants[] = [
                     'issuer_id' => $issuerId,
                     'financial_year_end' => $currentYear . '-12-31',
-                    'audited_financial_statements' => $complianceStatuses[array_rand($complianceStatuses)],
-                    'unaudited_financial_statements' => $complianceStatuses[array_rand($complianceStatuses)],
-                    'compliance_certificate' => $complianceStatuses[array_rand($complianceStatuses)],
-                    'finance_service_cover_ratio' => $fscr,
-                    'annual_budget' => $complianceStatuses[array_rand($complianceStatuses)],
-                    'computation_of_finance_to_ebitda' => $complianceStatuses[array_rand($complianceStatuses)],
-                    'ratio_information_on_use_of_proceeds' => $complianceStatuses[array_rand($complianceStatuses)],
+                    'audited_financial_statements' => $currentYearDocStatuses['audited_financial_statements'],
+                    'unaudited_financial_statements' => $currentYearDocStatuses['unaudited_financial_statements'],
+                    'compliance_certificate' => $currentYearDocStatuses['compliance_certificate'],
+                    'finance_service_cover_ratio' => (string)$fscr, // Convert to string to match migration
+                    'annual_budget' => $currentYearDocStatuses['annual_budget'],
+                    'computation_of_finance_to_ebitda' => $currentYearDocStatuses['computation_of_finance_to_ebitda'],
+                    'ratio_information_on_use_of_proceeds' => $currentYearDocStatuses['ratio_information_on_use_of_proceeds'],
+                    'status' => $status,
                     'prepared_by' => 'System',
                     'verified_by' => $verifiedBy,
-                    'remarks' => 'Auto-generated compliance covenant',
+                    'remarks' => 'Auto-generated compliance covenant for ' . $currentYear,
                     'approval_datetime' => $verifiedBy ? Carbon::now()->subDays(rand(10, 60))->format('Y-m-d H:i:s') : null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
                 
-                // Last year covenant (always verified)
+                // Last year covenant with mixed statuses for testing
                 $lastYearFscr = (rand(120, 180) / 100); // 1.2 to 1.8
                 
                 $complianceCovenants[] = [
                     'issuer_id' => $issuerId,
                     'financial_year_end' => $lastYear . '-12-31',
-                    'audited_financial_statements' => 'Received',
-                    'unaudited_financial_statements' => 'Received',
-                    'compliance_certificate' => 'Received',
-                    'finance_service_cover_ratio' => $lastYearFscr,
-                    'annual_budget' => 'Received',
-                    'computation_of_finance_to_ebitda' => 'Received',
-                    'ratio_information_on_use_of_proceeds' => 'Received',
+                    'audited_financial_statements' => $documentStatuses[array_rand($documentStatuses)],
+                    'unaudited_financial_statements' => $documentStatuses[array_rand($documentStatuses)],
+                    'compliance_certificate' => $documentStatuses[array_rand($documentStatuses)],
+                    'finance_service_cover_ratio' => (string)$lastYearFscr, // Convert to string to match migration
+                    'annual_budget' => $documentStatuses[array_rand($documentStatuses)],
+                    'computation_of_finance_to_ebitda' => $documentStatuses[array_rand($documentStatuses)],
+                    'ratio_information_on_use_of_proceeds' => $documentStatuses[array_rand($documentStatuses)],
+                    'status' => $recordStatuses[array_rand($recordStatuses)],
                     'prepared_by' => 'System',
-                    'verified_by' => 'System Verifier',
-                    'remarks' => 'Auto-generated compliance covenant (previous year)',
-                    'approval_datetime' => Carbon::createFromFormat('Y-m-d', $lastYear . '-12-31')->addDays(rand(15, 45))->format('Y-m-d H:i:s'),
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                    'verified_by' => rand(0, 3) > 0 ? 'System Verifier' : null, // 3/4 chance to be verified
+                    'remarks' => 'Auto-generated compliance covenant for ' . $lastYear . ' (previous year)',
+                    'approval_datetime' => rand(0, 3) > 0 ? Carbon::createFromFormat('Y-m-d', $lastYear . '-12-31')->addDays(rand(15, 45))->format('Y-m-d H:i:s') : null,
+                    'created_at' => Carbon::createFromFormat('Y-m-d', $lastYear . '-12-31')->addDays(rand(15, 45)),
+                    'updated_at' => Carbon::createFromFormat('Y-m-d', $lastYear . '-12-31')->addDays(rand(15, 45)),
                 ];
             }
         }

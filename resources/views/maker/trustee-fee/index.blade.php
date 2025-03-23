@@ -103,7 +103,7 @@
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET" action="{{ route('trustee-fee-m.index') }}">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <!-- Issuer Search Field -->
                             <div>
                                 <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer</label>
@@ -172,6 +172,12 @@
                                     </svg>
                                     Search
                                 </button>
+
+                                @if(request('issuer_id') || request('facility_information_id') || request('invoice_no') || request('month') || request('payment_status'))
+                                    <a href="{{ route('trustee-fee-m.index') }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </form>

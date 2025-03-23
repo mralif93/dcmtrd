@@ -1241,6 +1241,11 @@ class MakerController extends Controller
     {
         $query = ComplianceCovenant::query();
 
+        // Filter by issuer_id
+        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
+            $query->where('issuer_id', $request->issuer_id);
+        }
+
         // Search by issuer short name
         if ($request->has('issuer_short_name') && !empty($request->issuer_short_name)) {
             $query->where('issuer_short_name', 'LIKE', '%' . $request->issuer_short_name . '%');
@@ -1251,20 +1256,35 @@ class MakerController extends Controller
             $query->where('financial_year_end', 'LIKE', '%' . $request->financial_year_end . '%');
         }
 
-        // Filter by compliance status
+        // Filter by status
         if ($request->has('status')) {
-            if ($request->status === 'compliant') {
-                $query->compliant();
-            } elseif ($request->status === 'non_compliant') {
-                $query->nonCompliant();
+            switch ($request->status) {
+                case 'draft':
+                    $query->where('status', 'draft');
+                    break;
+                case 'active':
+                    $query->where('status', 'active');
+                    break;
+                case 'inactive':
+                    $query->where('status', 'inactive');
+                    break;
+                case 'pending':
+                    $query->where('status', 'pending');
+                    break;
+                case 'rejected':
+                    $query->where('status', 'rejected');
+                    break;
             }
         }
+
+        // Get all issuers for the dropdown
+        $issuers = Issuer::orderBy('issuer_name')->get();
 
         // Get results with pagination
         $covenants = $query->latest()->paginate(10);
         $covenants->appends($request->all());
         
-        return view('maker.compliance-covenant.index', compact('covenants'));
+        return view('maker.compliance-covenant.index', compact('covenants', 'issuers'));
     }
 
     public function ComplianceCreate()
@@ -1380,12 +1400,9 @@ class MakerController extends Controller
     {
         $query = ActivityDiary::with('issuer');
         
-        // Apply filters if provided
-        if ($request->filled('issuer')) {
-            $query->whereHas('issuer', function($q) use ($request) {
-                $q->where('issuer_name', 'like', '%' . $request->issuer . '%')
-                  ->orWhere('issuer_short_name', 'like', '%' . $request->issuer . '%');
-            });
+        // Filter by issuer_id
+        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
+            $query->where('issuer_id', $request->issuer_id);
         }
         
         if ($request->filled('status')) {
@@ -1395,10 +1412,13 @@ class MakerController extends Controller
         if ($request->filled('due_date')) {
             $query->whereDate('due_date', $request->due_date);
         }
+
+        // Get all issuers for the dropdown
+        $issuers = Issuer::orderBy('issuer_name')->get();
         
         $activities = $query->latest()->paginate(10)->withQueryString();
         
-        return view('maker.activity-diary.index', compact('activities'));
+        return view('maker.activity-diary.index', compact('activities', 'issuers'));
     }
 
     /**

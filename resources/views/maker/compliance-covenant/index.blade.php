@@ -59,6 +59,16 @@
         </div>
     </x-slot>
 
+    <script>
+        function confirmApproval(event, value) {
+            event.preventDefault();
+            if (confirm(`Are you confirm to submit the compliance covenant "${value}" for approval?`)) {
+                // If confirmed, proceed to the approval page
+                window.location.href = event.currentTarget.href;
+            }
+        }
+    </script>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(session('success'))
@@ -96,10 +106,16 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <!-- Issuer Search Field -->
                             <div>
-                                <label for="issuer_short_name" class="block text-sm font-medium text-gray-700">Issuer</label>
-                                <input type="text" name="issuer_short_name" id="issuer_short_name" value="{{ request('issuer_short_name') }}" 
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
-                                       placeholder="Search issuer...">
+                                <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer</label>
+                                <select name="issuer_id" id="issuer_id" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">All Issuers</option>
+                                    @foreach($issuers as $issuer)
+                                        <option value="{{ $issuer->id }}" @selected(request('issuer_id') == $issuer->id)>
+                                            {{ $issuer->issuer_short_name }} - {{ $issuer->issuer_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <!-- Financial Year End Filter -->
@@ -110,14 +126,17 @@
                                        placeholder="e.g. 31 Dec 2024">
                             </div>
 
-                            <!-- Compliance Status Filter -->
+                            <!-- Status Filter -->
                             <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700">Compliance Status</label>
+                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
                                 <select name="status" id="status" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">All Status</option>
-                                    <option value="compliant" @selected(request('status') === 'compliant')>Compliant</option>
-                                    <option value="non_compliant" @selected(request('status') === 'non_compliant')>Non-Compliant</option>
+                                    <option value="draft" @selected(request('status') === 'draft')>Draft</option>
+                                    <option value="active" @selected(request('status') === 'active')>Active</option>
+                                    <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
+                                    <option value="pending" @selected(request('status') === 'pending')>Pending</option>
+                                    <option value="rejected" @selected(request('status') === 'rejected')>Rejected</option>
                                 </select>
                             </div>
 
@@ -130,6 +149,12 @@
                                     </svg>
                                     Search
                                 </button>
+
+                                @if(request('issuer_id') || request('financial_year_end') || request('status'))
+                                    <a href="{{ route('compliance-covenant-m.index') }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </form>
@@ -178,19 +203,19 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    @if ($covenant->status == 'Draft' or $covenant->status == 'Rejected')
-                                    <a href="{{ route('compliance-covenant-m.approval', $covenant) }}" 
-                                        class="text-indigo-600 hover:text-indigo-900" 
-                                        title="Submit for Approval"
-                                        onclick="confirmApproval(event, '{{ $covenant->issuer->issuer_name }}')">
-                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-5m0 0l-2 2m2-2l2 2" />
-                                        </svg>
-                                    </a>
-                                    @endif
                                     <div class="flex justify-end space-x-2">
+                                        @if ($covenant->status == 'Draft' or $covenant->status == 'Rejected')
+                                        <a href="{{ route('compliance-covenant-m.approval', $covenant) }}" 
+                                            class="text-indigo-600 hover:text-indigo-900" 
+                                            title="Submit for Approval"
+                                            onclick="confirmApproval(event, '{{ $covenant->issuer->issuer_name }}')">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-5m0 0l-2 2m2-2l2 2" />
+                                            </svg>
+                                        </a>
+                                        @endif
                                         <a href="{{ route('compliance-covenant-m.show', $covenant) }}" class="text-indigo-600 hover:text-indigo-900">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
