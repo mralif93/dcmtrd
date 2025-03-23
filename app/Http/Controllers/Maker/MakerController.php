@@ -42,8 +42,34 @@ use App\Http\Requests\User\BondFormRequest;
 class MakerController extends Controller
 {
     // List of Issuers and Portfolio
-    public function index()
+    public function index(Request $request)
     {
+        // Start with a base query
+        $query = Issuer::query();
+        
+        // Apply search filter
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('issuer_name', 'LIKE', '%' . $search . '%')
+                ->orWhere('issuer_short_name', 'LIKE', '%' . $search . '%')
+                ->orWhere('registration_number', 'LIKE', '%' . $search . '%');
+            });
+        }
+        
+        // Apply status filter
+        if ($request->has('status') && !empty($request->status)) {
+            $query->where('status', $request->status);
+        }
+
+        // Get filtered issuers with latest first and paginate
+        $issuers = $query->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])
+                        ->latest()
+                        ->paginate(10)
+                        ->withQueryString(); // This preserves the query parameters in pagination links
+        
+        $portfolios = Portfolio::query()->latest()->paginate(10);
+
         $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
             $result = DB::select("
                 SELECT 
@@ -54,8 +80,7 @@ class MakerController extends Controller
             return (array) $result[0];
         });
 
-        $issuers = Issuer::query()->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])->latest()->paginate(10);
-        $portfolios = Portfolio::query()->latest()->paginate(10);
+        
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
@@ -1067,7 +1092,7 @@ class MakerController extends Controller
     }
 
     // Trustee Fee
-    public function TrusteeFeeIndex(Request $request, )
+    public function TrusteeFeeIndex(Request $request)
     {
         $query = TrusteeFee::with('issuer');
         
