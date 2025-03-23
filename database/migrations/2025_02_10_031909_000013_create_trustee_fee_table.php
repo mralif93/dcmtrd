@@ -36,7 +36,7 @@ return new class extends Migration
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
-            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+            $table->foreignId('facility_information_id')->constrained('facility_informations')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

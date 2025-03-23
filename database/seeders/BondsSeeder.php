@@ -586,17 +586,29 @@ class BondsSeeder extends Seeder
 
         // Seed Trustee Fees
         $trusteeFees = [];
-        $issuerIds = array_values(DB::table('issuers')->pluck('id')->toArray());
-        
+        // Get facility IDs instead of issuer IDs
+        $facilityIds = array_values(DB::table('facility_informations')->pluck('id')->toArray());
+
         $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         $statuses = ['Active', 'Pending', 'Inactive', 'Draft', 'Rejected'];
-        
+
         $currentYear = Carbon::now()->year;
         $lastYear = $currentYear - 1;
-        
-        foreach ($issuerIds as $issuerId) {
-            // Only create fee for some issuers
+
+        foreach ($facilityIds as $facilityId) {
+            // Only create fee for some facilities
             if (rand(0, 1) == 1) { // 50% chance
+                // Get facility information for references
+                $facility = DB::table('facility_informations')
+                    ->join('issuers', 'facility_informations.issuer_id', '=', 'issuers.id')
+                    ->where('facility_informations.id', $facilityId)
+                    ->select('facility_informations.*', 'issuers.issuer_short_name')
+                    ->first();
+                
+                if (!$facility) {
+                    continue;
+                }
+                
                 // Current year fee
                 $month = $months[array_rand($months)];
                 $date = rand(1, 28);
@@ -612,13 +624,13 @@ class BondsSeeder extends Seeder
                 $trusteeFees[] = [
                     'month' => $month,
                     'date' => $date,
-                    'description' => 'Annual Trustee Fee for ' . rand(0, 1) ? 'Medium Term Notes' : 'Sukuk',
+                    'description' => 'Annual Trustee Fee for ' . $facility->facility_name,
                     'trustee_fee_amount_1' => $fee1 . '.00',
                     'trustee_fee_amount_2' => $fee2 . '.00',
                     'start_anniversary_date' => $startDate->format('Y-m-d'),
                     'end_anniversary_date' => $endDate->format('Y-m-d'),
                     'memo_to_fad' => $startDate->copy()->subDays(rand(5, 15))->format('Y-m-d'),
-                    'invoice_no' => 'INV-' . substr(DB::table('issuers')->where('id', $issuerId)->value('issuer_short_name'), 0, 4) . '-' . $currentYear . '-001',
+                    'invoice_no' => 'INV-' . substr($facility->issuer_short_name, 0, 4) . '-' . $currentYear . '-' . $facilityId,
                     'date_letter_to_issuer' => $startDate->copy()->subDays(rand(5, 10))->format('Y-m-d'),
                     'first_reminder' => ($status != 'Active') ? $startDate->copy()->addMonths(1)->format('Y-m-d') : null,
                     'second_reminder' => ($status != 'Active' && rand(0, 1) == 1) ? $startDate->copy()->addMonths(2)->format('Y-m-d') : null,
@@ -627,13 +639,13 @@ class BondsSeeder extends Seeder
                     'tt_cheque_no' => $paymentReceived ? 'TT-' . rand(1000000, 9999999) : null,
                     'memo_receipt_to_fad' => $paymentReceived ? Carbon::parse($paymentReceived)->addDays(rand(3, 7))->format('Y-m-d') : null,
                     'receipt_to_issuer' => $paymentReceived ? Carbon::parse($paymentReceived)->addDays(rand(5, 10))->format('Y-m-d') : null,
-                    'receipt_no' => $paymentReceived ? 'RCPT-' . substr(DB::table('issuers')->where('id', $issuerId)->value('issuer_short_name'), 0, 4) . '-' . $currentYear . '-001' : null,
+                    'receipt_no' => $paymentReceived ? 'RCPT-' . substr($facility->issuer_short_name, 0, 4) . '-' . $currentYear . '-' . $facilityId : null,
                     'prepared_by' => 'System',
                     'verified_by' => ($status == 'Active' || $status == 'Inactive') ? 'System Verifier' : null,
                     'remarks' => 'Auto-generated trustee fee',
                     'approval_datetime' => ($status == 'Active' || $status == 'Inactive') ? $startDate->copy()->format('Y-m-d H:i:s') : null,
                     'status' => $status,
-                    'issuer_id' => $issuerId,
+                    'facility_information_id' => $facilityId, // Changed from issuer_id to facility_information_id
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -651,13 +663,13 @@ class BondsSeeder extends Seeder
                 $trusteeFees[] = [
                     'month' => $lastYearMonth,
                     'date' => $lastYearDate,
-                    'description' => 'Annual Trustee Fee for ' . (rand(0, 1) ? 'Medium Term Notes' : 'Sukuk'),
+                    'description' => 'Annual Trustee Fee for ' . $facility->facility_name . ' (Previous Year)',
                     'trustee_fee_amount_1' => $lastYearFee1 . '.00',
                     'trustee_fee_amount_2' => $lastYearFee2 . '.00',
                     'start_anniversary_date' => $lastYearStartDate->format('Y-m-d'),
                     'end_anniversary_date' => $lastYearEndDate->format('Y-m-d'),
                     'memo_to_fad' => $lastYearStartDate->copy()->subDays(rand(5, 15))->format('Y-m-d'),
-                    'invoice_no' => 'INV-' . substr(DB::table('issuers')->where('id', $issuerId)->value('issuer_short_name'), 0, 4) . '-' . $lastYear . '-001',
+                    'invoice_no' => 'INV-' . substr($facility->issuer_short_name, 0, 4) . '-' . $lastYear . '-' . $facilityId,
                     'date_letter_to_issuer' => $lastYearStartDate->copy()->subDays(rand(5, 10))->format('Y-m-d'),
                     'first_reminder' => rand(0, 1) == 1 ? $lastYearStartDate->copy()->addMonths(1)->format('Y-m-d') : null,
                     'second_reminder' => null,
@@ -666,20 +678,23 @@ class BondsSeeder extends Seeder
                     'tt_cheque_no' => 'TT-' . rand(1000000, 9999999),
                     'memo_receipt_to_fad' => Carbon::parse($lastYearPaymentReceived)->addDays(rand(3, 7))->format('Y-m-d'),
                     'receipt_to_issuer' => Carbon::parse($lastYearPaymentReceived)->addDays(rand(5, 10))->format('Y-m-d'),
-                    'receipt_no' => 'RCPT-' . substr(DB::table('issuers')->where('id', $issuerId)->value('issuer_short_name'), 0, 4) . '-' . $lastYear . '-001',
+                    'receipt_no' => 'RCPT-' . substr($facility->issuer_short_name, 0, 4) . '-' . $lastYear . '-' . $facilityId,
                     'prepared_by' => 'System',
                     'verified_by' => 'System Verifier',
                     'remarks' => 'Auto-generated trustee fee (previous year)',
                     'approval_datetime' => $lastYearStartDate->copy()->format('Y-m-d H:i:s'),
                     'status' => 'Active',
-                    'issuer_id' => $issuerId,
+                    'facility_information_id' => $facilityId, // Changed from issuer_id to facility_information_id
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
             }
         }
 
-        DB::table('trustee_fees')->insert($trusteeFees);
+        // Only insert if we have records
+        if (count($trusteeFees) > 0) {
+            DB::table('trustee_fees')->insert($trusteeFees);
+        }
 
         // Seed Compliance Covenants
         $complianceCovenants = [];

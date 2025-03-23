@@ -38,7 +38,7 @@ class TrusteeFee extends Model
         'verified_by',
         'remarks',
         'approval_datetime',
-        'issuer_id'
+        'facility_information_id'
     ];
 
     /**
@@ -66,9 +66,9 @@ class TrusteeFee extends Model
     /**
      * Get the issuer that the trustee fee belongs to.
      */
-    public function issuer()
+    public function facility()
     {
-        return $this->belongsTo(Issuer::class);
+        return $this->belongsTo(FacilityInformation::class, 'facility_information_id');
     }
     
     /**

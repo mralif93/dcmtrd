@@ -118,6 +118,20 @@
                                 </select>
                             </div>
 
+                            <!-- Facility Filter -->
+                            <div>
+                                <label for="facility_information_id" class="block text-sm font-medium text-gray-700">Facility</label>
+                                <select name="facility_information_id" id="facility_information_id" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">All Facilities</option>
+                                    @foreach($facilities as $facility)
+                                        <option value="{{ $facility->id }}" data-issuer="{{ $facility->issuer_id }}" @selected(request('facility_information_id') == $facility->id)>
+                                            {{ $facility->facility_code }} - {{ $facility->facility_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                             <!-- Invoice Number Filter -->
                             <div>
                                 <label for="invoice_no" class="block text-sm font-medium text-gray-700">Invoice No</label>
@@ -168,7 +182,7 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issuer</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Facility / Issuer</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee Amount</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anniversary Period</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -181,8 +195,9 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
                                         <a href="{{ route('trustee-fee-m.show', $fee) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $fee->issuer->issuer_short_name }} - {{ $fee->issuer->issuer_name }}
-                                            <p>{{ $fee->description }}</p>
+                                            {{ $fee->facility?->facility_code }} - {{ $fee->facility?->facility_name }}
+                                            <p class="text-xs text-gray-500">{{ $fee->facility?->issuer->issuer_short_name }} - {{ $fee->facility?->issuer->issuer_name }}</p>
+                                            <p class="text-xs text-gray-700 mt-1">{{ $fee->description }}</p>
                                         </a>
                                     </div>
                                 </td>
@@ -209,7 +224,7 @@
                                         <a href="{{ route('trustee-fee-m.approval', $fee) }}" 
                                             class="text-indigo-600 hover:text-indigo-900" 
                                             title="Submit for Approval"
-                                            onclick="confirmApproval(event, '{{ $fee->issuer->issuer_name }}')">
+                                            onclick="confirmApproval(event, '{{ $fee->facility?->facility_name }}')">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4" />
@@ -250,4 +265,32 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const issuerFilter = document.getElementById('issuer_id');
+            const facilitySelect = document.getElementById('facility_information_id');
+            const facilityOptions = Array.from(facilitySelect.options);
+            
+            // Filter facilities when issuer is selected
+            issuerFilter.addEventListener('change', function() {
+                const selectedIssuerId = this.value;
+                
+                // Reset facility dropdown
+                facilitySelect.innerHTML = '<option value="">All Facilities</option>';
+                
+                // Filter and add matching facilities
+                facilityOptions.forEach(option => {
+                    if (!selectedIssuerId || option.dataset.issuer === selectedIssuerId) {
+                        facilitySelect.appendChild(option.cloneNode(true));
+                    }
+                });
+            });
+
+            // Initial filter based on selected issuer
+            if (issuerFilter.value) {
+                issuerFilter.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
 </x-app-layout>

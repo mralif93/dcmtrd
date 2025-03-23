@@ -39,18 +39,34 @@
                         <div class="border-b border-gray-200 pb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Issuer Dropdown for filtering facilities -->
                                 <div>
-                                    <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
-                                    <select name="issuer_id" id="issuer_id" required 
+                                    <label for="issuer_filter" class="block text-sm font-medium text-gray-700">Filter by Issuer</label>
+                                    <select id="issuer_filter" 
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">-- Select Issuer --</option>
                                         @foreach($issuers as $issuer)
-                                            <option value="{{ $issuer->id }}" @selected(old('issuer_id', $trusteeFee->issuer_id) == $issuer->id)>
+                                            <option value="{{ $issuer->id }}" @selected($trusteeFee->facility?->issuer_id == $issuer->id)>
                                                 {{ $issuer->issuer_short_name }} - {{ $issuer->issuer_name }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
+                                
+                                <!-- Facility Information Dropdown -->
+                                <div>
+                                    <label for="facility_information_id" class="block text-sm font-medium text-gray-700">Facility Information *</label>
+                                    <select name="facility_information_id" id="facility_information_id" required 
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">-- Select Facility --</option>
+                                        @foreach($facilities as $facility)
+                                            <option value="{{ $facility->id }}" data-issuer="{{ $facility->issuer_id }}" @selected(old('facility_information_id', $trusteeFee->facility_information_id) == $facility->id)>
+                                                {{ $facility->facility_code }} - {{ $facility->facility_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                
                                 <div>
                                     <label for="invoice_no" class="block text-sm font-medium text-gray-700">Invoice Number *</label>
                                     <input type="text" name="invoice_no" id="invoice_no" 
@@ -266,4 +282,42 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const issuerFilter = document.getElementById('issuer_filter');
+            const facilitySelect = document.getElementById('facility_information_id');
+            const facilityOptions = Array.from(facilitySelect.querySelectorAll('option'));
+            
+            // Filter facilities when issuer is selected
+            issuerFilter.addEventListener('change', function() {
+                const selectedIssuerId = this.value;
+                
+                // Reset facility dropdown
+                facilitySelect.innerHTML = '<option value="">-- Select Facility --</option>';
+                
+                // Filter and add matching facilities
+                facilityOptions.forEach(option => {
+                    if (!selectedIssuerId || option.dataset.issuer === selectedIssuerId) {
+                        facilitySelect.appendChild(option.cloneNode(true));
+                    }
+                });
+                
+                // Make sure the previous selection is maintained if available
+                const previouslySelectedFacility = {{ old('facility_information_id', $trusteeFee->facility_information_id) }};
+                if (previouslySelectedFacility) {
+                    const matchingOption = Array.from(facilitySelect.options).find(option => 
+                        option.value == previouslySelectedFacility);
+                    if (matchingOption) {
+                        matchingOption.selected = true;
+                    }
+                }
+            });
+
+            // Initial filter based on selected issuer
+            if (issuerFilter.value) {
+                issuerFilter.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
 </x-app-layout>

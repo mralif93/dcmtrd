@@ -32,7 +32,7 @@
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <form action="{{ route('document-m.update', $document) }}" method="POST" class="p-6" enctype="multipart/form-data">
                     @csrf 
-                    @method('PATCH')
+                    @method('PUT')
 
                     <div class="space-y-6 pb-6">
                         <!-- Row 1: Facility Information -->

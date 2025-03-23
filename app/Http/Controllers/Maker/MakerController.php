@@ -1094,10 +1094,19 @@ class MakerController extends Controller
     // Trustee Fee
     public function TrusteeFeeIndex(Request $request)
     {
-        $query = TrusteeFee::with('issuer');
+        // Use the proper relationship - facility.issuer instead of direct issuer
+        $query = TrusteeFee::with(['facility', 'facility.issuer']);
         
+        // Filter by facility_information_id if provided
+        if ($request->has('facility_information_id') && !empty($request->facility_information_id)) {
+            $query->where('facility_information_id', $request->facility_information_id);
+        }
+        
+        // Filter by issuer_id through the facility relationship
         if ($request->has('issuer_id') && !empty($request->issuer_id)) {
-            $query->where('issuer_id', $request->issuer_id);
+            $query->whereHas('facility', function($q) use ($request) {
+                $q->where('issuer_id', $request->issuer_id);
+            });
         }
         
         if ($request->has('invoice_no') && !empty($request->invoice_no)) {
@@ -1119,14 +1128,18 @@ class MakerController extends Controller
         // Get all issuers for the dropdown
         $issuers = Issuer::orderBy('issuer_name')->get();
         
+        // Get facilities for dropdown if needed
+        $facilities = FacilityInformation::orderBy('facility_name')->get();
+        
         $trustee_fees = $query->latest()->paginate(10);
-        return view('maker.trustee-fee.index', compact('trustee_fees', 'issuers'));
+        return view('maker.trustee-fee.index', compact('trustee_fees', 'issuers', 'facilities'));
     }
 
     public function TrusteeFeeCreate()
     {
         $issuers = Issuer::orderBy('issuer_name')->get();
-        return view('maker.trustee-fee.create', compact('issuers'));
+        $facilities = FacilityInformation::orderBy('facility_name')->get();
+        return view('maker.trustee-fee.create', compact('issuers', 'facilities'));
     }
 
     public function TrusteeFeeStore(Request $request)
@@ -1137,7 +1150,7 @@ class MakerController extends Controller
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'Draft';
 
-        TrusteeFee::create($validated);
+        $trusteeFee = TrusteeFee::create($validated);
 
         return redirect()
             ->route('trustee-fee-m.show', $trusteeFee)
@@ -1147,7 +1160,8 @@ class MakerController extends Controller
     public function TrusteeFeeEdit(TrusteeFee $trusteeFee)
     {
         $issuers = Issuer::orderBy('issuer_name')->get();
-        return view('maker.trustee-fee.edit', compact('trusteeFee', 'issuers'));
+        $facilities = FacilityInformation::orderBy('facility_name')->get();
+        return view('maker.trustee-fee.edit', compact('trusteeFee', 'issuers', 'facilities'));
     }
 
     public function TrusteeFeeUpdate(Request $request, TrusteeFee $trusteeFee)
@@ -1163,6 +1177,8 @@ class MakerController extends Controller
 
     public function TrusteeFeeShow(TrusteeFee $trusteeFee)
     {
+        // Eager load the facility and issuer relationships
+        $trusteeFee->load(['facility', 'facility.issuer']);
         return view('maker.trustee-fee.show', compact('trusteeFee'));
     }
 
@@ -1194,7 +1210,7 @@ class MakerController extends Controller
     protected function validateTrusteeFee(Request $request, TrusteeFee $trusteeFee = null)
     {
         return $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
+            'facility_information_id' => 'required|exists:facility_informations,id',
             'description' => 'required|string',
             'trustee_fee_amount_1' => 'nullable|numeric',
             'trustee_fee_amount_2' => 'nullable|numeric',
