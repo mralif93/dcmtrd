@@ -12,13 +12,50 @@ use Illuminate\Validation\Rule;
 class ActivityDiaryController extends Controller
 {
     /**
-     * Display a listing of activity diaries.
+     * Display a listing of activity diaries with filters.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $activityDiaries = ActivityDiary::with('issuer')->latest()->paginate(10);
+        $query = ActivityDiary::with('issuer');
+
+        // Filter by issuer name
+        if ($request->filled('issuer')) {
+            $issuerSearch = $request->input('issuer');
+            $query->whereHas('issuer', function($q) use ($issuerSearch) {
+                $q->where('issuer_name', 'like', '%' . $issuerSearch . '%')
+                ->orWhere('issuer_short_name', 'like', '%' . $issuerSearch . '%');
+            });
+        }
+
+        // Filter by purpose
+        if ($request->filled('purpose')) {
+            $query->where('purpose', 'like', '%' . $request->input('purpose') . '%');
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        // Filter by due date
+        if ($request->filled('due_date')) {
+            $dueDate = $request->input('due_date');
+            $query->where(function($q) use ($dueDate) {
+                $q->where('due_date', $dueDate)
+                ->orWhere('extension_date_1', $dueDate)
+                ->orWhere('extension_date_2', $dueDate);
+            });
+        }
+
+        // Apply sorting
+        $activityDiaries = $query->latest()->paginate(10);
+
+        // Append query parameters to pagination links
+        $activityDiaries->appends($request->all());
+
         return view('admin.activity-diaries.index', compact('activityDiaries'));
     }
 
@@ -160,39 +197,89 @@ class ActivityDiaryController extends Controller
     }
 
     /**
-     * Display a listing of activity diaries by issuer ID.
+     * Display a listing of activity diaries by issuer ID with filters.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  int  $issuerId
      * @return \Illuminate\Http\Response
      */
-    public function getByIssuer($issuerId)
+    public function getByIssuer(Request $request, $issuerId)
     {
         $issuer = Issuer::findOrFail($issuerId);
-        $activityDiaries = ActivityDiary::where('issuer_id', $issuerId)->latest()->paginate(10);
+        
+        $query = ActivityDiary::where('issuer_id', $issuerId);
+        
+        // Filter by purpose
+        if ($request->filled('purpose')) {
+            $query->where('purpose', 'like', '%' . $request->input('purpose') . '%');
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        // Filter by due date
+        if ($request->filled('due_date')) {
+            $dueDate = $request->input('due_date');
+            $query->where(function($q) use ($dueDate) {
+                $q->where('due_date', $dueDate)
+                ->orWhere('extension_date_1', $dueDate)
+                ->orWhere('extension_date_2', $dueDate);
+            });
+        }
+        
+        // Apply sorting
+        $activityDiaries = $query->latest()->paginate(10);
+        
+        // Append query parameters to pagination links
+        $activityDiaries->appends($request->all());
         
         return view('admin.activity-diaries.by-issuer', compact('activityDiaries', 'issuer'));
     }
 
     /**
-     * Display a listing of upcoming due activity diaries.
+     * Display a listing of upcoming due activity diaries with filters.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function upcoming()
+    public function upcoming(Request $request)
     {
         $today = now()->format('Y-m-d');
         $nextWeek = now()->addDays(7)->format('Y-m-d');
         
-        // Get activities where any of the due dates fall within the next week
-        $activityDiaries = ActivityDiary::with('issuer')
-            ->where(function($query) use ($today, $nextWeek) {
-                $query->whereBetween('due_date', [$today, $nextWeek])
-                      ->orWhereBetween('extension_date_1', [$today, $nextWeek])
-                      ->orWhereBetween('extension_date_2', [$today, $nextWeek]);
-            })
-            ->whereNotIn('status', ['complied', 'passed'])
-            ->latest()
-            ->paginate(10);
+        // Start with the base query
+        $query = ActivityDiary::with('issuer');
+        
+        // Filter for upcoming dates
+        $query->where(function($query) use ($today, $nextWeek) {
+            $query->whereBetween('due_date', [$today, $nextWeek])
+                ->orWhereBetween('extension_date_1', [$today, $nextWeek])
+                ->orWhereBetween('extension_date_2', [$today, $nextWeek]);
+        })
+        ->whereNotIn('status', ['complied', 'passed']);
+        
+        // Apply additional filters
+        // Filter by issuer name
+        if ($request->filled('issuer')) {
+            $issuerSearch = $request->input('issuer');
+            $query->whereHas('issuer', function($q) use ($issuerSearch) {
+                $q->where('issuer_name', 'like', '%' . $issuerSearch . '%')
+                ->orWhere('issuer_short_name', 'like', '%' . $issuerSearch . '%');
+            });
+        }
+
+        // Filter by purpose
+        if ($request->filled('purpose')) {
+            $query->where('purpose', 'like', '%' . $request->input('purpose') . '%');
+        }
+        
+        // Apply sorting
+        $activityDiaries = $query->latest()->paginate(10);
+        
+        // Append query parameters to pagination links
+        $activityDiaries->appends($request->all());
         
         return view('admin.activity-diaries.upcoming', compact('activityDiaries'));
     }
