@@ -88,14 +88,14 @@
                         <!-- Row 5: Document Upload -->
                         <div>
                             <label for="file_path" class="block text-sm font-medium text-gray-700">Document File (Leave blank to keep current file)</label>
-                            <input type="file" name="file_path" id="file_path" 
+                            <input type="file" name="document_file" id="document_file" 
                                 class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
                             @if($document->file_path)
                                 <p class="mt-2 text-sm text-gray-500">Current Attachment: 
                                     <a href="{{ Storage::url($document->file_path) }}" class="text-blue-600 underline" target="_blank">View</a>
                                 </p>
                             @endif
-                            @error('file_path')
+                            @error('document_file')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>

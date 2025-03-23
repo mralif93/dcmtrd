@@ -54,6 +54,9 @@
                                 <select name="status" id="status" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">All Status</option>
+                                    <option value="Draft" @selected(request('status') === 'Draft')>Draft</option>
+                                    <option value="Active" @selected(request('status') === 'Active')>Active</option>
+                                    <option value="Rejected" @selected(request('status') === 'Rejected')>Rejected</option>
                                     <option value="pending" @selected(request('status') === 'pending')>Pending</option>
                                     <option value="in_progress" @selected(request('status') === 'in_progress')>In Progress</option>
                                     <option value="completed" @selected(request('status') === 'completed')>Completed</option>

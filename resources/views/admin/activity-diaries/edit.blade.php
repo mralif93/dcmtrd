@@ -38,7 +38,7 @@
                         <!-- Basic Information Section -->
                         <div class="border-b border-gray-200 pb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-1 gap-1">
                                 <div>
                                     <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
                                     <select id="issuer_id" name="issuer_id" required
@@ -51,17 +51,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                    <select id="status" name="status" 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Select Status</option>
-                                        <option value="passed" {{ (old('status') ?? $activityDiary->status) == 'passed' ? 'selected' : '' }}>Passed</option>
-                                        <option value="complied" {{ (old('status') ?? $activityDiary->status) == 'complied' ? 'selected' : '' }}>Complied</option>
-                                        <option value="notification" {{ (old('status') ?? $activityDiary->status) == 'notification' ? 'selected' : '' }}>Notification</option>
-                                    </select>
-                                </div>
-                                <div class="md:col-span-2">
+                                <div class="mt-4">
                                     <label for="purpose" class="block text-sm font-medium text-gray-700">Purpose *</label>
                                     <textarea id="purpose" name="purpose" rows="3" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('purpose') ?? $activityDiary->purpose }}</textarea>
@@ -86,91 +76,103 @@
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                             </div>
-                            
-                            <!-- Extension Dates -->
-                            <div class="mt-6 border-t border-gray-200 pt-4">
-                                <h4 class="text-md font-medium text-gray-700 mb-4">Extension Dates (Optional)</h4>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                                    <div>
-                                        <label for="extension_date_1" class="block text-sm font-medium text-gray-700">1st Extension Date</label>
-                                        <input type="date" name="extension_date_1" id="extension_date_1" 
-                                            value="{{ old('extension_date_1') ?? ($activityDiary->extension_date_1 ? $activityDiary->extension_date_1->format('Y-m-d') : '') }}"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    </div>
-                                    <div>
-                                        <label for="extension_note_1" class="block text-sm font-medium text-gray-700">1st Extension Note</label>
-                                        <input type="text" name="extension_note_1" id="extension_note_1" 
-                                            value="{{ old('extension_note_1') ?? $activityDiary->extension_note_1 ?? '(1st Extension)' }}"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    </div>
-                                </div>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label for="extension_date_2" class="block text-sm font-medium text-gray-700">2nd Extension Date</label>
-                                        <input type="date" name="extension_date_2" id="extension_date_2" 
-                                            value="{{ old('extension_date_2') ?? ($activityDiary->extension_date_2 ? $activityDiary->extension_date_2->format('Y-m-d') : '') }}"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    </div>
-                                    <div>
-                                        <label for="extension_note_2" class="block text-sm font-medium text-gray-700">2nd Extension Note</label>
-                                        <input type="text" name="extension_note_2" id="extension_note_2" 
-                                            value="{{ old('extension_note_2') ?? $activityDiary->extension_note_2 ?? '(2nd Extension)' }}"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                        
-                        <!-- Additional Information Section -->
+
+                        <!-- Extension Dates Section -->
                         <div class="border-b border-gray-200 pb-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
-                            <div class="grid grid-cols-1 gap-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Extension Dates</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label for="remarks" class="block text-sm font-medium text-gray-700">Remarks</label>
-                                    <textarea id="remarks" name="remarks" rows="3" 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks') ?? $activityDiary->remarks }}</textarea>
+                                    <label for="extension_date_1" class="block text-sm font-medium text-gray-700">Extension Date 1</label>
+                                    <input type="date" name="extension_date_1" id="extension_date_1" 
+                                        value="{{ old('extension_date_1') ?? ($activityDiary->extension_date_1 ? $activityDiary->extension_date_1->format('Y-m-d') : '') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="extension_note_1" class="block text-sm font-medium text-gray-700">Extension Note 1</label>
+                                    <input type="text" name="extension_note_1" id="extension_note_1" 
+                                        value="{{ old('extension_note_1') ?? $activityDiary->extension_note_1 }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="extension_date_2" class="block text-sm font-medium text-gray-700">Extension Date 2</label>
+                                    <input type="date" name="extension_date_2" id="extension_date_2" 
+                                        value="{{ old('extension_date_2') ?? ($activityDiary->extension_date_2 ? $activityDiary->extension_date_2->format('Y-m-d') : '') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="extension_note_2" class="block text-sm font-medium text-gray-700">Extension Note 2</label>
+                                    <input type="text" name="extension_note_2" id="extension_note_2" 
+                                        value="{{ old('extension_note_2') ?? $activityDiary->extension_note_2 }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Verification Section -->
+                        <!-- Status & System Information -->
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Verification</h3>
-                            <div class="grid grid-cols-1 gap-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Status & System Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                    <select id="status" name="status" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">-- Select Status --</option>
+                                        <option value="draft" {{ (old('status') ?? $activityDiary->status) == 'draft' ? 'selected' : '' }}>Draft</option>
+                                        <option value="active" {{ (old('status') ?? $activityDiary->status) == 'active' ? 'selected' : '' }}>Active</option>
+                                        <option value="rejected" {{ (old('status') ?? $activityDiary->status) == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                        <option value="pending" {{ (old('status') ?? $activityDiary->status) == 'pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="in_progress" {{ (old('status') ?? $activityDiary->status) == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                                        <option value="completed" {{ (old('status') ?? $activityDiary->status) == 'completed' ? 'selected' : '' }}>Completed</option>
+                                        <option value="overdue" {{ (old('status') ?? $activityDiary->status) == 'overdue' ? 'selected' : '' }}>Overdue</option>
+                                        <option value="compiled" {{ (old('status') ?? $activityDiary->status) == 'compiled' ? 'selected' : '' }}>Compiled</option>
+                                        <option value="notification" {{ (old('status') ?? $activityDiary->status) == 'notification' ? 'selected' : '' }}>Notification</option>
+                                        <option value="passed" {{ (old('status') ?? $activityDiary->status) == 'passed' ? 'selected' : '' }}>Passed</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="approval_datetime" class="block text-sm font-medium text-gray-700">Approval Date/Time</label>
+                                    <input type="datetime-local" name="approval_datetime" id="approval_datetime" 
+                                        value="{{ old('approval_datetime') ?? ($activityDiary->approval_datetime ? $activityDiary->approval_datetime->format('Y-m-d\TH:i') : '') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
                                 <div>
                                     <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified By</label>
                                     <input type="text" name="verified_by" id="verified_by" 
                                         value="{{ old('verified_by') ?? $activityDiary->verified_by }}"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
+                                <div>
+                                    <label for="prepared_by" class="block text-sm font-medium text-gray-700">Prepared By</label>
+                                    <input type="text" name="prepared_by" id="prepared_by" 
+                                        value="{{ old('prepared_by') ?? $activityDiary->prepared_by }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="remarks" class="block text-sm font-medium text-gray-700">Remarks</label>
+                                    <textarea id="remarks" name="remarks" rows="3" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks') ?? $activityDiary->remarks }}</textarea>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- System Information -->
-                        <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
-                            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">
-                                        {{ $activityDiary->created_at->format('M j, Y H:i') }}
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">
-                                        {{ $activityDiary->updated_at->format('M j, Y H:i') }}
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">
-                                        {{ $activityDiary->prepared_by ?? 'N/A' }}
-                                    </dd>
-                                </div>
-                            </dl>
+                            
+                            <!-- System generated information (read-only) -->
+                            <div class="mt-6 border-t border-gray-200 pt-4">
+                                <h4 class="text-md font-medium text-gray-700 mb-4">System Information (Read-only)</h4>
+                                <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">
+                                            {{ $activityDiary->created_at->format('M j, Y H:i') }}
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">
+                                            {{ $activityDiary->updated_at->format('M j, Y H:i') }}
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
                         </div>
                     </div>
 

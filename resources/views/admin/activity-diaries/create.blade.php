@@ -37,7 +37,7 @@
                         <!-- Basic Information Section -->
                         <div class="border-b border-gray-200 pb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-1 gap-1">
                                 <div>
                                     <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
                                     <select id="issuer_id" name="issuer_id" required
@@ -50,17 +50,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                    <select id="status" name="status" 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">Select Status</option>
-                                        <option value="passed" {{ old('status') == 'passed' ? 'selected' : '' }}>Passed</option>
-                                        <option value="complied" {{ old('status') == 'complied' ? 'selected' : '' }}>Complied</option>
-                                        <option value="notification" {{ old('status') == 'notification' ? 'selected' : '' }}>Notification</option>
-                                    </select>
-                                </div>
-                                <div class="md:col-span-2">
+                                <div class="mt-4">
                                     <label for="purpose" class="block text-sm font-medium text-gray-700">Purpose *</label>
                                     <textarea id="purpose" name="purpose" rows="3" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('purpose') }}</textarea>
@@ -118,6 +108,52 @@
                                             value="{{ old('extension_note_2', '(2nd Extension)') }}"
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Information Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Status Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                    <select id="status" name="status" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">-- Select Status --</option>
+                                        <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                        <option value="rejected" {{ old('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                                        <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                                        <option value="overdue" {{ old('status') == 'overdue' ? 'selected' : '' }}>Overdue</option>
+                                        <option value="compiled" {{ old('status') == 'compiled' ? 'selected' : '' }}>Compiled</option>
+                                        <option value="notification" {{ old('status') == 'notification' ? 'selected' : '' }}>Notification</option>
+                                        <option value="passed" {{ old('status') == 'passed' ? 'selected' : '' }}>Passed</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="approval_datetime" class="block text-sm font-medium text-gray-700">Approval Date/Time</label>
+                                    <input type="datetime-local" name="approval_datetime" id="approval_datetime" 
+                                        value="{{ old('approval_datetime') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                                <div>
+                                    <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified By</label>
+                                    <input type="text" name="verified_by" id="verified_by" 
+                                        value="{{ old('verified_by') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <p class="mt-1 text-xs text-gray-500">Leave empty if not yet verified</p>
+                                </div>
+                                <div>
+                                    <label for="prepared_by" class="block text-sm font-medium text-gray-700">Prepared By</label>
+                                    <input type="text" name="prepared_by" id="prepared_by" 
+                                        value="{{ old('prepared_by', Auth::user()->name ?? '') }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <p class="mt-1 text-xs text-gray-500">Auto-filled with your name, can be modified if needed</p>
                                 </div>
                             </div>
                         </div>

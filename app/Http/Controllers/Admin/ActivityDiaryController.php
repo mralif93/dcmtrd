@@ -87,7 +87,7 @@ class ActivityDiaryController extends Controller
             'extension_note_1' => 'nullable|string',
             'extension_date_2' => 'nullable|date',
             'extension_note_2' => 'nullable|string',
-            'status' => ['nullable', 'string', Rule::in(['passed', 'complied', 'notification'])],
+            'status' => ['nullable', 'string', Rule::in(['draft', 'active', 'rejected', 'pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
             'remarks' => 'nullable|string',
         ]);
 
@@ -141,7 +141,7 @@ class ActivityDiaryController extends Controller
             'extension_note_1' => 'nullable|string',
             'extension_date_2' => 'nullable|date',
             'extension_note_2' => 'nullable|string',
-            'status' => ['nullable', 'string', Rule::in(['passed', 'complied', 'notification'])],
+            'status' => ['nullable', 'string', Rule::in(['draft', 'active', 'rejected', 'pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
             'remarks' => 'nullable|string',
             'verified_by' => 'nullable|string',
         ]);

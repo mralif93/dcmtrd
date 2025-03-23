@@ -467,6 +467,8 @@ class MakerController extends Controller
     {
         $validated = $this->validateDocument($request);
 
+        dd($request->hasFile('document_file'));
+
         if ($request->hasFile('document_file')) {
             // Delete old file
             if ($document->file_path) {
@@ -481,9 +483,9 @@ class MakerController extends Controller
         return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document updated successfully');
     }
 
-    public function DocumentShow ()
+    public function DocumentShow(RelatedDocument $document)
     {
-        return view('maker.related-document.show');
+        return view('maker.related-document.show', compact('document'));
     }
 
     protected function validateDocument(Request $request)
@@ -493,7 +495,7 @@ class MakerController extends Controller
             'document_name' => 'required|max:200',
             'document_type' => 'required|max:50',
             'upload_date' => 'required|date',
-            'document_file' => 'required|file|mimes:pdf|max:2048'
+            'document_file' => 'nullable|file|mimes:pdf|max:51200'
         ]);
     }
 

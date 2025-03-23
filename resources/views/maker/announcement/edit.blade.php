@@ -177,14 +177,6 @@
                                         {{ $announcement->updated_at->format('M j, Y H:i') }}
                                     </dd>
                                 </div>
-                                @if($announcement->approval_datetime)
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">
-                                        {{ $announcement->approval_datetime->format('M j, Y H:i') }}
-                                    </dd>
-                                </div>
-                                @endif
                             </dl>
                         </div>
                     </div>
