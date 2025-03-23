@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('trust_amount_escrow_sum')->nullable();
             $table->string('no_of_share')->nullable();
             $table->string('outstanding_size')->nullable();
-            $table->string('status')->nullable();
+            $table->string('status')->default('Draft')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
