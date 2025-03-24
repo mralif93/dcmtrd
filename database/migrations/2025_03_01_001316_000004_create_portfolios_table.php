@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('trust_deed_document')->nullable();
             $table->string('insurance_document')->nullable();
             $table->string('valuation_report')->nullable();
-            $table->string('status')->default('active');
+            $table->string('status')->default('Draft')->nullable();
             $table->timestamps();
             $table->softDeletes();
             

@@ -37,6 +37,11 @@ class FacilityInformation extends Model
         'lead_arranger',
         'facility_agent',
         'availability_date',
+        'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
+        'remarks',
         'issuer_id',
     ];
 

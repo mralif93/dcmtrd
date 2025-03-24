@@ -19,6 +19,11 @@ class Announcement extends Model
         'content',
         'attachment',
         'source',
+        'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
+        'remarks',
         'issuer_id',
     ];
 

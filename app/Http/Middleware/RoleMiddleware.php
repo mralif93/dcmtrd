@@ -17,7 +17,7 @@ class RoleMiddleware
      * @param  string  $role
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, $role): Response
+    public function handle(Request $request, Closure $next, string$role): Response
     {
         $user = Auth::user();
 
@@ -27,9 +27,9 @@ class RoleMiddleware
         }
 
         // Temporary debug output - REMOVE BEFORE PRODUCTION
-        // echo "<div style='position:fixed;top:0;right:0;background:yellow;padding:10px;z-index:9999;'>";
-        // echo "Debug: User Role: " . ($user ? $user->role : 'none') . " | Required Role: {$role}";
-        // echo "</div>";
+        echo "<div style='position:fixed;top:0;right:0;background:yellow;padding:10px;z-index:9999;'>";
+        echo "Debug: User Role: " . ($user ? $user->role : 'none') . " | Required Role: {$role}";
+        echo "</div>";
 
         // Check if the user has the required role
         if ($user->role !== $role) {
@@ -52,7 +52,6 @@ class RoleMiddleware
             }
         }
 
-        // Role check passed, continue to the next middleware
         return $next($request);
     }
 }

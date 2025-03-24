@@ -29,7 +29,11 @@ return new class extends Migration
             $table->string('ownership');
             $table->decimal('share_amount', 15, 2)->unsigned();
             $table->decimal('market_value', 15, 2)->unsigned();
-            $table->string('status')->default('active');
+            $table->string('status')->default('Draft')->nullable();
+            $table->string('prepared_by')->nullable();
+            $table->string('verified_by')->nullable();
+            $table->text('remarks')->nullable();
+            $table->dateTime('approval_datetime')->nullable();
             $table->timestamps();
             $table->softDeletes();
             

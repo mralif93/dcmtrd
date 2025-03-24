@@ -150,7 +150,7 @@
                         <!-- Reminder Dates Section -->
                         <div class="border-b border-gray-200 pb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Reminder Dates</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="first_reminder" class="block text-sm font-medium text-gray-700">First Reminder</label>
                                     <input type="date" name="first_reminder" id="first_reminder" 

@@ -60,9 +60,8 @@ class AuthenticatedSessionController extends Controller
             // Make sure you're regenerating the session after login
             $request->session()->regenerate();
 
-
-            // Redirect based on user role
-            // return redirect()->route('main');
+            // Redirect to welcome page
+            return redirect()->route('main');
         }
     
         // If authentication fails, redirect back with an error message

@@ -104,7 +104,10 @@
                             @forelse($covenants as $covenant)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $covenant->issuer_short_name }}</div>
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ $covenant->issuer->issuer_short_name }}
+                                        <p>{{ $covenant->issuer->issuer_name }}</p>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">{{ $covenant->financial_year_end }}</div>

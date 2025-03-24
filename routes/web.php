@@ -89,6 +89,8 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -99,6 +101,11 @@ require __DIR__.'/auth.php';
 
 // 2FA Routes
 Route::middleware(['auth'])->group(function() {
+    // Welcome Page
+    Route::get('/welcome', function() {
+        return view('welcome');
+    })->name('main');
+
     // These routes are available to authenticated users that need to complete 2FA
     Route::get('/two-factor/verify', [TwoFactorController::class, 'show'])
         ->name('two-factor.show');
@@ -112,8 +119,8 @@ Route::middleware(['auth'])->group(function() {
 
 // Admin routes
 Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])
-        ->name('admin.dashboard');
+    // Dashboard
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
     // Bond
     Route::resource('/admin/users', UserAdminController::class);
@@ -210,11 +217,6 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
 
 // User routes
 Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
-    // Welcome
-    Route::get('/welcome', function() {
-        return view('welcome');
-    })->name('main');
-
     // Dashboard
     Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
 
@@ -368,31 +370,18 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
 
 // Legal routes
 Route::middleware(['auth', 'two-factor', 'role:legal'])->group(function () {
-    // Welcome
-    Route::get('/welcome', function() {
-        return view('welcome');
-    })->name('main');
-
+    // Dashboard
     Route::get('/legal/dashboard', [LegalController::class, 'index'])->name('legal.dashboard');
 });
 
 // Compliance routes
 Route::middleware(['auth', 'two-factor', 'role:compliance'])->group(function () {
-    // Welcome
-    Route::get('/welcome', function() {
-        return view('welcome');
-    })->name('main');
-
+    // Dashboard
     Route::get('/compliance/dashboard', [ComplianceController::class, 'index'])->name('compliance.dashboard');
 });
 
 // Maker routes
 Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
-    // Welcome
-    Route::get('/welcome', function() {
-        return view('welcome');
-    })->name('main');
-
     // Dashboard
     Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
 
@@ -524,11 +513,6 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
 
 // Approver routes
 Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
-    // Welcome
-    Route::get('/welcome', function() {
-        return view('welcome');
-    })->name('main');
-
     // Dashboard
     Route::get('/approver/dashboard', [ApproverController::class, 'index'])->name('approver.dashboard');
 
