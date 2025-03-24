@@ -384,97 +384,97 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
 
     // Issuer Module
-    Route::get('maker/issuer/create', [MakerController::class, 'IssuerCreate'])->name('issuer-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/issuer/create', [MakerController::class, 'IssuerStore'])->name('issuer-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/issuer/{issuer}/edit', [MakerController::class, 'IssuerEdit'])->name('issuer-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/issuer/{issuer}/update', [MakerController::class, 'IssuerUpdate'])->name('issuer-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/issuer/{issuer}/show', [MakerController::class, 'IssuerShow'])->name('issuer-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/issuer/{issuer}/submit-for-approval', [MakerController::class, 'submitForApproval'])->name('issuer-m.approval')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/issuer/create', [MakerController::class, 'IssuerCreate'])->name('issuer-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/issuer/create', [MakerController::class, 'IssuerStore'])->name('issuer-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/issuer/{issuer}/edit', [MakerController::class, 'IssuerEdit'])->name('issuer-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/issuer/{issuer}/update', [MakerController::class, 'IssuerUpdate'])->name('issuer-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/issuer/{issuer}/show', [MakerController::class, 'IssuerShow'])->name('issuer-m.show')->middleware('permission:DCMTRD');
+    Route::get('maker/issuer/{issuer}/submit-for-approval', [MakerController::class, 'submitForApproval'])->name('issuer-m.approval')->middleware('permission:DCMTRD');
 
     // Bond Module
-    Route::get('maker/{issuer}/details', [MakerController::class, 'BondIndex'])->name('bond-m.details')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/bond/{issuer}/create', [MakerController::class, 'BondCreate'])->name('bond-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/bond/{issuer}/create', [MakerController::class, 'BondStore'])->name('bond-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/bond/{bond}/edit', [MakerController::class, 'BondEdit'])->name('bond-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/bond/{bond}/update', [MakerController::class, 'BondUpdate'])->name('bond-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/bond/{bond}/show', [MakerController::class, 'BondShow'])->name('bond-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/bond/{issuer}/upload', [MakerController::class, 'BondUploadForm'])->name('bond-m.upload-form')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/bond/{issuer}/upload', [MakerController::class, 'BondUploadStore'])->name('bond-m.upload-store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/{issuer}/details', [MakerController::class, 'BondIndex'])->name('bond-m.details')->middleware('permission:DCMTRD');
+    Route::get('maker/bond/{issuer}/create', [MakerController::class, 'BondCreate'])->name('bond-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/bond/{issuer}/create', [MakerController::class, 'BondStore'])->name('bond-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/bond/{bond}/edit', [MakerController::class, 'BondEdit'])->name('bond-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/bond/{bond}/update', [MakerController::class, 'BondUpdate'])->name('bond-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/bond/{bond}/show', [MakerController::class, 'BondShow'])->name('bond-m.show')->middleware('permission:DCMTRD');
+    Route::get('maker/bond/{issuer}/upload', [MakerController::class, 'BondUploadForm'])->name('bond-m.upload-form')->middleware('permission:DCMTRD');
+    Route::post('maker/bond/{issuer}/upload', [MakerController::class, 'BondUploadStore'])->name('bond-m.upload-store')->middleware('permission:DCMTRD');
 
     // Announcement Module
-    Route::get('maker/announcement/{issuer}/create', [MakerController::class, 'AnnouncementCreate'])->name('announcement-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/announcement/{issuer}/create', [MakerController::class, 'AnnouncementStore'])->name('announcement-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/announcement/{announcement}/edit', [MakerController::class, 'AnnouncementEdit'])->name('announcement-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/announcement/{announcement}/update', [MakerController::class, 'AnnouncementUpdate'])->name('announcement-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/announcement/{announcement}/show', [MakerController::class, 'AnnouncementShow'])->name('announcement-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/announcement/{issuer}/create', [MakerController::class, 'AnnouncementCreate'])->name('announcement-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/announcement/{issuer}/create', [MakerController::class, 'AnnouncementStore'])->name('announcement-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/announcement/{announcement}/edit', [MakerController::class, 'AnnouncementEdit'])->name('announcement-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/announcement/{announcement}/update', [MakerController::class, 'AnnouncementUpdate'])->name('announcement-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/announcement/{announcement}/show', [MakerController::class, 'AnnouncementShow'])->name('announcement-m.show')->middleware('permission:DCMTRD');
 
     // Document Module
-    Route::get('maker/document/{issuer}/create', [MakerController::class, 'DocumentCreate'])->name('document-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/document/{issuer}/create', [MakerController::class, 'DocumentStore'])->name('document-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/document/{document}/edit', [MakerController::class, 'DocumentEdit'])->name('document-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/document/{document}/update', [MakerController::class, 'DocumentUpdate'])->name('document-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/document/{document}/show', [MakerController::class, 'DocumentShow'])->name('document-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/document/{issuer}/create', [MakerController::class, 'DocumentCreate'])->name('document-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/document/{issuer}/create', [MakerController::class, 'DocumentStore'])->name('document-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/document/{document}/edit', [MakerController::class, 'DocumentEdit'])->name('document-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/document/{document}/update', [MakerController::class, 'DocumentUpdate'])->name('document-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/document/{document}/show', [MakerController::class, 'DocumentShow'])->name('document-m.show')->middleware('permission:DCMTRD');
 
     // Facility Info Module
-    Route::get('maker/facility-info/{issuer}/create', [MakerController::class, 'FacilityInfoCreate'])->name('facility-info-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/facility-info/{issuer}/create', [MakerController::class, 'FacilityInfoStore'])->name('facility-info-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/facility-info/{facility}/edit', [MakerController::class, 'FacilityInfoEdit'])->name('facility-info-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/facility-info/{facility}/update', [MakerController::class, 'FacilityInfoUpdate'])->name('facility-info-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/facility-info/{facility}/show', [MakerController::class, 'FacilityInfoShow'])->name('facility-info-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/facility-info/{issuer}/create', [MakerController::class, 'FacilityInfoCreate'])->name('facility-info-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/facility-info/{issuer}/create', [MakerController::class, 'FacilityInfoStore'])->name('facility-info-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/facility-info/{facility}/edit', [MakerController::class, 'FacilityInfoEdit'])->name('facility-info-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/facility-info/{facility}/update', [MakerController::class, 'FacilityInfoUpdate'])->name('facility-info-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/facility-info/{facility}/show', [MakerController::class, 'FacilityInfoShow'])->name('facility-info-m.show')->middleware('permission:DCMTRD');
 
     // Rating Movement Module
-    Route::get('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementCreate'])->name('rating-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementStore'])->name('rating-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/rating-movement/{rating}/edit', [MakerController::class, 'RatingMovementEdit'])->name('rating-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/rating-movement/{rating}/update', [MakerController::class, 'RatingMovementUpdate'])->name('rating-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/rating-movement/{rating}/show', [MakerController::class, 'RatingMovementShow'])->name('rating-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/rating-movement/{bond}/upload', [MakerController::class, 'RatingMovementUploadForm'])->name('rating-m.upload-form')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/rating-movement/{bond}/upload', [MakerController::class, 'RatingMovementUploadStore'])->name('rating-m.upload-store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementCreate'])->name('rating-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementStore'])->name('rating-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/rating-movement/{rating}/edit', [MakerController::class, 'RatingMovementEdit'])->name('rating-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/rating-movement/{rating}/update', [MakerController::class, 'RatingMovementUpdate'])->name('rating-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/rating-movement/{rating}/show', [MakerController::class, 'RatingMovementShow'])->name('rating-m.show')->middleware('permission:DCMTRD');
+    Route::get('maker/rating-movement/{bond}/upload', [MakerController::class, 'RatingMovementUploadForm'])->name('rating-m.upload-form')->middleware('permission:DCMTRD');
+    Route::post('maker/rating-movement/{bond}/upload', [MakerController::class, 'RatingMovementUploadStore'])->name('rating-m.upload-store')->middleware('permission:DCMTRD');
 
     // Payment Schedule Module
-    Route::get('maker/payment-schedule/{bond}/create', [MakerController::class, 'PaymentScheduleCreate'])->name('payment-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/payment-schedule/{bond}/create', [MakerController::class, 'PaymentScheduleStore'])->name('payment-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/payment-schedule/{payment}/edit', [MakerController::class, 'PaymentScheduleEdit'])->name('payment-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/payment-schedule/{payment}/update', [MakerController::class, 'PaymentScheduleUpdate'])->name('payment-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/payment-schedule/{payment}/show', [MakerController::class, 'PaymentScheduleShow'])->name('payment-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/payment-schedule/{bond}/upload', [MakerController::class, 'PaymentScheduleUploadForm'])->name('payment-m.upload-form')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/payment-schedule/{bond}/upload', [MakerController::class, 'PaymentScheduleUploadStore'])->name('payment-m.upload-store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/payment-schedule/{bond}/create', [MakerController::class, 'PaymentScheduleCreate'])->name('payment-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/payment-schedule/{bond}/create', [MakerController::class, 'PaymentScheduleStore'])->name('payment-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/payment-schedule/{payment}/edit', [MakerController::class, 'PaymentScheduleEdit'])->name('payment-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/payment-schedule/{payment}/update', [MakerController::class, 'PaymentScheduleUpdate'])->name('payment-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/payment-schedule/{payment}/show', [MakerController::class, 'PaymentScheduleShow'])->name('payment-m.show')->middleware('permission:DCMTRD');
+    Route::get('maker/payment-schedule/{bond}/upload', [MakerController::class, 'PaymentScheduleUploadForm'])->name('payment-m.upload-form')->middleware('permission:DCMTRD');
+    Route::post('maker/payment-schedule/{bond}/upload', [MakerController::class, 'PaymentScheduleUploadStore'])->name('payment-m.upload-store')->middleware('permission:DCMTRD');
 
     // Redemption Module
-    Route::get('maker/redemption/{bond}/create', [MakerController::class, 'RedemptionCreate'])->name('redemption-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/redemption/{bond}/create', [MakerController::class, 'RedemptionStore'])->name('redemption-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/redemption/{redemption}/edit', [MakerController::class, 'RedemptionEdit'])->name('redemption-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/redemption/{redemption}/update', [MakerController::class, 'RedemptionUpdate'])->name('redemption-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/redemption/{redemption}/show', [MakerController::class, 'RedemptionShow'])->name('redemption-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/redemption/{bond}/upload', [MakerController::class, 'RedemptionUploadForm'])->name('redemption-m.upload-form')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/redemption/{bond}/upload', [MakerController::class, 'RedemptionUploadStore'])->name('redemption-m.upload-store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/redemption/{bond}/create', [MakerController::class, 'RedemptionCreate'])->name('redemption-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/redemption/{bond}/create', [MakerController::class, 'RedemptionStore'])->name('redemption-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/redemption/{redemption}/edit', [MakerController::class, 'RedemptionEdit'])->name('redemption-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/redemption/{redemption}/update', [MakerController::class, 'RedemptionUpdate'])->name('redemption-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/redemption/{redemption}/show', [MakerController::class, 'RedemptionShow'])->name('redemption-m.show')->middleware('permission:DCMTRD');
+    Route::get('maker/redemption/{bond}/upload', [MakerController::class, 'RedemptionUploadForm'])->name('redemption-m.upload-form')->middleware('permission:DCMTRD');
+    Route::post('maker/redemption/{bond}/upload', [MakerController::class, 'RedemptionUploadStore'])->name('redemption-m.upload-store')->middleware('permission:DCMTRD');
 
     // Call Schedule Module
-    Route::get('maker/call-schedule/{bond}/create', [MakerController::class, 'CallScheduleCreate'])->name('call-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/call-schedule/{bond}/create', [MakerController::class, 'CallScheduleStore'])->name('call-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/call-schedule/{call}/edit', [MakerController::class, 'CallScheduleEdit'])->name('call-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/call-schedule/{call}/update', [MakerController::class, 'CallScheduleUpdate'])->name('call-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/call-schedule/{call}/show', [MakerController::class, 'CallScheduleShow'])->name('call-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/call-schedule/{bond}/upload', [MakerController::class, 'CallScheduleUploadForm'])->name('call-m.upload-form')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/call-schedule/{bond}/upload', [MakerController::class, 'CallScheduleUploadStore'])->name('call-m.upload-store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/call-schedule/{bond}/create', [MakerController::class, 'CallScheduleCreate'])->name('call-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/call-schedule/{bond}/create', [MakerController::class, 'CallScheduleStore'])->name('call-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/call-schedule/{call}/edit', [MakerController::class, 'CallScheduleEdit'])->name('call-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/call-schedule/{call}/update', [MakerController::class, 'CallScheduleUpdate'])->name('call-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/call-schedule/{call}/show', [MakerController::class, 'CallScheduleShow'])->name('call-m.show')->middleware('permission:DCMTRD');
+    Route::get('maker/call-schedule/{bond}/upload', [MakerController::class, 'CallScheduleUploadForm'])->name('call-m.upload-form')->middleware('permission:DCMTRD');
+    Route::post('maker/call-schedule/{bond}/upload', [MakerController::class, 'CallScheduleUploadStore'])->name('call-m.upload-store')->middleware('permission:DCMTRD');
 
     // Lockout Period Module
-    Route::get('maker/lockout-period/{bond}/create', [MakerController::class, 'LockoutPeriodCreate'])->name('lockout-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/lockout-period/{bond}/create', [MakerController::class, 'LockoutPeriodStore'])->name('lockout-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/lockout-period/{lockout}/edit', [MakerController::class, 'LockoutPeriodEdit'])->name('lockout-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/lockout-period/{lockout}/update', [MakerController::class, 'LockoutPeriodUpdate'])->name('lockout-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/lockout-period/{lockout}/show', [MakerController::class, 'LockoutPeriodShow'])->name('lockout-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/lockout-period/{bond}/upload', [MakerController::class, 'LockoutPeriodUploadForm'])->name('lockout-m.upload-form')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/lockout-period/{bond}/upload', [MakerController::class, 'LockoutPeriodUploadStore'])->name('lockout-m.upload-store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/lockout-period/{bond}/create', [MakerController::class, 'LockoutPeriodCreate'])->name('lockout-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/lockout-period/{bond}/create', [MakerController::class, 'LockoutPeriodStore'])->name('lockout-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/lockout-period/{lockout}/edit', [MakerController::class, 'LockoutPeriodEdit'])->name('lockout-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/lockout-period/{lockout}/update', [MakerController::class, 'LockoutPeriodUpdate'])->name('lockout-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/lockout-period/{lockout}/show', [MakerController::class, 'LockoutPeriodShow'])->name('lockout-m.show')->middleware('permission:DCMTRD');
+    Route::get('maker/lockout-period/{bond}/upload', [MakerController::class, 'LockoutPeriodUploadForm'])->name('lockout-m.upload-form')->middleware('permission:DCMTRD');
+    Route::post('maker/lockout-period/{bond}/upload', [MakerController::class, 'LockoutPeriodUploadStore'])->name('lockout-m.upload-store')->middleware('permission:DCMTRD');
 
     // Trading Activity Module
-    Route::get('maker/trading-activity/{bond}/create', [MakerController::class, 'TradingActivityCreate'])->name('trading-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/trading-activity/{bond}/create', [MakerController::class, 'TradingActivityStore'])->name('trading-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/trading-activity/{trading}/edit', [MakerController::class, 'TradingActivityEdit'])->name('trading-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/trading-activity/{trading}/update', [MakerController::class, 'TradingActivityUpdate'])->name('trading-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/trading-activity/{trading}/show', [MakerController::class, 'TradingActivityShow'])->name('trading-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadForm'])->name('trading-m.upload-form')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadStore'])->name('trading-m.upload-store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/trading-activity/{bond}/create', [MakerController::class, 'TradingActivityCreate'])->name('trading-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/trading-activity/{bond}/create', [MakerController::class, 'TradingActivityStore'])->name('trading-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/trading-activity/{trading}/edit', [MakerController::class, 'TradingActivityEdit'])->name('trading-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/trading-activity/{trading}/update', [MakerController::class, 'TradingActivityUpdate'])->name('trading-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/trading-activity/{trading}/show', [MakerController::class, 'TradingActivityShow'])->name('trading-m.show')->middleware('permission:DCMTRD');
+    Route::get('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadForm'])->name('trading-m.upload-form')->middleware('permission:DCMTRD');
+    Route::post('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadStore'])->name('trading-m.upload-store')->middleware('permission:DCMTRD');
     
     // Trustee Fee Module
     Route::get('maker/trustee-fee', [MakerController::class, 'TrusteeFeeIndex'])->name('trustee-fee-m.index')->middleware('permission:DCMTRD');
@@ -483,29 +483,29 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/trustee-fee/{trusteeFee}/edit', [MakerController::class, 'TrusteeFeeEdit'])->name('trustee-fee-m.edit')->middleware('permission:DCMTRD');
     Route::put('maker/trustee-fee/{trusteeFee}/update', [MakerController::class, 'TrusteeFeeUpdate'])->name('trustee-fee-m.update')->middleware('permission:DCMTRD');
     Route::get('maker/trustee-fee/{trusteeFee}/show', [MakerController::class, 'TrusteeFeeShow'])->name('trustee-fee-m.show')->middleware('permission:DCMTRD');
-    Route::get('maker/trustee-fee/{trusteeFee}/submit-for-approval', [MakerController::class, 'SubmitApprovalTrusteeFee'])->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/trustee-fee/{trusteeFee}/submit-for-approval', [MakerController::class, 'SubmitApprovalTrusteeFee'])->middleware('permission:DCMTRD');
 
     // Compliance Covenant Module
-    Route::get('maker/compliance-covenant', [MakerController::class, 'ComplianceIndex'])->name('compliance-covenant-m.index')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/compliance-covenant/create', [MakerController::class, 'ComplianceCreate'])->name('compliance-covenant-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/compliance-covenant/create', [MakerController::class, 'ComplianceStore'])->name('compliance-covenant-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/compliance-covenant/{compliance}/edit', [MakerController::class, 'ComplianceEdit'])->name('compliance-covenant-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/compliance-covenant/{compliance}/update', [MakerController::class, 'ComplianceUpdate'])->name('compliance-covenant-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/compliance-covenant/{compliance}/show', [MakerController::class, 'ComplianceShow'])->name('compliance-covenant-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/compliance-covenant/{compliance}/submit-for-approval', [MakerController::class, 'SubmitApprovalCompliance'])->name('compliance-covenant-m.approval')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/compliance-covenant', [MakerController::class, 'ComplianceIndex'])->name('compliance-covenant-m.index')->middleware('permission:DCMTRD');
+    Route::get('maker/compliance-covenant/create', [MakerController::class, 'ComplianceCreate'])->name('compliance-covenant-m.create')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
+    Route::post('maker/compliance-covenant/create', [MakerController::class, 'ComplianceStore'])->name('compliance-covenant-m.store')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/compliance-covenant/{compliance}/edit', [MakerController::class, 'ComplianceEdit'])->name('compliance-covenant-m.edit')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
+    Route::put('maker/compliance-covenant/{compliance}/update', [MakerController::class, 'ComplianceUpdate'])->name('compliance-covenant-m.update')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/compliance-covenant/{compliance}/show', [MakerController::class, 'ComplianceShow'])->name('compliance-covenant-m.show')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/compliance-covenant/{compliance}/submit-for-approval', [MakerController::class, 'SubmitApprovalCompliance'])->name('compliance-covenant-m.approval')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
 
     // Activity Diary Module
-    Route::get('maker/activity-diary', [MakerController::class, 'ActivityIndex'])->name('activity-diary-m.index')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/create', [MakerController::class, 'ActivityCreate'])->name('activity-diary-m.create')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/activity-diary/create', [MakerController::class, 'ActivityStore'])->name('activity-diary-m.store')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/{activity}/edit', [MakerController::class, 'ActivityEdit'])->name('activity-diary-m.edit')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/activity-diary/{activity}/update', [MakerController::class, 'ActivityUpdate'])->name('activity-diary-m.update')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/{activity}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-m.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::patch('maker/activity-diary/{activity}/status', [MakerController::class, 'ActivityUpdateStatus'])->name('activity-diary-m.update-status')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/by-issuer/{issuerId}', [MakerController::class, 'ActivityGetByIssuer'])->name('activity-diary-m.by-issuer')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/upcoming', [MakerController::class, 'ActivityUpcoming'])->name('activity-diary-m.upcoming')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/export', [MakerController::class, 'ActivityExportActivities'])->name('activity-diary-m.export')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/{activity}/submit-for-approval', [MakerController::class, 'SubmitApprovalActivityDiary'])->name('activity-diary-m.approval')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary', [MakerController::class, 'ActivityIndex'])->name('activity-diary-m.index')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/create', [MakerController::class, 'ActivityCreate'])->name('activity-diary-m.create')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
+    Route::post('maker/activity-diary/create', [MakerController::class, 'ActivityStore'])->name('activity-diary-m.store')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/{activity}/edit', [MakerController::class, 'ActivityEdit'])->name('activity-diary-m.edit')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
+    Route::put('maker/activity-diary/{activity}/update', [MakerController::class, 'ActivityUpdate'])->name('activity-diary-m.update')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/{activity}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-m.show')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
+    Route::patch('maker/activity-diary/{activity}/status', [MakerController::class, 'ActivityUpdateStatus'])->name('activity-diary-m.update-status')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/by-issuer/{issuerId}', [MakerController::class, 'ActivityGetByIssuer'])->name('activity-diary-m.by-issuer')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/upcoming', [MakerController::class, 'ActivityUpcoming'])->name('activity-diary-m.upcoming')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/export', [MakerController::class, 'ActivityExportActivities'])->name('activity-diary-m.export')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/{activity}/submit-for-approval', [MakerController::class, 'SubmitApprovalActivityDiary'])->name('activity-diary-m.approval')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
 });
 
 // Approver routes
@@ -514,22 +514,22 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('/approver/dashboard', [ApproverController::class, 'index'])->name('approver.dashboard');
 
     // Issuer Module
-    Route::get('approver/issuer/{issuer}/show', [ApproverController::class, 'IssuerShow'])->name('issuer-a.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('approver/{issuer}/approve', [ApproverController::class, 'IssuerApprove'])->name('issuer-a.approve')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::post('approver/{issuer}/reject', [ApproverController::class, 'IssuerReject'])->name('issuer-a.reject')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('approver/issuer/{issuer}/show', [ApproverController::class, 'IssuerShow'])->name('issuer-a.show')->middleware('permission:DCMTRD');
+    Route::post('approver/{issuer}/approve', [ApproverController::class, 'IssuerApprove'])->name('issuer-a.approve')->middleware('permission:DCMTRD');
+    Route::post('approver/{issuer}/reject', [ApproverController::class, 'IssuerReject'])->name('issuer-a.reject')->middleware('permission:DCMTRD');
     
     // Bond Module
-    Route::get('approver/{issuer}/details', [ApproverController::class, 'BondIndex'])->name('bond-a.details')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('approver/bond/{bond}/show', [ApproverController::class, 'BondShow'])->name('bond-a.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('approver/{issuer}/details', [ApproverController::class, 'BondIndex'])->name('bond-a.details')->middleware('permission:DCMTRD');
+    Route::get('approver/bond/{bond}/show', [ApproverController::class, 'BondShow'])->name('bond-a.show')->middleware('permission:DCMTRD');
 
     // Announcement Module
-    Route::get('approver/announcement/{announcement}/show', [ApproverController::class, 'AnnouncementShow'])->name('announcement-a.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('approver/announcement/{announcement}/show', [ApproverController::class, 'AnnouncementShow'])->name('announcement-a.show')->middleware('permission:DCMTRD');
 
     // Document Module
-    Route::get('approver/document/{document}/show', [ApproverController::class, 'DocumentShow'])->name('document-a.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('approver/document/{document}/show', [ApproverController::class, 'DocumentShow'])->name('document-a.show')->middleware('permission:DCMTRD');
 
     // Facility Info Module
-    Route::get('approver/facility-info/{facility}/show', [ApproverController::class, 'FacilityInfoShow'])->name('facility-info-a.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('approver/facility-info/{facility}/show', [ApproverController::class, 'FacilityInfoShow'])->name('facility-info-a.show')->middleware('permission:DCMTRD');
 
     // Trustee Fee Module
     Route::get('approver/trustee-fee', [ApproverController::class, 'TrusteeFeeIndex'])->name('trustee-fee-a.index')->middleware('permission:DCMTRD');
@@ -538,14 +538,14 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/trustee-fee/{trustee_fee}/reject', [ApproverController::class, 'TrusteeFeeReject'])->name('trustee-fee-a.reject')->middleware('permission:DCMTRD');
 
     // Compliance Covenant Module
-    Route::get('approver/compliance-covenant', [MakerController::class, 'ComplianceIndex'])->name('compliance-covenant-a.index')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('approver/compliance-covenant/{compliance}/show', [MakerController::class, 'ComplianceShow'])->name('compliance-covenant-a.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('approver/compliance-covenant', [MakerController::class, 'ComplianceIndex'])->name('compliance-covenant-a.index')->middleware('permission:DCMTRD');
+    Route::get('approver/compliance-covenant/{compliance}/show', [MakerController::class, 'ComplianceShow'])->name('compliance-covenant-a.show')->middleware('permission:DCMTRD');
 
     // Activity Diary Module
-    Route::get('approver/activity-diary', [MakerController::class, 'ActivityIndex'])->name('activity-diary-a.index')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('approver/activity-diary/{activity}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-a.show')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::patch('approver/activity-diary/{activity}/status', [MakerController::class, 'ActivityUpdateStatus'])->name('activity-diary-a.update-status')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('approver/activity-diary/by-issuer/{issuerId}', [MakerController::class, 'ActivityGetByIssuer'])->name('activity-diary-a.by-issuer')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('approver/activity-diary/upcoming', [MakerController::class, 'ActivityUpcoming'])->name('activity-diary-a.upcoming')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
-    Route::get('approver/activity-diary/export', [MakerController::class, 'ActivityExportActivities'])->name('activity-diary-a.export')->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
+    Route::get('approver/activity-diary', [MakerController::class, 'ActivityIndex'])->name('activity-diary-a.index')->middleware('permission:DCMTRD');
+    Route::get('approver/activity-diary/{activity}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-a.show')->middleware('permission:DCMTRD');
+    Route::patch('approver/activity-diary/{activity}/status', [MakerController::class, 'ActivityUpdateStatus'])->name('activity-diary-a.update-status')->middleware('permission:DCMTRD');
+    Route::get('approver/activity-diary/by-issuer/{issuerId}', [MakerController::class, 'ActivityGetByIssuer'])->name('activity-diary-a.by-issuer')->middleware('permission:DCMTRD');
+    Route::get('approver/activity-diary/upcoming', [MakerController::class, 'ActivityUpcoming'])->name('activity-diary-a.upcoming')->middleware('permission:DCMTRD');
+    Route::get('approver/activity-diary/export', [MakerController::class, 'ActivityExportActivities'])->name('activity-diary-a.export')->middleware('permission:DCMTRD');
 });
