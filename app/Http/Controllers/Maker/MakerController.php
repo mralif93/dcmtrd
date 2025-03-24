@@ -582,7 +582,7 @@ class MakerController extends Controller
             'facility_code' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_code,'.$facility->id : 'unique:facility_informations'),
             'facility_number' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_number,'.$facility->id : 'unique:facility_informations'),
             'facility_name' => 'required|max:100',
-            'principle_type' => 'required|max:50',
+            'principle_type' => 'nullable|max:50',
             'islamic_concept' => 'nullable|max:100',
             'maturity_date' => 'nullable|date',
             'instrument' => 'nullable|max:50',

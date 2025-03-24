@@ -319,7 +319,7 @@ class ApproverController extends Controller
         }
         
         // Get all facilities for the dropdown
-        $facilities = FacilityInformation::orderBy('name')->get();
+        $facilities = FacilityInformation::orderBy('facility_name')->get();
         
         $trustee_fees = $query->latest()->paginate(10);
         return view('approver.trustee-fee.index', compact('trustee_fees', 'facilities'));

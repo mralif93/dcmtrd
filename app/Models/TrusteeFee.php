@@ -34,6 +34,7 @@ class TrusteeFee extends Model
         'memo_receipt_to_fad',
         'receipt_to_issuer',
         'receipt_no',
+        'status',
         'prepared_by',
         'verified_by',
         'remarks',

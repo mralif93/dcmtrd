@@ -300,7 +300,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $facility->maturity_date->format('d M Y') }}
+                                    {{ $facility->maturity_date?->format('d M Y') }}
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex justify-end space-x-2">

@@ -211,7 +211,7 @@
                         <!-- Row 1: Facility Amount & Available Limit -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="facility_amount" class="block text-sm font-medium text-gray-700">Facility Amount (RM) *</label>
+                                <label for="facility_amount" class="block text-sm font-medium text-gray-700">Facility Amount (RM)</label>
                                 <input type="number" name="facility_amount" id="facility_amount" 
                                     value="{{ old('facility_amount') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -244,7 +244,7 @@
                         <!-- Row 3: Lead Arranger & Availability -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="lead_arranger" class="block text-sm font-medium text-gray-700">Lead Arranger (LA) *</label>
+                                <label for="lead_arranger" class="block text-sm font-medium text-gray-700">Lead Arranger (LA)</label>
                                 <input type="text" name="lead_arranger" id="lead_arranger" 
                                     value="{{ old('lead_arranger') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
