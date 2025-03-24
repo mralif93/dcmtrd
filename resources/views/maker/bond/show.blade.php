@@ -291,7 +291,7 @@
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'document'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
+                    <div x-show="openSection === 'document'" x-collapse class="border-t border-gray-200 overflow-x-auto">
                         <div class="overflow-x-auto">
                             <table class="min-w-full bg-white">
                                 <thead>
@@ -364,7 +364,7 @@
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'rating'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
+                    <div x-show="openSection === 'rating'" x-collapse class="border-t border-gray-200 overflow-x-auto">
                         <div class="overflow-x-auto">
                             <table class="min-w-full bg-white">
                                 <thead>
@@ -431,7 +431,7 @@
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'payment'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
+                    <div x-show="openSection === 'payment'" x-collapse class="border-t border-gray-200 overflow-x-auto">
                         <div class="overflow-x-auto">
                             <table class="min-w-full bg-white">
                                 <thead>
@@ -654,7 +654,7 @@
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'trading'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
+                    <div x-show="openSection === 'trading'" x-collapse class="border-t border-gray-200 overflow-x-auto">
                         <div class="overflow-x-auto">
                             <table class="min-w-full bg-white">
                                 <thead>

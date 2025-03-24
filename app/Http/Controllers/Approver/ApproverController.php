@@ -244,9 +244,9 @@ class ApproverController extends Controller
     }
 
     // Related Document & Financial Module
-    public function DocumentShow ()
+    public function DocumentShow (RelatedDocument $document)
     {
-        return view('approver.related-document.show');
+        return view('approver.related-document.show', compact('document'));
     }
 
     // Facility Information Module

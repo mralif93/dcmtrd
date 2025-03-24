@@ -54,8 +54,8 @@
                         </svg>
                     </div>
                 </button>
-                <div x-show="openSection === 'bonds'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
+                <div x-show="openSection === 'bonds'" x-collapse class="border-t border-gray-200 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Bond/Sukuk Name') }}</th>
@@ -155,8 +155,8 @@
                         </svg>
                     </div>
                 </button>
-                <div x-show="openSection === 'announcements'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
+                <div x-show="openSection === 'announcements'" x-collapse class="border-t border-gray-200 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Announce Date</th>
@@ -221,8 +221,8 @@
                         </svg>
                     </div>
                 </button>
-                <div x-show="openSection === 'documents'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
+                <div x-show="openSection === 'documents'" x-collapse class="border-t border-gray-200 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document Type</th>
@@ -287,8 +287,8 @@
                         </svg>
                     </div>
                 </button>
-                <div x-show="openSection === 'facilities'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 border border-bg-gray">
+                <div x-show="openSection === 'facilities'" x-collapse class="border-t border-gray-200 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Facility Code</th>
