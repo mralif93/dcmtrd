@@ -89,8 +89,6 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -99,7 +97,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-// 2FA Routes
+// Welcome Page & 2FA Routes
 Route::middleware(['auth'])->group(function() {
     // Welcome Page
     Route::get('/welcome', function() {
