@@ -17,7 +17,7 @@ class PermissionMiddleware
      * @param  string  $permission
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, $permission): Response
+    public function handle(Request $request, Closure $next, string $permission): Response
     {
         $user = Auth::user();
 

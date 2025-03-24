@@ -477,13 +477,13 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::post('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadStore'])->name('trading-m.upload-store');
     
     // Trustee Fee Module
-    Route::get('maker/trustee-fee', [MakerController::class, 'TrusteeFeeIndex'])->name('trustee-fee-m.index');
-    Route::get('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeCreate'])->name('trustee-fee-m.create');
-    Route::post('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeStore'])->name('trustee-fee-m.store');
-    Route::get('maker/trustee-fee/{trusteeFee}/edit', [MakerController::class, 'TrusteeFeeEdit'])->name('trustee-fee-m.edit');
-    Route::put('maker/trustee-fee/{trusteeFee}/update', [MakerController::class, 'TrusteeFeeUpdate'])->name('trustee-fee-m.update');
-    Route::get('maker/trustee-fee/{trusteeFee}/show', [MakerController::class, 'TrusteeFeeShow'])->name('trustee-fee-m.show');
-    Route::get('maker/trustee-fee/{trusteeFee}/submit-for-approval', [MakerController::class, 'SubmitApprovalTrusteeFee'])->name('trustee-fee-m.approval');
+    Route::get('maker/trustee-fee', [MakerController::class, 'TrusteeFeeIndex'])->name('trustee-fee-m.index')->middleware('permission:DCMTRD');
+    Route::get('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeCreate'])->name('trustee-fee-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeStore'])->name('trustee-fee-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/trustee-fee/{trusteeFee}/edit', [MakerController::class, 'TrusteeFeeEdit'])->name('trustee-fee-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/trustee-fee/{trusteeFee}/update', [MakerController::class, 'TrusteeFeeUpdate'])->name('trustee-fee-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/trustee-fee/{trusteeFee}/show', [MakerController::class, 'TrusteeFeeShow'])->name('trustee-fee-m.show')->middleware('permission:DCMTRD');
+    Route::get('maker/trustee-fee/{trusteeFee}/submit-for-approval', [MakerController::class, 'SubmitApprovalTrusteeFee'])->name('trustee-fee-m.approval')->middleware('permission:DCMTRD');
 
     // Compliance Covenant Module
     Route::get('maker/compliance-covenant', [MakerController::class, 'ComplianceIndex'])->name('compliance-covenant-m.index');
@@ -533,14 +533,14 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/facility-info/{facility}/show', [ApproverController::class, 'FacilityInfoShow'])->name('facility-info-a.show');
 
     // Trustee Fee Module
-    Route::get('approver/trustee-fee', [ApproverController::class, 'TrusteeFeeIndex'])->name('trustee-fee-a.index');
+    Route::get('approver/trustee-fee', [ApproverController::class, 'TrusteeFeeIndex'])->name('trustee-fee-a.index')->middleware('permission:DCMTRD');
     // Route::get('approver/trustee-fee/create', [MakerController::class, 'TrusteeFeeCreate'])->name('trustee-fee-a.create');
     // Route::post('approver/trustee-fee/create', [MakerController::class, 'TrusteeFeeStore'])->name('trustee-fee-a.store');
     // Route::get('approver/trustee-fee/{trusteeFee}/edit', [MakerController::class, 'TrusteeFeeEdit'])->name('trustee-fee-a.edit');
     // Route::put('approver/trustee-fee/{trusteeFee}/update', [MakerController::class, 'TrusteeFeeUpdate'])->name('trustee-fee-a.update');
-    Route::get('approver/trustee-fee/{trusteeFee}/show', [ApproverController::class, 'TrusteeFeeShow'])->name('trustee-fee-a.show');
-    Route::post('approver/trustee-fee/{trustee_fee}/approve', [ApproverController::class, 'TrusteeFeeApprove'])->name('trustee-fee-a.approve');
-    Route::post('approver/trustee-fee/{trustee_fee}/reject', [ApproverController::class, 'TrusteeFeeReject'])->name('trustee-fee-a.reject');
+    Route::get('approver/trustee-fee/{trusteeFee}/show', [ApproverController::class, 'TrusteeFeeShow'])->name('trustee-fee-a.show')->middleware('permission:DCMTRD');
+    Route::post('approver/trustee-fee/{trustee_fee}/approve', [ApproverController::class, 'TrusteeFeeApprove'])->name('trustee-fee-a.approve')->middleware('permission:DCMTRD');
+    Route::post('approver/trustee-fee/{trustee_fee}/reject', [ApproverController::class, 'TrusteeFeeReject'])->name('trustee-fee-a.reject')->middleware('permission:DCMTRD');
 
     // Compliance Covenant Module
     Route::get('approver/compliance-covenant', [MakerController::class, 'ComplianceIndex'])->name('compliance-covenant-a.index');

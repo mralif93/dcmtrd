@@ -17,7 +17,7 @@ class RoleMiddleware
      * @param  string  $role
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, string$role): Response
+    public function handle(Request $request, Closure $next, string $role): Response
     {
         $user = Auth::user();
 
@@ -52,6 +52,7 @@ class RoleMiddleware
             }
         }
 
+        // User role check passed, continue to the next middleware
         return $next($request);
     }
 }
