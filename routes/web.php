@@ -487,25 +487,25 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
 
     // Compliance Covenant Module
     Route::get('maker/compliance-covenant', [MakerController::class, 'ComplianceIndex'])->name('compliance-covenant-m.index')->middleware('permission:DCMTRD');
-    Route::get('maker/compliance-covenant/create', [MakerController::class, 'ComplianceCreate'])->name('compliance-covenant-m.create')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/compliance-covenant/create', [MakerController::class, 'ComplianceStore'])->name('compliance-covenant-m.store')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/compliance-covenant/{compliance}/edit', [MakerController::class, 'ComplianceEdit'])->name('compliance-covenant-m.edit')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/compliance-covenant/{compliance}/update', [MakerController::class, 'ComplianceUpdate'])->name('compliance-covenant-m.update')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/compliance-covenant/{compliance}/show', [MakerController::class, 'ComplianceShow'])->name('compliance-covenant-m.show')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/compliance-covenant/{compliance}/submit-for-approval', [MakerController::class, 'SubmitApprovalCompliance'])->name('compliance-covenant-m.approval')->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/compliance-covenant/create', [MakerController::class, 'ComplianceCreate'])->name('compliance-covenant-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/compliance-covenant/create', [MakerController::class, 'ComplianceStore'])->name('compliance-covenant-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/compliance-covenant/{compliance}/edit', [MakerController::class, 'ComplianceEdit'])->name('compliance-covenant-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/compliance-covenant/{compliance}/update', [MakerController::class, 'ComplianceUpdate'])->name('compliance-covenant-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/compliance-covenant/{compliance}/show', [MakerController::class, 'ComplianceShow'])->name('compliance-covenant-m.show')->middleware('permission:DCMTRD');
+    Route::get('maker/compliance-covenant/{compliance}/submit-for-approval', [MakerController::class, 'SubmitApprovalCompliance'])->name('compliance-covenant-m.approval')->middleware('permission:DCMTRD');
 
     // Activity Diary Module
     Route::get('maker/activity-diary', [MakerController::class, 'ActivityIndex'])->name('activity-diary-m.index')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/create', [MakerController::class, 'ActivityCreate'])->name('activity-diary-m.create')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
-    Route::post('maker/activity-diary/create', [MakerController::class, 'ActivityStore'])->name('activity-diary-m.store')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/{activity}/edit', [MakerController::class, 'ActivityEdit'])->name('activity-diary-m.edit')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
-    Route::put('maker/activity-diary/{activity}/update', [MakerController::class, 'ActivityUpdate'])->name('activity-diary-m.update')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/{activity}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-m.show')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
-    Route::patch('maker/activity-diary/{activity}/status', [MakerController::class, 'ActivityUpdateStatus'])->name('activity-diary-m.update-status')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/by-issuer/{issuerId}', [MakerController::class, 'ActivityGetByIssuer'])->name('activity-diary-m.by-issuer')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/upcoming', [MakerController::class, 'ActivityUpcoming'])->name('activity-diary-m.upcoming')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/export', [MakerController::class, 'ActivityExportActivities'])->name('activity-diary-m.export')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
-    Route::get('maker/activity-diary/{activity}/submit-for-approval', [MakerController::class, 'SubmitApprovalActivityDiary'])->name('activity-diary-m.approval')->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/create', [MakerController::class, 'ActivityCreate'])->name('activity-diary-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/activity-diary/create', [MakerController::class, 'ActivityStore'])->name('activity-diary-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/{activity}/edit', [MakerController::class, 'ActivityEdit'])->name('activity-diary-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/activity-diary/{activity}/update', [MakerController::class, 'ActivityUpdate'])->name('activity-diary-m.update')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/{activity}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-m.show')->middleware('permission:DCMTRD');
+    Route::patch('maker/activity-diary/{activity}/status', [MakerController::class, 'ActivityUpdateStatus'])->name('activity-diary-m.update-status')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/by-issuer/{issuerId}', [MakerController::class, 'ActivityGetByIssuer'])->name('activity-diary-m.by-issuer')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/upcoming', [MakerController::class, 'ActivityUpcoming'])->name('activity-diary-m.upcoming')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/export', [MakerController::class, 'ActivityExportActivities'])->name('activity-diary-m.export')->middleware('permission:DCMTRD');
+    Route::get('maker/activity-diary/{activity}/submit-for-approval', [MakerController::class, 'SubmitApprovalActivityDiary'])->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
 });
 
 // Approver routes
