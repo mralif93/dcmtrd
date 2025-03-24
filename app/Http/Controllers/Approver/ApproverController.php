@@ -41,7 +41,7 @@ class ApproverController extends Controller
         }
         
         // Get filtered issuers with latest first and paginate
-        $issuers = $query->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])
+        $issuers = $query->whereIn('status', ['Active', 'Pending', 'Rejected', 'Draft'])
                         ->latest()
                         ->paginate(10)
                         ->withQueryString();
