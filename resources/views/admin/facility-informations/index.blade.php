@@ -126,7 +126,7 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($facilities as $facility)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap font-mono text-indigo-600">{{ $facility->facility_code }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-indigo-600">{{ $facility->facility_code }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $facility->facility_name }}</div>
                                     </td>
