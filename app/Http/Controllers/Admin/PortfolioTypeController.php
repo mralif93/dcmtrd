@@ -15,7 +15,7 @@ class PortfolioTypeController extends Controller
      */
     public function index()
     {
-        $portfolioTypes = PortfolioType::all();
+        $portfolioTypes = PortfolioType::latest()->paginate(10);
         return view('admin.portfolio-types.index', compact('portfolioTypes'));
     }
 

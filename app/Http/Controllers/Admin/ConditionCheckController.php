@@ -17,8 +17,7 @@ class ConditionCheckController extends Controller
      */
     public function index()
     {
-        $conditionChecks = ConditionCheck::with('checklist')->get();
-        
+        $conditionChecks = ConditionCheck::with('checklist')->latest()->paginate(10);
         return view('admin.condition-checks.index', compact('conditionChecks'));
     }
 

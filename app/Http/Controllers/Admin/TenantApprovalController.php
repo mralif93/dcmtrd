@@ -17,8 +17,7 @@ class TenantApprovalController extends Controller
      */
     public function index()
     {
-        $tenantApprovals = TenantApproval::with(['tenant', 'checklist', 'lease'])->get();
-        
+        $tenantApprovals = TenantApproval::with(['tenant', 'checklist', 'lease'])->latest()->paginate(10);
         return view('admin.tenant-approvals.index', compact('tenantApprovals'));
     }
 

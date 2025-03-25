@@ -15,8 +15,7 @@ class DocumentationItemController extends Controller
      */
     public function index()
     {
-        $documentationItems = DocumentationItem::with('checklist')->get();
-        
+        $documentationItems = DocumentationItem::with('checklist')->latest()->paginate(10);
         return view('admin.documentation-items.index', compact('documentationItems'));
     }
 

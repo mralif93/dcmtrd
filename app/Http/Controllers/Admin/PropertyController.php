@@ -20,8 +20,7 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        $properties = Property::with('portfolio')->get();
-        
+        $properties = Property::with('portfolio')->latest()->paginate(10);
         return view('admin.properties.index', compact('properties'));
     }
 
