@@ -123,7 +123,16 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     // Bond
     Route::resource('/admin/users', UserAdminController::class);
     Route::resource('/admin/issuers', IssuerController::class);
+
     Route::resource('/admin/bonds', BondController::class);
+
+    // Additional
+    Route::prefix('/admin/bonds')->name('bonds.')->group(function () {
+        Route::get('/admin/bonds/trashed', [BondController::class, 'trashed'])->name('trashed');
+        Route::patch('/admin/bonds/{id}/restore', [BondController::class, 'restore'])->name('restore');
+        Route::delete('/admin/bonds/{id}/force-delete', [BondController::class, 'forceDelete'])->name('/adminforce-delete');
+    });
+
     Route::resource('/admin/rating-movements', RatingMovementController::class);
     Route::resource('/admin/payment-schedules', PaymentScheduleController::class);
     Route::resource('/admin/redemptions', RedemptionController::class);
@@ -150,10 +159,10 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
 
     // Additional
     Route::prefix('/admin/compliance-covenants')->name('compliance-covenants.')->group(function () {
-        Route::get('/compliance-covenants/report', [ComplianceCovenantController::class, 'report'])->name('report');
-        Route::get('/compliance-covenants-trashed', [ComplianceCovenantController::class, 'trashed'])->name('trashed');
-        Route::patch('/compliance-covenants/{id}/restore', [ComplianceCovenantController::class, 'restore'])->name('restore');
-        Route::delete('/compliance-covenants/{id}/force-delete', [ComplianceCovenantController::class, 'forceDelete'])->name('force-delete');
+        Route::get('/admin/compliance-covenants/report', [ComplianceCovenantController::class, 'report'])->name('report');
+        Route::get('/admin/compliance-covenants-trashed', [ComplianceCovenantController::class, 'trashed'])->name('trashed');
+        Route::patch('/admin/compliance-covenants/{id}/restore', [ComplianceCovenantController::class, 'restore'])->name('restore');
+        Route::delete('/admin/compliance-covenants/{id}/force-delete', [ComplianceCovenantController::class, 'forceDelete'])->name('force-delete');
     });
 
     Route::resource('permissions', \App\Http\Controllers\Admin\PermissionController::class);

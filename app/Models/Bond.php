@@ -5,9 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Bond extends Model
 {
@@ -49,151 +46,59 @@ class Bond extends Model
         'status',
         'prepared_by',
         'verified_by',
-        'approval_datetime',
         'remarks',
+        'approval_datetime',
         'issuer_id',
     ];
 
     protected $casts = [
         'issue_date' => 'date',
         'maturity_date' => 'date',
-        'coupon_rate'=> 'decimal:2',
+        'last_traded_date' => 'date',
+        'coupon_accrual' => 'date',
+        'prev_coupon_payment_date' => 'date',
+        'first_coupon_payment_date' => 'date',
+        'next_coupon_payment_date' => 'date',
+        'last_coupon_payment_date' => 'date',
+        'approval_datetime' => 'datetime',
+        'coupon_rate' => 'decimal:4',
         'issue_tenure_years' => 'decimal:4',
         'residual_tenure_years' => 'decimal:4',
         'last_traded_yield' => 'decimal:2',
         'last_traded_price' => 'decimal:2',
         'last_traded_amount' => 'decimal:2',
-        'last_traded_date' => 'date:Y-m-d',
-        'coupon_accrual' => 'date:Y-m-d',
-        'prev_coupon_payment_date' => 'date:Y-m-d',
-        'first_coupon_payment_date' => 'date:Y-m-d',
-        'next_coupon_payment_date' => 'date:Y-m-d',
-        'last_coupon_payment_date' => 'date:Y-m-d',
         'amount_issued' => 'decimal:2',
         'amount_outstanding' => 'decimal:2',
-        'approval_datetime' => 'datetime:Y-m-d H:i:s',
     ];
 
-    // Relationships
-    public function issuer(): BelongsTo
+    public function issuer()
     {
         return $this->belongsTo(Issuer::class);
     }
 
-    public function ratingMovements(): HasMany
+    // Add your relationships here (based on what I can see in your controller)
+    public function ratingMovements()
     {
-        return $this->hasMany(RatingMovement::class)->latest();
+        return $this->hasMany(RatingMovement::class);
     }
 
-    public function paymentSchedules(): HasMany
+    public function paymentSchedules()
     {
-        return $this->hasMany(PaymentSchedule::class)->orderBy('payment_date');
+        return $this->hasMany(PaymentSchedule::class);
     }
 
-    public function redemption(): HasOne
+    public function tradingActivities()
     {
-        return $this->hasOne(Redemption::class, 'bond_id');
+        return $this->hasMany(TradingActivity::class);
     }
 
-    public function tradingActivities(): HasMany
+    public function redemption()
     {
-        return $this->hasMany(TradingActivity::class)->latest();
+        return $this->hasOne(Redemption::class);
     }
 
-    public function charts(): HasMany
+    public function charts()
     {
-        return $this->hasMany(Chart::class)->orderBy('period_from');
-    }
-
-    public function facilityInformation()
-    {
-        // If there's a direct relationship (which I don't see in the schema)
-        return $this->belongsTo(FacilityInformation::class, 'facility_code', 'facility_code');
-        
-        // Or alternatively, if you need to go through the issuer
-        // return $this->issuer->facilityInformations()->where('facility_code', $this->facility_code);
-    }
-
-    // Scopes
-    public function scopeActive($query)
-    {
-        return $query->where('status', 'Active');
-    }
-
-    public function scopeMatured($query)
-    {
-        return $query->where('status', 'Matured');
-    }
-
-    public function scopePending($query)
-    {
-        return $query->where('status', 'Pending');
-    }
-
-    public function scopeByIssuer($query, $issuerId)
-    {
-        return $query->where('issuer_id', $issuerId);
-    }
-
-    public function scopeWithCouponType($query, $type)
-    {
-        return $query->where('coupon_type', $type);
-    }
-
-    // Accessors
-    public function getFormattedCouponRateAttribute(): string
-    {
-        return $this->coupon_rate.'%';
-    }
-
-    public function getDaysToMaturityAttribute(): int
-    {
-        return now()->diffInDays($this->maturity_date, false);
-    }
-
-    public function getIsTradableAttribute(): bool
-    {
-        return $this->status === 'Active' && $this->days_to_maturity > 0;
-    }
-
-    // Status checks
-    public function getIsPendingAttribute(): bool
-    {
-        return $this->status === 'Pending';
-    }
-
-    public function getIsApprovedAttribute(): bool
-    {
-        return $this->status === 'Active';
-    }
-
-    public function getIsRejectedAttribute(): bool
-    {
-        return $this->status === 'Inactive' && $this->verified_by !== null;
-    }
-
-    // Mutators
-    public function setBondSukukNameAttribute($value)
-    {
-        $this->attributes['bond_sukuk_name'] = ucwords(strtolower($value));
-    }
-
-    public function setFacilityCodeAttribute($value)
-    {
-        $this->attributes['facility_code'] = strtoupper($value);
-    }
-
-    // Business logic
-    public function markAsMatured()
-    {
-        if ($this->maturity_date->isPast()) {
-            $this->update(['status' => 'Matured']);
-        }
-    }
-
-    public function updateOutstandingAmount()
-    {
-        $this->amount_outstanding = $this->amount_issued - $this->principal;
-        $this->save();
+        return $this->hasMany(Chart::class);
     }
 }

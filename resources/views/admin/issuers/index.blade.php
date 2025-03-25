@@ -1,16 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Issuers List') }}
-            </h2>
-            <a href="{{ route('issuers.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                Create Issuer
-            </a>
-        </div>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Issuers Management') }}
+        </h2>
     </x-slot>
 
     <div class="py-12">
@@ -31,14 +23,21 @@
                 </div>
             @endif
 
-            <div class="bg-white shadow rounded-lg">
-                <!-- Header with Search and Filters -->
-                <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <!-- Header -->
+                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">Issuers</h3>
+                    <a href="{{ route('issuers.create') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Add New Issuer
+                    </a>
                 </div>
 
                 <!-- Search and Filter Bar -->
-                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-b border-gray-200">
+                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <div class="flex flex-col sm:flex-row justify-between gap-4">
                         <!-- Search Form -->
                         <form class="w-full sm:w-1/2" method="GET">

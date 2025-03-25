@@ -13,6 +13,11 @@ class BondController extends Controller
     public function index(Request $request)
     {
         $searchTerm = $request->input('search');
+        $category = $request->input('category');
+        $rating = $request->input('rating');
+        $facilityCode = $request->input('facility_code');
+        $status = $request->input('status');
+        $showTrashed = $request->boolean('trashed');
         
         $bonds = Bond::with('issuer')
             ->when($searchTerm, function ($query) use ($searchTerm) {
@@ -25,11 +30,26 @@ class BondController extends Controller
                       });
                 });
             })
+            ->when($category, function ($query) use ($category) {
+                $query->where('category', $category);
+            })
+            ->when($rating, function ($query) use ($rating) {
+                $query->where('rating', $rating);
+            })
+            ->when($facilityCode, function ($query) use ($facilityCode) {
+                $query->where('facility_code', 'like', "%$facilityCode%");
+            })
+            ->when($status, function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->when($showTrashed, function ($query) {
+                $query->onlyTrashed();
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
-
-        return view('admin.bonds.index', compact('bonds', 'searchTerm'));
+    
+        return view('admin.bonds.index', compact('bonds', 'searchTerm', 'category', 'rating', 'facilityCode', 'status', 'showTrashed'));
     }
 
     public function create()
@@ -47,7 +67,7 @@ class BondController extends Controller
             $bond = Bond::create($validated);
             return redirect()->route('bonds.show', $bond)->with('success', 'Bond created successfully');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error deleting bond: ' . $e->getMessage());
+            return back()->with('error', 'Error creating bond: ' . $e->getMessage());
         }
     }
 
@@ -94,6 +114,60 @@ class BondController extends Controller
         }
     }
 
+    /**
+     * Display a listing of the trashed bonds
+     */
+    public function trashed(Request $request)
+    {
+        $searchTerm = $request->input('search');
+        
+        $bonds = Bond::onlyTrashed()
+            ->with('issuer')
+            ->when($searchTerm, function ($query) use ($searchTerm) {
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('bond_sukuk_name', 'like', "%$searchTerm%")
+                      ->orWhere('isin_code', 'like', "%$searchTerm%")
+                      ->orWhere('stock_code', 'like', "%$searchTerm%")
+                      ->orWhereHas('issuer', function ($q) use ($searchTerm) {
+                          $q->where('issuer_name', 'like', "%$searchTerm%");
+                      });
+                });
+            })
+            ->orderBy('deleted_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('admin.bonds.trashed', compact('bonds', 'searchTerm'));
+    }
+
+    /**
+     * Restore the specified bond from soft delete
+     */
+    public function restore($id)
+    {
+        try {
+            $bond = Bond::onlyTrashed()->findOrFail($id);
+            $bond->restore();
+            return redirect()->route('bonds.index')->with('success', 'Bond restored successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error restoring bond: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Permanently delete the specified bond from storage
+     */
+    public function forceDelete($id)
+    {
+        try {
+            $bond = Bond::withTrashed()->findOrFail($id);
+            $bond->forceDelete();
+            return redirect()->route('bonds.trashed')->with('success', 'Bond permanently deleted');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error permanently deleting bond: ' . $e->getMessage());
+        }
+    }
+
     protected function validateBond(Request $request, Bond $bond = null)
     {
         return $request->validate([
@@ -102,6 +176,7 @@ class BondController extends Controller
             'rating' => 'nullable|string|max:50',
             'category' => 'nullable|string|max:100',
             'principal' => 'nullable|string|max:100',
+            'islamic_concept' => 'nullable|string|max:255',
             'isin_code' => [
                 'nullable',
                 'string',
@@ -149,7 +224,10 @@ class BondController extends Controller
                 Rule::unique('bonds')->ignore($bond?->id)
             ],
             'status' => 'nullable|in:Active,Inactive,Matured,Pending',
-            'approval_date_time' => 'nullable|date',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
             'issuer_id' => 'required|exists:issuers,id',
         ], [
             'maturity_date.after' => 'Maturity date must be after issue date',
