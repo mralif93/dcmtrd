@@ -1267,19 +1267,19 @@ class MakerController extends Controller
         if ($request->has('status')) {
             switch ($request->status) {
                 case 'draft':
-                    $query->where('status', 'draft');
+                    $query->where('status', 'Draft');
                     break;
                 case 'active':
-                    $query->where('status', 'active');
+                    $query->where('status', 'Active');
                     break;
                 case 'inactive':
-                    $query->where('status', 'inactive');
+                    $query->where('status', 'Inactive');
                     break;
                 case 'pending':
-                    $query->where('status', 'pending');
+                    $query->where('status', 'Pending');
                     break;
                 case 'rejected':
-                    $query->where('status', 'rejected');
+                    $query->where('status', 'Rejected');
                     break;
             }
         }
@@ -1588,11 +1588,11 @@ class MakerController extends Controller
     public function ActivityUpdateStatus(Request $request, ActivityDiary $activity)
     {
         $validated = $request->validate([
-            'status' => ['required', 'string', Rule::in(['pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
+            'status' => ['required', 'string', Rule::in(['Draft', 'Active', 'Rejected', 'Pending', 'In_progress', 'Completed', 'Overdue', 'Compiled', 'Notification', 'Passed'])],
         ]);
 
         // Handle approval datetime if status is changing to completed
-        if ($validated['status'] === 'completed' && $activity->status !== 'completed') {
+        if ($validated['status'] === 'Completed' && $activity->status !== 'Completed') {
             $activity->update([
                 'status' => $validated['status'],
                 'approval_datetime' => now()
@@ -1665,7 +1665,7 @@ class MakerController extends Controller
             'extension_note_1' => 'nullable|string',
             'extension_date_2' => 'nullable|date',
             'extension_note_2' => 'nullable|string',
-            'status' => ['nullable', 'string', Rule::in(['draft', 'active', 'rejected', 'pending', 'in_progress', 'completed', 'overdue', 'compiled', 'notification', 'passed'])],
+            'status' => ['nullable', 'string', Rule::in(['Draft', 'Active', 'Rejected', 'Pending', 'In_progress', 'Completed', 'Overdue', 'Compiled', 'Notification', 'Passed'])],
             'remarks' => 'nullable|string',
             'verified_by' => 'nullable|string',
         ]);

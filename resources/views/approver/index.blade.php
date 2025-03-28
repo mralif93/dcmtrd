@@ -30,17 +30,17 @@
                         </a>
 
                         <!-- Trustee Fee -->
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <a href="{{ route('trustee-fee-a.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Trustee Fee') }}
                         </a>
 
                         <!-- Compliance Covenant -->
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <a href="{{ route('compliance-covenant-a.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Compliance Covenant') }}
                         </a>
 
                         <!-- Activity Diary -->
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <a href="{{ route('activity-diary-a.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Activity Diary') }}
                         </a>
 
@@ -87,9 +87,9 @@
                     color="bg-blue-100"
                 />
 
-                <!-- Activity Dairy -->
+                <!-- Activity Diary -->
                 <x-dashboard-card
-                    title="Activity Dairy"
+                    title="Activity Diary"
                     icon="calendar"
                     :count="$activityDairyCount ?? 0"
                     :href="route('activity-diary-a.index')"

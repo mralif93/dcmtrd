@@ -547,14 +547,18 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/trustee-fee/{trustee_fee}/reject', [ApproverController::class, 'TrusteeFeeReject'])->name('trustee-fee-a.reject')->middleware('permission:DCMTRD');
 
     // Compliance Covenant Module
-    Route::get('approver/compliance-covenant', [MakerController::class, 'ComplianceIndex'])->name('compliance-covenant-a.index')->middleware('permission:DCMTRD');
-    Route::get('approver/compliance-covenant/{compliance}/show', [MakerController::class, 'ComplianceShow'])->name('compliance-covenant-a.show')->middleware('permission:DCMTRD');
+    Route::get('approver/compliance-covenant', [ApproverController::class, 'ComplianceIndex'])->name('compliance-covenant-a.index')->middleware('permission:DCMTRD');
+    Route::get('approver/compliance-covenant/{compliance}/show', [ApproverController::class, 'ComplianceShow'])->name('compliance-covenant-a.show')->middleware('permission:DCMTRD');
+    Route::post('approver/compliance-covenant/{compliance}/approve', [ApproverController::class, 'ComplianceApprove'])->name('compliance-covenant-a.approve')->middleware('permission:DCMTRD');
+    Route::post('approver/compliance-covenant/{compliance}/reject', [ApproverController::class, 'ComplianceReject'])->name('compliance-covenant-a.reject')->middleware('permission:DCMTRD');
 
     // Activity Diary Module
-    Route::get('approver/activity-diary', [MakerController::class, 'ActivityIndex'])->name('activity-diary-a.index')->middleware('permission:DCMTRD');
-    Route::get('approver/activity-diary/{activity}/show', [MakerController::class, 'ActivityShow'])->name('activity-diary-a.show')->middleware('permission:DCMTRD');
-    Route::patch('approver/activity-diary/{activity}/status', [MakerController::class, 'ActivityUpdateStatus'])->name('activity-diary-a.update-status')->middleware('permission:DCMTRD');
-    Route::get('approver/activity-diary/by-issuer/{issuerId}', [MakerController::class, 'ActivityGetByIssuer'])->name('activity-diary-a.by-issuer')->middleware('permission:DCMTRD');
-    Route::get('approver/activity-diary/upcoming', [MakerController::class, 'ActivityUpcoming'])->name('activity-diary-a.upcoming')->middleware('permission:DCMTRD');
-    Route::get('approver/activity-diary/export', [MakerController::class, 'ActivityExportActivities'])->name('activity-diary-a.export')->middleware('permission:DCMTRD');
+    Route::get('approver/activity-diary', [ApproverController::class, 'ActivityIndex'])->name('activity-diary-a.index')->middleware('permission:DCMTRD');
+    Route::get('approver/activity-diary/{activity}/show', [ApproverController::class, 'ActivityShow'])->name('activity-diary-a.show')->middleware('permission:DCMTRD');
+    Route::patch('approver/activity-diary/{activity}/status', [ApproverController::class, 'ActivityUpdateStatus'])->name('activity-diary-a.update-status')->middleware('permission:DCMTRD');
+    Route::get('approver/activity-diary/by-issuer/{issuerId}', [ApproverController::class, 'ActivityGetByIssuer'])->name('activity-diary-a.by-issuer')->middleware('permission:DCMTRD');
+    Route::get('approver/activity-diary/upcoming', [ApproverController::class, 'ActivityUpcoming'])->name('activity-diary-a.upcoming')->middleware('permission:DCMTRD');
+    Route::get('approver/activity-diary/export', [ApproverController::class, 'ActivityExportActivities'])->name('activity-diary-a.export')->middleware('permission:DCMTRD');
+    Route::post('approver/activity-diary/{activity}/approve', [ApproverController::class, 'ActivityApprove'])->name('activity-diary-a.approve')->middleware('permission:DCMTRD');
+    Route::post('approver/activity-diary/{activity}/reject', [ApproverController::class, 'ActivityReject'])->name('activity-diary-a.reject')->middleware('permission:DCMTRD');
 });

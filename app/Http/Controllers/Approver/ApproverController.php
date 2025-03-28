@@ -17,6 +17,7 @@ use App\Models\RelatedDocument;
 use App\Models\FacilityInformation;
 use App\Models\TrusteeFee;
 use App\Models\ComplianceCovenant;
+use App\Models\ActivityDiary;
 use App\Models\Portfolio;
 
 class ApproverController extends Controller
@@ -384,8 +385,203 @@ class ApproverController extends Controller
     }
 
     // Compliance Covenant Module
+    public function ComplianceIndex(Request $request)
+    {
+        $query = ComplianceCovenant::query();
+
+        // Filter by issuer_id
+        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
+            $query->where('issuer_id', $request->issuer_id);
+        }
+
+        // Search by issuer short name
+        if ($request->has('issuer_short_name') && !empty($request->issuer_short_name)) {
+            $query->where('issuer_short_name', 'LIKE', '%' . $request->issuer_short_name . '%');
+        }
+
+        // Search by financial year end
+        if ($request->has('financial_year_end') && !empty($request->financial_year_end)) {
+            $query->where('financial_year_end', 'LIKE', '%' . $request->financial_year_end . '%');
+        }
+
+        // Filter by status
+        if ($request->has('status')) {
+            switch ($request->status) {
+                case 'draft':
+                    $query->where('status', 'Draft');
+                    break;
+                case 'active':
+                    $query->where('status', 'Active');
+                    break;
+                case 'inactive':
+                    $query->where('status', 'Inactive');
+                    break;
+                case 'pending':
+                    $query->where('status', 'Pending');
+                    break;
+                case 'rejected':
+                    $query->where('status', 'Rejected');
+                    break;
+            }
+        }
+
+        // Get all issuers for the dropdown
+        $issuers = Issuer::orderBy('issuer_name')->get();
+
+        // Get results with pagination
+        $covenants = $query->latest()->paginate(10);
+        $covenants->appends($request->all());
+        
+        return view('approver.compliance-covenant.index', compact('covenants', 'issuers'));
+    }
+
     public function ComplianceShow(ComplianceCovenant $compliance)
     {
         return view('approver.compliance-covenant.show', compact('compliance'));
+    }
+
+    public function ComplianceApprove(ComplianceCovenant $compliance)
+    {
+        try {
+            $compliance->update([
+                'status' => 'Active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+            
+            return redirect()->route('compliance-covenant-a.index')->with('success', 'Compliance Covenant approved successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error approving compliance covenant: ' . $e->getMessage());
+        }
+    }
+
+    public function ComplianceReject(Request $request, ComplianceCovenant $compliance)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $compliance->update([
+                'status' => 'Rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+            
+            return redirect()->route('compliance-covenant-a.index')->with('success', 'Compliance Covenant rejected successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error rejecting compliance covenant: ' . $e->getMessage());
+        }
+    }
+
+    // Activity Diary Module
+    public function ActivityIndex(Request $request)
+    {
+        $query = ActivityDiary::with('issuer');
+        
+        // Filter by issuer_id
+        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
+            $query->where('issuer_id', $request->issuer_id);
+        }
+        
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        if ($request->filled('due_date')) {
+            $query->whereDate('due_date', $request->due_date);
+        }
+
+        // Get all issuers for the dropdown
+        $issuers = Issuer::orderBy('issuer_name')->get();
+        
+        $activities = $query->latest()->paginate(10)->withQueryString();
+        
+        return view('approver.activity-diary.index', compact('activities', 'issuers'));
+    }
+
+    public function ActivityShow(ActivityDiary $activity)
+    {
+        $activity->load('issuer');
+        return view('approver.activity-diary.show', compact('activity'));
+    }
+
+    public function ActivityUpcoming(Request $request)
+    {
+        $today = now()->format('Y-m-d');
+        $nextWeek = now()->addDays(7)->format('Y-m-d');
+        
+        $query = ActivityDiary::with('issuer')
+            ->whereBetween('due_date', [$today, $nextWeek])
+            ->where('status', '!=', 'completed');
+        
+        // Apply filters if provided
+        if ($request->filled('issuer')) {
+            $query->whereHas('issuer', function($q) use ($request) {
+                $q->where('issuer_name', 'like', '%' . $request->issuer . '%')
+                  ->orWhere('issuer_short_name', 'like', '%' . $request->issuer . '%');
+            });
+        }
+        
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        $activities = $query->latest()->paginate(10)->withQueryString();
+        
+        return view('approver.activity-diary.upcoming', compact('activities'));
+    }
+
+    public function ActivityGetByIssuer($issuerId, Request $request)
+    {
+        $issuer = Issuer::findOrFail($issuerId);
+        $query = ActivityDiary::where('issuer_id', $issuerId);
+        
+        // Apply filters if provided
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        if ($request->filled('due_date')) {
+            $query->whereDate('due_date', $request->due_date);
+        }
+        
+        $activities = $query->latest()->paginate(10)->withQueryString();
+        
+        return view('approver.activity-diary.by-issuer', compact('activities', 'issuer'));
+    }
+
+    public function ActivityApprove(ActivityDiary $activity)
+    {
+        try {
+            $activity->update([
+                'status' => 'Active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+            
+            return redirect()->route('activity-diary-a.index')->with('success', 'Activity Diary approved successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error approving activity diary: ' . $e->getMessage());
+        }
+    }
+
+    public function ActivityReject(Request $request, ActivityDiary $activity)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $activity->update([
+                'status' => 'Rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+            
+            return redirect()->route('activity-diary-a.index')->with('success', 'Activity Diary rejected successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
+        }
     }
 }
