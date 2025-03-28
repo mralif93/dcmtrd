@@ -83,7 +83,7 @@
                     title="Compliance Covenants"
                     icon="document-check"
                     :count="$complianceCovenantCount ?? 0"
-                    :href="route('compliance-covenants-info.index')"
+                    :href="route('compliance-covenant-a.index')"
                     color="bg-blue-100"
                 />
 
@@ -92,7 +92,7 @@
                     title="Activity Dairy"
                     icon="calendar"
                     :count="$activityDairyCount ?? 0"
-                    :href="route('activity-diaries-info.index')"
+                    :href="route('activity-diary-a.index')"
                     color="bg-blue-100"
                 />
 
