@@ -16,7 +16,6 @@ class PortfolioType extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'portfolio_id',
         'name',
         'description',
         'status',
@@ -27,6 +26,6 @@ class PortfolioType extends Model
      */
     public function portfolios()
     {
-        return $this->hasMany(Portfolio::class, 'portfolio_types_id');
+        return $this->hasMany(Portfolio::class, 'portfolio_type_id');
     }
 }

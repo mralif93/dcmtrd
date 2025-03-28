@@ -15,11 +15,23 @@ class ReitsSeeder extends Seeder
     {
         // Seed Financial Types
         $financialTypes = [
-            ['name' => 'Loan', 'description' => 'Standard bank loan'],
-            ['name' => 'Mortgage', 'description' => 'Property mortgage'],
-            ['name' => 'Line of Credit', 'description' => 'Revolving credit facility']
+            ['name' => 'Islamic Banking Financing', 'description' => 'Shariah-compliant financing options'],
+            ['name' => 'Conventional Loan', 'description' => 'Traditional interest-based financing'],
+            ['name' => 'Revolving Credit', 'description' => 'Flexible credit line for ongoing needs'],
+            ['name' => 'Term Loan', 'description' => 'Fixed-term loan with regular repayment schedule'],
+            ['name' => 'Bridge Financing', 'description' => 'Short-term financing between transactions'],
+            ['name' => 'Syndicated Loan', 'description' => 'Loan provided by a group of lenders'],
+            ['name' => 'Mortgage', 'description' => 'Loan secured by real property'],
+            ['name' => 'Construction Loan', 'description' => 'Financing for property development'],
+            ['name' => 'Mezzanine Financing', 'description' => 'Subordinated debt or preferred equity'],
+            ['name' => 'REIT Financing', 'description' => 'Funding through Real Estate Investment Trusts'],
+            ['name' => 'Commercial Mortgage-Backed Securities', 'description' => 'Securities backed by commercial loans'],
+            ['name' => 'Green Financing', 'description' => 'Funding for sustainable real estate projects'],
+            ['name' => 'Commercial Paper', 'description' => 'Short-term debt instruments'],
+            ['name' => 'Equity Financing', 'description' => 'Capital for ownership stake'],
+            ['name' => 'Lease Financing', 'description' => 'Assets leased instead of purchased']
         ];
-        
+
         foreach ($financialTypes as $type) {
             DB::table('financial_types')->insert([
                 'name' => $type['name'],
@@ -32,11 +44,23 @@ class ReitsSeeder extends Seeder
 
         // Seed Banks
         $banks = [
-            ['name' => 'First National Bank', 'description' => 'Major commercial bank'],
-            ['name' => 'City Trust', 'description' => 'Local financial institution'],
-            ['name' => 'Global Finance', 'description' => 'International banking corporation']
+            ['name' => 'HSBC Bank', 'description' => 'Global banking and financial services'],
+            ['name' => 'Citibank', 'description' => 'Multinational investment bank'],
+            ['name' => 'JP Morgan Chase', 'description' => 'American financial services company'],
+            ['name' => 'Bank of America', 'description' => 'American multinational bank'],
+            ['name' => 'DBS Bank', 'description' => 'Banking corporation from Singapore'],
+            ['name' => 'Standard Chartered', 'description' => 'British multinational bank'],
+            ['name' => 'OCBC Bank', 'description' => 'Singapore-based banking organization'],
+            ['name' => 'UOB Bank', 'description' => 'Singaporean multinational bank'],
+            ['name' => 'Maybank', 'description' => 'Malaysian banking group'],
+            ['name' => 'CIMB Bank', 'description' => 'Malaysian universal bank'],
+            ['name' => 'RHB Bank', 'description' => 'Malaysian financial services provider'],
+            ['name' => 'Bank Islam', 'description' => 'Malaysian Islamic banking institution'],
+            ['name' => 'Public Bank', 'description' => 'Malaysian banking group'],
+            ['name' => 'Hong Leong Bank', 'description' => 'Malaysian banking company'],
+            ['name' => 'AmBank', 'description' => 'Malaysian banking services']
         ];
-        
+
         foreach ($banks as $bank) {
             DB::table('banks')->insert([
                 'name' => $bank['name'],
@@ -46,14 +70,27 @@ class ReitsSeeder extends Seeder
                 'updated_at' => now()
             ]);
         }
+       
 
         // Seed Portfolio Types
         $portfolioTypes = [
             ['name' => 'Residential', 'description' => 'Residential property investments'],
             ['name' => 'Commercial', 'description' => 'Commercial property investments'],
-            ['name' => 'Mixed Use', 'description' => 'Combined residential and commercial properties']
+            ['name' => 'Mixed Use', 'description' => 'Combined residential and commercial properties'],
+            ['name' => 'Retail', 'description' => 'Retail property investments'],
+            ['name' => 'Industrial', 'description' => 'Industrial property investments'],
+            ['name' => 'Office', 'description' => 'Office property investments'],
+            ['name' => 'Hospitality', 'description' => 'Hotel and resort investments'],
+            ['name' => 'Healthcare', 'description' => 'Medical and healthcare facilities'],
+            ['name' => 'Educational', 'description' => 'Schools and educational institutions'],
+            ['name' => 'Logistics', 'description' => 'Warehousing and distribution centers'],
+            ['name' => 'Data Centers', 'description' => 'IT infrastructure facilities'],
+            ['name' => 'Self Storage', 'description' => 'Self-storage facilities'],
+            ['name' => 'Agricultural', 'description' => 'Agricultural land investments'],
+            ['name' => 'Leisure', 'description' => 'Recreation and leisure facilities'],
+            ['name' => 'Student Housing', 'description' => 'Purpose-built student accommodations']
         ];
-        
+
         foreach ($portfolioTypes as $type) {
             DB::table('portfolio_types')->insert([
                 'name' => $type['name'],
@@ -67,609 +104,2513 @@ class ReitsSeeder extends Seeder
         // Seed Portfolios
         $portfolios = [
             [
-                'portfolio_types_id' => 1,
-                'portfolio_name' => 'Downtown Residences',
-                'annual_report' => 'reports/downtown_2024.pdf',
-                'status' => 'active'
+                'portfolio_types_id' => 1, // Residential
+                'portfolio_name' => 'Skyline Residences',
+                'annual_report' => 'reports/skyline_annual_2024.pdf',
+                'trust_deed_document' => 'legal/skyline_trust_deed.pdf',
+                'insurance_document' => 'insurance/skyline_policy.pdf',
+                'valuation_report' => 'valuation/skyline_q4_2024.pdf',
+                'status' => 'Active'
             ],
             [
-                'portfolio_types_id' => 2,
-                'portfolio_name' => 'Business Park Holdings',
-                'annual_report' => 'reports/business_park_2024.pdf',
-                'status' => 'active'
+                'portfolio_types_id' => 2, // Commercial
+                'portfolio_name' => 'Downtown Business Center',
+                'annual_report' => 'reports/dbc_annual_2024.pdf',
+                'trust_deed_document' => 'legal/dbc_trust_deed.pdf',
+                'insurance_document' => 'insurance/dbc_policy.pdf',
+                'valuation_report' => 'valuation/dbc_q3_2024.pdf',
+                'status' => 'Active'
             ],
             [
-                'portfolio_types_id' => 3,
-                'portfolio_name' => 'Urban Development Project',
-                'annual_report' => 'reports/urban_dev_2024.pdf',
-                'status' => 'active'
+                'portfolio_types_id' => 3, // Mixed Use
+                'portfolio_name' => 'Urban Complex',
+                'annual_report' => 'reports/urban_annual_2024.pdf',
+                'trust_deed_document' => 'legal/urban_trust_deed.pdf',
+                'insurance_document' => 'insurance/urban_policy.pdf',
+                'valuation_report' => 'valuation/urban_q2_2024.pdf',
+                'status' => 'Active'
+            ],
+            [
+                'portfolio_types_id' => 4, // Retail
+                'portfolio_name' => 'Central Shopping Mall',
+                'annual_report' => 'reports/csm_annual_2024.pdf',
+                'trust_deed_document' => 'legal/csm_trust_deed.pdf',
+                'insurance_document' => 'insurance/csm_policy.pdf',
+                'valuation_report' => 'valuation/csm_q1_2024.pdf',
+                'status' => 'Active'
+            ],
+            [
+                'portfolio_types_id' => 5, // Industrial
+                'portfolio_name' => 'Tech Industrial Park',
+                'annual_report' => 'reports/tip_annual_2024.pdf',
+                'trust_deed_document' => 'legal/tip_trust_deed.pdf',
+                'insurance_document' => 'insurance/tip_policy.pdf',
+                'valuation_report' => 'valuation/tip_q4_2024.pdf',
+                'status' => 'Active'
+            ],
+            [
+                'portfolio_types_id' => 6, // Office
+                'portfolio_name' => 'Executive Tower',
+                'annual_report' => 'reports/et_annual_2024.pdf',
+                'trust_deed_document' => 'legal/et_trust_deed.pdf',
+                'insurance_document' => 'insurance/et_policy.pdf',
+                'valuation_report' => 'valuation/et_q3_2024.pdf',
+                'status' => 'Active'
+            ],
+            [
+                'portfolio_types_id' => 7, // Hospitality
+                'portfolio_name' => 'Luxury Resort Collection',
+                'annual_report' => 'reports/lrc_annual_2024.pdf',
+                'trust_deed_document' => 'legal/lrc_trust_deed.pdf',
+                'insurance_document' => 'insurance/lrc_policy.pdf',
+                'valuation_report' => 'valuation/lrc_q2_2024.pdf',
+                'status' => 'Active'
+            ],
+            [
+                'portfolio_types_id' => 8, // Healthcare
+                'portfolio_name' => 'Medical Plaza',
+                'annual_report' => 'reports/mp_annual_2024.pdf',
+                'trust_deed_document' => 'legal/mp_trust_deed.pdf',
+                'insurance_document' => 'insurance/mp_policy.pdf',
+                'valuation_report' => 'valuation/mp_q1_2024.pdf',
+                'status' => 'Active'
+            ],
+            [
+                'portfolio_types_id' => 9, // Educational
+                'portfolio_name' => 'Campus Properties',
+                'annual_report' => 'reports/cp_annual_2024.pdf',
+                'trust_deed_document' => 'legal/cp_trust_deed.pdf',
+                'insurance_document' => 'insurance/cp_policy.pdf',
+                'valuation_report' => 'valuation/cp_q4_2023.pdf',
+                'status' => 'Draft'
+            ],
+            [
+                'portfolio_types_id' => 10, // Logistics
+                'portfolio_name' => 'Distribution Hub',
+                'annual_report' => 'reports/dh_annual_2024.pdf',
+                'trust_deed_document' => 'legal/dh_trust_deed.pdf',
+                'insurance_document' => 'insurance/dh_policy.pdf',
+                'valuation_report' => 'valuation/dh_q3_2023.pdf',
+                'status' => 'Active'
+            ],
+            [
+                'portfolio_types_id' => 11, // Data Centers
+                'portfolio_name' => 'Cloud Infrastructure',
+                'annual_report' => 'reports/ci_annual_2024.pdf',
+                'trust_deed_document' => 'legal/ci_trust_deed.pdf',
+                'insurance_document' => 'insurance/ci_policy.pdf',
+                'valuation_report' => 'valuation/ci_q2_2023.pdf',
+                'status' => 'Active'
+            ],
+            [
+                'portfolio_types_id' => 12, // Self Storage
+                'portfolio_name' => 'SecureSpace Facilities',
+                'annual_report' => 'reports/ss_annual_2024.pdf',
+                'trust_deed_document' => 'legal/ss_trust_deed.pdf',
+                'insurance_document' => 'insurance/ss_policy.pdf',
+                'valuation_report' => 'valuation/ss_q1_2023.pdf',
+                'status' => 'Active'
+            ],
+            [
+                'portfolio_types_id' => 13, // Agricultural
+                'portfolio_name' => 'Farmland Investments',
+                'annual_report' => 'reports/fi_annual_2024.pdf',
+                'trust_deed_document' => 'legal/fi_trust_deed.pdf',
+                'insurance_document' => 'insurance/fi_policy.pdf',
+                'valuation_report' => 'valuation/fi_q4_2022.pdf',
+                'status' => 'Draft'
+            ],
+            [
+                'portfolio_types_id' => 14, // Leisure
+                'portfolio_name' => 'Recreation Parks',
+                'annual_report' => 'reports/rp_annual_2024.pdf',
+                'trust_deed_document' => 'legal/rp_trust_deed.pdf',
+                'insurance_document' => 'insurance/rp_policy.pdf',
+                'valuation_report' => 'valuation/rp_q3_2022.pdf',
+                'status' => 'Active'
+            ],
+            [
+                'portfolio_types_id' => 15, // Student Housing
+                'portfolio_name' => 'University Accommodations',
+                'annual_report' => 'reports/ua_annual_2024.pdf',
+                'trust_deed_document' => 'legal/ua_trust_deed.pdf',
+                'insurance_document' => 'insurance/ua_policy.pdf',
+                'valuation_report' => 'valuation/ua_q2_2022.pdf',
+                'status' => 'Active'
             ]
         ];
-        
+
         foreach ($portfolios as $portfolio) {
-            DB::table('portfolios')->insert(array_merge($portfolio, [
+            DB::table('portfolios')->insert([
+                'portfolio_types_id' => $portfolio['portfolio_types_id'],
+                'portfolio_name' => $portfolio['portfolio_name'],
+                'annual_report' => $portfolio['annual_report'],
+                'trust_deed_document' => $portfolio['trust_deed_document'],
+                'insurance_document' => $portfolio['insurance_document'],
+                'valuation_report' => $portfolio['valuation_report'],
+                'status' => $portfolio['status'],
                 'created_at' => now(),
                 'updated_at' => now()
-            ]));
+            ]);
         }
 
         // Seed Properties
         $properties = [
             [
-                'portfolio_id' => 1,
-                'category' => 'Apartment',
-                'batch_no' => 'R-2025-001',
-                'name' => 'Sunset Apartments',
-                'address' => '123 Main Street',
-                'city' => 'Metropolis',
-                'state' => 'State',
-                'country' => 'Country',
-                'postal_code' => '12345',
+                'portfolio_id' => 1, // Skyline Residences
+                'category' => 'Apartments',
+                'batch_no' => 'SR-001',
+                'name' => 'Skyline Tower A',
+                'address' => '123 Skyview Road',
+                'city' => 'Singapore',
+                'state' => 'Central Region',
+                'country' => 'Singapore',
+                'postal_code' => '123456',
                 'land_size' => 2500.00,
+                'gross_floor_area' => 15000.00,
+                'usage' => 'Residential',
+                'value' => 25000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 25000000.00,
+                'market_value' => 28000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'John Smith',
+                'verified_by' => 'Sarah Johnson',
+                'remarks' => 'Luxury apartment building with 25 floors'
+            ],
+            [
+                'portfolio_id' => 1, // Skyline Residences
+                'category' => 'Apartments',
+                'batch_no' => 'SR-002',
+                'name' => 'Skyline Tower B',
+                'address' => '125 Skyview Road',
+                'city' => 'Singapore',
+                'state' => 'Central Region',
+                'country' => 'Singapore',
+                'postal_code' => '123457',
+                'land_size' => 2300.00,
+                'gross_floor_area' => 14000.00,
+                'usage' => 'Residential',
+                'value' => 23000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 23000000.00,
+                'market_value' => 25500000.00,
+                'status' => 'Active',
+                'prepared_by' => 'John Smith',
+                'verified_by' => 'Sarah Johnson',
+                'remarks' => 'Luxury apartment building with 23 floors'
+            ],
+            [
+                'portfolio_id' => 2, // Downtown Business Center
+                'category' => 'Office',
+                'batch_no' => 'DBC-001',
+                'name' => 'Central Business Tower',
+                'address' => '500 Business Avenue',
+                'city' => 'Kuala Lumpur',
+                'state' => 'Federal Territory',
+                'country' => 'Malaysia',
+                'postal_code' => '50000',
+                'land_size' => 3500.00,
+                'gross_floor_area' => 28000.00,
+                'usage' => 'Commercial',
+                'value' => 45000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 45000000.00,
+                'market_value' => 48000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'David Wong',
+                'verified_by' => 'Michelle Tan',
+                'remarks' => 'Prime office location in the financial district'
+            ],
+            [
+                'portfolio_id' => 3, // Urban Complex
+                'category' => 'Mixed Use',
+                'batch_no' => 'UC-001',
+                'name' => 'Urban Heights',
+                'address' => '888 Metro Boulevard',
+                'city' => 'Jakarta',
+                'state' => 'Jakarta Capital Region',
+                'country' => 'Indonesia',
+                'postal_code' => '10110',
+                'land_size' => 6500.00,
+                'gross_floor_area' => 45000.00,
+                'usage' => 'Mixed Use',
+                'value' => 62000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 62000000.00,
+                'market_value' => 68000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'Ahmad Yusof',
+                'verified_by' => 'Nadia Ibrahim',
+                'remarks' => 'Combined residential and commercial complex'
+            ],
+            [
+                'portfolio_id' => 4, // Central Shopping Mall
+                'category' => 'Retail',
+                'batch_no' => 'CSM-001',
+                'name' => 'Central Mall Plaza',
+                'address' => '100 Shopping Avenue',
+                'city' => 'Bangkok',
+                'state' => 'Bangkok Metropolitan',
+                'country' => 'Thailand',
+                'postal_code' => '10330',
+                'land_size' => 8000.00,
+                'gross_floor_area' => 52000.00,
+                'usage' => 'Retail',
+                'value' => 78000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 78000000.00,
+                'market_value' => 85000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'Somchai Patel',
+                'verified_by' => 'Picha Wong',
+                'remarks' => 'Major shopping mall with 300 retail units'
+            ],
+            [
+                'portfolio_id' => 5, // Tech Industrial Park
+                'category' => 'Industrial',
+                'batch_no' => 'TIP-001',
+                'name' => 'Tech Manufacturing Facility',
+                'address' => '25 Industrial Road',
+                'city' => 'Penang',
+                'state' => 'Penang',
+                'country' => 'Malaysia',
+                'postal_code' => '11900',
+                'land_size' => 12000.00,
+                'gross_floor_area' => 18000.00,
+                'usage' => 'Industrial',
+                'value' => 32000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 32000000.00,
+                'market_value' => 34000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'Tan Wei Liang',
+                'verified_by' => 'Lim Mei Ling',
+                'remarks' => 'Advanced manufacturing facility for electronics'
+            ],
+            [
+                'portfolio_id' => 6, // Executive Tower
+                'category' => 'Office',
+                'batch_no' => 'ET-001',
+                'name' => 'Executive Plaza',
+                'address' => '1 Corporate Drive',
+                'city' => 'Singapore',
+                'state' => 'Central Region',
+                'country' => 'Singapore',
+                'postal_code' => '068883',
+                'land_size' => 3200.00,
+                'gross_floor_area' => 35000.00,
+                'usage' => 'Commercial',
+                'value' => 55000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 55000000.00,
+                'market_value' => 60000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'Jennifer Koh',
+                'verified_by' => 'Michael Lee',
+                'remarks' => 'Grade A office building in prime CBD location'
+            ],
+            [
+                'portfolio_id' => 7, // Luxury Resort Collection
+                'category' => 'Hospitality',
+                'batch_no' => 'LRC-001',
+                'name' => 'Beach Resort & Spa',
+                'address' => '25 Beachfront Avenue',
+                'city' => 'Bali',
+                'state' => 'Badung',
+                'country' => 'Indonesia',
+                'postal_code' => '80361',
+                'land_size' => 25000.00,
+                'gross_floor_area' => 18000.00,
+                'usage' => 'Hospitality',
+                'value' => 45000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 45000000.00,
+                'market_value' => 52000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'Putu Wijaya',
+                'verified_by' => 'Made Sukma',
+                'remarks' => '5-star beachfront resort with 120 rooms and villas'
+            ],
+            [
+                'portfolio_id' => 8, // Medical Plaza
+                'category' => 'Healthcare',
+                'batch_no' => 'MP-001',
+                'name' => 'Central Medical Center',
+                'address' => '50 Health Boulevard',
+                'city' => 'Manila',
+                'state' => 'Metro Manila',
+                'country' => 'Philippines',
+                'postal_code' => '1000',
+                'land_size' => 5500.00,
+                'gross_floor_area' => 25000.00,
+                'usage' => 'Healthcare',
+                'value' => 38000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 38000000.00,
+                'market_value' => 40000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'Maria Santos',
+                'verified_by' => 'Jose Cruz',
+                'remarks' => 'Modern medical facility with specialized units'
+            ],
+            [
+                'portfolio_id' => 9, // Campus Properties
+                'category' => 'Educational',
+                'batch_no' => 'CP-001',
+                'name' => 'University Research Building',
+                'address' => '15 Academia Drive',
+                'city' => 'Singapore',
+                'state' => 'Western Region',
+                'country' => 'Singapore',
+                'postal_code' => '639798',
+                'land_size' => 4500.00,
+                'gross_floor_area' => 18000.00,
+                'usage' => 'Educational',
+                'value' => 28000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 28000000.00,
+                'market_value' => 30000000.00,
+                'status' => 'Draft',
+                'prepared_by' => 'Ravi Kumar',
+                'verified_by' => null,
+                'remarks' => 'Research facility leased to major university'
+            ],
+            [
+                'portfolio_id' => 10, // Distribution Hub
+                'category' => 'Logistics',
+                'batch_no' => 'DH-001',
+                'name' => 'Central Distribution Warehouse',
+                'address' => '8 Logistics Way',
+                'city' => 'Ho Chi Minh City',
+                'state' => 'District 9',
+                'country' => 'Vietnam',
+                'postal_code' => '700000',
+                'land_size' => 18000.00,
+                'gross_floor_area' => 15000.00,
+                'usage' => 'Logistics',
+                'value' => 25000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 25000000.00,
+                'market_value' => 27000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'Nguyen Van Minh',
+                'verified_by' => 'Tran Thi Hoa',
+                'remarks' => 'Modern distribution center with cold storage'
+            ],
+            [
+                'portfolio_id' => 11, // Cloud Infrastructure
+                'category' => 'Data Center',
+                'batch_no' => 'CI-001',
+                'name' => 'Cloud Data Center',
+                'address' => '10 Digital Avenue',
+                'city' => 'Singapore',
+                'state' => 'Eastern Region',
+                'country' => 'Singapore',
+                'postal_code' => '486048',
+                'land_size' => 8500.00,
+                'gross_floor_area' => 12000.00,
+                'usage' => 'Technology',
+                'value' => 65000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 65000000.00,
+                'market_value' => 70000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'Desmond Lim',
+                'verified_by' => 'Rachel Teo',
+                'remarks' => 'Tier 4 data center with redundant systems'
+            ],
+            [
+                'portfolio_id' => 12, // SecureSpace Facilities
+                'category' => 'Self Storage',
+                'batch_no' => 'SS-001',
+                'name' => 'SecureSpace Center',
+                'address' => '55 Storage Road',
+                'city' => 'Kuala Lumpur',
+                'state' => 'Selangor',
+                'country' => 'Malaysia',
+                'postal_code' => '47500',
+                'land_size' => 10000.00,
+                'gross_floor_area' => 8500.00,
+                'usage' => 'Storage',
+                'value' => 15000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 15000000.00,
+                'market_value' => 16500000.00,
+                'status' => 'Active',
+                'prepared_by' => 'Amir Hassan',
+                'verified_by' => 'Farah Ahmad',
+                'remarks' => 'Climate-controlled storage facility with 500 units'
+            ],
+            [
+                'portfolio_id' => 13, // Farmland Investments
+                'category' => 'Agricultural',
+                'batch_no' => 'FI-001',
+                'name' => 'Palm Plantation Estate',
+                'address' => 'Rural Route 25',
+                'city' => 'Johor Bahru',
+                'state' => 'Johor',
+                'country' => 'Malaysia',
+                'postal_code' => '81200',
+                'land_size' => 500000.00,
+                'gross_floor_area' => 2500.00,
+                'usage' => 'Agricultural',
+                'value' => 18000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 18000000.00,
+                'market_value' => 20000000.00,
+                'status' => 'Draft',
+                'prepared_by' => 'Chong Wei Ming',
+                'verified_by' => null,
+                'remarks' => 'Palm oil plantation with processing facilities'
+            ],
+            [
+                'portfolio_id' => 14, // Recreation Parks
+                'category' => 'Leisure',
+                'batch_no' => 'RP-001',
+                'name' => 'Family Fun Park',
+                'address' => '200 Recreation Boulevard',
+                'city' => 'Bangkok',
+                'state' => 'Pathum Thani',
+                'country' => 'Thailand',
+                'postal_code' => '12120',
+                'land_size' => 85000.00,
+                'gross_floor_area' => 12000.00,
+                'usage' => 'Recreation',
+                'value' => 22000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 22000000.00,
+                'market_value' => 24000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'Chai Sombat',
+                'verified_by' => 'Naree Wattana',
+                'remarks' => 'Theme park with water attractions and amenities'
+            ],
+            [
+                'portfolio_id' => 15, // University Accommodations
+                'category' => 'Student Housing',
+                'batch_no' => 'UA-001',
+                'name' => 'Campus View Residences',
+                'address' => '75 University Avenue',
+                'city' => 'Singapore',
+                'state' => 'Western Region',
+                'country' => 'Singapore',
+                'postal_code' => '639789',
+                'land_size' => 4000.00,
                 'gross_floor_area' => 18000.00,
                 'usage' => 'Residential',
-                'value' => 4500000.00,
-                'ownership' => 'Full',
-                'share_amount' => 4500000.00,
-                'market_value' => 4800000.00,
-                'status' => 'active'
-            ],
-            [
-                'portfolio_id' => 2,
-                'category' => 'Office',
-                'batch_no' => 'C-2025-001',
-                'name' => 'Tech Tower',
-                'address' => '456 Business Avenue',
-                'city' => 'Techville',
-                'state' => 'State',
-                'country' => 'Country',
-                'postal_code' => '54321',
-                'land_size' => 5000.00,
-                'gross_floor_area' => 25000.00,
-                'usage' => 'Commercial',
-                'value' => 8500000.00,
-                'ownership' => 'Full',
-                'share_amount' => 8500000.00,
-                'market_value' => 9000000.00,
-                'status' => 'active'
-            ],
-            [
-                'portfolio_id' => 3,
-                'category' => 'Mixed',
-                'batch_no' => 'M-2025-001',
-                'name' => 'City Center Complex',
-                'address' => '789 Urban Street',
-                'city' => 'Centralville',
-                'state' => 'State',
-                'country' => 'Country',
-                'postal_code' => '67890',
-                'land_size' => 8000.00,
-                'gross_floor_area' => 40000.00,
-                'usage' => 'Mixed Use',
-                'value' => 12000000.00,
-                'ownership' => 'Partial',
-                'share_amount' => 7200000.00,
-                'market_value' => 12500000.00,
-                'status' => 'active'
+                'value' => 32000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 32000000.00,
+                'market_value' => 35000000.00,
+                'status' => 'Active',
+                'prepared_by' => 'Teo Jia Ming',
+                'verified_by' => 'Linda Kwok',
+                'remarks' => 'Modern student accommodation with 500 beds'
             ]
         ];
         
         foreach ($properties as $property) {
-            DB::table('properties')->insert(array_merge($property, [
+            DB::table('properties')->insert([
+                'portfolio_id' => $property['portfolio_id'],
+                'category' => $property['category'],
+                'batch_no' => $property['batch_no'],
+                'name' => $property['name'],
+                'address' => $property['address'],
+                'city' => $property['city'],
+                'state' => $property['state'],
+                'country' => $property['country'],
+                'postal_code' => $property['postal_code'],
+                'land_size' => $property['land_size'],
+                'gross_floor_area' => $property['gross_floor_area'],
+                'usage' => $property['usage'],
+                'value' => $property['value'],
+                'ownership' => $property['ownership'],
+                'share_amount' => $property['share_amount'],
+                'market_value' => $property['market_value'],
+                'status' => $property['status'],
+                'prepared_by' => $property['prepared_by'],
+                'verified_by' => $property['verified_by'],
+                'remarks' => $property['remarks'],
                 'created_at' => now(),
                 'updated_at' => now()
-            ]));
+            ]);
         }
 
-        // Seed Updated Checklists with new fields
-        $checklists = [
-            [
-                'property_id' => 1,
-                'type' => 'documentation',
-                'description' => 'Legal documentation verification',
-                'approval_date' => Carbon::now()->subMonths(2),
-                'status' => 'completed',
-                'assigned_department' => 'LD',
-                'verifying_department' => 'OD',
-                'response_time_days' => 3,
-                'prepared_by' => 'Dang Fathihah binti Ibrahim',
-                'prepared_date' => Carbon::now()->subMonths(2)->subDays(5),
-                'confirmed_by' => 'Roslim Syah bin Idris',
-                'confirmed_date' => Carbon::now()->subMonths(2)
-            ],
-            [
-                'property_id' => 2,
-                'type' => 'tenant',
-                'description' => 'Tenant renewal verification',
-                'approval_date' => Carbon::now()->subMonths(1),
-                'status' => 'completed',
-                'assigned_department' => 'OD',
-                'verifying_department' => 'LD',
-                'response_time_days' => 3,
-                'prepared_by' => 'Ahmad Rizal bin Hassan',
-                'prepared_date' => Carbon::now()->subMonths(1)->subDays(7),
-                'confirmed_by' => 'Lim Wei Ling',
-                'confirmed_date' => Carbon::now()->subMonths(1)
-            ],
-            [
-                'property_id' => 3,
-                'type' => 'condition',
-                'description' => 'Property condition assessment',
-                'approval_date' => null,
-                'status' => 'pending',
-                'assigned_department' => 'OD',
-                'verifying_department' => null,
-                'response_time_days' => null,
-                'prepared_by' => null,
-                'prepared_date' => null,
-                'confirmed_by' => null,
-                'confirmed_date' => null
-            ]
-        ];
-        
-        foreach ($checklists as $checklist) {
-            DB::table('checklists')->insert(array_merge($checklist, [
-                'created_at' => now(),
-                'updated_at' => now()
-            ]));
-        }
-
-        // Seed Tenants with approval fields
+        // Seed Tenants
         $tenants = [
             [
-                'property_id' => 1,
-                'name' => 'John Smith',
-                'contact_person' => 'John Smith',
-                'email' => 'john.smith@example.com',
-                'phone' => '123-456-7890',
-                'commencement_date' => Carbon::now()->subYears(1),
-                'approval_date' => Carbon::now()->subYears(1)->subDays(15),
-                'expiry_date' => Carbon::now()->addYears(1),
+                'property_id' => 1, // Skyline Tower A
+                'name' => 'Global Finance Corp',
+                'contact_person' => 'James Wilson',
+                'email' => 'jwilson@globalfinance.com',
+                'phone' => '+65 9123 4567',
+                'commencement_date' => '2023-06-01',
+                'approval_date' => '2023-05-15',
+                'expiry_date' => '2028-05-31',
                 'status' => 'active',
-                'approval_status' => 'approved',
-                'last_approval_date' => Carbon::now()->subYears(1)->subDays(15)
+                'approval_status' => 'approved'
             ],
             [
-                'property_id' => 2,
-                'name' => 'Tech Innovations Inc.',
-                'contact_person' => 'Jane Doe',
-                'email' => 'jane.doe@techinnovations.com',
-                'phone' => '987-654-3210',
-                'commencement_date' => Carbon::now()->subMonths(6),
-                'approval_date' => Carbon::now()->subMonths(6)->subDays(10),
-                'expiry_date' => Carbon::now()->addYears(2),
+                'property_id' => 1, // Skyline Tower A
+                'name' => 'Tech Innovations Pte Ltd',
+                'contact_person' => 'Sarah Chen',
+                'email' => 'schen@techinnovations.com',
+                'phone' => '+65 9234 5678',
+                'commencement_date' => '2024-01-01',
+                'approval_date' => '2023-12-10',
+                'expiry_date' => '2026-12-31',
                 'status' => 'active',
-                'approval_status' => 'approved',
-                'last_approval_date' => Carbon::now()->subMonths(6)->subDays(10)
+                'approval_status' => 'approved'
             ],
             [
-                'property_id' => 3,
-                'name' => 'Urban Living Co.',
-                'contact_person' => 'Michael Johnson',
-                'email' => 'michael@urbanliving.co',
-                'phone' => '555-123-4567',
-                'commencement_date' => Carbon::now()->subMonths(3),
-                'approval_date' => Carbon::now()->subMonths(3)->subDays(7),
-                'expiry_date' => Carbon::now()->addYears(3),
+                'property_id' => 2, // Skyline Tower B
+                'name' => 'Legal Associates LLP',
+                'contact_person' => 'Michael Brown',
+                'email' => 'mbrown@legalassociates.com',
+                'phone' => '+65 9345 6789',
+                'commencement_date' => '2023-09-15',
+                'approval_date' => '2023-08-30',
+                'expiry_date' => '2026-09-14',
                 'status' => 'active',
-                'approval_status' => 'approved',
-                'last_approval_date' => Carbon::now()->subMonths(3)->subDays(7)
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 3, // Central Business Tower
+                'name' => 'Standard Insurance Group',
+                'contact_person' => 'David Lee',
+                'email' => 'dlee@standardinsurance.com',
+                'phone' => '+60 12 345 6789',
+                'commencement_date' => '2022-11-01',
+                'approval_date' => '2022-10-15',
+                'expiry_date' => '2027-10-31',
+                'status' => 'active',
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 3, // Central Business Tower
+                'name' => 'Consulting Partners International',
+                'contact_person' => 'Rachel Tan',
+                'email' => 'rtan@consultingpartners.com',
+                'phone' => '+60 12 456 7890',
+                'commencement_date' => '2023-02-01',
+                'approval_date' => '2023-01-15',
+                'expiry_date' => '2028-01-31',
+                'status' => 'active',
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 4, // Urban Heights
+                'name' => 'Skyline Retailers',
+                'contact_person' => 'Ahmad Rizal',
+                'email' => 'arizal@skylineretailers.com',
+                'phone' => '+62 21 1234 5678',
+                'commencement_date' => '2023-04-01',
+                'approval_date' => '2023-03-15',
+                'expiry_date' => '2028-03-31',
+                'status' => 'active',
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 5, // Central Mall Plaza
+                'name' => 'Fashion Forward',
+                'contact_person' => 'Nattapong Chai',
+                'email' => 'nchai@fashionforward.com',
+                'phone' => '+66 2 123 4567',
+                'commencement_date' => '2023-07-01',
+                'approval_date' => '2023-06-15',
+                'expiry_date' => '2028-06-30',
+                'status' => 'active',
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 5, // Central Mall Plaza
+                'name' => 'Global Electronics',
+                'contact_person' => 'Supaporn Wattana',
+                'email' => 'swattana@globalelectronics.com',
+                'phone' => '+66 2 234 5678',
+                'commencement_date' => '2023-08-01',
+                'approval_date' => '2023-07-15',
+                'expiry_date' => '2028-07-31',
+                'status' => 'active',
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 6, // Tech Manufacturing Facility
+                'name' => 'Advanced Semiconductors Inc.',
+                'contact_person' => 'Lim Eng Huat',
+                'email' => 'ehuat@advancedsemi.com',
+                'phone' => '+60 4 123 4567',
+                'commencement_date' => '2022-05-01',
+                'approval_date' => '2022-04-15',
+                'expiry_date' => '2032-04-30',
+                'status' => 'active',
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 7, // Executive Plaza
+                'name' => 'Global Ventures Capital',
+                'contact_person' => 'Jennifer Lim',
+                'email' => 'jlim@globalventures.com',
+                'phone' => '+65 9456 7890',
+                'commencement_date' => '2023-03-01',
+                'approval_date' => '2023-02-15',
+                'expiry_date' => '2028-02-29',
+                'status' => 'active',
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 7, // Executive Plaza
+                'name' => 'Pacific Trading Group',
+                'contact_person' => 'Kenneth Wong',
+                'email' => 'kwong@pacifictrading.com',
+                'phone' => '+65 9567 8901',
+                'commencement_date' => '2023-05-01',
+                'approval_date' => '2023-04-15',
+                'expiry_date' => '2028-04-30',
+                'status' => 'active',
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 8, // Beach Resort & Spa
+                'name' => 'Luxury Escapes',
+                'contact_person' => 'Made Surya',
+                'email' => 'msurya@luxuryescapes.com',
+                'phone' => '+62 361 123 456',
+                'commencement_date' => '2022-12-01',
+                'approval_date' => '2022-11-15',
+                'expiry_date' => '2037-11-30',
+                'status' => 'active',
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 9, // Central Medical Center
+                'name' => 'Premier Healthcare Systems',
+                'contact_person' => 'Elena Santos',
+                'email' => 'esantos@premierhealthcare.com',
+                'phone' => '+63 2 123 4567',
+                'commencement_date' => '2022-10-01',
+                'approval_date' => '2022-09-15',
+                'expiry_date' => '2032-09-30',
+                'status' => 'active',
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 10, // University Research Building
+                'name' => 'National University Research',
+                'contact_person' => 'Dr. Tan Li Wei',
+                'email' => 'tlwei@nationaluniv.edu',
+                'phone' => '+65 9678 9012',
+                'commencement_date' => '2023-01-01',
+                'approval_date' => '2022-12-15',
+                'expiry_date' => '2027-12-31',
+                'status' => 'active',
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => 11, // Central Distribution Warehouse
+                'name' => 'Asia Logistics Solutions',
+                'contact_person' => 'Tran Van Duc',
+                'email' => 'tvduc@asialogistics.com',
+                'phone' => '+84 28 1234 5678',
+                'commencement_date' => '2023-02-01',
+                'approval_date' => '2023-01-15',
+                'expiry_date' => '2028-01-31',
+                'status' => 'active',
+                'approval_status' => 'approved'
             ]
         ];
-        
+
         foreach ($tenants as $tenant) {
-            DB::table('tenants')->insert(array_merge($tenant, [
+            DB::table('tenants')->insert([
+                'property_id' => $tenant['property_id'],
+                'name' => $tenant['name'],
+                'contact_person' => $tenant['contact_person'],
+                'email' => $tenant['email'],
+                'phone' => $tenant['phone'],
+                'commencement_date' => $tenant['commencement_date'],
+                'approval_date' => $tenant['approval_date'],
+                'expiry_date' => $tenant['expiry_date'],
+                'status' => $tenant['status'],
+                'approval_status' => $tenant['approval_status'],
+                'last_approval_date' => $tenant['approval_date'],
                 'created_at' => now(),
                 'updated_at' => now()
-            ]));
+            ]);
         }
 
         // Seed Leases
         $leases = [
             [
-                'tenant_id' => 1,
-                'lease_name' => 'Residential Lease Agreement',
-                'demised_premises' => 'Apartment 101, Sunset Apartments',
-                'permitted_use' => 'Residential dwelling',
-                'rental_amount' => 2500.00,
-                'rental_frequency' => 'monthly',
-                'option_to_renew' => true,
-                'term_years' => '2',
-                'start_date' => Carbon::now()->subYears(1),
-                'end_date' => Carbon::now()->addYears(1),
-                'status' => 'active'
-            ],
-            [
-                'tenant_id' => 2,
-                'lease_name' => 'Commercial Office Lease',
-                'demised_premises' => '5th Floor, Tech Tower',
-                'permitted_use' => 'Office space',
-                'rental_amount' => 15000.00,
-                'rental_frequency' => 'monthly',
-                'option_to_renew' => true,
-                'term_years' => '3',
-                'start_date' => Carbon::now()->subMonths(6),
-                'end_date' => Carbon::now()->addYears(2)->addMonths(6),
-                'status' => 'active'
-            ],
-            [
-                'tenant_id' => 3,
-                'lease_name' => 'Mixed Use Development Lease',
-                'demised_premises' => 'Units 1-5, City Center Complex',
-                'permitted_use' => 'Retail and residential',
-                'rental_amount' => 25000.00,
+                'tenant_id' => 1, // Global Finance Corp
+                'lease_name' => 'GFC Office Lease',
+                'demised_premises' => 'Floors 20-25, Skyline Tower A',
+                'permitted_use' => 'Office Space',
+                'rental_amount' => 85000.00,
                 'rental_frequency' => 'monthly',
                 'option_to_renew' => true,
                 'term_years' => '5',
-                'start_date' => Carbon::now()->subMonths(3),
-                'end_date' => Carbon::now()->addYears(4)->addMonths(9),
+                'start_date' => '2023-06-01',
+                'end_date' => '2028-05-31',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 2, // Tech Innovations Pte Ltd
+                'lease_name' => 'Tech Innovations Lease',
+                'demised_premises' => 'Floors 15-18, Skyline Tower A',
+                'permitted_use' => 'Office Space',
+                'rental_amount' => 65000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '3',
+                'start_date' => '2024-01-01',
+                'end_date' => '2026-12-31',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 3, // Legal Associates LLP
+                'lease_name' => 'Legal Associates Lease',
+                'demised_premises' => 'Floors 10-14, Skyline Tower B',
+                'permitted_use' => 'Office Space',
+                'rental_amount' => 72000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '3',
+                'start_date' => '2023-09-15',
+                'end_date' => '2026-09-14',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 4, // Standard Insurance Group
+                'lease_name' => 'Standard Insurance Lease',
+                'demised_premises' => 'Floors 25-30, Central Business Tower',
+                'permitted_use' => 'Office Space',
+                'rental_amount' => 95000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '5',
+                'start_date' => '2022-11-01',
+                'end_date' => '2027-10-31',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 5, // Consulting Partners International
+                'lease_name' => 'Consulting Partners Lease',
+                'demised_premises' => 'Floors 15-20, Central Business Tower',
+                'permitted_use' => 'Office Space',
+                'rental_amount' => 82000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '5',
+                'start_date' => '2023-02-01',
+                'end_date' => '2028-01-31',
+                'status' => 'active'
+            ],  
+            [
+                'tenant_id' => 6, // Skyline Retailers
+                'lease_name' => 'Skyline Retail Lease',
+                'demised_premises' => 'Ground floor units 1-10, Urban Heights',
+                'permitted_use' => 'Retail',
+                'rental_amount' => 120000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '5',
+                'start_date' => '2023-04-01',
+                'end_date' => '2028-03-31',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 7, // Fashion Forward
+                'lease_name' => 'Fashion Forward Anchor Lease',
+                'demised_premises' => 'South Wing, Floors 1-3, Central Mall Plaza',
+                'permitted_use' => 'Retail',
+                'rental_amount' => 150000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '5',
+                'start_date' => '2023-07-01',
+                'end_date' => '2028-06-30',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 8, // Global Electronics
+                'lease_name' => 'Global Electronics Retail Lease',
+                'demised_premises' => 'North Wing, Floor 2, Central Mall Plaza',
+                'permitted_use' => 'Retail',
+                'rental_amount' => 135000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '5',
+                'start_date' => '2023-08-01',
+                'end_date' => '2028-07-31',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 9, // Advanced Semiconductors Inc.
+                'lease_name' => 'Advanced Semiconductors Manufacturing Lease',
+                'demised_premises' => 'Entire facility, Tech Manufacturing Facility',
+                'permitted_use' => 'Industrial Manufacturing',
+                'rental_amount' => 180000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '10',
+                'start_date' => '2022-05-01',
+                'end_date' => '2032-04-30',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 10, // Global Ventures Capital
+                'lease_name' => 'Global Ventures Office Lease',
+                'demised_premises' => 'Floors 15-20, Executive Plaza',
+                'permitted_use' => 'Office Space',
+                'rental_amount' => 110000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '5',
+                'start_date' => '2023-03-01',
+                'end_date' => '2028-02-29',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 11, // Pacific Trading Group
+                'lease_name' => 'Pacific Trading Office Lease',
+                'demised_premises' => 'Floors 10-14, Executive Plaza',
+                'permitted_use' => 'Office Space',
+                'rental_amount' => 95000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '5',
+                'start_date' => '2023-05-01',
+                'end_date' => '2028-04-30',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 12, // Luxury Escapes
+                'lease_name' => 'Luxury Escapes Resort Lease',
+                'demised_premises' => 'Entire property, Beach Resort & Spa',
+                'permitted_use' => 'Hospitality',
+                'rental_amount' => 320000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '15',
+                'start_date' => '2022-12-01',
+                'end_date' => '2037-11-30',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 13, // Premier Healthcare Systems
+                'lease_name' => 'Premier Healthcare Facility Lease',
+                'demised_premises' => 'Entire facility, Central Medical Center',
+                'permitted_use' => 'Healthcare',
+                'rental_amount' => 250000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '10',
+                'start_date' => '2022-10-01',
+                'end_date' => '2032-09-30',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 14, // National University Research
+                'lease_name' => 'University Research Lease',
+                'demised_premises' => 'Entire building, University Research Building',
+                'permitted_use' => 'Educational & Research',
+                'rental_amount' => 160000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '5',
+                'start_date' => '2023-01-01',
+                'end_date' => '2027-12-31',
+                'status' => 'active'
+            ],
+            [
+                'tenant_id' => 15, // Asia Logistics Solutions
+                'lease_name' => 'Asia Logistics Warehouse Lease',
+                'demised_premises' => 'Entire facility, Central Distribution Warehouse',
+                'permitted_use' => 'Logistics & Distribution',
+                'rental_amount' => 145000.00,
+                'rental_frequency' => 'monthly',
+                'option_to_renew' => true,
+                'term_years' => '5',
+                'start_date' => '2023-02-01',
+                'end_date' => '2028-01-31',
                 'status' => 'active'
             ]
         ];
         
         foreach ($leases as $lease) {
-            DB::table('leases')->insert(array_merge($lease, [
+            DB::table('leases')->insert([
+                'tenant_id' => $lease['tenant_id'],
+                'lease_name' => $lease['lease_name'],
+                'demised_premises' => $lease['demised_premises'],
+                'permitted_use' => $lease['permitted_use'],
+                'rental_amount' => $lease['rental_amount'],
+                'rental_frequency' => $lease['rental_frequency'],
+                'option_to_renew' => $lease['option_to_renew'],
+                'term_years' => $lease['term_years'],
+                'start_date' => $lease['start_date'],
+                'end_date' => $lease['end_date'],
+                'status' => $lease['status'],
                 'created_at' => now(),
                 'updated_at' => now()
-            ]));
+            ]);
         }
 
-        // Seed Financials
-        $financials = [
-            [
-                'portfolio_id' => 1,
-                'bank_id' => 1,
-                'financial_type_id' => 2,
-                'purpose' => 'Property acquisition',
-                'tenure' => '20 years',
-                'installment_date' => Carbon::now()->day(15),
-                'profit_type' => 'Fixed',
-                'profit_rate' => 4.5000,
-                'process_fee' => 25000.00,
-                'total_facility_amount' => 3500000.00,
-                'utilization_amount' => 3500000.00,
-                'outstanding_amount' => 3200000.00,
-                'interest_monthly' => 12000.00,
-                'security_value_monthly' => 14500.00,
-                'facilities_agent' => 'Financial Services Group',
-                'agent_contact' => 'agent@financialservices.com',
-                'valuer' => 'Property Valuation Co.',
-                'status' => 'active'
-            ],
-            [
-                'portfolio_id' => 2,
-                'bank_id' => 2,
-                'financial_type_id' => 1,
-                'purpose' => 'Renovation',
-                'tenure' => '5 years',
-                'installment_date' => Carbon::now()->day(1),
-                'profit_type' => 'Variable',
-                'profit_rate' => 5.2500,
-                'process_fee' => 15000.00,
-                'total_facility_amount' => 1500000.00,
-                'utilization_amount' => 1200000.00,
-                'outstanding_amount' => 1000000.00,
-                'interest_monthly' => 4375.00,
-                'security_value_monthly' => 5000.00,
-                'facilities_agent' => 'Business Loan Agency',
-                'agent_contact' => 'contact@businessloan.com',
-                'valuer' => 'Commercial Valuation Experts',
-                'status' => 'active'
-            ],
-            [
-                'portfolio_id' => 3,
-                'bank_id' => 3,
-                'financial_type_id' => 3,
-                'purpose' => 'Development',
-                'tenure' => '10 years',
-                'installment_date' => Carbon::now()->day(10),
-                'profit_type' => 'Fixed',
-                'profit_rate' => 4.7500,
-                'process_fee' => 30000.00,
-                'total_facility_amount' => 8000000.00,
-                'utilization_amount' => 6000000.00,
-                'outstanding_amount' => 5800000.00,
-                'interest_monthly' => 22916.67,
-                'security_value_monthly' => 25000.00,
-                'facilities_agent' => 'Global Development Finance',
-                'agent_contact' => 'finance@globaldev.com',
-                'valuer' => 'Urban Property Assessors',
-                'status' => 'active'
-            ]
-        ];
-        
-        foreach ($financials as $financial) {
-            DB::table('financials')->insert(array_merge($financial, [
-                'created_at' => now(),
-                'updated_at' => now()
-            ]));
-        }
-
-        // Seed Site Visits (updated with checklist_id)
+        // Seed Site Visits
         $siteVisits = [
             [
-                'property_id' => 1,
-                'checklist_id' => 1,
-                'date_visit' => Carbon::now()->subMonths(2)->subDays(5),
+                'property_id' => 1, // Skyline Tower A
+                'date_visit' => '2024-01-15',
                 'time_visit' => '10:00:00',
-                'inspector_name' => 'Robert Brown',
-                'notes' => 'Documentation verification visit',
-                'attachment' => null,
+                'inspector_name' => 'John Smith',
+                'notes' => 'Routine annual inspection of the property',
+                'attachment' => 'visits/skyline_a_2024_01_15.pdf',
                 'status' => 'completed'
             ],
             [
-                'property_id' => 2,
-                'checklist_id' => 2,
-                'date_visit' => Carbon::now()->subMonths(1)->subDays(7),
+                'property_id' => 2, // Skyline Tower B
+                'date_visit' => '2024-01-16',
+                'time_visit' => '14:00:00',
+                'inspector_name' => 'John Smith',
+                'notes' => 'Routine annual inspection of the property',
+                'attachment' => 'visits/skyline_b_2024_01_16.pdf',
+                'status' => 'completed'
+            ],
+            [
+                'property_id' => 3, // Central Business Tower
+                'date_visit' => '2024-02-10',
+                'time_visit' => '09:30:00',
+                'inspector_name' => 'David Wong',
+                'notes' => 'Inspection of newly renovated floors',
+                'attachment' => 'visits/cbt_2024_02_10.pdf',
+                'status' => 'completed'
+            ],
+            [
+                'property_id' => 4, // Urban Heights
+                'date_visit' => '2024-02-20',
+                'time_visit' => '11:00:00',
+                'inspector_name' => 'Ahmad Rizal',
+                'notes' => 'Assessment of common areas and facilities',
+                'attachment' => 'visits/urban_heights_2024_02_20.pdf',
+                'status' => 'completed'
+            ],
+            [
+                'property_id' => 5, // Central Mall Plaza
+                'date_visit' => '2024-03-05',
+                'time_visit' => '10:00:00',
+                'inspector_name' => 'Nattapong Chai',
+                'notes' => 'Inspection of retail spaces and food court',
+                'attachment' => 'visits/mall_plaza_2024_03_05.pdf',
+                'status' => 'completed'
+            ],
+            [
+                'property_id' => 6, // Tech Manufacturing Facility
+                'date_visit' => '2024-03-15',
+                'time_visit' => '09:00:00',
+                'inspector_name' => 'Lim Eng Huat',
+                'notes' => 'Safety and compliance inspection of industrial facility',
+                'attachment' => 'visits/tech_facility_2024_03_15.pdf',
+                'status' => 'completed'
+            ],
+            [
+                'property_id' => 7, // Executive Plaza
+                'date_visit' => '2024-04-10',
                 'time_visit' => '14:30:00',
-                'inspector_name' => 'Sarah Johnson',
-                'notes' => 'Tenant renewal verification completed',
-                'attachment' => 'visits/tech_tower_inspection.pdf',
+                'inspector_name' => 'Kenneth Wong',
+                'notes' => 'Review of building systems and tenant improvements',
+                'attachment' => 'visits/exec_plaza_2024_04_10.pdf',
                 'status' => 'completed'
             ],
             [
-                'property_id' => 3,
-                'checklist_id' => 3,
-                'date_visit' => Carbon::now()->addDays(7),
-                'time_visit' => '09:15:00',
-                'inspector_name' => 'David Wilson',
-                'notes' => 'Upcoming property condition assessment',
+                'property_id' => 8, // Beach Resort & Spa
+                'date_visit' => '2024-04-20',
+                'time_visit' => '11:00:00',
+                'inspector_name' => 'Made Surya',
+                'notes' => 'Inspection of resort facilities and guest accommodations',
+                'attachment' => 'visits/beach_resort_2024_04_20.pdf',
+                'status' => 'completed'
+            ],
+            [
+                'property_id' => 9, // Central Medical Center
+                'date_visit' => '2024-05-05',
+                'time_visit' => '10:00:00',
+                'inspector_name' => 'Elena Santos',
+                'notes' => 'Review of medical facility compliance and systems',
+                'attachment' => 'visits/medical_center_2024_05_05.pdf',
+                'status' => 'completed'
+            ],
+            [
+                'property_id' => 10, // University Research Building
+                'date_visit' => '2024-05-15',
+                'time_visit' => '13:00:00',
+                'inspector_name' => 'Dr. Tan Li Wei',
+                'notes' => 'Inspection of research facilities and laboratories',
+                'attachment' => 'visits/uni_research_2024_05_15.pdf',
+                'status' => 'completed'
+            ],
+            [
+                'property_id' => 11, // Central Distribution Warehouse
+                'date_visit' => '2024-06-01',
+                'time_visit' => '09:00:00',
+                'inspector_name' => 'Tran Van Duc',
+                'notes' => 'Safety inspection of warehouse operations',
+                'attachment' => 'visits/warehouse_2024_06_01.pdf',
+                'status' => 'completed'
+            ],
+            [
+                'property_id' => 12, // Cloud Data Center
+                'date_visit' => '2024-06-15',
+                'time_visit' => '10:30:00',
+                'inspector_name' => 'Desmond Lim',
+                'notes' => 'Inspection of data center infrastructure and cooling systems',
+                'attachment' => 'visits/data_center_2024_06_15.pdf',
+                'status' => 'completed'
+            ],
+            [
+                'property_id' => 13, // SecureSpace Center
+                'date_visit' => '2024-07-01',
+                'time_visit' => '11:00:00',
+                'inspector_name' => 'Amir Hassan',
+                'notes' => 'Review of storage facility security and climate control',
+                'attachment' => 'visits/securespace_2024_07_01.pdf',
+                'status' => 'completed'
+            ],
+            [
+                'property_id' => 1, // Skyline Tower A
+                'date_visit' => '2024-09-15',
+                'time_visit' => '10:00:00',
+                'inspector_name' => 'John Smith',
+                'notes' => 'Follow-up inspection for maintenance issues',
+                'attachment' => null,
+                'status' => 'scheduled'
+            ],
+            [
+                'property_id' => 3, // Central Business Tower
+                'date_visit' => '2024-09-20',
+                'time_visit' => '14:00:00',
+                'inspector_name' => 'David Wong',
+                'notes' => 'Tenant improvement inspection',
                 'attachment' => null,
                 'status' => 'scheduled'
             ]
         ];
-        
+
         foreach ($siteVisits as $visit) {
-            DB::table('site_visits')->insert(array_merge($visit, [
+            DB::table('site_visits')->insert([
+                'property_id' => $visit['property_id'],
+                'date_visit' => $visit['date_visit'],
+                'time_visit' => $visit['time_visit'],
+                'inspector_name' => $visit['inspector_name'],
+                'notes' => $visit['notes'],
+                'attachment' => $visit['attachment'],
+                'status' => $visit['status'],
                 'created_at' => now(),
                 'updated_at' => now()
-            ]));
+            ]);
         }
-        
-        // NEW SEEDS FOR CHECKLIST-RELATED TABLES
-        
-        // Seed Documentation Items
-        $documentationItems = [
-            [
-                'checklist_id' => 1,
-                'item_number' => '1.1',
-                'document_type' => 'Title',
-                'description' => 'H.S (D) 221754 Lot PT 254356 Bandar Ipoh, Daerah Kinta, Negeri Perak',
-                'validity_date' => null,
-                'location' => 'Title with Maybank Investment Berhad',
-                'is_prefilled' => true
-            ],
-            [
-                'checklist_id' => 1,
-                'item_number' => '1.2',
-                'document_type' => 'Trust Deed',
-                'description' => 'Second Restated Trust Deed dated 25/11/2019 & the supplemental to the second restated trust deed dated 29/12/2022',
-                'validity_date' => Carbon::parse('2022-12-29'),
-                'location' => 'LD\'s room',
-                'is_prefilled' => true
-            ],
-            [
-                'checklist_id' => 1,
-                'item_number' => '1.4',
-                'document_type' => 'Lease Agreement',
-                'description' => 'Lease Agreement dated 22/06/2021',
-                'validity_date' => Carbon::parse('2021-06-22'),
-                'location' => 'LD\'s room',
-                'is_prefilled' => true
-            ],
-            [
-                'checklist_id' => 1,
-                'item_number' => '1.6',
-                'document_type' => 'Maintenance Manager Agreement',
-                'description' => 'Maintanece Management Agreement dated 11/03/2013, Supplemental to the Maintenance Management dated 30/03/2018 & Renewed by Extension Maintenance Management Agreement dated 15/12/2021',
-                'validity_date' => Carbon::parse('2021-12-15'),
-                'location' => 'LD\'s room',
-                'is_prefilled' => true
-            ],
-        ];
-        
-        foreach ($documentationItems as $item) {
-            DB::table('documentation_items')->insert(array_merge($item, [
-                'created_at' => now(),
-                'updated_at' => now()
-            ]));
-        }
-        
-        // Seed Tenant Approvals
-        $tenantApprovals = [
-            [
-                'checklist_id' => 2,
-                'tenant_id' => 2,
-                'lease_id' => 2,
-                'approval_type' => 'renewal',
-                'od_approved' => true,
-                'ld_verified' => true,
-                'od_approval_date' => Carbon::now()->subMonths(1)->subDays(10),
-                'ld_verification_date' => Carbon::now()->subMonths(1)->subDays(7),
-                'notes' => 'Tenant renewal approved for Tech Innovations Inc.',
-                'submitted_to_ld_date' => Carbon::now()->subMonths(1)->subDays(10),
-                'ld_response_date' => Carbon::now()->subMonths(1)->subDays(7)
-            ],
-            [
-                'checklist_id' => 3,
-                'tenant_id' => 3,
-                'lease_id' => 3,
-                'approval_type' => 'new',
-                'od_approved' => true,
-                'ld_verified' => false,
-                'od_approval_date' => Carbon::now()->subDays(5),
-                'ld_verification_date' => null,
-                'notes' => 'Awaiting LD verification for Urban Living Co.',
-                'submitted_to_ld_date' => Carbon::now()->subDays(5),
-                'ld_response_date' => null
-            ]
-        ];
-        
-        foreach ($tenantApprovals as $approval) {
-            DB::table('tenant_approvals')->insert(array_merge($approval, [
-                'created_at' => now(),
-                'updated_at' => now()
-            ]));
-        }
-        
-        // Seed Condition Checks
-        $conditionChecks = [
-            // External Area checks for checklist 3
-            [
-                'checklist_id' => 3,
-                'section' => 'External Area',
-                'item_number' => '3.1',
-                'item_name' => 'General Cleanliness',
-                'is_satisfied' => true,
-                'remarks' => null
-            ],
-            [
-                'checklist_id' => 3,
-                'section' => 'External Area',
-                'item_number' => '3.2',
-                'item_name' => 'Fencing & Main Gate',
-                'is_satisfied' => true,
-                'remarks' => null
-            ],
-            [
-                'checklist_id' => 3,
-                'section' => 'External Area',
-                'item_number' => '3.3',
-                'item_name' => 'External Facade',
-                'is_satisfied' => true,
-                'remarks' => null
-            ],
-            [
-                'checklist_id' => 3,
-                'section' => 'External Area',
-                'item_number' => '3.4',
-                'item_name' => 'Car park',
-                'is_satisfied' => true,
-                'remarks' => null
-            ],
-            [
-                'checklist_id' => 3,
-                'section' => 'External Area',
-                'item_number' => '3.5',
-                'item_name' => 'Land settlement',
-                'is_satisfied' => false,
-                'remarks' => 'N/A'
-            ],
-            
-            // Internal Area checks for checklist 3
-            [
-                'checklist_id' => 3,
-                'section' => 'Internal Area',
-                'item_number' => '4.1',
-                'item_name' => 'Door & window',
-                'is_satisfied' => true,
-                'remarks' => null
-            ],
-            [
-                'checklist_id' => 3,
-                'section' => 'Internal Area',
-                'item_number' => '4.2',
-                'item_name' => 'Staircase',
-                'is_satisfied' => true,
-                'remarks' => null
-            ],
-            [
-                'checklist_id' => 3,
-                'section' => 'Internal Area',
-                'item_number' => '4.3',
-                'item_name' => 'Toilet',
-                'is_satisfied' => true,
-                'remarks' => null
-            ],
-        ];
-        
-        foreach ($conditionChecks as $check) {
-            DB::table('condition_checks')->insert(array_merge($check, [
-                'created_at' => now(),
-                'updated_at' => now()
-            ]));
-        }
-        
-        // Seed Property Improvements
-        $propertyImprovements = [
-            [
-                'checklist_id' => 3,
-                'item_number' => '5.4',
-                'improvement_type' => 'Equipment Replacement',
-                'sub_type' => 'Air condition/Chiller System/Air Handling Unit ("AHU")',
-                'approval_date' => Carbon::parse('2022-12-14'),
-                'scope_of_work' => 'Proposed Total Replacement and Disposal of one (1) unit of Air Handling Unit (AHU) for Cardiac Operation Theatre at 1st floor Block B',
-                'status' => 'completed'
-            ],
-            [
-                'checklist_id' => 3,
-                'item_number' => '5.1',
-                'improvement_type' => 'Development',
-                'sub_type' => null,
-                'approval_date' => null,
-                'scope_of_work' => null,
-                'status' => 'not_applicable'
-            ],
-            [
-                'checklist_id' => 3,
-                'item_number' => '5.2',
-                'improvement_type' => 'Renovation',
-                'sub_type' => null,
-                'approval_date' => null,
-                'scope_of_work' => null,
-                'status' => 'not_applicable'
-            ],
-        ];
-        
-        foreach ($propertyImprovements as $improvement) {
-            DB::table('property_improvements')->insert(array_merge($improvement, [
-                'created_at' => now(),
-                'updated_at' => now()
-            ]));
-        }
-        
+
         // Seed Site Visit Logs
         $siteVisitLogs = [
             [
                 'site_visit_id' => 1,
                 'no' => 1,
-                'visitation_date' => Carbon::parse('2025-02-02'),
-                'purpose' => 'Approval for Proposed Total Replacement and Disposal for Two (2) Units Suction Water Pump No. 1 & No. 2',
+                'visitation_date' => '2024-01-15',
+                'purpose' => 'Annual facility inspection and tenant feedback collection',
                 'status' => 'Completed',
-                'report_submission_date' => Carbon::parse('2025-05-03'),
-                'report_attachment' => 'SV_Report_KPJ_Ampang_Puteri.pdf',
+                'report_submission_date' => '2024-01-20',
+                'report_attachment' => 'reports/skyline_a_inspection_2024.pdf',
                 'follow_up_required' => false,
-                'remarks' => 'NIL'
+                'remarks' => 'All systems in good working order. Minor maintenance issues in common areas to be addressed.'
             ],
             [
                 'site_visit_id' => 2,
-                'no' => 2,
-                'visitation_date' => Carbon::parse('2025-07-07'),
-                'purpose' => 'To discharge ART\'s duty as the legal owner of the Al-Salām Reit properties',
-                'status' => 'Pending',
-                'report_submission_date' => null,
-                'report_attachment' => null,
-                'follow_up_required' => false,
-                'remarks' => null
+                'no' => 1,
+                'visitation_date' => '2024-01-16',
+                'purpose' => 'Annual facility inspection and tenant feedback collection',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-01-21',
+                'report_attachment' => 'reports/skyline_b_inspection_2024.pdf',
+                'follow_up_required' => true,
+                'remarks' => 'HVAC system requires maintenance. Elevator #2 needs service.'
             ],
             [
                 'site_visit_id' => 3,
-                'no' => 3,
-                'visitation_date' => Carbon::now()->addDays(7),
-                'purpose' => 'Regular property assessment and tenant review',
+                'no' => 1,
+                'visitation_date' => '2024-02-10',
+                'purpose' => 'Inspection of newly renovated floors and tenant spaces',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-02-15',
+                'report_attachment' => 'reports/cbt_renovation_inspection_2024.pdf',
+                'follow_up_required' => false,
+                'remarks' => 'Renovations completed to specification. All systems operational.'
+            ],
+            [
+                'site_visit_id' => 4,
+                'no' => 1,
+                'visitation_date' => '2024-02-20',
+                'purpose' => 'Assessment of common areas and facilities',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-02-25',
+                'report_attachment' => 'reports/urban_heights_assessment_2024.pdf',
+                'follow_up_required' => true,
+                'remarks' => 'Security system upgrade recommended. Lobby requires refurbishment.'
+            ],
+            [
+                'site_visit_id' => 5,
+                'no' => 1,
+                'visitation_date' => '2024-03-05',
+                'purpose' => 'Inspection of retail spaces and food court',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-03-10',
+                'report_attachment' => 'reports/mall_plaza_retail_inspection_2024.pdf',
+                'follow_up_required' => false,
+                'remarks' => 'Food court renovation completed successfully. All retail spaces in good condition.'
+            ],
+            [
+                'site_visit_id' => 6,
+                'no' => 1,
+                'visitation_date' => '2024-03-15',
+                'purpose' => 'Safety and compliance inspection of industrial facility',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-03-20',
+                'report_attachment' => 'reports/tech_facility_safety_inspection_2024.pdf',
+                'follow_up_required' => true,
+                'remarks' => 'Fire suppression system requires upgrade to meet new regulations.'
+            ],
+            [
+                'site_visit_id' => 7,
+                'no' => 1,
+                'visitation_date' => '2024-04-10',
+                'purpose' => 'Review of building systems and tenant improvements',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-04-15',
+                'report_attachment' => 'reports/exec_plaza_systems_review_2024.pdf',
+                'follow_up_required' => false,
+                'remarks' => 'Building automation system functioning well. Tenant improvements align with guidelines.'
+            ],
+            [
+                'site_visit_id' => 8,
+                'no' => 1,
+                'visitation_date' => '2024-04-20',
+                'purpose' => 'Inspection of resort facilities and guest accommodations',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-04-25',
+                'report_attachment' => 'reports/beach_resort_facilities_inspection_2024.pdf',
+                'follow_up_required' => true,
+                'remarks' => 'Beach area requires erosion control measures. Pool equipment needs replacement.'
+            ],
+            [
+                'site_visit_id' => 9,
+                'no' => 1,
+                'visitation_date' => '2024-05-05',
+                'purpose' => 'Review of medical facility compliance and systems',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-05-10',
+                'report_attachment' => 'reports/medical_center_compliance_review_2024.pdf',
+                'follow_up_required' => false,
+                'remarks' => 'Facility meets all compliance requirements. Medical waste handling procedures excellent.'
+            ],
+            [
+                'site_visit_id' => 10,
+                'no' => 1,
+                'visitation_date' => '2024-05-15',
+                'purpose' => 'Inspection of research facilities and laboratories',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-05-20',
+                'report_attachment' => 'reports/uni_research_lab_inspection_2024.pdf',
+                'follow_up_required' => true,
+                'remarks' => 'Ventilation systems in chemical labs need upgrade. Safety protocols well implemented.'
+            ],
+            [
+                'site_visit_id' => 11,
+                'no' => 1,
+                'visitation_date' => '2024-06-01',
+                'purpose' => 'Safety inspection of warehouse operations',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-06-06',
+                'report_attachment' => 'reports/warehouse_safety_inspection_2024.pdf',
+                'follow_up_required' => false,
+                'remarks' => 'Loading dock equipment in excellent condition. Safety protocols followed rigorously.'
+            ],
+            [
+                'site_visit_id' => 12,
+                'no' => 1,
+                'visitation_date' => '2024-06-15',
+                'purpose' => 'Inspection of data center infrastructure and cooling systems',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-06-20',
+                'report_attachment' => 'reports/data_center_infrastructure_inspection_2024.pdf',
+                'follow_up_required' => true,
+                'remarks' => 'Backup power systems require testing. Cooling efficiency could be improved.'
+            ],
+            [
+                'site_visit_id' => 13,
+                'no' => 1,
+                'visitation_date' => '2024-07-01',
+                'purpose' => 'Review of storage facility security and climate control',
+                'status' => 'Completed',
+                'report_submission_date' => '2024-07-06',
+                'report_attachment' => 'reports/securespace_security_review_2024.pdf',
+                'follow_up_required' => false,
+                'remarks' => 'Security systems functioning optimally. Climate control consistent across all units.'
+            ],
+            [
+                'site_visit_id' => 14,
+                'no' => 1,
+                'visitation_date' => '2024-09-15',
+                'purpose' => 'Follow-up inspection for maintenance issues',
                 'status' => 'Scheduled',
                 'report_submission_date' => null,
                 'report_attachment' => null,
-                'follow_up_required' => true,
-                'remarks' => 'Will verify maintenance issues reported by tenants'
+                'follow_up_required' => false,
+                'remarks' => 'Scheduled to address previously identified maintenance issues.'
+            ],
+            [
+                'site_visit_id' => 15,
+                'no' => 1,
+                'visitation_date' => '2024-09-20',
+                'purpose' => 'Tenant improvement inspection',
+                'status' => 'Scheduled',
+                'report_submission_date' => null,
+                'report_attachment' => null,
+                'follow_up_required' => false,
+                'remarks' => 'Scheduled to assess new tenant improvements on floors 25-30.'
             ]
         ];
         
         foreach ($siteVisitLogs as $log) {
-            DB::table('site_visit_logs')->insert(array_merge($log, [
+            DB::table('site_visit_logs')->insert([
+                'site_visit_id' => $log['site_visit_id'],
+                'no' => $log['no'],
+                'visitation_date' => $log['visitation_date'],
+                'purpose' => $log['purpose'],
+                'status' => $log['status'],
+                'report_submission_date' => $log['report_submission_date'],
+                'report_attachment' => $log['report_attachment'],
+                'follow_up_required' => $log['follow_up_required'],
+                'remarks' => $log['remarks'],
                 'created_at' => now(),
                 'updated_at' => now()
-            ]));
+            ]);
+        }
+
+        // Seed Financials
+        $financials = [
+            [
+                'portfolio_id' => 1, // Skyline Residences
+                'bank_id' => 1, // HSBC Bank
+                'financial_type_id' => 2, // Conventional Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '15 years',
+                'installment_date' => '2023-07-01',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.2500,
+                'process_fee' => 125000.00,
+                'total_facility_amount' => 25000000.00,
+                'utilization_amount' => 25000000.00,
+                'outstanding_amount' => 23500000.00,
+                'interest_monthly' => 83125.00,
+                'security_value_monthly' => 28000000.00,
+                'facilities_agent' => 'Premier Real Estate Financials',
+                'agent_contact' => '+65 9123 4567',
+                'valuer' => 'Singapore Property Valuers',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 2, // Downtown Business Center
+                'bank_id' => 3, // JP Morgan Chase
+                'financial_type_id' => 4, // Term Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '10 years',
+                'installment_date' => '2022-12-15',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.5000,
+                'process_fee' => 225000.00,
+                'total_facility_amount' => 45000000.00,
+                'utilization_amount' => 45000000.00,
+                'outstanding_amount' => 41250000.00,
+                'interest_monthly' => 168750.00,
+                'security_value_monthly' => 48000000.00,
+                'facilities_agent' => 'KL Commercial Finance',
+                'agent_contact' => '+60 12 345 6789',
+                'valuer' => 'Malaysia Property Consultants',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 3, // Urban Complex
+                'bank_id' => 9, // Maybank
+                'financial_type_id' => 1, // Islamic Banking Financing
+                'purpose' => 'Property Acquisition',
+                'tenure' => '15 years',
+                'installment_date' => '2023-05-01',
+                'profit_type' => 'Floating',
+                'profit_rate' => 4.7500,
+                'process_fee' => 310000.00,
+                'total_facility_amount' => 62000000.00,
+                'utilization_amount' => 62000000.00,
+                'outstanding_amount' => 59500000.00,
+                'interest_monthly' => 245208.33,
+                'security_value_monthly' => 68000000.00,
+                'facilities_agent' => 'Jakarta Investment Finance',
+                'agent_contact' => '+62 21 987 6543',
+                'valuer' => 'Indonesian Property Services',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 4, // Central Shopping Mall
+                'bank_id' => 5, // DBS Bank
+                'financial_type_id' => 6, // Syndicated Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '10 years',
+                'installment_date' => '2023-08-01',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.0000,
+                'process_fee' => 390000.00,
+                'total_facility_amount' => 78000000.00,
+                'utilization_amount' => 78000000.00,
+                'outstanding_amount' => 76500000.00,
+                'interest_monthly' => 260000.00,
+                'security_value_monthly' => 85000000.00,
+                'facilities_agent' => 'Bangkok Commercial Finance',
+                'agent_contact' => '+66 2 345 6789',
+                'valuer' => 'Thai Property Appraisers',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 5, // Tech Industrial Park
+                'bank_id' => 10, // CIMB Bank
+                'financial_type_id' => 5, // Bridge Financing
+                'purpose' => 'Facility Upgrade',
+                'tenure' => '5 years',
+                'installment_date' => '2023-03-15',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 5.5000,
+                'process_fee' => 160000.00,
+                'total_facility_amount' => 32000000.00,
+                'utilization_amount' => 32000000.00,
+                'outstanding_amount' => 29500000.00,
+                'interest_monthly' => 146666.67,
+                'security_value_monthly' => 34000000.00,
+                'facilities_agent' => 'Penang Industrial Finance',
+                'agent_contact' => '+60 4 567 8901',
+                'valuer' => 'MYS Industrial Valuers',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 6, // Executive Tower
+                'bank_id' => 2, // Citibank
+                'financial_type_id' => 2, // Conventional Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '15 years',
+                'installment_date' => '2023-04-01',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.2500,
+                'process_fee' => 275000.00,
+                'total_facility_amount' => 55000000.00,
+                'utilization_amount' => 55000000.00,
+                'outstanding_amount' => 53000000.00,
+                'interest_monthly' => 194791.67,
+                'security_value_monthly' => 60000000.00,
+                'facilities_agent' => 'SG Commercial Property Finance',
+                'agent_contact' => '+65 9456 7890',
+                'valuer' => 'Singapore Commercial Appraisers',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 7, // Luxury Resort Collection
+                'bank_id' => 8, // UOB Bank
+                'financial_type_id' => 4, // Term Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '20 years',
+                'installment_date' => '2023-01-15',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.5000,
+                'process_fee' => 225000.00,
+                'total_facility_amount' => 45000000.00,
+                'utilization_amount' => 45000000.00,
+                'outstanding_amount' => 43500000.00,
+                'interest_monthly' => 168750.00,
+                'security_value_monthly' => 52000000.00,
+                'facilities_agent' => 'Bali Resort Finance',
+                'agent_contact' => '+62 361 234 5678',
+                'valuer' => 'Indonesian Hospitality Valuers',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 8, // Medical Plaza
+                'bank_id' => 7, // OCBC Bank
+                'financial_type_id' => 2, // Conventional Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '15 years',
+                'installment_date' => '2022-11-01',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.3500,
+                'process_fee' => 190000.00,
+                'total_facility_amount' => 38000000.00,
+                'utilization_amount' => 38000000.00,
+                'outstanding_amount' => 36000000.00,
+                'interest_monthly' => 137750.00,
+                'security_value_monthly' => 40000000.00,
+                'facilities_agent' => 'Manila Healthcare Finance',
+                'agent_contact' => '+63 2 345 6789',
+                'valuer' => 'Philippine Medical Property Appraisers',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 9, // Campus Properties
+                'bank_id' => 6, // Standard Chartered
+                'financial_type_id' => 4, // Term Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '10 years',
+                'installment_date' => '2023-02-01',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.0000,
+                'process_fee' => 140000.00,
+                'total_facility_amount' => 28000000.00,
+                'utilization_amount' => 28000000.00,
+                'outstanding_amount' => 26500000.00,
+                'interest_monthly' => 93333.33,
+                'security_value_monthly' => 30000000.00,
+                'facilities_agent' => 'SG Educational Finance',
+                'agent_contact' => '+65 9678 9012',
+                'valuer' => 'Singapore Educational Property Valuers',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 10, // Distribution Hub
+                'bank_id' => 11, // RHB Bank
+                'financial_type_id' => 8, // Construction Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '10 years',
+                'installment_date' => '2023-03-01',
+                'profit_type' => 'Floating',
+                'profit_rate' => 4.7500,
+                'process_fee' => 125000.00,
+                'total_facility_amount' => 25000000.00,
+                'utilization_amount' => 25000000.00,
+                'outstanding_amount' => 23750000.00,
+                'interest_monthly' => 98958.33,
+                'security_value_monthly' => 27000000.00,
+                'facilities_agent' => 'Vietnam Logistics Finance',
+                'agent_contact' => '+84 28 234 5678',
+                'valuer' => 'Vietnam Industrial Property Consultants',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 11, // Cloud Infrastructure
+                'bank_id' => 4, // Bank of America
+                'financial_type_id' => 2, // Conventional Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '15 years',
+                'installment_date' => '2022-09-01',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.0000,
+                'process_fee' => 325000.00,
+                'total_facility_amount' => 65000000.00,
+                'utilization_amount' => 65000000.00,
+                'outstanding_amount' => 61500000.00,
+                'interest_monthly' => 216666.67,
+                'security_value_monthly' => 70000000.00,
+                'facilities_agent' => 'SG Technology Finance',
+                'agent_contact' => '+65 9789 0123',
+                'valuer' => 'Singapore Tech Infrastructure Valuers',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 12, // SecureSpace Facilities
+                'bank_id' => 13, // Public Bank
+                'financial_type_id' => 2, // Conventional Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '10 years',
+                'installment_date' => '2023-01-01',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.5000,
+                'process_fee' => 75000.00,
+                'total_facility_amount' => 15000000.00,
+                'utilization_amount' => 15000000.00,
+                'outstanding_amount' => 14250000.00,
+                'interest_monthly' => 56250.00,
+                'security_value_monthly' => 16500000.00,
+                'facilities_agent' => 'KL Storage Finance',
+                'agent_contact' => '+60 3 456 7890',
+                'valuer' => 'Malaysia Storage Facility Valuers',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 13, // Farmland Investments
+                'bank_id' => 12, // Bank Islam
+                'financial_type_id' => 1, // Islamic Banking Financing
+                'purpose' => 'Property Acquisition',
+                'tenure' => '15 years',
+                'installment_date' => '2023-02-15',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.7500,
+                'process_fee' => 90000.00,
+                'total_facility_amount' => 18000000.00,
+                'utilization_amount' => 18000000.00,
+                'outstanding_amount' => 17250000.00,
+                'interest_monthly' => 71250.00,
+                'security_value_monthly' => 20000000.00,
+                'facilities_agent' => 'Malaysia Agricultural Finance',
+                'agent_contact' => '+60 7 345 6789',
+                'valuer' => 'Malaysian Agricultural Land Valuers',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 14, // Recreation Parks
+                'bank_id' => 14, // Hong Leong Bank
+                'financial_type_id' => 4, // Term Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '10 years',
+                'installment_date' => '2023-04-01',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.5000,
+                'process_fee' => 110000.00,
+                'total_facility_amount' => 22000000.00,
+                'utilization_amount' => 22000000.00,
+                'outstanding_amount' => 21000000.00,
+                'interest_monthly' => 82500.00,
+                'security_value_monthly' => 24000000.00,
+                'facilities_agent' => 'Thai Leisure Properties Finance',
+                'agent_contact' => '+66 2 456 7890',
+                'valuer' => 'Thai Recreational Property Valuers',
+                'status' => 'active'
+            ],
+            [
+                'portfolio_id' => 15, // University Accommodations
+                'bank_id' => 15, // AmBank
+                'financial_type_id' => 4, // Term Loan
+                'purpose' => 'Property Acquisition',
+                'tenure' => '15 years',
+                'installment_date' => '2023-03-01',
+                'profit_type' => 'Fixed',
+                'profit_rate' => 4.2500,
+                'process_fee' => 160000.00,
+                'total_facility_amount' => 32000000.00,
+                'utilization_amount' => 32000000.00,
+                'outstanding_amount' => 30500000.00,
+                'interest_monthly' => 113333.33,
+                'security_value_monthly' => 35000000.00,
+                'facilities_agent' => 'SG Student Housing Finance',
+                'agent_contact' => '+65 9890 1234',
+                'valuer' => 'Singapore Educational Property Valuers',
+                'status' => 'active'
+            ]
+        ];
+
+        foreach ($financials as $financial) {
+            DB::table('financials')->insert([
+                'portfolio_id' => $financial['portfolio_id'],
+                'bank_id' => $financial['bank_id'],
+                'financial_type_id' => $financial['financial_type_id'],
+                'purpose' => $financial['purpose'],
+                'tenure' => $financial['tenure'],
+                'installment_date' => $financial['installment_date'],
+                'profit_type' => $financial['profit_type'],
+                'profit_rate' => $financial['profit_rate'],
+                'process_fee' => $financial['process_fee'],
+                'total_facility_amount' => $financial['total_facility_amount'],
+                'utilization_amount' => $financial['utilization_amount'],
+                'outstanding_amount' => $financial['outstanding_amount'],
+                'interest_monthly' => $financial['interest_monthly'],
+                'security_value_monthly' => $financial['security_value_monthly'],
+                'facilities_agent' => $financial['facilities_agent'],
+                'agent_contact' => $financial['agent_contact'],
+                'valuer' => $financial['valuer'],
+                'status' => $financial['status'],
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        // Seed Checklists
+        $checklists = [
+            [
+                'property_title' => 'Skyline Tower A',
+                'property_location' => 'Singapore',
+                'title_ref' => 'SKA-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'SKA-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'SKA-SPA-001',
+                'lease_agreement_ref' => 'SKA-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'SKA-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Insurance certificates, property tax records',
+                'tenant_name' => 'Global Finance Corp',
+                'tenant_property' => 'Skyline Tower A, Floors 20-25',
+                'tenancy_approval_date' => '2023-05-15',
+                'tenancy_commencement_date' => '2023-06-01',
+                'tenancy_expiry_date' => '2028-05-31',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'All external areas well-maintained',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Interior in excellent condition',
+                'development_expansion_status' => 'No current plans',
+                'renovation_status' => 'Complete',
+                'external_repainting_status' => 'Scheduled for 2025',
+                'water_tank_status' => 'Satisfactory',
+                'air_conditioning_approval_date' => '2022-08-15',
+                'air_conditioning_scope' => 'Central HVAC system for entire building',
+                'air_conditioning_status' => 'Operational',
+                'lift_escalator_status' => 'Well-maintained',
+                'fire_system_status' => 'Up to code',
+                'other_property' => 'Backup generator, water recycling system',
+                'other_proposals_approvals' => 'Solar panel installation proposed for 2026',
+                'site_visit_id' => 1,
+                'status' => 'Approved',
+                'prepared_by' => 'John Smith',
+                'verified_by' => 'Sarah Johnson',
+                'remarks' => 'Annual inspection complete with satisfactory results',
+                'approval_datetime' => '2024-01-25 14:30:00'
+            ],
+            [
+                'property_title' => 'Skyline Tower B',
+                'property_location' => 'Singapore',
+                'title_ref' => 'SKB-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'SKB-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'SKB-SPA-001',
+                'lease_agreement_ref' => 'SKB-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'SKB-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Insurance certificates, property tax records',
+                'tenant_name' => 'Legal Associates LLP',
+                'tenant_property' => 'Skyline Tower B, Floors 10-14',
+                'tenancy_approval_date' => '2023-08-30',
+                'tenancy_commencement_date' => '2023-09-15',
+                'tenancy_expiry_date' => '2026-09-14',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => false,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'Rooftop requires maintenance, drainage system in good condition',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => false,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Minor water seepage in level 5 east corner, requires attention',
+                'development_expansion_status' => 'No current plans',
+                'renovation_status' => 'Partial renovation planned',
+                'external_repainting_status' => 'Scheduled for 2025',
+                'water_tank_status' => 'Requires cleaning',
+                'air_conditioning_approval_date' => '2022-10-20',
+                'air_conditioning_scope' => 'Central HVAC system for entire building',
+                'air_conditioning_status' => 'Requires maintenance',
+                'lift_escalator_status' => 'Elevator #2 needs service',
+                'fire_system_status' => 'Up to code',
+                'other_property' => 'Backup generator, water recycling system',
+                'other_proposals_approvals' => 'Elevator modernization proposed for 2025',
+                'site_visit_id' => 2,
+                'status' => 'Pending Action',
+                'prepared_by' => 'John Smith',
+                'verified_by' => 'Sarah Johnson',
+                'remarks' => 'Follow-up inspection required for HVAC and water seepage issues',
+                'approval_datetime' => '2024-01-26 15:45:00'
+            ],
+            [
+                'property_title' => 'Central Business Tower',
+                'property_location' => 'Kuala Lumpur, Malaysia',
+                'title_ref' => 'CBT-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'CBT-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'CBT-SPA-001',
+                'lease_agreement_ref' => 'CBT-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'CBT-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'CBT-DEV-001',
+                'other_legal_docs' => 'Tax clearance certificates, building permits',
+                'tenant_name' => 'Standard Insurance Group',
+                'tenant_property' => 'Central Business Tower, Floors 25-30',
+                'tenancy_approval_date' => '2022-10-15',
+                'tenancy_commencement_date' => '2022-11-01',
+                'tenancy_expiry_date' => '2027-10-31',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'External areas in excellent condition after renovation',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Recently renovated floors in pristine condition',
+                'development_expansion_status' => 'No current plans',
+                'renovation_status' => 'Complete',
+                'external_repainting_status' => 'Completed 2023',
+                'water_tank_status' => 'Excellent',
+                'air_conditioning_approval_date' => '2023-01-15',
+                'air_conditioning_scope' => 'Complete system upgrade for entire building',
+                'air_conditioning_status' => 'Excellent',
+                'lift_escalator_status' => 'Recently serviced, excellent condition',
+                'fire_system_status' => 'Up to code with recent upgrades',
+                'other_property' => 'Smart building technology, energy-efficient systems',
+                'other_proposals_approvals' => 'Green building certification in progress',
+                'site_visit_id' => 3,
+                'status' => 'Approved',
+                'prepared_by' => 'David Wong',
+                'verified_by' => 'Michelle Tan',
+                'remarks' => 'Building meets all requirements after renovation',
+                'approval_datetime' => '2024-02-15 09:45:00'
+            ],
+            [
+                'property_title' => 'Urban Heights',
+                'property_location' => 'Jakarta, Indonesia',
+                'title_ref' => 'UH-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'UH-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'UH-SPA-001',
+                'lease_agreement_ref' => 'UH-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'UH-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'UH-DEV-001',
+                'other_legal_docs' => 'Building permits, occupancy certificates',
+                'tenant_name' => 'Skyline Retailers',
+                'tenant_property' => 'Urban Heights, Ground floor units 1-10',
+                'tenancy_approval_date' => '2023-03-15',
+                'tenancy_commencement_date' => '2023-04-01',
+                'tenancy_expiry_date' => '2028-03-31',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => false,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'Facade needs maintenance in several areas. West side has some paint peeling.',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => false,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Loading bay equipment requires servicing. Some hydraulic lifts not functioning properly.',
+                'development_expansion_status' => 'Expansion planned for 2025',
+                'renovation_status' => 'Lobby renovation in progress',
+                'external_repainting_status' => 'Scheduled for 2024',
+                'water_tank_status' => 'Satisfactory',
+                'air_conditioning_approval_date' => '2022-05-10',
+                'air_conditioning_scope' => 'Central cooling for commercial spaces',
+                'air_conditioning_status' => 'Operational',
+                'lift_escalator_status' => 'Satisfactory',
+                'fire_system_status' => 'Up to code',
+                'other_property' => 'Backup generators, water treatment system',
+                'other_proposals_approvals' => 'Security system upgrade approved',
+                'site_visit_id' => 4,
+                'status' => 'Pending Action',
+                'prepared_by' => 'Ahmad Yusof',
+                'verified_by' => 'Nadia Ibrahim',
+                'remarks' => 'Follow-up required for facade maintenance and loading bay repairs',
+                'approval_datetime' => '2024-02-25 11:30:00'
+            ],
+            [
+                'property_title' => 'Central Mall Plaza',
+                'property_location' => 'Bangkok, Thailand',
+                'title_ref' => 'CMP-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'CMP-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'CMP-SPA-001',
+                'lease_agreement_ref' => 'CMP-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'CMP-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Insurance certificates, retail licenses',
+                'tenant_name' => 'Fashion Forward',
+                'tenant_property' => 'Central Mall Plaza, South Wing, Floors 1-3',
+                'tenancy_approval_date' => '2023-06-15',
+                'tenancy_commencement_date' => '2023-07-01',
+                'tenancy_expiry_date' => '2028-06-30',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'All external areas well-maintained. Recent landscaping improvements enhance the property.',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Food court renovation successful. All areas in excellent condition.',
+                'development_expansion_status' => 'West wing expansion planned for 2025',
+                'renovation_status' => 'Food court renovation complete',
+                'external_repainting_status' => 'Completed 2023',
+                'water_tank_status' => 'Excellent',
+                'air_conditioning_approval_date' => '2022-09-15',
+                'air_conditioning_scope' => 'Central cooling for entire mall',
+                'air_conditioning_status' => 'Excellent',
+                'lift_escalator_status' => 'Excellent',
+                'fire_system_status' => 'Up to code with recent upgrades',
+                'other_property' => 'Smart building systems, digital directory kiosks',
+                'other_proposals_approvals' => 'Food delivery pickup zone approved',
+                'site_visit_id' => 5,
+                'status' => 'Approved',
+                'prepared_by' => 'Somchai Patel',
+                'verified_by' => 'Picha Wong',
+                'remarks' => 'Property in excellent condition with successful renovations',
+                'approval_datetime' => '2024-03-10 13:15:00'
+            ],
+            [
+                'property_title' => 'Tech Manufacturing Facility',
+                'property_location' => 'Penang, Malaysia',
+                'title_ref' => 'TMF-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'TMF-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'TMF-SPA-001',
+                'lease_agreement_ref' => 'TMF-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'TMF-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Manufacturing licenses, environmental permits',
+                'tenant_name' => 'Advanced Semiconductors Inc.',
+                'tenant_property' => 'Tech Manufacturing Facility',
+                'tenancy_approval_date' => '2022-04-15',
+                'tenancy_commencement_date' => '2022-05-01',
+                'tenancy_expiry_date' => '2032-04-30',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'Security perimeter and grounds well-maintained',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Manufacturing spaces well-maintained by tenant',
+                'development_expansion_status' => 'Phase 2 expansion planned for 2026',
+                'renovation_status' => 'Not applicable',
+                'external_repainting_status' => 'Scheduled for 2025',
+                'water_tank_status' => 'Satisfactory',
+                'air_conditioning_approval_date' => '2022-02-15',
+                'air_conditioning_scope' => 'Specialized HVAC for manufacturing environment',
+                'air_conditioning_status' => 'Operational',
+                'lift_escalator_status' => 'Satisfactory',
+                'fire_system_status' => 'Requires upgrade to meet new regulations',
+                'other_property' => 'Specialized water treatment, air purification systems',
+                'other_proposals_approvals' => 'Fire suppression system upgrade pending approval',
+                'site_visit_id' => 6,
+                'status' => 'Pending Action',
+                'prepared_by' => 'Tan Wei Liang',
+                'verified_by' => 'Lim Mei Ling',
+                'remarks' => 'Fire suppression system upgrade required to meet new regulations',
+                'approval_datetime' => '2024-03-20 10:30:00'
+            ],
+            [
+                'property_title' => 'Executive Plaza',
+                'property_location' => 'Singapore',
+                'title_ref' => 'EP-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'EP-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'EP-SPA-001',
+                'sale_purchase_agreement' => 'EP-SPA-001',
+                'lease_agreement_ref' => 'EP-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'EP-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Insurance certificates, building permits',
+                'tenant_name' => 'Global Ventures Capital',
+                'tenant_property' => 'Executive Plaza, Floors 15-20',
+                'tenancy_approval_date' => '2023-02-15',
+                'tenancy_commencement_date' => '2023-03-01',
+                'tenancy_expiry_date' => '2028-02-29',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'External areas in excellent condition',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'All systems functioning optimally. Building automation system performing well.',
+                'development_expansion_status' => 'No current plans',
+                'renovation_status' => 'Complete',
+                'external_repainting_status' => 'Completed 2022',
+                'water_tank_status' => 'Excellent',
+                'air_conditioning_approval_date' => '2022-06-15',
+                'air_conditioning_scope' => 'Central HVAC for entire building',
+                'air_conditioning_status' => 'Excellent',
+                'lift_escalator_status' => 'Excellent',
+                'fire_system_status' => 'Up to code with recent certification',
+                'other_property' => 'Smart building technology, energy management systems',
+                'other_proposals_approvals' => 'EV charging stations to be installed in 2025',
+                'site_visit_id' => 7,
+                'status' => 'Approved',
+                'prepared_by' => 'Jennifer Koh',
+                'verified_by' => 'Michael Lee',
+                'remarks' => 'Property in excellent condition with all systems functioning optimally',
+                'approval_datetime' => '2024-04-15 14:00:00'
+            ],
+            [
+                'property_title' => 'Beach Resort & Spa',
+                'property_location' => 'Bali, Indonesia',
+                'title_ref' => 'BRS-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'BRS-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'BRS-SPA-001',
+                'lease_agreement_ref' => 'BRS-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'BRS-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Tourism licenses, environmental permits',
+                'tenant_name' => 'Luxury Escapes',
+                'tenant_property' => 'Beach Resort & Spa',
+                'tenancy_approval_date' => '2022-11-15',
+                'tenancy_commencement_date' => '2022-12-01',
+                'tenancy_expiry_date' => '2037-11-30',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'Grounds well-maintained. Beach area requires erosion control measures.',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Guest accommodations in excellent condition. Pool equipment needs replacement.',
+                'development_expansion_status' => 'Villa expansion planned for 2026',
+                'renovation_status' => 'Spa renovation scheduled for 2025',
+                'external_repainting_status' => 'Scheduled for 2024',
+                'water_tank_status' => 'Satisfactory',
+                'air_conditioning_approval_date' => '2022-09-15',
+                'air_conditioning_scope' => 'Individual units for all rooms and common areas',
+                'air_conditioning_status' => 'Good',
+                'lift_escalator_status' => 'Good',
+                'fire_system_status' => 'Up to code',
+                'other_property' => 'Desalination plant, energy management systems',
+                'other_proposals_approvals' => 'Solar power implementation approved',
+                'site_visit_id' => 8,
+                'status' => 'Pending Action',
+                'prepared_by' => 'Putu Wijaya',
+                'verified_by' => 'Made Sukma',
+                'remarks' => 'Beach erosion control and pool equipment replacement needed',
+                'approval_datetime' => '2024-04-25 11:30:00'
+            ],
+            [
+                'property_title' => 'Central Medical Center',
+                'property_location' => 'Manila, Philippines',
+                'title_ref' => 'CMC-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'CMC-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'CMC-SPA-001',
+                'lease_agreement_ref' => 'CMC-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'CMC-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Medical facility licenses, health department certifications',
+                'tenant_name' => 'Premier Healthcare Systems',
+                'tenant_property' => 'Central Medical Center',
+                'tenancy_approval_date' => '2022-09-15',
+                'tenancy_commencement_date' => '2022-10-01',
+                'tenancy_expiry_date' => '2032-09-30',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'All external areas well-maintained and meeting healthcare facility standards',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'All medical facilities meet or exceed standards. Medical waste handling procedures excellent.',
+                'development_expansion_status' => 'Diagnostic wing expansion planned for 2026',
+                'renovation_status' => 'Not applicable',
+                'external_repainting_status' => 'Completed 2023',
+                'water_tank_status' => 'Excellent',
+                'air_conditioning_approval_date' => '2022-08-15',
+                'air_conditioning_scope' => 'Specialized HVAC for medical environment',
+                'air_conditioning_status' => 'Excellent',
+                'lift_escalator_status' => 'Excellent',
+                'fire_system_status' => 'Up to code with specialized medical facility protocols',
+                'other_property' => 'Backup power systems, medical gas systems',
+                'other_proposals_approvals' => 'New imaging equipment installation approved',
+                'site_visit_id' => 9,
+                'status' => 'Approved',
+                'prepared_by' => 'Maria Santos',
+                'verified_by' => 'Jose Cruz',
+                'remarks' => 'Facility meets all medical standards and building requirements',
+                'approval_datetime' => '2024-05-10 09:45:00'
+            ],
+            [
+                'property_title' => 'University Research Building',
+                'property_location' => 'Singapore',
+                'title_ref' => 'URB-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'URB-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'URB-SPA-001',
+                'lease_agreement_ref' => 'URB-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'URB-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Educational facility permits, research licenses',
+                'tenant_name' => 'National University Research',
+                'tenant_property' => 'University Research Building',
+                'tenancy_approval_date' => '2022-12-15',
+                'tenancy_commencement_date' => '2023-01-01',
+                'tenancy_expiry_date' => '2027-12-31',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'Campus grounds well-maintained',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Laboratory facilities well-maintained. Ventilation systems in chemical labs need upgrade.',
+                'development_expansion_status' => 'No current plans',
+                'renovation_status' => 'Lab modernization in planning',
+                'external_repainting_status' => 'Scheduled for 2025',
+                'water_tank_status' => 'Satisfactory',
+                'air_conditioning_approval_date' => '2022-11-15',
+                'air_conditioning_scope' => 'Specialized HVAC for research environments',
+                'air_conditioning_status' => 'Operational',
+                'lift_escalator_status' => 'Satisfactory',
+                'fire_system_status' => 'Up to code with specialized lab safety protocols',
+                'other_property' => 'Specialized lab equipment, fume hoods',
+                'other_proposals_approvals' => 'Chemical lab ventilation upgrade approved',
+                'site_visit_id' => 10,
+                'status' => 'Pending Action',
+                'prepared_by' => 'Ravi Kumar',
+                'verified_by' => 'Dr. Tan Li Wei',
+                'remarks' => 'Ventilation systems in chemical labs need upgrade',
+                'approval_datetime' => '2024-05-20 13:00:00'
+            ],
+            [
+                'property_title' => 'Central Distribution Warehouse',
+                'property_location' => 'Ho Chi Minh City, Vietnam',
+                'title_ref' => 'CDW-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'CDW-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'CDW-SPA-001',
+                'lease_agreement_ref' => 'CDW-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'CDW-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Logistics licenses, customs permits',
+                'tenant_name' => 'Asia Logistics Solutions',
+                'tenant_property' => 'Central Distribution Warehouse',
+                'tenancy_approval_date' => '2023-01-15',
+                'tenancy_commencement_date' => '2023-02-01',
+                'tenancy_expiry_date' => '2028-01-31',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'Loading areas and truck yard well-maintained',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Warehouse interior in good condition. Loading dock equipment in excellent condition.',
+                'development_expansion_status' => 'Phase 2 expansion planned for 2026',
+                'renovation_status' => 'Not applicable',
+                'external_repainting_status' => 'Scheduled for 2025',
+                'water_tank_status' => 'Satisfactory',
+                'air_conditioning_approval_date' => '2022-12-15',
+                'air_conditioning_scope' => 'Office areas and cold storage',
+                'air_conditioning_status' => 'Operational',
+                'lift_escalator_status' => 'Satisfactory',
+                'fire_system_status' => 'Up to code',
+                'other_property' => 'Cold storage facilities, loading equipment',
+                'other_proposals_approvals' => 'Automated sorting system proposed',
+                'site_visit_id' => 11,
+                'status' => 'Approved',
+                'prepared_by' => 'Nguyen Van Minh',
+                'verified_by' => 'Tran Thi Hoa',
+                'remarks' => 'Warehouse operations and facilities meet all requirements',
+                'approval_datetime' => '2024-06-06 10:30:00'
+            ],
+            [
+                'property_title' => 'Cloud Data Center',
+                'property_location' => 'Singapore',
+                'title_ref' => 'CDC-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'CDC-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'CDC-SPA-001',
+                'lease_agreement_ref' => 'CDC-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'CDC-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Data security certifications, infrastructure permits',
+                'tenant_name' => 'Global Cloud Services',
+                'tenant_property' => 'Cloud Data Center',
+                'tenancy_approval_date' => '2022-08-15',
+                'tenancy_commencement_date' => '2022-09-01',
+                'tenancy_expiry_date' => '2032-08-31',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'High security perimeter well-maintained',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Specialized data center infrastructure well-maintained. Backup power systems require testing.',
+                'development_expansion_status' => 'Capacity expansion planned for 2025',
+                'renovation_status' => 'Not applicable',
+                'external_repainting_status' => 'Not applicable',
+                'water_tank_status' => 'Satisfactory',
+                'air_conditioning_approval_date' => '2022-07-15',
+                'air_conditioning_scope' => 'Specialized cooling for server environments',
+                'air_conditioning_status' => 'Operational but could be more efficient',
+                'lift_escalator_status' => 'Satisfactory',
+                'fire_system_status' => 'Specialized systems up to code',
+                'other_property' => 'Advanced security systems, backup generators',
+                'other_proposals_approvals' => 'Cooling efficiency upgrade approved',
+                'site_visit_id' => 12,
+                'status' => 'Pending Action',
+                'prepared_by' => 'Desmond Lim',
+                'verified_by' => 'Rachel Teo',
+                'remarks' => 'Backup power systems require testing and cooling efficiency could be improved',
+                'approval_datetime' => '2024-06-20 11:45:00'
+            ],
+            [
+                'property_title' => 'SecureSpace Center',
+                'property_location' => 'Kuala Lumpur, Malaysia',
+                'title_ref' => 'SSC-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'SSC-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'SSC-SPA-001',
+                'lease_agreement_ref' => 'SSC-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'SSC-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Storage facility permits, security certifications',
+                'tenant_name' => 'SecureSpace Operations',
+                'tenant_property' => 'SecureSpace Center',
+                'tenancy_approval_date' => '2022-12-15',
+                'tenancy_commencement_date' => '2023-01-01',
+                'tenancy_expiry_date' => '2027-12-31',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'Secure perimeter and access points well-maintained',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Storage units and climate control systems in excellent condition',
+                'development_expansion_status' => 'Phase 2 expansion planned for 2025',
+                'renovation_status' => 'Not applicable',
+                'external_repainting_status' => 'Scheduled for 2024',
+                'water_tank_status' => 'Satisfactory',
+                'air_conditioning_approval_date' => '2022-11-15',
+                'air_conditioning_scope' => 'Climate control for storage units',
+                'air_conditioning_status' => 'Excellent',
+                'lift_escalator_status' => 'Excellent',
+                'fire_system_status' => 'Up to code',
+                'other_property' => 'Security systems, climate monitoring',
+                'other_proposals_approvals' => 'Mobile app access system approved',
+                'site_visit_id' => 13,
+                'status' => 'Approved',
+                'prepared_by' => 'Amir Hassan',
+                'verified_by' => 'Farah Ahmad',
+                'remarks' => 'Facility meets all storage and security requirements',
+                'approval_datetime' => '2024-07-06 09:30:00'
+            ],
+            [
+                'property_title' => 'Skyline Tower A',
+                'property_location' => 'Singapore',
+                'title_ref' => 'SKA-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'SKA-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'SKA-SPA-001',
+                'lease_agreement_ref' => 'SKA-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'SKA-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'Not Applicable',
+                'other_legal_docs' => 'Insurance certificates, property tax records',
+                'tenant_name' => 'Global Finance Corp',
+                'tenant_property' => 'Skyline Tower A, Floors 20-25',
+                'tenancy_approval_date' => '2023-05-15',
+                'tenancy_commencement_date' => '2023-06-01',
+                'tenancy_expiry_date' => '2028-05-31',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'Scheduled follow-up inspection for maintenance issues',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Scheduled follow-up inspection for minor maintenance issues',
+                'development_expansion_status' => 'No current plans',
+                'renovation_status' => 'Complete',
+                'external_repainting_status' => 'Scheduled for 2025',
+                'water_tank_status' => 'Scheduled for inspection',
+                'air_conditioning_approval_date' => '2022-08-15',
+                'air_conditioning_scope' => 'Central HVAC system for entire building',
+                'air_conditioning_status' => 'Scheduled for maintenance check',
+                'lift_escalator_status' => 'Scheduled for inspection',
+                'fire_system_status' => 'Scheduled for testing',
+                'other_property' => 'Backup generator, water recycling system',
+                'other_proposals_approvals' => 'Solar panel installation proposed for 2026',
+                'site_visit_id' => 14,
+                'status' => 'Scheduled',
+                'prepared_by' => 'John Smith',
+                'verified_by' => null,
+                'remarks' => 'Follow-up inspection scheduled for previously identified maintenance issues',
+                'approval_datetime' => null
+            ],
+            [
+                'property_title' => 'Central Business Tower',
+                'property_location' => 'Kuala Lumpur, Malaysia',
+                'title_ref' => 'CBT-TITLE-001',
+                'title_location' => 'Legal Department Safe',
+                'trust_deed_ref' => 'CBT-DEED-001',
+                'trust_deed_location' => 'Legal Department Safe',
+                'sale_purchase_agreement' => 'CBT-SPA-001',
+                'lease_agreement_ref' => 'CBT-LEASE-001',
+                'lease_agreement_location' => 'Digital Archive',
+                'agreement_to_lease' => 'Complete',
+                'maintenance_agreement_ref' => 'CBT-MAINT-001',
+                'maintenance_agreement_location' => 'Operations Office',
+                'development_agreement' => 'CBT-DEV-001',
+                'other_legal_docs' => 'Tax clearance certificates, building permits',
+                'tenant_name' => 'Standard Insurance Group',
+                'tenant_property' => 'Central Business Tower, Floors 25-30',
+                'tenancy_approval_date' => '2022-10-15',
+                'tenancy_commencement_date' => '2022-11-01',
+                'tenancy_expiry_date' => '2027-10-31',
+                'is_general_cleanliness_satisfied' => true,
+                'is_fencing_gate_satisfied' => true,
+                'is_external_facade_satisfied' => true,
+                'is_car_park_satisfied' => true,
+                'is_land_settlement_satisfied' => true,
+                'is_rooftop_satisfied' => true,
+                'is_drainage_satisfied' => true,
+                'external_remarks' => 'Scheduled inspection for tenant improvements',
+                'is_door_window_satisfied' => true,
+                'is_staircase_satisfied' => true,
+                'is_toilet_satisfied' => true,
+                'is_ceiling_satisfied' => true,
+                'is_wall_satisfied' => true,
+                'is_water_seeping_satisfied' => true,
+                'is_loading_bay_satisfied' => true,
+                'is_basement_car_park_satisfied' => true,
+                'internal_remarks' => 'Scheduled inspection to assess new tenant improvements on floors 25-30',
+                'development_expansion_status' => 'No current plans',
+                'renovation_status' => 'Tenant improvements in progress',
+                'external_repainting_status' => 'Completed 2023',
+                'water_tank_status' => 'Excellent',
+                'air_conditioning_approval_date' => '2023-01-15',
+                'air_conditioning_scope' => 'Complete system upgrade for entire building',
+                'air_conditioning_status' => 'Excellent',
+                'lift_escalator_status' => 'Recently serviced, excellent condition',
+                'fire_system_status' => 'Up to code with recent upgrades',
+                'other_property' => 'Smart building technology, energy-efficient systems',
+                'other_proposals_approvals' => 'Green building certification in progress',
+                'site_visit_id' => 15,
+                'status' => 'Scheduled',
+                'prepared_by' => 'David Wong',
+                'verified_by' => null,
+                'remarks' => 'Scheduled inspection to assess new tenant improvements on floors 25-30',
+                'approval_datetime' => null
+            ]
+        ];
+
+        foreach ($checklists as $checklist) {
+            DB::table('checklists')->insert([
+                'property_title' => $checklist['property_title'],
+                'property_location' => $checklist['property_location'],
+                'title_ref' => $checklist['title_ref'],
+                'title_location' => $checklist['title_location'],
+                'trust_deed_ref' => $checklist['trust_deed_ref'],
+                'trust_deed_location' => $checklist['trust_deed_location'],
+                'sale_purchase_agreement' => $checklist['sale_purchase_agreement'],
+                'lease_agreement_ref' => $checklist['lease_agreement_ref'],
+                'lease_agreement_location' => $checklist['lease_agreement_location'],
+                'agreement_to_lease' => $checklist['agreement_to_lease'],
+                'maintenance_agreement_ref' => $checklist['maintenance_agreement_ref'],
+                'maintenance_agreement_location' => $checklist['maintenance_agreement_location'],
+                'development_agreement' => $checklist['development_agreement'],
+                'other_legal_docs' => $checklist['other_legal_docs'],
+                'tenant_name' => $checklist['tenant_name'],
+                'tenant_property' => $checklist['tenant_property'],
+                'tenancy_approval_date' => $checklist['tenancy_approval_date'],
+                'tenancy_commencement_date' => $checklist['tenancy_commencement_date'],
+                'tenancy_expiry_date' => $checklist['tenancy_expiry_date'],
+                'is_general_cleanliness_satisfied' => $checklist['is_general_cleanliness_satisfied'],
+                'is_fencing_gate_satisfied' => $checklist['is_fencing_gate_satisfied'],
+                'is_external_facade_satisfied' => $checklist['is_external_facade_satisfied'],
+                'is_car_park_satisfied' => $checklist['is_car_park_satisfied'],
+                'is_land_settlement_satisfied' => $checklist['is_land_settlement_satisfied'],
+                'is_rooftop_satisfied' => $checklist['is_rooftop_satisfied'],
+                'is_drainage_satisfied' => $checklist['is_drainage_satisfied'],
+                'external_remarks' => $checklist['external_remarks'],
+                'is_door_window_satisfied' => $checklist['is_door_window_satisfied'],
+                'is_staircase_satisfied' => $checklist['is_staircase_satisfied'],
+                'is_toilet_satisfied' => $checklist['is_toilet_satisfied'],
+                'is_ceiling_satisfied' => $checklist['is_ceiling_satisfied'],
+                'is_wall_satisfied' => $checklist['is_wall_satisfied'],
+                'is_water_seeping_satisfied' => $checklist['is_water_seeping_satisfied'],
+                'is_loading_bay_satisfied' => $checklist['is_loading_bay_satisfied'],
+                'is_basement_car_park_satisfied' => $checklist['is_basement_car_park_satisfied'],
+                'internal_remarks' => $checklist['internal_remarks'],
+                'development_expansion_status' => $checklist['development_expansion_status'],
+                'renovation_status' => $checklist['renovation_status'],
+                'external_repainting_status' => $checklist['external_repainting_status'],
+                'water_tank_status' => $checklist['water_tank_status'],
+                'air_conditioning_approval_date' => $checklist['air_conditioning_approval_date'],
+                'air_conditioning_scope' => $checklist['air_conditioning_scope'],
+                'air_conditioning_status' => $checklist['air_conditioning_status'],
+                'lift_escalator_status' => $checklist['lift_escalator_status'],
+                'fire_system_status' => $checklist['fire_system_status'],
+                'other_property' => $checklist['other_property'],
+                'other_proposals_approvals' => $checklist['other_proposals_approvals'],
+                'site_visit_id' => $checklist['site_visit_id'],
+                'status' => $checklist['status'],
+                'prepared_by' => $checklist['prepared_by'],
+                'verified_by' => $checklist['verified_by'],
+                'remarks' => $checklist['remarks'],
+                'approval_datetime' => $checklist['approval_datetime'],
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
         }
     }
 }

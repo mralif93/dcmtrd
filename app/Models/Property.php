@@ -95,57 +95,6 @@ class Property extends Model
     }
     
     /**
-     * Get latest checklist by type.
-     */
-    public function latestChecklistByType($type)
-    {
-        return $this->checklists()
-            ->where('type', $type)
-            ->latest('approval_date')
-            ->first();
-    }
-    
-    /**
-     * Get documentation checklist.
-     */
-    public function documentationChecklist()
-    {
-        return $this->latestChecklistByType('documentation');
-    }
-    
-    /**
-     * Get tenant checklist.
-     */
-    public function tenantChecklist()
-    {
-        return $this->latestChecklistByType('tenant');
-    }
-    
-    /**
-     * Get condition checklist.
-     */
-    public function conditionChecklist()
-    {
-        return $this->latestChecklistByType('condition');
-    }
-    
-    /**
-     * Get improvement checklist.
-     */
-    public function improvementChecklist()
-    {
-        return $this->latestChecklistByType('improvement');
-    }
-    
-    /**
-     * Get all documentation items through checklists.
-     */
-    public function getAllDocumentationItems()
-    {
-        return DocumentationItem::whereIn('checklist_id', $this->checklists()->pluck('id'));
-    }
-    
-    /**
      * Get upcoming site visits.
      */
     public function upcomingSiteVisits()

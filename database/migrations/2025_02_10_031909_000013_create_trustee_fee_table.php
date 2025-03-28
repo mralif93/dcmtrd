@@ -26,7 +26,9 @@ return new class extends Migration
             $table->date('first_reminder')->nullable();
             $table->date('second_reminder')->nullable();
             $table->date('third_reminder')->nullable();
+            $table->date('remarks_reminder')->nullable();
             $table->date('payment_received')->nullable();
+            $table->date('payment_status')->nullable();
             $table->string('tt_cheque_no')->nullable();
             $table->date('memo_receipt_to_fad')->nullable();
             $table->date('receipt_to_issuer')->nullable();

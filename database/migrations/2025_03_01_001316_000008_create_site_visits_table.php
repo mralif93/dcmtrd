@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('site_visits', function (Blueprint $table) {
             $table->id();
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
-            $table->foreignId('checklist_id')->nullable()->constrained()->onDelete('set null'); // Added for checklist integration
             $table->date('date_visit');
             $table->time('time_visit');
             $table->string('inspector_name')->nullable();

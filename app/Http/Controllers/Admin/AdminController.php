@@ -6,25 +6,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Issuer;
-use App\Models\Bond;
-use App\Models\RatingMovement;
-use App\Models\PaymentSchedule;
-use App\Models\Redemption;
-use App\Models\CallSchedule;
-use App\Models\LockoutPeriod;
-use App\Models\TradingActivity;
-use App\Models\Announcement;
-use App\Models\FacilityInformation;
-use App\Models\RelatedDocument;
-use App\Models\Chart;
-use App\Models\TrusteeFee;
-use App\Models\ComplianceCovenant;
-use App\Models\DocumentationItem;
-use App\Models\TenantApproval;
-use App\Models\ConditionCheck;
-use App\Models\PropertyImprovement;
 
 class AdminController extends Controller
 {
@@ -55,15 +36,11 @@ class AdminController extends Controller
                     (SELECT COUNT(*) FROM portfolio_types) AS portfolio_types_count,
                     (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
                     (SELECT COUNT(*) FROM properties) AS properties_count,
-                    (SELECT COUNT(*) FROM checklists) AS checklists_count,
                     (SELECT COUNT(*) FROM tenants) AS tenants_count,
                     (SELECT COUNT(*) FROM leases) AS leases_count,
                     (SELECT COUNT(*) FROM financials) AS financials_count,
                     (SELECT COUNT(*) FROM site_visits) AS site_visits_count,
-                    (SELECT COUNT(*) FROM documentation_items) AS documentation_items_count,
-                    (SELECT COUNT(*) FROM tenant_approvals) AS tenant_approvals_count,
-                    (SELECT COUNT(*) FROM condition_checks) AS condition_checks_count,
-                    (SELECT COUNT(*) FROM property_improvements) AS property_improvements_count,
+                    (SELECT COUNT(*) FROM checklists) AS checklists_count,
                     (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count
             ");
             return (array) $result[0];
@@ -94,15 +71,11 @@ class AdminController extends Controller
             'portfolioTypesCount' => $counts['portfolio_types_count'],
             'portfoliosCount' => $counts['portfolios_count'],
             'propertiesCount' => $counts['properties_count'],
-            'checklistsCount' => $counts['checklists_count'],
             'tenantsCount' => $counts['tenants_count'],
             'leasesCount' => $counts['leases_count'],
             'financialsCount' => $counts['financials_count'],
             'siteVisitsCount' => $counts['site_visits_count'],
-            'documentationItemsCount' => $counts['documentation_items_count'],
-            'tenantApprovalsCount' => $counts['tenant_approvals_count'],
-            'conditionChecksCount' => $counts['condition_checks_count'],
-            'propertyImprovementsCount' => $counts['property_improvements_count'],
+            'checklistsCount' => $counts['checklists_count'],
             'siteVisitLogsCount' => $counts['site_visit_logs_count']
         ]);
     }

@@ -233,15 +233,6 @@
                     color="bg-green-100"
                 />
 
-                <!-- Checklists -->
-                <x-dashboard-card
-                    title="Checklists"
-                    icon="clipboard-check"
-                    :count="$checklistsCount"
-                    :href="route('checklists.index')"
-                    color="bg-green-100"
-                />
-
                 <!-- Tenants -->
                 <x-dashboard-card
                     title="Tenants"
@@ -278,39 +269,12 @@
                     color="bg-green-100"
                 />
 
-                <!-- Documentation Items -->
+                <!-- Checklists -->
                 <x-dashboard-card
-                    title="Documentation Items"
-                    icon="document"
-                    :count="$documentationItemsCount ?? 0"
-                    :href="route('documentation-items.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Tenant Approvals -->
-                <x-dashboard-card
-                    title="Tenant Approvals"
-                    icon="check-circle"
-                    :count="$tenantApprovalsCount ?? 0"
-                    :href="route('tenant-approvals.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Condition Checks -->
-                <x-dashboard-card
-                    title="Condition Checks"
-                    icon="clipboard-list"
-                    :count="$conditionChecksCount ?? 0"
-                    :href="route('condition-checks.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Property Improvements -->
-                <x-dashboard-card
-                    title="Property Improvements"
-                    icon="sparkles"
-                    :count="$propertyImprovementsCount ?? 0"
-                    :href="route('property-improvements.index')"
+                    title="Checklists"
+                    icon="clipboard-check"
+                    :count="$checklistsCount"
+                    :href="route('checklists.index')"
                     color="bg-green-100"
                 />
 

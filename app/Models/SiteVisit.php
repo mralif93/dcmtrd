@@ -17,7 +17,6 @@ class SiteVisit extends Model
      */
     protected $fillable = [
         'property_id',
-        'checklist_id',
         'date_visit',
         'time_visit',
         'inspector_name',
@@ -45,11 +44,11 @@ class SiteVisit extends Model
     }
 
     /**
-     * Get the checklist associated with this site visit.
+     * Get the checklist for this site visit.
      */
     public function checklist()
     {
-        return $this->belongsTo(Checklist::class);
+        return $this->hasOne(Checklist::class);
     }
     
     /**

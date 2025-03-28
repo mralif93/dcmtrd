@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->date('start_date');
             $table->date('end_date');
+            $table->string('reminder_total_date')->nullable(); // additional for total days reminder before payment date
             $table->date('payment_date');
             $table->date('ex_date')->nullable();
             $table->decimal('coupon_rate', 5, 2)->nullable();

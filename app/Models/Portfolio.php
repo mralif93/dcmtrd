@@ -16,6 +16,7 @@ class Portfolio extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'portfolio_type_id',
         'portfolio_name',
         'annual_report',
         'trust_deed_document',
@@ -29,7 +30,7 @@ class Portfolio extends Model
      */
     public function portfolioType()
     {
-        return $this->belongsTo(PortfolioType::class, 'portfolio_types_id');
+        return $this->belongsTo(PortfolioType::class, 'portfolio_type_id');
     }
 
     /**
