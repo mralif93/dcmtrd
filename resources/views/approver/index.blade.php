@@ -236,4 +236,82 @@
             </div>
         </div>
     </div>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="pb-6">
+                <h2 class="text-xl font-bold leading-tight text-gray-800">
+                    {{ __('Real Estate Investment Trusts (REITs)') }}
+                </h2>
+            </div>
+
+            <!-- Cards -->
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Trustee Fees -->
+                <x-dashboard-card
+                    title="Trustee Fees"
+                    icon="receipt-refund"
+                    :count="$trusteeFeesCount ?? 0"
+                    :href="route('trustee-fee-a.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Compliance Covenants -->
+                <x-dashboard-card
+                    title="Compliance Covenants"
+                    icon="document-check"
+                    :count="$complianceCovenantCount ?? 0"
+                    :href="route('compliance-covenant-a.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Activity Diary -->
+                <x-dashboard-card
+                    title="Activity Diary"
+                    icon="calendar"
+                    :count="$activityDairyCount ?? 0"
+                    :href="route('activity-diary-a.index')"
+                    color="bg-green-100"
+                />
+
+                <div class="hidden">
+                <!-- Audit Log -->
+                <x-dashboard-card
+                    title="Audit Log"
+                    icon="clipboard-list"
+                    :count="$auditLogCount ?? 0"
+                    href="#"
+                    color="bg-green-100"
+                />
+
+                <!-- Reports -->
+                <x-dashboard-card
+                    title="Reports"
+                    icon="document"
+                    :count="$reportsCount ?? 0"
+                    href="#"
+                    color="bg-green-100"
+                />
+                </div>
+            </div>
+
+            <!-- Table Portfolio -->
+            <div class="bg-white shadow overflow-hidden rounded-lg mt-6">
+                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-lg font-medium text-gray-900">List of Portfolios</h3>
+                </div>
+
+                <!-- Search and Filter Bar -->
+                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                </div>
+
+                <div class="overflow-x-auto rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </x-app-layout>

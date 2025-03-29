@@ -65,8 +65,6 @@ class MakerController extends Controller
                         ->latest()
                         ->paginate(10)
                         ->withQueryString(); // This preserves the query parameters in pagination links
-        
-        $portfolios = Portfolio::query()->latest()->paginate(10);
 
         $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
             $result = DB::select("
@@ -78,7 +76,8 @@ class MakerController extends Controller
             return (array) $result[0];
         });
 
-        
+        $portfolios = Portfolio::query()->latest()->paginate(10);
+
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
@@ -1362,22 +1361,6 @@ class MakerController extends Controller
         }
     }
 
-    public function SubmitApprovalActivityDiary(ActivityDiary $activity)
-    {
-        try {
-            $activity->update([
-                'status' => 'Pending',
-                'prepared_by' => Auth::user()->name,
-            ]);
-            
-            return redirect()
-                ->route('activity-diary-m.show', $activity)
-                ->with('success', 'Activity diary submitted for approval successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
-        }
-    }
-
     protected function validateCompliance(Request $request)
     {
         return $request->validate([
@@ -1654,6 +1637,22 @@ class MakerController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    public function SubmitApprovalActivityDiary(ActivityDiary $activity)
+    {
+        try {
+            $activity->update([
+                'status' => 'Pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+            
+            return redirect()
+                ->route('activity-diary-m.show', $activity)
+                ->with('success', 'Activity diary submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
+    }
+
     protected function validateActivity(Request $request)
     {
         return $validated = $request->validate([
@@ -1707,6 +1706,22 @@ class MakerController extends Controller
     public function PortfolioShow(Portfolio $portfolio)
     {
         return view('maker.portfolio.show', compact('portfolio'));
+    }
+
+    public function PortfolioApproval(ActivityDiary $activity)
+    {
+        try {
+            $activity->update([
+                'status' => 'Pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+            
+            return redirect()
+                ->route('portfolio-m.show', $activity)
+                ->with('success', 'Portfolio submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
     }
     
     protected function validatePortfolio(Request $request, Portfolio $portfolio = null)

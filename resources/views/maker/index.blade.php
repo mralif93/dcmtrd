@@ -69,7 +69,8 @@
         }
     </script>
 
-    <div class="py-12">
+    @if(Auth::user()->hasPermission('DCMTRD'))
+    <div class="hidden py-12 dashboard-section" id="dcmtrd-section" data-section="dcmtrd">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
@@ -287,4 +288,199 @@
             </div>
         </div>
     </div>
+    @endif
+
+    @if(Auth::user()->hasPermission('REITS'))
+    <div class="hidden py-12 dashboard-section" id="reits-section" data-section="reits">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="pb-6">
+                <h2 class="text-xl font-bold leading-tight text-gray-800">
+                    {{ __('Real Estate Investment Trusts (REITs)') }}
+                </h2>
+            </div>
+
+            <!-- Cards -->
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Trustee Fees -->
+                <x-dashboard-card
+                    title="Trustee Fees"
+                    icon="receipt-refund"
+                    :count="$trusteeFeesCount ?? 0"
+                    :href="route('trustee-fee-a.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Compliance Covenants -->
+                <x-dashboard-card
+                    title="Compliance Covenants"
+                    icon="document-check"
+                    :count="$complianceCovenantCount ?? 0"
+                    :href="route('compliance-covenant-a.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Activity Diary -->
+                <x-dashboard-card
+                    title="Activity Diary"
+                    icon="calendar"
+                    :count="$activityDairyCount ?? 0"
+                    :href="route('activity-diary-a.index')"
+                    color="bg-green-100"
+                />
+
+                <div class="hidden">
+                <!-- Audit Log -->
+                <x-dashboard-card
+                    title="Audit Log"
+                    icon="clipboard-list"
+                    :count="$auditLogCount ?? 0"
+                    href="#"
+                    color="bg-green-100"
+                />
+
+                <!-- Reports -->
+                <x-dashboard-card
+                    title="Reports"
+                    icon="document"
+                    :count="$reportsCount ?? 0"
+                    href="#"
+                    color="bg-green-100"
+                />
+                </div>
+            </div>
+
+            <!-- Table Portfolio -->
+            <div class="bg-white shadow overflow-hidden rounded-lg mt-6">
+                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-lg font-medium text-gray-900">List of Portfolios</h3>
+                </div>
+
+                <!-- Search and Filter Bar -->
+                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                </div>
+
+                <div class="overflow-x-auto rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse ($portfolios as $portfolio)
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    <a href="{{ route('portfolio-m.show', $portfolio) }}" class="cursor-pointer text-blue-600 hover:text-blue-900">
+                                        {{ $portfolio->portfolio_name }}
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $portfolio->created_at->format('d/m/Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        {{ $portfolio->status == 'Active' ? 'bg-green-100 text-green-800' : 
+                                        ($portfolio->status == 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                        ($portfolio->status == 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        {{ $portfolio->status }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex justify-end space-x-2">
+                                        @if ($portfolio->status == 'Draft' or $portfolio->status == 'Rejected')
+                                        <a href="{{ route('portfolio-m.approval', $portfolio) }}" 
+                                            class="text-indigo-600 hover:text-indigo-900" 
+                                            title="Submit for Approval"
+                                            onclick="confirmApproval(event, '{{ $portfolio->portfolio_name }}')">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-5m0 0l-2 2m2-2l2 2" />
+                                            </svg>
+                                        </a>
+                                        @endif
+                                        <a href="{{ route('portfolio-m.show', $portfolio) }}" class="text-indigo-600 hover:text-indigo-900" title="View">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </a>
+                                        <a href="{{ route('portfolio-m.edit', $portfolio) }}" class="text-indigo-600 hover:text-indigo-900" title="Edit">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
+                                        No portfolio found
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- If the user has no permissions, show a message -->
+    @if(!Auth::user()->hasPermission('DCMTRD') && !Auth::user()->hasPermission('REITS') && !Auth::user()->hasPermission('LEGAL') && !Auth::user()->hasPermission('COMPLIANCE'))
+    <div class="py-12">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="p-6 overflow-hidden bg-white shadow-xl sm:rounded-lg">
+                <div class="text-center">
+                    <h3 class="text-lg font-medium text-gray-900">{{ __('No Access') }}</h3>
+                    <p class="mt-1 text-sm text-gray-500">{{ __('You do not have permission to access any modules.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- JavaScript for handling section display -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the section parameter from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const section = urlParams.get('section');
+        
+        // Initially hide the default message (will show it if no valid section is found)
+        const defaultMessage = document.getElementById('default-message');
+        
+        // Select all section elements
+        const sections = document.querySelectorAll('.dashboard-section');
+        
+        // If a section parameter is present
+        if (section) {
+            // Find the target section
+            const targetSection = document.querySelector(`[data-section="${section}"]`);
+            
+            if (targetSection) {
+                // Hide default message
+                if (defaultMessage) {
+                    defaultMessage.classList.add('hidden');
+                }
+                
+                // Show only the target section
+                targetSection.classList.remove('hidden');
+            } else {
+                // If no valid section was found, show the default message
+                if (defaultMessage) {
+                    defaultMessage.classList.remove('hidden');
+                }
+            }
+        } else {
+            // If no section parameter, show the default message
+            if (defaultMessage) {
+                defaultMessage.classList.remove('hidden');
+            }
+        }
+    });
+    </script>
 </x-app-layout>

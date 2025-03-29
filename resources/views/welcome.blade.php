@@ -267,77 +267,97 @@
             @endphp
             
             <div class="{{ $containerClass }}">
-                @if(Auth::user()->hasPermission('DCMTRD'))
-                <!-- Card 1: Bond Monitoring -->
-                <a href="{{ route('dashboard', ['section' => 'dcmtrd']) }}" class="card bond-card shadow-lg">
-                    <div class="p-8">
-                        <div class="icon-container blue-bg-light">
-                            <i class="fas fa-building blue-icon fa-3x"></i>
-                        </div>
-                        <h2 class="text-2xl font-bold text-center mb-4">Bond Monitoring (DCMTRD)</h2>
-                        <p class="text-gray-600 text-center mb-6">Track bond performance, market trends, and explore issuers available in the market.</p>
-                        <div class="flex justify-center">
-                            <span class="inline-flex items-center px-4 py-2 blue-btn font-medium rounded-md">
-                                View Dashboard <i class="fas fa-arrow-right ml-2"></i>
-                            </span>
-                        </div>
+            @if(Auth::user()->hasPermission('DCMTRD'))
+            <!-- Card 1: Bond Monitoring -->
+            <a href="{{ 
+                Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'dcmtrd']) : 
+                (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'dcmtrd']) : 
+                (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'dcmtrd']) : 
+                route('dashboard', ['section' => 'dcmtrd']))) 
+            }}" class="card bond-card shadow-lg">
+                <div class="p-8">
+                    <div class="icon-container blue-bg-light">
+                        <i class="fas fa-building blue-icon fa-3x"></i>
                     </div>
-                </a>
-                @endif
+                    <h2 class="text-2xl font-bold text-center mb-4">Bond Monitoring (DCMTRD)</h2>
+                    <p class="text-gray-600 text-center mb-6">Track bond performance, market trends, and explore issuers available in the market.</p>
+                    <div class="flex justify-center">
+                        <span class="inline-flex items-center px-4 py-2 blue-btn font-medium rounded-md">
+                            View Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            @endif
 
-                @if(Auth::user()->hasPermission('REITS'))
-                <!-- Card 2: REITs -->
-                <a href="{{ route('dashboard', ['section' => 'reits']) }}" class="card reit-card shadow-lg">
-                    <div class="p-8">
-                        <div class="icon-container green-bg-light">
-                            <i class="fas fa-home green-icon fa-3x"></i>
-                        </div>
-                        <h2 class="text-2xl font-bold text-center mb-4">Real Estate Investment Trusts (REITs)</h2>
-                        <p class="text-gray-600 text-center mb-6">Discover and analyze Real Estate Investment Trusts and their benefits.</p>
-                        <div class="flex justify-center">
-                            <span class="inline-flex items-center px-4 py-2 green-btn font-medium rounded-md">
-                                View Dashboard <i class="fas fa-arrow-right ml-2"></i>
-                            </span>
-                        </div>
+            @if(Auth::user()->hasPermission('REITS'))
+            <!-- Card 2: REITs -->
+            <a href="{{ 
+                Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'reits']) : 
+                (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'reits']) : 
+                (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'reits']) : 
+                route('dashboard', ['section' => 'reits']))) 
+            }}" class="card reit-card shadow-lg">
+                <div class="p-8">
+                    <div class="icon-container green-bg-light">
+                        <i class="fas fa-home green-icon fa-3x"></i>
                     </div>
-                </a>
-                @endif
-                
-                @if(Auth::user()->hasPermission('LEGAL'))
-                <!-- Card 3: Legal Department -->
-                <a href="{{ route('dashboard', ['section' => 'legal']) }}" class="card legal-card shadow-lg">
-                    <div class="p-8">
-                        <div class="icon-container purple-bg-light">
-                            <i class="fas fa-balance-scale purple-icon fa-3x"></i>
-                        </div>
-                        <h2 class="text-2xl font-bold text-center mb-4">Legal Department</h2>
-                        <p class="text-gray-600 text-center mb-6">Manage legal documentation, review contracts, and ensure regulatory compliance.</p>
-                        <div class="flex justify-center">
-                            <span class="inline-flex items-center px-4 py-2 purple-btn font-medium rounded-md">
-                                View Dashboard <i class="fas fa-arrow-right ml-2"></i>
-                            </span>
-                        </div>
+                    <h2 class="text-2xl font-bold text-center mb-4">Real Estate Investment Trusts (REITs)</h2>
+                    <p class="text-gray-600 text-center mb-6">Discover and analyze Real Estate Investment Trusts and their benefits.</p>
+                    <div class="flex justify-center">
+                        <span class="inline-flex items-center px-4 py-2 green-btn font-medium rounded-md">
+                            View Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                        </span>
                     </div>
-                </a>
-                @endif
-                
-                @if(Auth::user()->hasPermission('COMPLIANCE'))
-                <!-- Card 4: Compliance -->
-                <a href="{{ route('dashboard', ['section' => 'compliance']) }}" class="card compliance-card shadow-lg">
-                    <div class="p-8">
-                        <div class="icon-container yellow-bg-light">
-                            <i class="fas fa-clipboard-check yellow-icon fa-3x"></i>
-                        </div>
-                        <h2 class="text-2xl font-bold text-center mb-4">Compliance Management</h2>
-                        <p class="text-gray-600 text-center mb-6">Monitor compliance requirements, track deadlines, and manage regulatory obligations.</p>
-                        <div class="flex justify-center">
-                            <span class="inline-flex items-center px-4 py-2 yellow-btn font-medium rounded-md">
-                                View Dashboard <i class="fas fa-arrow-right ml-2"></i>
-                            </span>
-                        </div>
+                </div>
+            </a>
+            @endif
+
+            @if(Auth::user()->hasPermission('LEGAL'))
+            <!-- Card 3: Legal Department -->
+            <a href="{{ 
+                Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'legal']) : 
+                (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'legal']) : 
+                (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'legal']) : 
+                route('dashboard', ['section' => 'legal']))) 
+            }}" class="card legal-card shadow-lg">
+                <div class="p-8">
+                    <div class="icon-container purple-bg-light">
+                        <i class="fas fa-balance-scale purple-icon fa-3x"></i>
                     </div>
-                </a>
-                @endif
+                    <h2 class="text-2xl font-bold text-center mb-4">Legal Department</h2>
+                    <p class="text-gray-600 text-center mb-6">Manage legal documentation, review contracts, and ensure regulatory compliance.</p>
+                    <div class="flex justify-center">
+                        <span class="inline-flex items-center px-4 py-2 purple-btn font-medium rounded-md">
+                            View Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            @endif
+
+            @if(Auth::user()->hasPermission('COMPLIANCE'))
+            <!-- Card 4: Compliance -->
+            <a href="{{ 
+                Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'compliance']) : 
+                (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'compliance']) : 
+                (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'compliance']) : 
+                route('dashboard', ['section' => 'compliance']))) 
+            }}" class="card compliance-card shadow-lg">
+                <div class="p-8">
+                    <div class="icon-container yellow-bg-light">
+                        <i class="fas fa-clipboard-check yellow-icon fa-3x"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-center mb-4">Compliance Management</h2>
+                    <p class="text-gray-600 text-center mb-6">Monitor compliance requirements, track deadlines, and manage regulatory obligations.</p>
+                    <div class="flex justify-center">
+                        <span class="inline-flex items-center px-4 py-2 yellow-btn font-medium rounded-md">
+                            View Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            @endif
             </div>
         </div>
         
