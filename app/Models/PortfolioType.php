@@ -26,6 +26,6 @@ class PortfolioType extends Model
      */
     public function portfolios()
     {
-        return $this->hasMany(Portfolio::class, 'portfolio_type_id');
+        return $this->hasMany(Portfolio::class, 'portfolio_types_id');
     }
 }

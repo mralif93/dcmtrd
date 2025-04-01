@@ -35,6 +35,7 @@ use App\Models\ActivityDiary;
 
 // REITs
 use App\Models\Portfolio;
+use App\Models\PortfolioType;
 
 use App\Http\Requests\User\BondFormRequest;
 
@@ -1673,7 +1674,8 @@ class MakerController extends Controller
     // REITs : Portfolio
     public function PortfolioCreate()
     {
-        return view('maker.portfolio.create');
+        $portfolioTypes = PortfolioType::where('status', 'active')->get();
+        return view('maker.portfolio.create', compact('portfolioTypes'));
     }
 
     public function PortfolioStore(Request $request)
@@ -1691,7 +1693,8 @@ class MakerController extends Controller
 
     public function PortfolioEdit(Portfolio $portfolio)
     {
-        return view('maker.portfolio.edit', compact('portfolio'));
+        $portfolioTypes = PortfolioType::where('status', 'active')->get();
+        return view('maker.portfolio.edit', compact('portfolio', 'portfolioTypes'));
     }
 
     public function PortfolioUpdate(Request $request, Portfolio $portfolio)
@@ -1727,18 +1730,13 @@ class MakerController extends Controller
     protected function validatePortfolio(Request $request, Portfolio $portfolio = null)
     {
         return $request->validate([
-            'name' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
-            'acquisition_date' => 'required|date',
-            'acquisition_cost' => 'required|numeric|min:0',
-            'market_value' => 'required|numeric|min:0',
-            'gross_floor_area' => 'nullable|numeric|min:0',
-            'net_lettable_area' => 'nullable|numeric|min:0',
-            'occupancy_rate' => 'nullable|numeric|between:0,100',
-            'property_type' => 'required|string|max:100',
-            'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
-            'description' => 'nullable|string',
-            'remarks' => 'nullable|string',
+            'portfolio_types_id' => 'required|exists:portfolio_types,id',
+            'portfolio_name' => 'required|string|max:255',
+            'annual_report' => 'nullable|file|mimes:pdf,doc,docx',
+            'trust_deed_document' => 'nullable|file|mimes:pdf,doc,docx',
+            'insurance_document' => 'nullable|file|mimes:pdf,doc,docx',
+            'valuation_report' => 'nullable|file|mimes:pdf,doc,docx',
+            'status' => 'nullable|string|in:active,inactive'
         ]);
     }
 }

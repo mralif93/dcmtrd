@@ -5,21 +5,28 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ Auth::user()->role == 'admin' ? route('admin.dashboard') : route('dashboard', ['section' => 'dcmtrd']) }}">
+                    <a href="{{ 
+                            Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'dcmtrd']) : 
+                            (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'dcmtrd']) : 
+                            (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'dcmtrd']) : 
+                            route('dashboard', ['section' => 'dcmtrd']))) 
+                        }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="Auth::user()->role == 'admin' ? route('admin.dashboard') : route('dashboard', ['section' => 'dcmtrd'])" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'dcmtrd']) : 
+                        (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'dcmtrd']) : 
+                        (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'dcmtrd']) : 
+                        route('dashboard', ['section' => 'dcmtrd'])))" 
+                        :active="request()->routeIs(Auth::user()->role === 'admin' ? 'admin.dashboard' : 
+                        (Auth::user()->role === 'maker' ? 'maker.dashboard' : 
+                        (Auth::user()->role === 'approver' ? 'approver.dashboard' : 
+                        'dashboard')))">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-
-                    {{-- User Links --}}
-                    @if (Auth::user()->role == 'user')
-                            <!-- Link -->
-                    @endif
                 </div>
             </div>
 
@@ -47,9 +54,8 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
+                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault();
+                                this.closest('form').submit();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
                         </form>

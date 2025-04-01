@@ -299,64 +299,64 @@
                 </h2>
             </div>
 
-            <!-- Cards -->
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <!-- Trustee Fees -->
-                <x-dashboard-card
-                    title="Trustee Fees"
-                    icon="receipt-refund"
-                    :count="$trusteeFeesCount ?? 0"
-                    :href="route('trustee-fee-a.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Compliance Covenants -->
-                <x-dashboard-card
-                    title="Compliance Covenants"
-                    icon="document-check"
-                    :count="$complianceCovenantCount ?? 0"
-                    :href="route('compliance-covenant-a.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Activity Diary -->
-                <x-dashboard-card
-                    title="Activity Diary"
-                    icon="calendar"
-                    :count="$activityDairyCount ?? 0"
-                    :href="route('activity-diary-a.index')"
-                    color="bg-green-100"
-                />
-
-                <div class="hidden">
-                <!-- Audit Log -->
-                <x-dashboard-card
-                    title="Audit Log"
-                    icon="clipboard-list"
-                    :count="$auditLogCount ?? 0"
-                    href="#"
-                    color="bg-green-100"
-                />
-
-                <!-- Reports -->
-                <x-dashboard-card
-                    title="Reports"
-                    icon="document"
-                    :count="$reportsCount ?? 0"
-                    href="#"
-                    color="bg-green-100"
-                />
-                </div>
-            </div>
-
             <!-- Table Portfolio -->
             <div class="bg-white shadow overflow-hidden rounded-lg mt-6">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">List of Portfolios</h3>
+                    <div class="flex gap-2">
+                        <a href="{{ route('portfolio-m.create') }}" 
+                           class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Create New Portfolio
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                    <form method="GET">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <!-- Issuer Name Search Field -->
+                            <div>
+                                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                                <input type="text" name="search" id="search" value="{{ old('search', request('search')) }}"
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                                       placeholder="Portfolio name..">
+                            </div>
+
+                            <!-- Status Filter -->
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <select name="status" id="status" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">All Status</option>
+                                    <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                                    <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="Rejected" {{ request('status') == 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                                    <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Filter Button -->
+                            <div class="flex items-end">
+                                <button type="submit" 
+                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                    </svg>
+                                    Search
+                                </button>
+                                
+                                @if(request('search') || request('status'))
+                                    <a href="{{ route('maker.dashboard', ['section' => 'reits']) }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="overflow-x-auto rounded-lg">
