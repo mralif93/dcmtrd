@@ -36,6 +36,8 @@ use App\Models\ActivityDiary;
 // REITs
 use App\Models\Portfolio;
 use App\Models\PortfolioType;
+use App\Models\Property;
+use App\Models\SiteVisit;
 
 use App\Http\Requests\User\BondFormRequest;
 
@@ -1738,5 +1740,83 @@ class MakerController extends Controller
             'valuation_report' => 'nullable|file|mimes:pdf,doc,docx',
             'status' => 'nullable|string|in:active,inactive'
         ]);
+    }
+
+    // Property Module
+    public function PropertyIndex(Portfolio $portfolio, Request $request)
+    {
+        // Start with a base query, including relevant relationships
+        $query = Property::with([
+            'portfolio',
+            'tenants' => function($q) {
+                $q->where('status', 'active');
+            },
+            'siteVisits' => function($q) {
+                $q->where('status', 'scheduled');
+            }
+        ]);
+        
+        // Filter by portfolio if provided
+        if ($portfolio->exists) {
+            $query->where('portfolio_id', $portfolio->id);
+            
+            // Eager load portfolio with its relationships when we're looking at a specific portfolio
+            $portfolio->load([
+                'portfolioType',
+                'properties.tenants',
+                'properties.siteVisits',
+                'financials.bank',
+                'financials.financialType'
+            ]);
+        }
+        
+        // Apply filters based on request parameters
+        if ($request->filled('batch_no')) {
+            $query->where('batch_no', $request->batch_no);
+        }
+        
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+        
+        if ($request->filled('city')) {
+            $query->where('city', $request->city);
+        }
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%")
+                  ->orWhere('batch_no', 'like', "%{$search}%");
+            });
+        }
+        
+        // Add sorting capability
+        $sortField = $request->filled('sort') ? $request->sort : 'created_at';
+        $sortDirection = $request->filled('direction') ? $request->direction : 'desc';
+        $query->orderBy($sortField, $sortDirection);
+        
+        // Execute the query with pagination
+        $properties = $query->paginate(10)->appends($request->except('page'));
+        
+        // Get unique values for filters dropdowns
+        $batchNumbers = Property::select('batch_no')->distinct()->pluck('batch_no');
+        $categories = Property::select('category')->distinct()->pluck('category');
+        $cities = Property::select('city')->distinct()->pluck('city');
+        $statuses = Property::select('status')->distinct()->pluck('status');
+        $portfolios = Portfolio::where('status', 'active')->get();
+        
+        return view('maker.property.index', compact(
+            'portfolios',
+            'properties',
+            'batchNumbers', 
+            'categories', 
+            'cities',
+            'statuses',
+            'portfolio',
+            'sortField',
+            'sortDirection'
+        ));
     }
 }

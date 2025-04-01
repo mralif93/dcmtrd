@@ -62,7 +62,7 @@
     <script>
         function confirmApproval(event, issuerName) {
             event.preventDefault();
-            if (confirm(`Are you confirm to submit the issuer "${issuerName}" for approval?`)) {
+            if (confirm(`Are you confirm to submit the "${issuerName}" for approval?`)) {
                 // If confirmed, proceed to the approval page
                 window.location.href = event.currentTarget.href;
             }
@@ -332,6 +332,7 @@
                                 <select name="status" id="status" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">All Status</option>
+                                    <option value="Draft" {{ request('status') == 'Draft' ? 'selected' : '' }}>Draft</option>
                                     <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
                                     <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
                                     <option value="Rejected" {{ request('status') == 'Rejected' ? 'selected' : '' }}>Rejected</option>
@@ -373,7 +374,7 @@
                             @forelse ($portfolios as $portfolio)
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                    <a href="{{ route('portfolio-m.show', $portfolio) }}" class="cursor-pointer text-blue-600 hover:text-blue-900">
+                                    <a href="{{ route('property-m.index', $portfolio) }}" class="cursor-pointer text-blue-600 hover:text-blue-900">
                                         {{ $portfolio->portfolio_name }}
                                     </a>
                                 </td>

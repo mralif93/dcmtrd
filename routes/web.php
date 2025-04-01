@@ -517,13 +517,21 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/activity-diary/{activity}/submit-for-approval', [MakerController::class, 'SubmitApprovalActivityDiary'])->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
 
     // Portfolio Module
-    Route::get('maker/portfolio', [MakerController::class, 'PortfolioIndex'])->name('portfolio-m.index')->middleware('permission:DCMTRD');
-    Route::get('maker/portfolio/create', [MakerController::class, 'PortfolioCreate'])->name('portfolio-m.create')->middleware('permission:DCMTRD');
-    Route::post('maker/portfolio/create', [MakerController::class, 'PortfolioStore'])->name('portfolio-m.store')->middleware('permission:DCMTRD');
-    Route::get('maker/portfolio/{portfolio}/edit', [MakerController::class, 'PortfolioEdit'])->name('portfolio-m.edit')->middleware('permission:DCMTRD');
-    Route::put('maker/portfolio/{portfolio}/update', [MakerController::class, 'PortfolioUpdate'])->name('portfolio-m.update')->middleware('permission:DCMTRD');
-    Route::get('maker/portfolio/{portfolio}/show', [MakerController::class, 'PortfolioShow'])->name('portfolio-m.show')->middleware('permission:DCMTRD');
-    Route::get('maker/portfolio/{portfolio}/submit-for-approval', [MakerController::class, 'PortfolioApproval'])->name('portfolio-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/portfolio', [MakerController::class, 'PortfolioIndex'])->name('portfolio-m.index')->middleware('permission:REITS');
+    Route::get('maker/portfolio/create', [MakerController::class, 'PortfolioCreate'])->name('portfolio-m.create')->middleware('permission:REITS');
+    Route::post('maker/portfolio/create', [MakerController::class, 'PortfolioStore'])->name('portfolio-m.store')->middleware('permission:REITS');
+    Route::get('maker/portfolio/{portfolio}/edit', [MakerController::class, 'PortfolioEdit'])->name('portfolio-m.edit')->middleware('permission:REITS');
+    Route::put('maker/portfolio/{portfolio}/update', [MakerController::class, 'PortfolioUpdate'])->name('portfolio-m.update')->middleware('permission:REITS');
+    Route::get('maker/portfolio/{portfolio}/show', [MakerController::class, 'PortfolioShow'])->name('portfolio-m.show')->middleware('permission:REITS');
+    Route::get('maker/portfolio/{portfolio}/submit-for-approval', [MakerController::class, 'PortfolioApproval'])->name('portfolio-m.approval')->middleware('permission:REITS');
+
+    // Portfolio Module
+    Route::get('maker/property/{portfolio}/', [MakerController::class, 'PropertyIndex'])->name('property-m.index')->middleware('permission:REITS');
+    Route::get('maker/property/create', [MakerController::class, 'PropertyCreate'])->name('property-m.create')->middleware('permission:REITS');
+    Route::post('maker/property/create', [MakerController::class, 'PropertyStore'])->name('property-m.store')->middleware('permission:REITS');
+    Route::get('maker/property/{property}/edit', [MakerController::class, 'PropertyEdit'])->name('property-m.edit')->middleware('permission:REITS');
+    Route::put('maker/property/{property}/update', [MakerController::class, 'PropertyUpdate'])->name('property-m.update')->middleware('permission:REITS');
+    Route::get('maker/property/{property}/show', [MakerController::class, 'PropertyShow'])->name('property-m.show')->middleware('permission:REITS');
 });
 
 // Approver routes
