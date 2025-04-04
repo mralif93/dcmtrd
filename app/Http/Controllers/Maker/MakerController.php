@@ -1984,8 +1984,13 @@ class MakerController extends Controller
             ->orderBy('name')
             ->paginate(10)
             ->withQueryString();
-
-        return view('maker.tenant.index', compact('tenants', 'property'));
+        
+        $siteVisits = $property->siteVisits()
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+    
+        return view('maker.tenant.index', compact('tenants', 'siteVisits', 'property'));
     }
 
     public function TenantCreate(Property $property)
@@ -2044,6 +2049,74 @@ class MakerController extends Controller
             'commencement_date' => 'nullable|date',
             'expiry_date' => 'nullable|date|after:commencement_date',
             'status' => 'nullable|in:active,inactive',
+        ]);
+    }
+
+    // Site Visit Module
+    public function SiteVisitIndex(Property $property)
+    {
+        $siteVisits = $property->siteVisits()
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10)
+                        ->withQueryString();
+                        
+        return view('maker.site-visit.index', compact('siteVisits', 'propertyInfo'));
+    }
+
+    public function SiteVisitCreate(Property $property)
+    {
+        $propertyInfo = $property;
+        $properties = Property::orderBy('name')->get();
+        return view('maker.site-visit.create', compact('properties', 'propertyInfo'));
+    }
+
+    public function SiteVisitStore(Request $request)
+    {
+        $validated = $this->SiteVisitValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Active';
+
+        try {
+            $siteVisit = SiteVisit::create($validated);
+            return redirect()->route('tenant-m.index', $siteVisit->property)->with('success', 'Site visit created successfully.');
+        } catch(\Exception $e) {
+            return back()->with('error', 'Error creating site visit: ' . $e->getMEssage());
+        }
+    }
+
+    public function SiteVisitEdit(SiteVisit $siteVisit)
+    {
+        $properties = Property::orderBy('name')->get();
+        return view('maker.site-visit.edit', compact('siteVisit', 'properties'));
+    }
+
+    public function SiteVisitUpdate(Request $request, SiteVisit $siteVisit)
+    {
+        $validated = $this->SiteVisitValidate($request);
+
+        try {
+            $siteVisit->update($validated);
+            return redirect()->route('tenant-m.index', $siteVisit->property)->with('success', 'Site visit updated successfully.');
+        } catch(\Exception $e) {
+            return back()->with('error', 'Error updating site visit: ' . $e->getMessage());
+        }
+    }
+
+    public function SiteVisitShow(SiteVisit $siteVisit)
+    {
+        return view('maker.site-visit.show', compact('siteVisit'));
+    }
+
+    public function SiteVisitValidate(Request $request, SiteVisit $siteVisit = null)
+    {
+        return $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'date_visit' => 'required|date',
+            'time_visit' => 'required',
+            'inspector_name' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
         ]);
     }
 }

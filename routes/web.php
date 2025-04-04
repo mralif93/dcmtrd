@@ -556,6 +556,15 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/lease/{lease}/edit', [MakerController::class, 'LeaseEdit'])->name('lease-m.edit')->middleware('permission:REITS');
     Route::put('maker/lease/{lease}/update', [MakerController::class, 'LeaseUpdate'])->name('lease-m.update')->middleware('permission:REITS');
     Route::get('maker/lease/{lease}/show', [MakerController::class, 'LeaseShow'])->name('lease-m.show')->middleware('permission:REITS');
+
+    // Tenant Module
+    Route::get('maker/site-visit/{property}/', [MakerController::class, 'SiteVisitIndex'])->name('site-visit-m.index')->middleware('permission:REITS');
+    Route::get('maker/site-visit/{property}/create', [MakerController::class, 'SiteVisitCreate'])->name('site-visit-m.create')->middleware('permission:REITS');
+    Route::post('maker/site-visit/create', [MakerController::class, 'SiteVisitStore'])->name('site-visit-m.store')->middleware('permission:REITS');
+    Route::get('maker/site-visit/{siteVisit}/edit', [MakerController::class, 'SiteVisitEdit'])->name('site-visit-m.edit')->middleware('permission:REITS');
+    Route::put('maker/site-visit/{siteVisit}/update', [MakerController::class, 'SiteVisitUpdate'])->name('site-visit-m.update')->middleware('permission:REITS');
+    Route::get('maker/site-visit/{siteVisit}/show', [MakerController::class, 'SiteVisitShow'])->name('site-visit-m.show')->middleware('permission:REITS');
+    
 });
 
 // Approver routes

@@ -87,7 +87,7 @@
                 </div>
 
                 <!-- Search and Filter Bar -->
-                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                <div class="hidden bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <!-- Name Search Field -->
                         <div>
@@ -129,7 +129,7 @@
                 </div>
 
                 <!-- Tenants Table -->
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto border-t border-gray-200">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
@@ -209,6 +209,87 @@
                 <!-- Pagination Links -->
                 <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
                     {{ $tenants->links() }}
+                </div>
+            </div>
+
+            <!-- Site Visit List -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg mt-6">
+                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-lg font-medium text-gray-900">Site Visits List</h3>
+                    <div class="flex gap-2">
+                        <a href="{{ route('site-visit-m.create', $property) }}" 
+                           class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Add New Site Visit
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Site Visit Table -->
+                <div class="overflow-x-auto border-t border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inspector</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse ($siteVisits as $visit)
+                            <tr>
+                                <td class="px-6 py-4 font-medium text-gray-900">
+                                    <div class="text-sm text-gray-900">
+                                        {{ $visit->inspector_name ?? 'Not assigned' }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900">
+                                        {{ $visit->date_visit->format('M d, Y') }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900">
+                                        {{ $visit->formatted_time }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $visit->status_badge_class }}">
+                                        {{ ucfirst($visit->status) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex justify-end space-x-2">
+                                        <a href="{{ route('site-visit-m.show', $visit) }}" class="text-indigo-600 hover:text-indigo-900">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                        </a>
+                                        <a href="{{ route('site-visit-m.edit', $visit) }}" class="text-indigo-600 hover:text-indigo-900">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No tenants found {{ request('search') ? 'matching your search' : '' }}</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Links -->
+                <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+                    {{ $siteVisits->links() }}
                 </div>
             </div>
         </div>
