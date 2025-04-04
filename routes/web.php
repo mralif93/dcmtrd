@@ -557,7 +557,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/lease/{lease}/update', [MakerController::class, 'LeaseUpdate'])->name('lease-m.update')->middleware('permission:REITS');
     Route::get('maker/lease/{lease}/show', [MakerController::class, 'LeaseShow'])->name('lease-m.show')->middleware('permission:REITS');
 
-    // Tenant Module
+    // Site Visit Module
     Route::get('maker/site-visit/{property}/', [MakerController::class, 'SiteVisitIndex'])->name('site-visit-m.index')->middleware('permission:REITS');
     Route::get('maker/site-visit/{property}/create', [MakerController::class, 'SiteVisitCreate'])->name('site-visit-m.create')->middleware('permission:REITS');
     Route::post('maker/site-visit/create', [MakerController::class, 'SiteVisitStore'])->name('site-visit-m.store')->middleware('permission:REITS');

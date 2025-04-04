@@ -1,13 +1,10 @@
+<!-- resources/views/leases/show.blade.php -->
+
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Lease Details') }}
-            </h2>
-            <a href="{{ route('leases-info.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
-                &larr; Back to List
-            </a>
-        </div>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Lease Details') }}
+        </h2>
     </x-slot>
 
     <div class="py-12">
@@ -27,141 +24,146 @@
                 </div>
             @endif
 
-            <div class="bg-white shadow rounded-lg p-6">
-                <div class="mb-6 flex justify-between items-center">
-                    <h3 class="text-lg font-medium text-gray-900">{{ $lease->lease_name }}</h3>
-                    <div>
-                        <a href="{{ route('leases-info.edit', $lease->id) }}" class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 mr-2">
-                            Edit
-                        </a>
-                        <form action="{{ route('leases-info.destroy', $lease->id) }}" method="POST" class="inline-block">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700" onclick="return confirm('Are you sure you want to delete this lease?')">
-                                Delete
-                            </button>
-                        </form>
-                    </div>
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <!-- Header Section -->
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg font-medium text-gray-900">Lease: {{ $lease->lease_name }}</h3>
                 </div>
 
-                <div class="bg-gray-50 p-4 rounded-lg mb-6">
-                    <h4 class="text-md font-medium text-gray-700 mb-2">Lease Information</h4>
-                    <dl class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Lease Name</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $lease->lease_name }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Demised Premises</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $lease->demised_premises }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Permitted Use</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $lease->permitted_use }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Start Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ date('M d, Y', strtotime($lease->start_date)) }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">End Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ date('M d, Y', strtotime($lease->end_date)) }}
+                <!-- Status Section -->
+                <div class="border-t border-gray-200">
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Status</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {{ $lease->status === 'active' ? 'bg-green-100 text-green-800' : 
+                                       ($lease->status === 'expired' ? 'bg-red-100 text-red-800' : 
+                                       ($lease->status === 'terminated' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
+                                    {{ ucfirst($lease->status) }}
+                                </span>
                                 @if($lease->isExpiringSoon() && $lease->status === 'active')
-                                    <span class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    <span class="ml-2 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
                                         Expiring Soon
                                     </span>
                                 @endif
                             </dd>
                         </div>
-                        <div>
+                    </dl>
+                </div>
+
+                <!-- Basic Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Basic Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Lease Name</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->lease_name }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Demised Premises</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->demised_premises }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Permitted Use</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->permitted_use }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Term</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $lease->term_years }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->term_years }}</dd>
                         </div>
-                        <div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Option to Renew</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $lease->option_to_renew ? 'Yes' : 'No' }}</dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Status</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            {{ $lease->status === 'active' ? 'bg-green-100 text-green-800' : 
-                                               ($lease->status === 'expired' ? 'bg-red-100 text-red-800' : 
-                                               ($lease->status === 'terminated' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
-                                    {{ ucfirst($lease->status) }}
-                                </span>
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ date('M d, Y H:i', strtotime($lease->created_at)) }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->option_to_renew ? 'Yes' : 'No' }}</dd>
                         </div>
                     </dl>
                 </div>
 
-                <div class="bg-gray-50 p-4 rounded-lg mb-6">
-                    <h4 class="text-md font-medium text-gray-700 mb-2">Financial Information</h4>
-                    <dl class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Rental Amount</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ number_format($lease->rental_amount, 2) }}</dd>
+                <!-- Period Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Period Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Start Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ date('d/m/Y', strtotime($lease->start_date)) }}</dd>
                         </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Rental Frequency</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ ucfirst($lease->rental_frequency) }}</dd>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">End Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ date('d/m/Y', strtotime($lease->end_date)) }}</dd>
                         </div>
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Total Contract Value</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ number_format($lease->getTotalContractValue(), 2) }}</dd>
-                        </div>
-                        <div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Remaining Term</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 @if($lease->isExpired())
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                                         Expired
                                     </span>
                                 @else
-                                    {{ $lease->getRemainingTerm() }} days
+                                    {{ (int)$lease->getRemainingTerm() }} days
                                 @endif
                             </dd>
                         </div>
                     </dl>
                 </div>
 
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="text-md font-medium text-gray-700 mb-2">Tenant & Property Information</h4>
-                    <dl class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
+                <!-- Financial Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Financial Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Rental Amount</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ number_format($lease->rental_amount, 2) }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Rental Frequency</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ ucfirst($lease->rental_frequency) }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Total Contract Value</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ number_format($lease->getTotalContractValue(), 2) }}</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Tenant & Property Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Tenant & Property Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Tenant Name</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                <a href="{{ route('tenants.show', $lease->tenant->id) }}" class="text-blue-600 hover:text-blue-900">
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <a href="{{ route('tenants.show', $lease->tenant->id) }}" class="text-indigo-600 hover:text-indigo-900">
                                     {{ $lease->tenant->name }}
                                 </a>
                             </dd>
                         </div>
-                        <div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Contact Person</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $lease->tenant->contact_person ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->tenant->contact_person ?? 'N/A' }}</dd>
                         </div>
-                        <div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Email</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $lease->tenant->email ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->tenant->email ?? 'N/A' }}</dd>
                         </div>
-                        <div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Phone</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $lease->tenant->phone ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->tenant->phone ?? 'N/A' }}</dd>
                         </div>
-                        <div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Property</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                {{ $lease->tenant->property->name }}
-                            </dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->tenant->property->name }}</dd>
                         </div>
-                        <div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Property Address</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 {{ $lease->tenant->property->address }},
                                 {{ $lease->tenant->property->city }},
                                 {{ $lease->tenant->property->state }},
@@ -171,28 +173,69 @@
                     </dl>
                 </div>
 
-                <!-- Status Update Form -->
-                <div class="mt-6 p-4 bg-gray-100 rounded-lg">
-                    <h4 class="text-md font-medium text-gray-700 mb-2">Update Lease Status</h4>
-                    <form action="{{ route('leases-info.update-status', $lease->id) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
-                        <div class="flex items-center space-x-4">
-                            <div class="flex-grow">
-                                <select name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="active" {{ $lease->status === 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="inactive" {{ $lease->status === 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                    <option value="terminated" {{ $lease->status === 'terminated' ? 'selected' : '' }}>Terminated</option>
-                                    <option value="expired" {{ $lease->status === 'expired' ? 'selected' : '' }}>Expired</option>
-                                </select>
-                            </div>
-                            <div>
-                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                    Update Status
-                                </button>
-                            </div>
+                <!-- System Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">System Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->created_at->format('d/m/Y H:i') }}</dd>
                         </div>
-                    </form>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->updated_at->format('d/m/Y H:i') }}</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Status Update Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Update Status</h3>
+                    </div>
+                    <div class="px-4 py-5 sm:px-6">
+                        <form action="{{ route('leases-info.update-status', $lease->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <div class="flex items-center">
+                                <div class="flex-grow max-w-md">
+                                    <select name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="active" {{ $lease->status === 'active' ? 'selected' : '' }}>Active</option>
+                                        <option value="inactive" {{ $lease->status === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                        <option value="terminated" {{ $lease->status === 'terminated' ? 'selected' : '' }}>Terminated</option>
+                                        <option value="expired" {{ $lease->status === 'expired' ? 'selected' : '' }}>Expired</option>
+                                    </select>
+                                </div>
+                                <div class="ml-4">
+                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Update Status
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
+                    <div class="flex justify-end gap-x-4">
+                        <a href="{{ route('tenant-m.index', $lease->tenant->property) }}" 
+                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
+                            </svg>
+                            Back to List
+                        </a>
+                        <a href="{{ route('lease-m.edit', $lease) }}" 
+                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Edit Lease
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

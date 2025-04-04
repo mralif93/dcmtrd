@@ -40,6 +40,7 @@ use App\Models\PortfolioType;
 use App\Models\Portfolio;
 use App\Models\Property;
 use App\Models\Tenant;
+use App\Models\Lease;
 use App\Models\Financial;
 use App\Models\Checklist;
 use App\Models\SiteVisit;
@@ -2049,6 +2050,77 @@ class MakerController extends Controller
             'commencement_date' => 'nullable|date',
             'expiry_date' => 'nullable|date|after:commencement_date',
             'status' => 'nullable|in:active,inactive',
+        ]);
+    }
+
+    // Lease Module
+    public function LeaseIndex(Tenant $tenant)
+    {
+        $leases = Lease::orderBy('lease_name')->get();
+        return view('maker.lease.index', compact('leases'));
+    }
+
+    public function LeaseCreate(Tenant $tenant)
+    {
+        $tenantInfo = $tenant;
+        $tenants = Tenant::orderBy('name')->get();
+        return view('maker.lease.create', compact('tenants', 'tenantInfo'));
+    }
+
+    public function LeaseStore(Request $request)
+    {
+        $validated = $this->LeaseValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Active';
+
+        try {
+            $lease = Lease::create($validated);
+            return redirect()->route('tenant-m.index', $lease->tenant)->with('success', 'Lease created successfully.');
+        } catch(\Exception $e) {
+            return back()->with('error', 'Error creating lease: ' . $e->getMessage());
+        }
+    }
+
+    public function LeaseEdit(Tenant $tenant)
+    {
+        $tenants = Tenant::orderBy('name')->get();
+        return view('maker.lease.edit', compact('tenants', 'tenant'));
+    }
+
+    public function LeaseUpdate(Request $request, Lease $lease)
+    {
+        $validated = $this->LeaseValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Active';
+
+        try {
+            $lease->update($validated);
+            return redirect()->route('tenant-m.index', $lease->tenant)->with('success', 'Lease updated successfully.');
+        } catch(\Exception $e) {
+            return back()->with('error', 'Error updating lease: ' . $e->getMessage());
+        }
+    }
+
+    public function LeaseShow(Lease $lease)
+    {
+        return view('maker.lease.show', compact('lease'));
+    }
+
+    public function LeaseValidate(Request $request, Lease $lease = null)
+    {
+        return $request->validate([
+            'tenant_id' => 'required|exists:tenants,id',
+            'lease_name' => 'required|string|max:255',
+            'demised_premises' => 'nullable|string|max:255',
+            'permitted_use' => 'nullable|string|max:255',
+            'rental_amount' => 'nullable|numeric|min:0',
+            'rental_frequency' => 'nullable|in:daily,weekly,monthly,quarterly,biannual,annual',
+            'option_to_renew' => 'nullable|boolean',
+            'term_years' => 'nullable|string|max:255',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after:start_date',
         ]);
     }
 
