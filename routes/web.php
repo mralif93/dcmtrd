@@ -525,13 +525,37 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/portfolio/{portfolio}/show', [MakerController::class, 'PortfolioShow'])->name('portfolio-m.show')->middleware('permission:REITS');
     Route::get('maker/portfolio/{portfolio}/submit-for-approval', [MakerController::class, 'PortfolioApproval'])->name('portfolio-m.approval')->middleware('permission:REITS');
 
-    // Portfolio Module
+    // Financial Module
+    Route::get('maker/financial/{portfolio}/', [MakerController::class, 'FinancialIndex'])->name('financial-m.index')->middleware('permission:REITS');
+    Route::get('maker/financial/{portfolio}/create', [MakerController::class, 'FinancialCreate'])->name('financial-m.create')->middleware('permission:REITS');
+    Route::post('maker/financial/create', [MakerController::class, 'FinancialStore'])->name('financial-m.store')->middleware('permission:REITS');
+    Route::get('maker/financial/{financial}/edit', [MakerController::class, 'FinancialEdit'])->name('financial-m.edit')->middleware('permission:REITS');
+    Route::put('maker/financial/{financial}/update', [MakerController::class, 'FinancialUpdate'])->name('financial-m.update')->middleware('permission:REITS');
+    Route::get('maker/financial/{financial}/show', [MakerController::class, 'FinancialShow'])->name('financial-m.show')->middleware('permission:REITS');
+    
+    // Property Module
     Route::get('maker/property/{portfolio}/', [MakerController::class, 'PropertyIndex'])->name('property-m.index')->middleware('permission:REITS');
-    Route::get('maker/property/create', [MakerController::class, 'PropertyCreate'])->name('property-m.create')->middleware('permission:REITS');
+    Route::get('maker/property/{portfolio}/create', [MakerController::class, 'PropertyCreate'])->name('property-m.create')->middleware('permission:REITS');
     Route::post('maker/property/create', [MakerController::class, 'PropertyStore'])->name('property-m.store')->middleware('permission:REITS');
     Route::get('maker/property/{property}/edit', [MakerController::class, 'PropertyEdit'])->name('property-m.edit')->middleware('permission:REITS');
     Route::put('maker/property/{property}/update', [MakerController::class, 'PropertyUpdate'])->name('property-m.update')->middleware('permission:REITS');
     Route::get('maker/property/{property}/show', [MakerController::class, 'PropertyShow'])->name('property-m.show')->middleware('permission:REITS');
+
+    // Tenant Module
+    Route::get('maker/tenant/{property}/', [MakerController::class, 'TenantIndex'])->name('tenant-m.index')->middleware('permission:REITS');
+    Route::get('maker/tenant/{property}/create', [MakerController::class, 'TenantCreate'])->name('tenant-m.create')->middleware('permission:REITS');
+    Route::post('maker/tenant/create', [MakerController::class, 'TenantStore'])->name('tenant-m.store')->middleware('permission:REITS');
+    Route::get('maker/tenant/{tenant}/edit', [MakerController::class, 'TenantEdit'])->name('tenant-m.edit')->middleware('permission:REITS');
+    Route::put('maker/tenant/{tenant}/update', [MakerController::class, 'TenantUpdate'])->name('tenant-m.update')->middleware('permission:REITS');
+    Route::get('maker/tenant/{tenant}/show', [MakerController::class, 'TenantShow'])->name('tenant-m.show')->middleware('permission:REITS');
+
+    // Lease Module
+    Route::get('maker/lease/{property}/', [MakerController::class, 'LeaseIndex'])->name('lease-m.index')->middleware('permission:REITS');
+    Route::get('maker/lease/{property}/create', [MakerController::class, 'LeaseCreate'])->name('lease-m.create')->middleware('permission:REITS');
+    Route::post('maker/lease/create', [MakerController::class, 'LeaseStore'])->name('lease-m.store')->middleware('permission:REITS');
+    Route::get('maker/lease/{lease}/edit', [MakerController::class, 'LeaseEdit'])->name('lease-m.edit')->middleware('permission:REITS');
+    Route::put('maker/lease/{lease}/update', [MakerController::class, 'LeaseUpdate'])->name('lease-m.update')->middleware('permission:REITS');
+    Route::get('maker/lease/{lease}/show', [MakerController::class, 'LeaseShow'])->name('lease-m.show')->middleware('permission:REITS');
 });
 
 // Approver routes

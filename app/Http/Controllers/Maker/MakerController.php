@@ -34,9 +34,14 @@ use App\Models\ComplianceCovenant;
 use App\Models\ActivityDiary;
 
 // REITs
-use App\Models\Portfolio;
+use App\Models\Bank;
+use App\Models\FinancialType;
 use App\Models\PortfolioType;
+use App\Models\Portfolio;
 use App\Models\Property;
+use App\Models\Tenant;
+use App\Models\Financial;
+use App\Models\Checklist;
 use App\Models\SiteVisit;
 
 use App\Http\Requests\User\BondFormRequest;
@@ -1742,6 +1747,88 @@ class MakerController extends Controller
         ]);
     }
 
+    // Financial Module
+    public function FinancialIndex(Portfolio $portfolio, Request $request)
+    {
+        $query = Financial::orderBy('bank_id')->get();
+        $financials = $query->where('portfolio_id', $portfolio->id);
+        return view('maker.financial.index', compact('financials', 'portfolio'));
+    }
+
+    public function FinancialCreate(Portfolio $portfolio)
+    {
+        $portfolioInfo = $portfolio;
+        $portfolios = Portfolio::orderBy('portfolio_name')->get();
+        $banks = Bank::orderBy('name')->get();
+        $financialTypes = FinancialType::orderBy('name')->get();
+
+        return view('maker.financial.create', compact('portfolios', 'banks', 'financialTypes', 'portfolioInfo'));
+    }
+
+    public function FinancialStore(Request $request)
+    {
+        $validated = $this->FinancialValidate($request);
+
+        // Add prepared_by from authenticated user and set status
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Draft';
+
+        try {
+            $financial = Financial::create($validated);
+            return redirect()->route()->with('success', 'Financial created successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error creating financial: ' . $e->getMessage());
+        }
+    }
+
+    public function FinancialEdit(Financial $financial)
+    {
+        $portfolios = Portfolio::orderBy('portfolio_name')->get();
+        $banks = Bank::orderBy('name')->get();
+        $financialTypes = FinancialType::orderBy('name')->get();
+
+        return view('maker.financial.edit', compact('financial', 'portfolios', 'banks', 'financialTypes'));
+    }
+
+    public function FinancialUpdate(Financial $financial, Request $request)
+    {
+        $validated = $this->FinancialValidate($request);
+
+        try {
+            $financial->update($validated);
+            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial created successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error creating financial: ' . $e->getMessage());
+        }
+    }
+
+    public function FinancialShow(Financial $financial)
+    {
+        return view('maker.financial.show', compact('financial'));
+    }
+
+    public function FinancialValidate(Request $request, Financial $financial = null) {
+        return $request->validate([
+            'portfolio_id' => 'required|exists:portfolios,id',
+            'bank_id' => 'required|exists:banks,id',
+            'financial_type_id' => 'required|exists:financial_types,id',
+            'purpose' => 'required|string|max:255',
+            'tenure' => 'required|string|max:255',
+            'installment_date' => 'required|date',
+            'profit_type' => 'nullable|string|max:255',
+            'profit_rate' => 'nullable|numeric|min:0|max:100',
+            'process_fee' => 'nullable|numeric|min:0',
+            'total_facility_amount' => 'nullable|numeric|min:0',
+            'utilization_amount' => 'nullable|numeric|min:0',
+            'outstanding_amount' => 'nullable|numeric|min:0',
+            'interest_monthly' => 'nullable|numeric|min:0',
+            'security_value_monthly' => 'nullable|numeric|min:0',
+            'facilities_agent' => 'nullable|string|max:255',
+            'agent_contact' => 'nullable|string|max:255',
+            'valuer' => 'nullable|string|max:255',
+        ]);
+    }
+
     // Property Module
     public function PropertyIndex(Portfolio $portfolio, Request $request)
     {
@@ -1818,5 +1905,145 @@ class MakerController extends Controller
             'sortField',
             'sortDirection'
         ));
+    }
+
+    public function PropertyCreate(Portfolio $portfolio)
+    {
+        $portfolioInfo = $portfolio;
+        $portfolios = Portfolio::orderBy('property_name')->get();
+        return view('maker.property.create', compact('portfolios', 'portfolioInfo'));
+    }
+
+    public function PropertyStore(Request $request)
+    {
+        $validated = $this->PropertyValidate($request);
+
+        // Add prepared_by from authenticated user and set status
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Draft';
+
+        try {
+            $property = Property::create($validated);
+            return redirect()->route('property-m.index', $property->portfolio)->with('success', 'Property created successfully.');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error creating property: ' . $e->getMessage());
+        }
+    }
+
+    public function PropertyEdit(Property $property)
+    {
+        $portfolios = Portfolio::orderBy('property_name')->get();
+        return view('maker.property.edit', compact('portfolios', 'property'));
+    }
+
+    public function PropertyUpdate(Request $request, Property $property)
+    {
+        $validated = $this->PropertyValidate($request);
+
+        try {
+            $property->update($validated);
+            return redirect()->route('property-m.index', $property->portfolio)->with('success', 'Property created successfully.');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error updating property: ' . $e->getMessage());
+        }
+    }
+
+    public function PropertyShow(Property $property)
+    {
+        return view('maker.property.show', compact('property'));
+    }
+
+    public function PropertyValidate(Request $request, Property $property = null)
+    {
+        return $request->validate([
+            'portfolio_id' => 'required|exists:portfolios,id',
+            'category' => 'required|string|max:255',
+            'batch_no' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'postal_code' => 'nullable|string|max:255',
+            'land_size' => 'nullable|numeric|min:0',
+            'gross_floor_area' => 'nullable|numeric|min:0',
+            'usage' => 'nullable|string|max:255',
+            'value' => 'nullable|numeric|min:0',
+            'ownership' => 'nullable|string|max:255',
+            'share_amount' => 'nullable|numeric|min:0',
+            'market_value' => 'nullable|numeric|min:0',
+            'status' => 'nullable|string|in:Draft,Active,Pending,Inactive'
+        ]);
+    }
+
+    // Tenant Module
+    public function TenantIndex(Property $property)
+    {
+        $tenants = $property->tenants()
+            ->with('leases')
+            ->orderBy('name')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('maker.tenant.index', compact('tenants', 'property'));
+    }
+
+    public function TenantCreate(Property $property)
+    {
+        $propertyInfo = $property;
+        $properties = Property::orderBy('property_name')->get();
+        return view('maker.tenant.create', compact('properties', 'propertyInfo'));
+    }
+
+    public function TenantStore(Request $request)
+    {
+        $validated = $this->TenantValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Active';
+
+        try {
+            $tenant = Tenant::create($validated);
+            return redirect()->route('tenant-m.index', $tenant->property)->with('success', 'Tenant created successfully.');
+        } catch(\Exception $e) {
+            return back()->withInput()->with('error', 'Error creating tenant: ' . $e->getMessage());
+        }
+    }
+
+    public function TenantEdit(Tenant $tenant)
+    {
+        $properties = Property::orderBy('property_name')->get();
+        return view('maker.tenant.edit', compact('tenant', 'properties'));
+    }
+
+    public function TenantUpdate(Request $request, Tenant $tenant)
+    {
+        $validated = $this->TenantValidate($request);
+
+        try {
+            $tenant->update($validated);
+            return redirect()->route('tenant-m.index', $tenant->property)->with('success', 'Tenant updated successfully.');
+        } catch(\Exception $e) {
+            return back()->withInput()->with('error', 'Error updating tenant: ' . $e->getMessage());
+        }
+    }
+
+    public function TenantShow(Tenant $tenant)
+    {
+        return view('maker.tenant.show', compact('tenant'));
+    }
+
+    public function TenantValidate(Request $request, Tenant $tenant = null)
+    {
+        return $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'name' => 'required|string|max:255',
+            'contact_person' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'commencement_date' => 'nullable|date',
+            'expiry_date' => 'nullable|date|after:commencement_date',
+            'status' => 'nullable|in:active,inactive',
+        ]);
     }
 }
