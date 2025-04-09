@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Create New Lease') }}
             </h2>
-            <a href="{{ route('leases-info.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+            <a href="{{ route('lease-m.index', $property) }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
                 &larr; Back to List
             </a>
         </div>
@@ -36,7 +36,7 @@
             @endif
 
             <div class="bg-white shadow rounded-lg p-6">
-                <form method="POST" action="{{ route('leases-info.store') }}">
+                <form method="POST" action="{{ route('lease-m.store', $property) }}">
                     @csrf
 
                     <div class="mb-6">
@@ -118,19 +118,6 @@
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
-
-                            <div class="mb-4">
-                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                    <option value="terminated" {{ old('status') == 'terminated' ? 'selected' : '' }}>Terminated</option>
-                                    <option value="expired" {{ old('status') == 'expired' ? 'selected' : '' }}>Expired</option>
-                                </select>
-                                @error('status')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
                         </div>
                     </div>
 
@@ -163,7 +150,7 @@
                     </div>
 
                     <div class="flex justify-end gap-4 border-t border-gray-200 mt-6 pt-6">
-                        <a href="{{ route('leases-info.index') }}" 
+                        <a href="{{ route('lease-m.index', $property) }}" 
                             class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>

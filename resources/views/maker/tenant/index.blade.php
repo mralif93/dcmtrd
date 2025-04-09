@@ -175,11 +175,11 @@
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $tenant->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                             {{ ucfirst($tenant->status) }}
                                         </span>
-                                        @if($isExpiringSoon)
+                                        <!-- @if($isExpiringSoon)
                                             <span class="ml-1 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
                                                 Expiring Soon
                                             </span>
-                                        @endif
+                                        @endif -->
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end space-x-2">

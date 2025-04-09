@@ -1792,7 +1792,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'Active';
 
         try {
             $financial = Financial::create($validated);
@@ -1941,7 +1941,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'Active';
 
         try {
             $property = Property::create($validated);
@@ -2109,11 +2109,10 @@ class MakerController extends Controller
         ));
     }
 
-    public function LeaseCreate(Tenant $tenant)
+    public function LeaseCreate(Property $property)
     {
-        $tenantInfo = $tenant;
-        $tenants = Tenant::orderBy('name')->get();
-        return view('maker.lease.create', compact('tenants', 'tenantInfo'));
+        $tenants = Tenant::where('property_id', $property->id)->orderBy('name')->get();
+        return view('maker.lease.create', compact('tenants', 'property'));
     }
 
     public function LeaseStore(Request $request)
@@ -2125,16 +2124,16 @@ class MakerController extends Controller
 
         try {
             $lease = Lease::create($validated);
-            return redirect()->route('tenant-m.index', $lease->tenant)->with('success', 'Lease created successfully.');
+            return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease created successfully.');
         } catch(\Exception $e) {
             return back()->with('error', 'Error creating lease: ' . $e->getMessage());
         }
     }
 
-    public function LeaseEdit(Tenant $tenant)
+    public function LeaseEdit(Lease $lease)
     {
         $tenants = Tenant::orderBy('name')->get();
-        return view('maker.lease.edit', compact('tenants', 'tenant'));
+        return view('maker.lease.edit', compact('tenants', 'lease'));
     }
 
     public function LeaseUpdate(Request $request, Lease $lease)
@@ -2146,7 +2145,7 @@ class MakerController extends Controller
 
         try {
             $lease->update($validated);
-            return redirect()->route('tenant-m.index', $lease->tenant)->with('success', 'Lease updated successfully.');
+            return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease updated successfully.');
         } catch(\Exception $e) {
             return back()->with('error', 'Error updating lease: ' . $e->getMessage());
         }
