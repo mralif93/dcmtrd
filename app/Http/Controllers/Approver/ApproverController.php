@@ -10,15 +10,34 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
+
+// Bonds
 use App\Models\Issuer;
 use App\Models\Bond;
 use App\Models\Announcement;
 use App\Models\RelatedDocument;
 use App\Models\FacilityInformation;
+use App\Models\RatingMovement;
+use App\Models\PaymentSchedule;
+use App\Models\Redemption;
+use App\Models\CallSchedule;
+use App\Models\LockoutPeriod;
+use App\Models\TradingActivity;
 use App\Models\TrusteeFee;
 use App\Models\ComplianceCovenant;
 use App\Models\ActivityDiary;
+
+// REITs
+use App\Models\Bank;
+use App\Models\FinancialType;
+use App\Models\PortfolioType;
 use App\Models\Portfolio;
+use App\Models\Property;
+use App\Models\Tenant;
+use App\Models\Lease;
+use App\Models\Financial;
+use App\Models\Checklist;
+use App\Models\SiteVisit;
 
 class ApproverController extends Controller
 {
@@ -47,7 +66,8 @@ class ApproverController extends Controller
                         ->paginate(10)
                         ->withQueryString();
 
-        $portfolios = Portfolio::query()->latest()->paginate(10);
+        // Query for portfolios
+        $portfolios = Portfolio::query()->where('status', ['Active', 'Pending', 'Rejected'])->latest()->paginate(10)->withQueryString();
 
         $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
             $result = DB::select("
@@ -58,7 +78,7 @@ class ApproverController extends Controller
             ");
             return (array) $result[0];
         });
-
+        
         return view('approver.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
@@ -583,5 +603,271 @@ class ApproverController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
         }
+    }
+
+    // Portfolio
+    public function PortfolioIndex()
+    {
+        $portfolios = Portfolio::orderBy('portfolio_name')->get();
+        return view('approver.portfolio.index', compact('portfolios'));
+    }
+
+    public function PortfolioShow(Portfolio $portfolios)
+    {
+        return view('approver.portfolio.show', compact('portfolio'));
+    }
+
+    public function PortfolioApprove(Portfolio $portfolio)
+    {
+        try {
+            $portfolio->update([
+                'status' => "Active",
+                'verified_by' => Auth::user->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()->route('approver.dashboard')->with('success', 'Portfolio approved successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error approving activity diary: ' . $e->getMessage());
+        }
+    }
+        
+        
+
+    public function PortfolioReject(Request $request, Portfolio $portfolio)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $portfolio->update([
+                'status' => "Active",
+                'verified_by' => Auth::user->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()->route('approver.dashboard')->with('success', 'Portfolio rejected successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
+        }
+    }
+
+    // Property
+    public function PropertyIndex(Request $request, Portfolio $portfolio)
+    {
+        // Start with a base query, including relevant relationships
+        $query = Property::with([
+            'portfolio',
+            'tenants' => function($q) {
+                $q->where('status', 'active');
+            },
+            'siteVisits' => function($q) {
+                $q->where('status', 'scheduled');
+            }
+        ]);
+
+        // Filter by portfolio if provided
+        if ($portfolio->exists) {
+            $query->where('portfolio_id', $portfolio->id);
+            
+            // Eager load portfolio with its relationships when we're looking at a specific portfolio
+            $portfolio->load([
+                'portfolioType',
+                'properties.tenants',
+                'properties.siteVisits',
+                'financials.bank',
+                'financials.financialType'
+            ]);
+        }
+        
+        // Apply filters based on request parameters
+        if ($request->filled('batch_no')) {
+            $query->where('batch_no', $request->batch_no);
+        }
+        
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+        
+        if ($request->filled('city')) {
+            $query->where('city', $request->city);
+        }
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%")
+                  ->orWhere('batch_no', 'like', "%{$search}%");
+            });
+        }
+
+        // Add sorting capability
+        $sortField = $request->filled('sort') ? $request->sort : 'created_at';
+        $sortDirection = $request->filled('direction') ? $request->direction : 'desc';
+        $query->orderBy($sortField, $sortDirection);
+        
+        // Execute the query with pagination
+        $properties = $query->paginate(10)->appends($request->except('page'));
+        
+        // Get unique values for filters dropdowns
+        $batchNumbers = Property::select('batch_no')->distinct()->pluck('batch_no');
+        $categories = Property::select('category')->distinct()->pluck('category');
+        $cities = Property::select('city')->distinct()->pluck('city');
+        $statuses = Property::select('status')->distinct()->pluck('status');
+        $portfolios = Portfolio::where('status', 'active')->get();
+
+        return view('approver.property.index', compact(
+            'portfolios',
+            'properties',
+            'batchNumbers', 
+            'categories', 
+            'cities',
+            'statuses',
+            'portfolio',
+            'sortField',
+            'sortDirection'
+        ));
+    }
+
+    public function PropertyShow(Property $property)
+    {
+        return view('approver.property.show', compact('property'));
+    }
+
+    // Tenant
+    public function TenantIndex(Property $property)
+    {
+        $tenants = $property->tenants()
+            ->with('leases')
+            ->orderBy('name')
+            ->paginate(10)
+            ->withQueryString();
+        
+        $siteVisits = $property->siteVisits()
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('approver.tenant.index', compact('tenants', 'siteVisits', 'property'));
+    }
+
+    public function TenantShow(Tenant $tenant)
+    {
+        return view('approver.tenant.show', compact('tenant'));
+    }
+
+    // Lease
+    public function LeaseIndex(Property $property)
+    {
+        // Get all tenants for this property
+        $tenantIds = $property->tenants->pluck('id');
+        
+        // Get all leases for these tenants with pagination
+        $leases = Lease::whereIn('tenant_id', $tenantIds)
+            ->with(['tenant', 'tenant.property']) // Eager load relationships
+            ->latest()
+            ->paginate(10);
+        
+        // Get property details with necessary relationships
+        $property->load(['portfolio', 'portfolio.portfolioType']);
+        
+        // Calculate lease metrics for property summary
+        $activeLeaseCount = Lease::whereIn('tenant_id', $tenantIds)
+            ->where('status', 'active')
+            ->count();
+        
+        $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)->count();
+        
+        $totalActiveRental = Lease::whereIn('tenant_id', $tenantIds)
+            ->where('status', 'active')
+            ->sum('rental_amount');
+
+        return view('approver.lease.index', compact(
+            'property',
+            'leases',
+            'activeLeaseCount',
+            'totalLeaseCount',
+            'totalActiveRental'
+        ));
+    }
+
+    public function LeaseShow(Lease $lease)
+    {
+        return view('approver.lease.show', compact('lease'));
+    }
+
+    // Site Visit
+    public function SiteVisitIndex(Property $property)
+    {
+        $siteVisits = $property->siteVisits()
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10)
+                        ->withQueryString();
+
+        return view('approver.site-visit.index', compact('siteVisits', 'propertyInfo'));
+    }
+
+    public function SiteVisitShow(SiteVisit $siteVisit)
+    {
+        return view('approver.site-visit.show', compact('siteVisit'));
+    }
+
+    // Checklist
+    public function ChecklistIndex(Request $request, Property $property)
+    {
+        // Start with a base query that includes the relationship
+        $query = Checklist::with('siteVisit');
+                
+        // Filter by property if provided
+        if ($property->exists) {
+            $query->where('site_visit_id', function ($subquery) use ($property) {
+                $subquery->select('id')
+                    ->from('site_visits')
+                    ->where('property_id', $property->id);
+            });
+        }
+
+        // Handle search functionality
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('property_title', 'like', "%{$search}%")
+                ->orWhere('property_location', 'like', "%{$search}%")
+                ->orWhere('tenant_name', 'like', "%{$search}%")
+                ->orWhere('title_ref', 'like', "%{$search}%")
+                ->orWhere('remarks', 'like', "%{$search}%");
+            });
+        }
+
+        // Handle status filtering
+        if ($request->has('status') && !empty($request->status)) {
+            $query->where('status', $request->status);
+        }
+
+        // Get paginated results
+        $checklists = $query->latest()->paginate(10)->withQueryString();
+
+        // Get related data for summary statistics if we're viewing a specific property
+        if ($property->exists) {
+            // You might want to add additional statistics here if needed
+            $pendingCount = $checklists->where('status', 'pending')->count();
+            $completedCount = $checklists->where('status', 'completed')->count();
+            
+            return view('approver.checklist.index', compact(
+                'property', 
+                'checklists',
+                'pendingCount',
+                'completedCount'
+            ));
+        }
+
+        return view('approver.checklist.index', compact('checklists'));
+    }
+
+    public function ChecklistShow(Checklist $checklist)
+    {
+        return view('approver.checklist.show', compact('checklist'));
     }
 }

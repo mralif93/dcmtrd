@@ -6,7 +6,7 @@
             </h2>
 
             <!-- Dropdown Menu -->
-            <div class="relative" x-data="{ open: false }">
+            <div class="relative" x-data="{ open: false }" id="header-dropdown" style="display: none;">
                 <button @click="open = !open" class="flex items-center text-gray-700 px-3 py-2 text-sm font-medium rounded-md bg-white border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none">
                     <span>{{ __('Menu') }}</span>
                     <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -59,7 +59,8 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    @if(Auth::user()->hasPermission('DCMTRD'))
+    <div class="hidden py-12 dashboard-section" id="dcmtrd-section" data-section="dcmtrd">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="pb-6">
                 <h2 class="text-xl font-bold leading-tight text-gray-800">
@@ -117,7 +118,6 @@
                 </div>
             </div>
 
-
             <!-- Table Issuer -->
             <div class="bg-white shadow overflow-hidden rounded-lg mt-6">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
@@ -125,7 +125,7 @@
                 </div>
 
                 <!-- Search and Filter Bar -->
-                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                <div class="hidden bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <!-- Issuer Name Search Field -->
@@ -236,63 +236,15 @@
             </div>
         </div>
     </div>
+    @endif
 
-    <div class="py-12">
+    @if(Auth::user()->hasPermission('REITS'))
+    <div class="hidden py-12 dashboard-section" id="reits-section" data-section="reits">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="pb-6">
                 <h2 class="text-xl font-bold leading-tight text-gray-800">
                     {{ __('Real Estate Investment Trusts (REITs)') }}
                 </h2>
-            </div>
-
-            <!-- Cards -->
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <!-- Trustee Fees -->
-                <x-dashboard-card
-                    title="Trustee Fees"
-                    icon="receipt-refund"
-                    :count="$trusteeFeesCount ?? 0"
-                    :href="route('trustee-fee-a.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Compliance Covenants -->
-                <x-dashboard-card
-                    title="Compliance Covenants"
-                    icon="document-check"
-                    :count="$complianceCovenantCount ?? 0"
-                    :href="route('compliance-covenant-a.index')"
-                    color="bg-green-100"
-                />
-
-                <!-- Activity Diary -->
-                <x-dashboard-card
-                    title="Activity Diary"
-                    icon="calendar"
-                    :count="$activityDairyCount ?? 0"
-                    :href="route('activity-diary-a.index')"
-                    color="bg-green-100"
-                />
-
-                <div class="hidden">
-                <!-- Audit Log -->
-                <x-dashboard-card
-                    title="Audit Log"
-                    icon="clipboard-list"
-                    :count="$auditLogCount ?? 0"
-                    href="#"
-                    color="bg-green-100"
-                />
-
-                <!-- Reports -->
-                <x-dashboard-card
-                    title="Reports"
-                    icon="document"
-                    :count="$reportsCount ?? 0"
-                    href="#"
-                    color="bg-green-100"
-                />
-                </div>
             </div>
 
             <!-- Table Portfolio -->
@@ -302,16 +254,180 @@
                 </div>
 
                 <!-- Search and Filter Bar -->
-                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                <div class="hidden bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                    <form method="GET">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <!-- Issuer Name Search Field -->
+                            <div>
+                                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                                <input type="text" name="search" id="search" value="{{ old('search', request('search')) }}"
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                                       placeholder="Portfolio name..">
+                            </div>
+
+                            <!-- Status Filter -->
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <select name="status" id="status" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">All Status</option>
+                                    <option value="Draft" {{ request('status') == 'Draft' ? 'selected' : '' }}>Draft</option>
+                                    <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                                    <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="Rejected" {{ request('status') == 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                                    <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Filter Button -->
+                            <div class="flex items-end">
+                                <button type="submit" 
+                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                    </svg>
+                                    Search
+                                </button>
+                                
+                                @if(request('search') || request('status'))
+                                    <a href="{{ route('maker.dashboard', ['section' => 'reits']) }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="overflow-x-auto rounded-lg">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead></thead>
-                        <tbody></tbody>
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trust Deed</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Annual Report</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Insurance</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valuation Report</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse ($portfolios as $portfolio)
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    <a href="{{ route('property-a.index', $portfolio) }}" class="cursor-pointer text-blue-600 hover:text-blue-900">
+                                        {{ $portfolio->portfolio_name }}
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    @if ($portfolio->trust_deed_document)
+                                    <a href="{{ Storage::url($portfolio->trust_deed_document) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        Download
+                                    </a>
+                                    @else
+                                    <span class="text-gray-500">N/A</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    @if ($portfolio->annual_report)
+                                    <a href="{{ Storage::url($portfolio->annual_report) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        Download
+                                    </a>
+                                    @else
+                                    <span class="text-gray-500">N/A</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    @if ($portfolio->insurance_document)
+                                    <a href="{{ Storage::url($portfolio->insurance_document) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        Download
+                                    </a>
+                                    @else
+                                    <span class="text-gray-500">N/A</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    @if ($portfolio->valuation_report)
+                                    <a href="{{ Storage::url($portfolio->valuation_report) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        Download
+                                    </a>
+                                    @else
+                                    <span class="text-gray-500">N/A</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        {{ $portfolio->status == 'Active' ? 'bg-green-100 text-green-800' : 
+                                        ($portfolio->status == 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                        ($portfolio->status == 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        {{ $portfolio->status }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex justify-end space-x-2">
+                                        <a href="{{ route('portfolio-m.show', $portfolio) }}" class="text-indigo-600 hover:text-indigo-900" title="View">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
+                                        No portfolio found
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+    @endif
+
+    <!-- JavaScript for handling section display -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the section parameter from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const section = urlParams.get('section');
+        
+        // Initially hide the default message (will show it if no valid section is found)
+        const defaultMessage = document.getElementById('default-message');
+        
+        // Select all section elements
+        const sections = document.querySelectorAll('.dashboard-section');
+        
+        // If a section parameter is present
+        if (section) {
+            // Find the target section
+            const targetSection = document.querySelector(`[data-section="${section}"]`);
+            
+            if (targetSection) {
+                // Hide default message
+                if (defaultMessage) {
+                    defaultMessage.classList.add('hidden');
+                }
+                
+                // Show only the target section
+                targetSection.classList.remove('hidden');
+            } else {
+                // If no valid section was found, show the default message
+                if (defaultMessage) {
+                    defaultMessage.classList.remove('hidden');
+                }
+            }
+        } else {
+            // If no section parameter, show the default message
+            if (defaultMessage) {
+                defaultMessage.classList.remove('hidden');
+            }
+        }
+    });
+    </script>
 </x-app-layout>

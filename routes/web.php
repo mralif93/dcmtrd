@@ -596,4 +596,30 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/activity-diary/export', [ApproverController::class, 'ActivityExportActivities'])->name('activity-diary-a.export')->middleware('permission:DCMTRD');
     Route::post('approver/activity-diary/{activity}/approve', [ApproverController::class, 'ActivityApprove'])->name('activity-diary-a.approve')->middleware('permission:DCMTRD');
     Route::post('approver/activity-diary/{activity}/reject', [ApproverController::class, 'ActivityReject'])->name('activity-diary-a.reject')->middleware('permission:DCMTRD');
+
+    // Portfolio Module
+    Route::get('approver/portfolio', [ApproverController::class, 'PortfolioIndex'])->name('portfolio-a.index')->middleware('permission:REITS');
+    Route::get('approver/portfolio/{portfolio}/show', [ApproverController::class, 'PortfolioShow'])->name('portfolio-a.show')->middleware('permission:REITS');
+    Route::get('approver/portfolio/{portfolio}/approve', [ApproverController::class, 'PortfolioApprove'])->name('portfolio-a.approve')->middleware('permission:REITS');
+    Route::get('approver/portfolio/{portfolio}/reject', [ApproverController::class, 'PortfolioReject'])->name('portfolio-a.reject')->middleware('permission:REITS');
+
+    // Property Module
+    Route::get('approver/property/{portfolio}', [ApproverController::class, 'PropertyIndex'])->name('property-a.index')->middleware('permission:REITS');
+    Route::get('approver/property/{property}/show', [ApproverController::class, 'PropertyShow'])->name('property-a.show')->middleware('permission:REITS');
+
+    // Tenant Module
+    Route::get('approver/tenant/{property}', [ApproverController::class, 'TenantIndex'])->name('tenant-a.index')->middleware('permission:REITS');
+    Route::get('approver/tenant/{tenant}/show', [ApproverController::class, 'TenantShow'])->name('tenant-a.show')->middleware('permission:REITS');
+
+    // Lease Module
+    Route::get('approver/lease/{property}', [ApproverController::class, 'LeaseIndex'])->name('lease-a.index')->middleware('permission:REITS');
+    Route::get('approver/lease/{lease}/show', [ApproverController::class, 'LeaseShow'])->name('lease-a.show')->middleware('permission:REITS');
+
+    // SiteVisit Module
+    Route::get('approver/site-visit/', [ApproverController::class, 'SiteVisitIndex'])->name('site-visit-a.index')->middleware('permission:REITS');
+    Route::get('approver/site-visit/{siteVisit}/show', [ApproverController::class, 'SiteVisitShow'])->name('site-visit-a.show')->middleware('permission:REITS');
+
+    // Checklist Module
+    Route::get('approver/checklist/{property}', [ApproverController::class, 'ChecklistIndex'])->name('checklist-a.index')->middleware('permission:REITS');
+    Route::get('approver/checklist/{checklist}/show', [ApproverController::class, 'ChecklistShow'])->name('checklist-a.show')->middleware('permission:REITS');
 });
