@@ -5,8 +5,8 @@
                 {{ __('Maker Dashboard') }}
             </h2>
 
-            <!-- Dropdown Menu -->
-            <div class="relative" x-data="{ open: false }">
+            <!-- Dropdown Menu - Only visible for DCMTRD section -->
+            <div class="relative" x-data="{ open: false }" id="header-dropdown" style="display: none;">
                 <button @click="open = !open" class="flex items-center text-gray-700 px-3 py-2 text-sm font-medium rounded-md bg-white border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none">
                     <span>{{ __('Menu') }}</span>
                     <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -67,6 +67,23 @@
                 window.location.href = event.currentTarget.href;
             }
         }
+
+        // Check if DCMTRD section is active and show dropdown if it is
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the section parameter from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const section = urlParams.get('section') || '';
+            
+            // Get the dropdown menu element
+            const headerDropdown = document.getElementById('header-dropdown');
+            
+            // Show the dropdown only if the section is 'dcmtrd'
+            if (section === 'dcmtrd') {
+                headerDropdown.style.display = 'block';
+            } else {
+                headerDropdown.style.display = 'none';
+            }
+        });
     </script>
 
     @if(Auth::user()->hasPermission('DCMTRD'))
@@ -299,6 +316,36 @@
                 </h2>
             </div>
 
+            <!-- Cards -->
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-3 mb-6">
+                <!-- Properties -->
+                <x-dashboard-card
+                    title="Properties"
+                    icon="office-building"
+                    :count="$propertiesCount ?? 0"
+                    href="#"
+                    color="bg-blue-100"
+                />
+
+                <!-- Financials -->
+                <x-dashboard-card
+                    title="Financials"
+                    icon="document-text"
+                    :count="$financialsCount ?? 0"
+                    href="#"
+                    color="bg-blue-100"
+                />
+
+                <!-- Tenants -->
+                <x-dashboard-card
+                    title="Tenants"
+                    icon="users"
+                    :count="$tenantsCount ?? 0"
+                    href="#"
+                    color="bg-blue-100"
+                />
+            </div>
+
             <!-- Table Portfolio -->
             <div class="bg-white shadow overflow-hidden rounded-lg mt-6">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
@@ -455,7 +502,7 @@
                             </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
+                                    <td colspan="7" class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
                                         No portfolio found
                                     </td>
                                 </tr>

@@ -47,10 +47,6 @@ use App\Http\Controllers\Admin\TenantController;
 use App\Http\Controllers\Admin\LeaseController;
 use App\Http\Controllers\Admin\FinancialController;
 use App\Http\Controllers\Admin\SiteVisitController;
-use App\Http\Controllers\Admin\DocumentationItemController;
-use App\Http\Controllers\Admin\TenantApprovalController;
-use App\Http\Controllers\Admin\ConditionCheckController;
-use App\Http\Controllers\Admin\PropertyImprovementController;
 use App\Http\Controllers\Admin\SiteVisitLogController;
 
 use App\Http\Controllers\User\UserIssuerController;
@@ -78,10 +74,6 @@ use App\Http\Controllers\User\UserLeaseController;
 use App\Http\Controllers\User\UserChecklistController;
 use App\Http\Controllers\User\UserFinancialController;
 use App\Http\Controllers\User\UserSiteVisitController;
-use App\Http\Controllers\User\UserDocumentationItemController;
-use App\Http\Controllers\User\UserTenantApprovalController;
-use App\Http\Controllers\User\UserConditionCheckController;
-use App\Http\Controllers\User\UserPropertyImprovementController;
 use App\Http\Controllers\User\UserSiteVisitLogController;
 
 // Main: Login
@@ -191,10 +183,6 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::resource('/admin/leases', LeaseController::class);
     Route::resource('/admin/financials', FinancialController::class);
     Route::resource('/admin/site-visits', SiteVisitController::class);
-    Route::resource('/admin/documentation-items', DocumentationItemController::class);
-    Route::resource('/admin/tenant-approvals', TenantApprovalController::class);
-    Route::resource('/admin/condition-checks', ConditionCheckController::class);
-    Route::resource('/admin/property-improvements', PropertyImprovementController::class);
     Route::resource('/admin/site-visit-logs', SiteVisitLogController::class);
 
     // Additional
@@ -207,13 +195,6 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     // Additional
     Route::prefix('/admin/site-visits')->name('site-visits.')->group(function () {
         Route::get('{site_visit}/download', [SiteVisitController::class, 'downloadAttachment'])->name('download');
-    });
-
-    // Additional
-    Route::prefix('/admin/tenant-approvals')->name('tenant-approvals.')->group(function () {
-        Route::post('{tenantApproval}/approve-by-od', [TenantApprovalController::class, 'approveByOD'])->name('approve-by-od');
-        Route::post('{tenantApproval}/verify-by-ld', [TenantApprovalController::class, 'verifyByLD'])->name('verify-by-ld');
-        Route::post('{tenantApproval}/submit-to-ld', [TenantApprovalController::class, 'submitToLD'])->name('submit-to-ld');
     });
 
     // Additional
@@ -357,10 +338,6 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::resource('/user/checklists-info', UserChecklistController::class);
     Route::resource('/user/financials-info', UserFinancialController::class);
     Route::resource('/user/site-visits-info', UserSiteVisitController::class);
-    Route::resource('/user/documentation-items-info', UserDocumentationItemController::class);
-    Route::resource('/user/tenant-approvals-info', UserTenantApprovalController::class);
-    Route::resource('/user/condition-checks-info', UserConditionCheckController::class);
-    Route::resource('/user/property-improvements-info', UserPropertyImprovementController::class);
     Route::resource('/user/site-visit-logs-info', UserSiteVisitLogController::class);
 
     // Additional custom routes
@@ -565,6 +542,14 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/site-visit/{siteVisit}/update', [MakerController::class, 'SiteVisitUpdate'])->name('site-visit-m.update')->middleware('permission:REITS');
     Route::get('maker/site-visit/{siteVisit}/show', [MakerController::class, 'SiteVisitShow'])->name('site-visit-m.show')->middleware('permission:REITS');
     
+    // Checklist Module
+    Route::get('maker/checklist/{property}/', [MakerController::class, 'ChecklistIndex'])->name('checklist-m.index')->middleware('permission:REITS');
+    Route::get('maker/checklist/{property}/create', [MakerController::class, 'ChecklistCreate'])->name('checklist-m.create')->middleware('permission:REITS');
+    Route::post('maker/checklist/create', [MakerController::class, 'ChecklistStore'])->name('checklist-m.store')->middleware('permission:REITS');
+    Route::get('maker/checklist/{checklist}/edit', [MakerController::class, 'ChecklistEdit'])->name('checklist-m.edit')->middleware('permission:REITS');
+    Route::put('maker/checklist/{checklist}/update', [MakerController::class, 'ChecklistUpdate'])->name('checklist-m.update')->middleware('permission:REITS');
+    Route::get('maker/checklist/{checklist}/show', [MakerController::class, 'ChecklistShow'])->name('checklist-m.show')->middleware('permission:REITS');
+    Route::get('maker/checklist/{checklist}/submission-legal', [MakerController::class, 'ChecklistSubmissionLegal'])->name('checklist-m.submission-legal')->middleware('permission:REITS');
 });
 
 // Approver routes

@@ -190,9 +190,7 @@
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="font-medium text-gray-900">
-                                            <a href="{{ route('tenant-m.index', $property) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                {{ $property->name }}
-                                            </a>
+                                            {{ $property->name }}
                                         </div>
                                         <div class="text-sm text-gray-500">
                                             {{ $property->category }}

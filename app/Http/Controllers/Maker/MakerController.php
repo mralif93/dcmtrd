@@ -68,31 +68,51 @@ class MakerController extends Controller
         if ($request->has('status') && !empty($request->status)) {
             $query->where('status', $request->status);
         }
-
+    
         // Get filtered issuers with latest first and paginate
         $issuers = $query->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])
                         ->latest()
                         ->paginate(10)
                         ->withQueryString(); // This preserves the query parameters in pagination links
-
+    
+        // Get count data from cache or database
         $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
             $result = DB::select("
                 SELECT 
                     (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
                     (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
-                    (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count
+                    (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
+                    (SELECT COUNT(*) FROM properties) AS properties_count,
+                    (SELECT COUNT(*) FROM financials) AS financials_count,
+                    (SELECT COUNT(*) FROM tenants) AS tenants_count
             ");
             return (array) $result[0];
         });
-
-        $portfolios = Portfolio::query()->latest()->paginate(10);
-
+    
+        // Query for portfolios
+        $portfolioQuery = Portfolio::query();
+        
+        // Apply search filter to portfolios
+        if ($request->has('search') && !empty($request->search)) {
+            $portfolioQuery->where('portfolio_name', 'LIKE', '%' . $request->search . '%');
+        }
+        
+        // Apply status filter to portfolios
+        if ($request->has('status') && !empty($request->status)) {
+            $portfolioQuery->where('status', $request->status);
+        }
+        
+        $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
+    
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
             'trusteeFeesCount' => $counts['trustee_fees_count'],
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
             'activityDairyCount' => $counts['activity_diaries_count'],
+            'propertiesCount' => $counts['properties_count'],
+            'financialsCount' => $counts['financials_count'],
+            'tenantsCount' => $counts['tenants_count'],
         ]);
     }
 
@@ -2054,10 +2074,39 @@ class MakerController extends Controller
     }
 
     // Lease Module
-    public function LeaseIndex(Tenant $tenant)
+    public function leaseIndex(Property $property)
     {
-        $leases = Lease::orderBy('lease_name')->get();
-        return view('maker.lease.index', compact('leases'));
+        // Get all tenants for this property
+        $tenantIds = $property->tenants->pluck('id');
+        
+        // Get all leases for these tenants with pagination
+        $leases = Lease::whereIn('tenant_id', $tenantIds)
+            ->with(['tenant', 'tenant.property']) // Eager load relationships
+            ->latest()
+            ->paginate(10);
+        
+        // Get property details with necessary relationships
+        $property->load(['portfolio', 'portfolio.portfolioType']);
+        
+        // Calculate lease metrics for property summary
+        $activeLeaseCount = Lease::whereIn('tenant_id', $tenantIds)
+            ->where('status', 'active')
+            ->count();
+        
+        $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)->count();
+        
+        $totalActiveRental = Lease::whereIn('tenant_id', $tenantIds)
+            ->where('status', 'active')
+            ->sum('rental_amount');
+        
+        // Pass calculated metrics to view
+        return view('maker.lease.index', compact(
+            'property',
+            'leases',
+            'activeLeaseCount',
+            'totalLeaseCount',
+            'totalActiveRental'
+        ));
     }
 
     public function LeaseCreate(Tenant $tenant)
@@ -2190,5 +2239,229 @@ class MakerController extends Controller
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
         ]);
+    }
+
+    // Checklist Module
+    public function ChecklistIndex(Property $property, Request $request)
+    {
+        // Start with a base query that includes the relationship
+        $query = Checklist::with('siteVisit');
+        
+        // Filter by property if provided
+        if ($property->exists) {
+            $query->where('site_visit_id', function ($subquery) use ($property) {
+                $subquery->select('id')
+                    ->from('site_visits')
+                    ->where('property_id', $property->id);
+            });
+        }
+        
+        // Handle search functionality
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('property_title', 'like', "%{$search}%")
+                  ->orWhere('property_location', 'like', "%{$search}%")
+                  ->orWhere('tenant_name', 'like', "%{$search}%")
+                  ->orWhere('title_ref', 'like', "%{$search}%")
+                  ->orWhere('remarks', 'like', "%{$search}%");
+            });
+        }
+        
+        // Handle status filtering
+        if ($request->has('status') && !empty($request->status)) {
+            $query->where('status', $request->status);
+        }
+        
+        // Get paginated results
+        $checklists = $query->latest()->paginate(10)->withQueryString();
+        
+        // Get related data for summary statistics if we're viewing a specific property
+        if ($property->exists) {
+            // You might want to add additional statistics here if needed
+            $pendingCount = $checklists->where('status', 'pending')->count();
+            $completedCount = $checklists->where('status', 'completed')->count();
+            
+            return view('maker.checklist.index', compact(
+                'property', 
+                'checklists',
+                'pendingCount',
+                'completedCount'
+            ));
+        }
+        
+        return view('maker.checklist.index', compact('checklists'));
+    }
+
+    public function ChecklistCreate(Property $property)
+    {
+        $siteVisits = SiteVisit::where('status', 'Active')->get();
+        return view('maker.checklist.create', compact('property', 'siteVisits'));
+    }
+
+    public function ChecklistStore(Request $request)
+    {
+        $validated = $this->ChecklistValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Draft';
+
+        try {
+            $checklist = Checklist::create($validated);
+            return redirect()->route('tenant-m.index', $checklist->property)->with('success', 'Checklist created successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error creating checklist: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistEdit(Request $request, Checklist $checklist)
+    {
+        $siteVisits = SiteVisit::where('status', 'Active')->get();
+        return view('maker.checklist.edit', compact('checklist', 'siteVisits'));
+    }
+
+    public function ChecklistUpdate()
+    {
+        $validated = $this->ChecklistValidate($request);
+
+        try {
+            $checklist->update($validated);
+            return redirect()->route('tenant-m.index', $checklist->property)->with('success', 'Checklist created successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error creating checklist: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistShow(Checklist $checklist)
+    {
+        return view('maker.checklist.show', compact('checklist'));
+    }
+
+    public function ChecklistValidate(Request $request, Checklist $checklist = null)
+    {
+        return $request->validate([
+            // General Property Info
+            'property_title' => 'required|string|max:255',
+            'property_location' => 'required|string|max:255',
+            'site_visit_id' => 'nullable|exists:site_visits,id',
+            
+            // 1.0 Legal Documentation
+            'title_ref' => 'nullable|string|max:255',
+            'title_location' => 'nullable|string|max:255',
+            'trust_deed_ref' => 'nullable|string|max:255',
+            'trust_deed_location' => 'nullable|string|max:255',
+            'sale_purchase_agreement' => 'nullable|string|max:255',
+            'lease_agreement_ref' => 'nullable|string|max:255',
+            'lease_agreement_location' => 'nullable|string|max:255',
+            'agreement_to_lease' => 'nullable|string|max:255',
+            'maintenance_agreement_ref' => 'nullable|string|max:255',
+            'maintenance_agreement_location' => 'nullable|string|max:255',
+            'development_agreement' => 'nullable|string|max:255',
+            'other_legal_docs' => 'nullable|string',
+            
+            // 2.0 Tenancy Agreement
+            'tenant_name' => 'nullable|string|max:255',
+            'tenant_property' => 'nullable|string|max:255',
+            'tenancy_approval_date' => 'nullable|date',
+            'tenancy_commencement_date' => 'nullable|date',
+            'tenancy_expiry_date' => 'nullable|date',
+            
+            // 3.0 External Area Conditions
+            'is_general_cleanliness_satisfied' => 'nullable|boolean',
+            'general_cleanliness_remarks' => 'nullable|string',
+            'is_fencing_gate_satisfied' => 'nullable|boolean',
+            'fencing_gate_remarks' => 'nullable|string',
+            'is_external_facade_satisfied' => 'nullable|boolean',
+            'external_facade_remarks' => 'nullable|string',
+            'is_car_park_satisfied' => 'nullable|boolean',
+            'car_park_remarks' => 'nullable|string',
+            'is_land_settlement_satisfied' => 'nullable|boolean',
+            'land_settlement_remarks' => 'nullable|string',
+            'is_rooftop_satisfied' => 'nullable|boolean',
+            'rooftop_remarks' => 'nullable|string',
+            'is_drainage_satisfied' => 'nullable|boolean',
+            'drainage_remarks' => 'nullable|string',
+            'external_remarks' => 'nullable|string',
+            
+            // 4.0 Internal Area Conditions
+            'is_door_window_satisfied' => 'nullable|boolean',
+            'door_window_remarks' => 'nullable|string',
+            'is_staircase_satisfied' => 'nullable|boolean',
+            'staircase_remarks' => 'nullable|string',
+            'is_toilet_satisfied' => 'nullable|boolean',
+            'toilet_remarks' => 'nullable|string',
+            'is_ceiling_satisfied' => 'nullable|boolean',
+            'ceiling_remarks' => 'nullable|string',
+            'is_wall_satisfied' => 'nullable|boolean',
+            'wall_remarks' => 'nullable|string',
+            'is_water_seeping_satisfied' => 'nullable|boolean',
+            'water_seeping_remarks' => 'nullable|string',
+            'is_loading_bay_satisfied' => 'nullable|boolean',
+            'loading_bay_remarks' => 'nullable|string',
+            'is_basement_car_park_satisfied' => 'nullable|boolean',
+            'basement_car_park_remarks' => 'nullable|string',
+            'internal_remarks' => 'nullable|string',
+            
+            // 5.0 Property Development
+            'development_date' => 'nullable|date',
+            'development_expansion_status' => 'nullable|string',
+            'development_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
+            'renovation_date' => 'nullable|date',
+            'renovation_status' => 'nullable|string',
+            'renovation_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
+            'repainting_date' => 'nullable|date',
+            'external_repainting_status' => 'nullable|string',
+            'repainting_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
+            
+            // 5.4 Disposal/Installation/Replacement
+            'water_tank_date' => 'nullable|date',
+            'water_tank_status' => 'nullable|string',
+            'water_tank_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
+            'air_conditioning_approval_date' => 'nullable|date',
+            'air_conditioning_scope' => 'nullable|string',
+            'air_conditioning_status' => 'nullable|string',
+            'air_conditioning_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
+            'lift_date' => 'nullable|date',
+            'lift_escalator_scope' => 'nullable|string',
+            'lift_escalator_status' => 'nullable|string',
+            'lift_escalator_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
+            'fire_system_date' => 'nullable|date',
+            'fire_system_scope' => 'nullable|string',
+            'fire_system_status' => 'nullable|string',
+            'fire_system_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
+            'other_system_date' => 'nullable|date',
+            'other_property' => 'nullable|string',
+            'other_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
+            
+            // 5.5 Other Proposals/Approvals
+            'other_proposals_approvals' => 'nullable|string',
+            
+            // System Information
+            'status' => 'nullable|string|in:Scheduled,Pending Action,Approved',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
+            
+            // Attachments - if you plan to have file uploads
+            // 'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+        ]);
+    }
+    
+    public function ChecklistSubmissionLegal(Checklist $checklist)
+    {
+        try {
+            $checklist->update([
+                'status' => 'Pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+            
+            return redirect()
+                ->route('tenant-m.index', $checklist->property)
+                ->with('success', 'Checklist submitted for legal approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error submitting for legal approval: ' . $e->getMessage());
+        }
     }
 }

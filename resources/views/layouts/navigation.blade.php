@@ -5,27 +5,16 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ 
-                            Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'dcmtrd']) : 
-                            (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'dcmtrd']) : 
-                            (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'dcmtrd']) : 
-                            route('dashboard', ['section' => 'dcmtrd']))) 
-                        }}">
+                    <a href="{{ route('main') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'dcmtrd']) : 
-                        (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'dcmtrd']) : 
-                        (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'dcmtrd']) : 
-                        route('dashboard', ['section' => 'dcmtrd'])))" 
-                        :active="request()->routeIs(Auth::user()->role === 'admin' ? 'admin.dashboard' : 
-                        (Auth::user()->role === 'maker' ? 'maker.dashboard' : 
-                        (Auth::user()->role === 'approver' ? 'approver.dashboard' : 
-                        'dashboard')))">
-                        {{ __('Dashboard') }}
+                    <x-nav-link :href="route('main')" 
+                        :active="request()->routeIs('main')">
+                        {{ __('Home') }}
                     </x-nav-link>
                 </div>
             </div>
