@@ -612,7 +612,7 @@ class ApproverController extends Controller
         return view('approver.portfolio.index', compact('portfolios'));
     }
 
-    public function PortfolioShow(Portfolio $portfolios)
+    public function PortfolioShow(Portfolio $portfolio)
     {
         return view('approver.portfolio.show', compact('portfolio'));
     }
@@ -632,8 +632,6 @@ class ApproverController extends Controller
         }
     }
         
-        
-
     public function PortfolioReject(Request $request, Portfolio $portfolio)
     {
         $request->validate([

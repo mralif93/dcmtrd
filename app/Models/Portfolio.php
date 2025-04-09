@@ -23,6 +23,14 @@ class Portfolio extends Model
         'insurance_document',
         'valuation_report',
         'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
+        'remarks',
+    ];
+
+    protected $casts = [
+        'approval_datetime' => 'datetime',
     ];
 
     /**
