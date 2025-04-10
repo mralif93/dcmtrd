@@ -19,7 +19,10 @@ class SiteVisit extends Model
         'property_id',
         'date_visit',
         'time_visit',
-        'inspector_name',
+        'trustee',
+        'manager',
+        'maintenance_manager',
+        'building_manager',
         'notes',
         'attachment',
         'status'

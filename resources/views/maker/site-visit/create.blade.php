@@ -1,5 +1,4 @@
 <!-- resources/views/site-visits/create.blade.php -->
-
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between">
@@ -44,7 +43,7 @@
 
                         <div class="grid grid-cols-1 gap-6">
                             <div class="col-span-1">
-                                <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Property Information</h3>
+                                <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Site Visit Information</h3>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -60,21 +59,6 @@
                                         @endforeach
                                     </select>
                                     @error('property_id')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-span-1">
-                                <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4 mt-4">Visit Information</h3>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Inspector Name -->
-                                <div>
-                                    <label for="inspector_name" class="block text-sm font-medium text-gray-500">Inspector Name</label>
-                                    <input id="inspector_name" type="text" name="inspector_name" value="{{ old('inspector_name') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('inspector_name')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -97,15 +81,38 @@
                                     @enderror
                                 </div>
 
-                                <!-- Status -->
+                                <!-- Trustee -->
                                 <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-500">Status</label>
-                                    <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="scheduled" {{ old('status', 'scheduled') == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
-                                        <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                                        <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                    </select>
-                                    @error('status')
+                                    <label for="trustee" class="block text-sm font-medium text-gray-500">Trustee</label>
+                                    <input id="trustee" type="text" name="trustee" value="{{ old('trustee') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('trustee')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Manager -->
+                                <div>
+                                    <label for="manager" class="block text-sm font-medium text-gray-500">Manager</label>
+                                    <input id="manager" type="text" name="manager" value="{{ old('manager') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('manager')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Maintenance Manager -->
+                                <div>
+                                    <label for="maintenance_manager" class="block text-sm font-medium text-gray-500">Maintenance Manager</label>
+                                    <input id="maintenance_manager" type="text" name="maintenance_manager" value="{{ old('maintenance_manager') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('maintenance_manager')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Building Manager -->
+                                <div>
+                                    <label for="building_manager" class="block text-sm font-medium text-gray-500">Building Manager</label>
+                                    <input id="building_manager" type="text" name="building_manager" value="{{ old('building_manager') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('building_manager')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -122,7 +129,7 @@
                                 <!-- Attachment -->
                                 <div class="col-span-2">
                                     <label for="attachment" class="block text-sm font-medium text-gray-500">Attachment</label>
-                                    <input id="attachment" type="file" name="attachment" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                    <input id="attachment" type="file" name="attachment" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-6 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                                     <p class="mt-1 text-sm text-gray-500">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG (max 10MB)</p>
                                     @error('attachment')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

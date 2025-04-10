@@ -17,6 +17,8 @@ use App\Imports\PaymentScheduleImport;
 use App\Imports\RatingMovementsImport;
 use App\Imports\TradingActivityImport;
 
+use App\Models\User;
+
 // Bonds
 use App\Models\Issuer;
 use App\Models\Bond;
@@ -44,6 +46,9 @@ use App\Models\Lease;
 use App\Models\Financial;
 use App\Models\Checklist;
 use App\Models\SiteVisit;
+use App\Models\SiteVisitLog;
+use App\Models\Appointment;
+use App\Models\ApprovalForm;
 
 use App\Http\Requests\User\BondFormRequest;
 
@@ -84,7 +89,9 @@ class MakerController extends Controller
                     (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
                     (SELECT COUNT(*) FROM properties) AS properties_count,
                     (SELECT COUNT(*) FROM financials) AS financials_count,
-                    (SELECT COUNT(*) FROM tenants) AS tenants_count
+                    (SELECT COUNT(*) FROM tenants) AS tenants_count,
+                    (SELECT COUNT(*) FROM appointment) AS appointments_count,
+                    (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count
             ");
             return (array) $result[0];
         });
@@ -113,6 +120,8 @@ class MakerController extends Controller
             'propertiesCount' => $counts['properties_count'],
             'financialsCount' => $counts['financials_count'],
             'tenantsCount' => $counts['tenants_count'],
+            'appointmentsCount' => $counts['appointments_count'],
+            'approvalFormsCount' => $counts['approval_forms_count'],
         ]);
     }
 
@@ -2234,8 +2243,11 @@ class MakerController extends Controller
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
             'date_visit' => 'required|date',
-            'time_visit' => 'required',
-            'inspector_name' => 'nullable|string|max:255',
+            'time_visit' => 'required|date_format:H:i',
+            'trustee' => 'nullable|string|max:255',
+            'manager' => 'nullable|string|max:255',
+            'maintenance_manager' => 'nullable|string|max:255',
+            'building_manager' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
         ]);
@@ -2463,5 +2475,327 @@ class MakerController extends Controller
             return back()
                 ->with('error', 'Error submitting for legal approval: ' . $e->getMessage());
         }
+    }
+
+    // Appointment Module
+    public function AppointmentIndex(Request $request)
+    {
+        // Retrieve appointments with related portfolio, handling search and filtering
+        $query = Appointment::with('portfolio')
+            ->when($request->input('search'), function ($query, $search) {
+                return $query->where(function($q) use ($search) {
+                    $q->where('party_name', 'like', "%{$search}%")
+                    ->orWhere('appointment_title', 'like', "%{$search}%")
+                    ->orWhereHas('portfolio', function($portfolio) use ($search) {
+                        $portfolio->where('portfolio_name', 'like', "%{$search}%");
+                    });
+                });
+            })
+            ->when($request->input('status'), function ($query, $status) {
+                return $query->where('status', $status);
+            })
+            ->when($request->input('year'), function ($query, $year) {
+                return $query->where('year', $year);
+            })
+            ->latest()
+            ->paginate(15);
+
+        // Get distinct years for filter
+        $years = Appointment::select('year')->distinct()->orderBy('year', 'desc')->get();
+
+        // Get status options
+        $statuses = ['pending', 'approved', 'completed', 'cancelled'];
+
+        return view('maker.appointment.index', [
+            'appointments' => $query,
+            'years' => $years,
+            'statuses' => $statuses
+        ]);
+    }
+
+    public function AppointmentCreate()
+    {
+        // Retrieve portfolios for selection
+        $portfolios = Portfolio::select('id', 'portfolio_name')->get();
+
+        return view('maker.appointment.create', [
+            'portfolios' => $portfolios
+        ]);
+    }
+
+    public function AppointmentStore(Request $request)
+    {
+        // Validate the request
+        $validatedData = $this->AppointmentValidate($request);
+
+        // Create the appointment
+        $appointment = Appointment::create($validatedData);
+
+        // Redirect with success message
+        return redirect()->route('appointment-m.show', $appointment)
+            ->with('success', 'Appointment created successfully.');
+    }
+
+    public function AppointmentEdit(Appointment $appointment)
+    {
+        // Retrieve portfolios for selection
+        $portfolios = Portfolio::select('id', 'portfolio_name')->get();
+
+        return view('maker.appointment.edit', [
+            'appointment' => $appointment,
+            'portfolios' => $portfolios
+        ]);
+    }
+
+    public function AppointmentUpdate(Request $request, Appointment $appointment)
+    {
+        // Validate the request
+        $validatedData = $this->AppointmentValidate($request, $appointment);
+
+        // Update the appointment
+        $appointment->update($validatedData);
+
+        // Redirect with success message
+        return redirect()->route('appointment-m.show', $appointment)
+            ->with('success', 'Appointment updated successfully.');
+    }
+
+    public function AppointmentShow(Appointment $appointment)
+    {
+        // Load related portfolio
+        $appointment->load('portfolio', 'preparedBy', 'verifiedBy');
+
+        return view('maker.appointment.show', [
+            'appointment' => $appointment
+        ]);
+    }
+
+    public function AppointmentValidate(Request $request, Appointment $appointment = null)
+    {
+        // Validation rules
+        $rules = [
+            'portfolio_id' => 'required|exists:portfolios,id',
+            'party_name' => 'required|string|max:255',
+            'date_of_approval' => 'required|date',
+            'appointment_title' => 'required|string|max:255',
+            'appointment_description' => 'required|string',
+            'estimated_amount' => 'nullable|numeric|min:0',
+            'remarks' => 'nullable|string',
+            'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
+            'year' => 'nullable|integer|min:2000|max:' . (date('Y') + 5),
+            'reference_no' => 'nullable|string|max:100',
+        ];
+
+        // Unique reference number validation (optional)
+        if (!$appointment) {
+            $rules['reference_no'] .= '|unique:appointments';
+        } else {
+            $rules['reference_no'] .= '|unique:appointments,reference_no,' . $appointment->id;
+        }
+
+        // Validate the request
+        $validatedData = $request->validate($rules);
+
+        // Handle file upload
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $path = $file->store('appointments', 'public');
+            $validatedData['attachment'] = $path;
+        }
+
+        // Add current user as prepared_by if creating new
+        if (!$appointment) {
+            $validatedData['prepared_by'] = auth()->id();
+        }
+
+        // Set the year if not provided
+        $validatedData['year'] = $validatedData['year'] ?? date('Y');
+
+        return $validatedData;
+    }
+
+    // Approval Form Module
+    public function ApprovalFormIndex(Request $request)
+    {
+        // Retrieve approval forms with related portfolio and property, handling search and filtering
+        $query = ApprovalForm::with(['portfolio', 'property'])
+            ->when($request->input('search'), function ($query, $search) {
+                return $query->where(function($q) use ($search) {
+                    $q->where('form_title', 'like', "%{$search}%")
+                    ->orWhere('form_number', 'like', "%{$search}%")
+                    ->orWhere('reference_code', 'like', "%{$search}%")
+                    ->orWhereHas('portfolio', function($portfolio) use ($search) {
+                        $portfolio->where('portfolio_name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('property', function($property) use ($search) {
+                        $property->where('name', 'like', "%{$search}%");
+                    });
+                });
+            })
+            ->when($request->input('status'), function ($query, $status) {
+                return $query->where('status', $status);
+            })
+            ->when($request->input('form_category'), function ($query, $category) {
+                return $query->where('form_category', $category);
+            })
+            ->when($request->input('date_range'), function ($query, $dateRange) {
+                $dates = explode(' to ', $dateRange);
+                if (count($dates) == 2) {
+                    return $query->whereBetween('received_date', $dates);
+                }
+            })
+            ->latest()
+            ->paginate(15);
+
+        // Get distinct form categories and statuses for filters
+        $formCategories = ApprovalForm::select('form_category')->distinct()->get();
+        $statuses = ['pending', 'approved', 'rejected', 'in_review'];
+
+        return view('maker.approval-form.index', [
+            'approvalForms' => $query,
+            'formCategories' => $formCategories,
+            'statuses' => $statuses
+        ]);
+    }
+
+    public function ApprovalFormCreate()
+    {
+        // Retrieve portfolios and properties for selection
+        $portfolios = Portfolio::select('id', 'portfolio_name')->get();
+        $properties = Property::select('id', 'name')->get();
+        $users = User::select('id', 'name')->get();
+
+        return view('maker.approval-form.create', [
+            'users' => $users,
+            'portfolios' => $portfolios,
+            'properties' => $properties
+        ]);
+    }
+
+    public function ApprovalFormStore(Request $request)
+    {
+        // Validate the request
+        $validatedData = $this->ApprovalFormValidate($request);
+
+        // Create the approval form
+        $approvalForm = ApprovalForm::create($validatedData);
+
+        // Redirect with success message
+        return redirect()->route('approval-form-m.show', $approvalForm)
+            ->with('success', 'Approval Form created successfully.');
+    }
+
+    public function ApprovalFormEdit(ApprovalForm $approvalForm)
+    {
+        // Retrieve portfolios and properties for selection
+        $portfolios = Portfolio::select('id', 'portfolio_name')->get();
+        $properties = Property::select('id', 'name')->get();
+        $users = User::select('id', 'name')->get();
+
+        return view('maker.approval-form.edit', [
+            'users' => $users,
+            'approvalForm' => $approvalForm,
+            'portfolios' => $portfolios,
+            'properties' => $properties
+        ]);
+    }
+
+    public function ApprovalFormUpdate(Request $request, ApprovalForm $approvalForm)
+    {
+        // Validate the request
+        $validatedData = $this->ApprovalFormValidate($request, $approvalForm);
+
+        // Update the approval form
+        $approvalForm->update($validatedData);
+
+        // Redirect with success message
+        return redirect()->route('approval-form-m.show', $approvalForm)
+            ->with('success', 'Approval Form updated successfully.');
+    }
+
+    public function ApprovalFormShow(ApprovalForm $approvalForm)
+    {
+        // Load related models
+        $approvalForm->load('portfolio', 'property', 'preparedBy', 'verifiedBy');
+
+        return view('maker.approval-form.show', [
+            'approvalForm' => $approvalForm
+        ]);
+    }
+
+    public function ApprovalFormValidate(Request $request, ApprovalForm $approvalForm = null)
+    {
+        // Validation rules
+        $rules = [
+            'portfolio_id' => 'nullable|exists:portfolios,id',
+            'property_id' => 'nullable|exists:properties,id',
+            'form_number' => 'nullable|string|max:50',
+            'form_title' => 'required|string|max:255',
+            'form_category' => 'nullable|string|max:100',
+            'reference_code' => 'nullable|string|max:100',
+            'received_date' => 'required|date',
+            'send_date' => 'nullable|date|after_or_equal:received_date',
+            'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
+            'location' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'remarks' => 'nullable|string',
+            'status' => 'required|in:pending,approved,rejected,in_review'
+        ];
+
+        // Unique reference code validation (optional)
+        if (!$approvalForm) {
+            $rules['reference_code'] .= '|unique:approval_forms';
+        } else {
+            $rules['reference_code'] .= '|unique:approval_forms,reference_code,' . $approvalForm->id;
+        }
+
+        // Validate the request
+        $validatedData = $request->validate($rules);
+
+        // Handle file upload
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $path = $file->store('approval-forms', 'public');
+            $validatedData['attachment'] = $path;
+        }
+
+        // Add current user as prepared_by if creating new
+        if (!$approvalForm) {
+            $validatedData['prepared_by'] = auth()->id();
+        }
+
+        return $validatedData;
+    }
+
+    // Optional: Method to verify/approve an approval form
+    public function ApprovalFormVerify(ApprovalForm $approvalForm)
+    {
+        // Check user permissions
+        $this->authorize('verify', $approvalForm);
+
+        $approvalForm->update([
+            'status' => 'approved',
+            'verified_by' => auth()->id(),
+            'approval_datetime' => now()
+        ]);
+
+        return redirect()->route('approval-form-m.show', $approvalForm)
+            ->with('success', 'Approval Form verified successfully.');
+    }
+
+    // Optional: Method to download attachment
+    public function ApprovalFormDownloadAttachment(ApprovalForm $approvalForm)
+    {
+        if (!$approvalForm->attachment) {
+            abort(404, 'No attachment found');
+        }
+
+        $path = storage_path('app/public/' . $approvalForm->attachment);
+
+        if (!file_exists($path)) {
+            abort(404, 'File not found');
+        }
+
+        return response()->download($path);
     }
 }

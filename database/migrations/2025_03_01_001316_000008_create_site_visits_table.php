@@ -16,7 +16,10 @@ return new class extends Migration
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
             $table->date('date_visit');
             $table->time('time_visit');
-            $table->string('inspector_name')->nullable();
+            $table->string('trustee')->nullable();
+            $table->string('manager')->nullable();
+            $table->string('maintenance_manager')->nullable();
+            $table->string('building_manager')->nullable();
             $table->text('notes')->nullable();
             $table->string('attachment')->nullable();
             $table->string('status')->default('pending');

@@ -558,6 +558,24 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/checklist/{checklist}/update', [MakerController::class, 'ChecklistUpdate'])->name('checklist-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist/{checklist}/show', [MakerController::class, 'ChecklistShow'])->name('checklist-m.show')->middleware('permission:REITS');
     Route::get('maker/checklist/{checklist}/submission-legal', [MakerController::class, 'ChecklistSubmissionLegal'])->name('checklist-m.submission-legal')->middleware('permission:REITS');
+
+    // Appointment Module
+    Route::get('maker/appointment/', [MakerController::class, 'AppointmentIndex'])->name('appointment-m.index')->middleware('permission:REITS');
+    Route::get('maker/appointment/create', [MakerController::class, 'AppointmentCreate'])->name('appointment-m.create')->middleware('permission:REITS');
+    Route::post('maker/appointment/create', [MakerController::class, 'AppointmentStore'])->name('appointment-m.store')->middleware('permission:REITS');
+    Route::get('maker/appointment/{appointment}/edit', [MakerController::class, 'AppointmentEdit'])->name('appointment-m.edit')->middleware('permission:REITS');
+    Route::put('maker/appointment/{appointment}/update', [MakerController::class, 'AppointmentUpdate'])->name('appointment-m.update')->middleware('permission:REITS');
+    Route::get('maker/appointment/{appointment}/show', [MakerController::class, 'AppointmentShow'])->name('appointment-m.show')->middleware('permission:REITS');
+    Route::get('maker/appointment/{appointment}/submit-for-approval', [MakerController::class, 'SubmitApprovalAppointment'])->name('appointment-m.approval')->middleware('permission:REITS');
+
+    // Approval Form Module
+    Route::get('maker/approval-form/', [MakerController::class, 'ApprovalFormIndex'])->name('approval-form-m.index')->middleware('permission:REITS');
+    Route::get('maker/approval-form/create', [MakerController::class, 'ApprovalFormCreate'])->name('approval-form-m.create')->middleware('permission:REITS');
+    Route::post('maker/approval-form/create', [MakerController::class, 'ApprovalFormStore'])->name('approval-form-m.store')->middleware('permission:REITS');
+    Route::get('maker/approval-form/{approvalForm}/edit', [MakerController::class, 'ApprovalFormEdit'])->name('approval-form-m.edit')->middleware('permission:REITS');
+    Route::put('maker/approval-form/{approvalForm}/update', [MakerController::class, 'ApprovalFormUpdate'])->name('approval-form-m.update')->middleware('permission:REITS');
+    Route::get('maker/approval-form/{approvalForm}/show', [MakerController::class, 'ApprovalFormShow'])->name('approval-form-m.show')->middleware('permission:REITS');
+    Route::get('maker/approval-form/{approvalForm}/submit-for-approval', [MakerController::class, 'SubmitApprovalForm'])->name('approval-form-m.approval')->middleware('permission:REITS');
 });
 
 // Approver routes

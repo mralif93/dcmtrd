@@ -344,6 +344,24 @@
                     href="#"
                     color="bg-blue-100"
                 />
+
+                <!-- Appointment -->
+                <x-dashboard-card
+                    title="Appointment"
+                    icon="users"
+                    :count="$appointmentsCount ?? 0"
+                    :href="route('appointment-m.index')"
+                    color="bg-blue-100"
+                />
+
+                <!-- Approval Form -->
+                <x-dashboard-card
+                    title="Approval Form"
+                    icon="users"
+                    :count="$approvalFormsCount ?? 0"
+                    :href="route('approval-form-m.index')"
+                    color="bg-blue-100"
+                />
             </div>
 
             <!-- Table Portfolio -->

@@ -258,9 +258,10 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inspector</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsible Parties</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -270,7 +271,7 @@
                             <tr>
                                 <td class="px-6 py-4 font-medium text-gray-900">
                                     <div class="text-sm text-gray-900">
-                                        {{ $visit->inspector_name ?? 'Not assigned' }}
+                                        {{ $visit->property->name ?? 'Unknown Property' }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
@@ -281,6 +282,12 @@
                                 <td class="px-6 py-4">
                                     <div class="text-sm text-gray-900">
                                         {{ $visit->formatted_time }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-500">
+                                        <div>Trustee: {{ $visit->trustee ?? 'Not assigned' }}</div>
+                                        <div>Manager: {{ $visit->manager ?? 'Not assigned' }}</div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
@@ -330,7 +337,7 @@
                             </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No tenants found {{ request('search') ? 'matching your search' : '' }}</td>
+                                    <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No site visits found {{ request('search') ? 'matching your search' : '' }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
