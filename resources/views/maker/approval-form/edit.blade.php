@@ -46,7 +46,7 @@
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">-- Select Portfolio --</option>
                                         @foreach($portfolios as $portfolio)
-                                            <option value="{{ $portfolio->id }}" @selected(old('portfolio_id', $approvalForm->portfolio_id ?? null) == $portfolio->id)>
+                                            <option value="{{ $portfolio->id }}" @selected(old('portfolio_id', $approvalForm->portfolio_id) == $portfolio->id)>
                                                 {{ $portfolio->portfolio_name }}
                                             </option>
                                         @endforeach
@@ -59,6 +59,11 @@
                                     <select name="property_id" id="property_id"
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">-- Select Property --</option>
+                                        @foreach($properties as $property)
+                                            <option value="{{ $property->id }}" @selected(old('property_id', $approvalForm->property_id) == $property->id)>
+                                                {{ $property->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -223,57 +228,4 @@
             </div>
         </div>
     </div>
-
-    <!-- JavaScript for Property Filtering -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get references to selects
-            const portfolioSelect = document.getElementById('portfolio_id');
-            const propertySelect = document.getElementById('property_id');
-            
-            // Define properties with their portfolio associations
-            // This will be populated from PHP
-            const properties = [
-                @foreach($properties as $property)
-                    {
-                        id: {{ $property->id }},
-                        name: "{{ $property->property_name }}",
-                        portfolioId: {{ $property->portfolio_id ?? 'null' }}
-                    },
-                @endforeach
-            ];
-            
-            // Current selected property (for edit form)
-            const currentPropertyId = "{{ old('property_id', $approvalForm->property_id ?? '') }}";
-            
-            // Function to update properties dropdown
-            function updateProperties() {
-                // Get selected portfolio
-                const selectedPortfolioId = portfolioSelect.value;
-                
-                // Clear current options
-                propertySelect.innerHTML = '<option value="">-- Select Property --</option>';
-                
-                // Filter properties for selected portfolio
-                const filteredProperties = selectedPortfolioId 
-                    ? properties.filter(p => p.portfolioId == selectedPortfolioId)
-                    : properties;
-                    
-                // Add filtered options
-                filteredProperties.forEach(property => {
-                    const option = document.createElement('option');
-                    option.value = property.id;
-                    option.textContent = property.name;
-                    option.selected = (property.id == currentPropertyId);
-                    propertySelect.appendChild(option);
-                });
-            }
-            
-            // Update properties when portfolio changes
-            portfolioSelect.addEventListener('change', updateProperties);
-            
-            // Initial load
-            updateProperties();
-        });
-    </script>
 </x-app-layout>

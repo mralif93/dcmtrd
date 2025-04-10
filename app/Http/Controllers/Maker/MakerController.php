@@ -90,7 +90,7 @@ class MakerController extends Controller
                     (SELECT COUNT(*) FROM properties) AS properties_count,
                     (SELECT COUNT(*) FROM financials) AS financials_count,
                     (SELECT COUNT(*) FROM tenants) AS tenants_count,
-                    (SELECT COUNT(*) FROM appointment) AS appointments_count,
+                    (SELECT COUNT(*) FROM appointments) AS appointments_count,
                     (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count
             ");
             return (array) $result[0];

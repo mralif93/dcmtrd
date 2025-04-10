@@ -45,7 +45,7 @@
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">-- Select Portfolio --</option>
                                         @foreach($portfolios as $portfolio)
-                                            <option value="{{ $portfolio->id }}" @selected(old('portfolio_id', $approvalForm->portfolio_id ?? null) == $portfolio->id)>
+                                            <option value="{{ $portfolio->id }}" @selected(old('portfolio_id') == $portfolio->id)>
                                                 {{ $portfolio->portfolio_name }}
                                             </option>
                                         @endforeach
@@ -59,10 +59,7 @@
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">-- Select Property --</option>
                                         @foreach($properties as $property)
-                                            <option value="{{ $property->id }}" 
-                                                    data-portfolio="{{ $property->portfolio_id }}" 
-                                                    style="display: none;"
-                                                    @selected(old('property_id', $approvalForm->property_id ?? null) == $property->id)>
+                                            <option value="{{ $property->id }}" @selected(old('property_id') == $property->id)>
                                                 {{ $property->name }}
                                             </option>
                                         @endforeach
@@ -184,61 +181,4 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get select elements
-            const portfolioSelect = document.getElementById('portfolio_id');
-            const propertySelect = document.getElementById('property_id');
-            
-            // Get all property options (skip the first placeholder option)
-            const propertyOptions = Array.from(propertySelect.options).slice(1);
-            
-            // Function to show/hide property options based on selected portfolio
-            function filterProperties() {
-                const selectedPortfolioId = portfolioSelect.value;
-                let foundSelected = false;
-                
-                // Process each property option
-                propertyOptions.forEach(option => {
-                    // Get portfolio ID from data attribute
-                    const portfolioId = option.getAttribute('data-portfolio');
-                    
-                    // Show/hide based on portfolio selection
-                    if (!selectedPortfolioId || portfolioId === selectedPortfolioId) {
-                        option.style.display = '';
-                        
-                        // Check if this is already selected
-                        if (option.selected) {
-                            foundSelected = true;
-                        }
-                    } else {
-                        option.style.display = 'none';
-                        
-                        // Deselect if it was selected but now hidden
-                        if (option.selected) {
-                            option.selected = false;
-                        }
-                    }
-                });
-                
-                // If no visible option is selected, select the first visible option or reset to placeholder
-                if (!foundSelected) {
-                    const firstVisibleOption = propertyOptions.find(option => option.style.display === '');
-                    
-                    if (firstVisibleOption) {
-                        firstVisibleOption.selected = true;
-                    } else {
-                        propertySelect.selectedIndex = 0; // Select placeholder
-                    }
-                }
-            }
-            
-            // Run filtering when portfolio changes
-            portfolioSelect.addEventListener('change', filterProperties);
-            
-            // Initial filtering
-            filterProperties();
-        });
-    </script>
 </x-app-layout>
