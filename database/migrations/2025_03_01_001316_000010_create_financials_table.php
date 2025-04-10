@@ -30,7 +30,10 @@ return new class extends Migration
             $table->string('facilities_agent');
             $table->string('agent_contact')->nullable();
             $table->string('valuer');
-            $table->string('status')->default('active');
+            $table->string('status')->default('pending');
+            $table->string('prepared_by')->nullable();
+            $table->string('verified_by')->nullable();
+            $table->dateTime('approval_datetime')->nullable();
             $table->timestamps();
             $table->softDeletes();
             

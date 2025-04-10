@@ -34,7 +34,24 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $financial->status === 'active' ? 'bg-green-100 text-green-800' : ($financial->status === 'inactive' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                    {{ match(strtolower($financial->status)) {
+                                        'completed' => 'bg-green-100 text-green-800',
+                                        'scheduled' => 'bg-blue-100 text-blue-800',
+                                        'cancelled' => 'bg-red-100 text-red-800',
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'active' => 'bg-green-100 text-green-800',
+                                        'inactive' => 'bg-gray-100 text-gray-800',
+                                        'rejected' => 'bg-red-100 text-red-800',
+                                        'draft' => 'bg-blue-100 text-blue-800',
+                                        'withdrawn' => 'bg-purple-100 text-purple-800',
+                                        'in progress' => 'bg-indigo-100 text-indigo-800',
+                                        'on hold' => 'bg-orange-100 text-orange-800',
+                                        'reviewing' => 'bg-teal-100 text-teal-800',
+                                        'approved' => 'bg-emerald-100 text-emerald-800',
+                                        'expired' => 'bg-rose-100 text-rose-800',
+                                        default => 'bg-gray-100 text-gray-800'
+                                    } }}">
                                     {{ ucfirst($financial->status) }}
                                 </span>
                             </dd>
@@ -174,8 +191,24 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Portfolio Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $financial->portfolio->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                    {{ match(strtolower($financial->portfolio->status)) {
+                                        'completed' => 'bg-green-100 text-green-800',
+                                        'scheduled' => 'bg-blue-100 text-blue-800',
+                                        'cancelled' => 'bg-red-100 text-red-800',
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'active' => 'bg-green-100 text-green-800',
+                                        'inactive' => 'bg-gray-100 text-gray-800',
+                                        'rejected' => 'bg-red-100 text-red-800',
+                                        'draft' => 'bg-blue-100 text-blue-800',
+                                        'withdrawn' => 'bg-purple-100 text-purple-800',
+                                        'in progress' => 'bg-indigo-100 text-indigo-800',
+                                        'on hold' => 'bg-orange-100 text-orange-800',
+                                        'reviewing' => 'bg-teal-100 text-teal-800',
+                                        'approved' => 'bg-emerald-100 text-emerald-800',
+                                        'expired' => 'bg-rose-100 text-rose-800',
+                                        default => 'bg-gray-100 text-gray-800'
+                                    } }}">
                                     {{ ucfirst($financial->portfolio->status) }}
                                 </span>
                             </dd>

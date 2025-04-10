@@ -37,9 +37,20 @@
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $lease->status === 'Active' ? 'bg-green-100 text-green-800' : 
-                                       ($lease->status === 'Expired' ? 'bg-red-100 text-red-800' : 
-                                       ($lease->status === 'Terminated' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
+                                    @php
+                                    $statusColors = [
+                                        'active' => 'bg-green-100 text-green-800',
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'inactive' => 'bg-gray-100 text-gray-800',
+                                        'completed' => 'bg-emerald-100 text-emerald-800',
+                                        'draft' => 'bg-blue-100 text-blue-800',
+                                        'rejected' => 'bg-red-100 text-red-800'
+                                    ];
+                                    
+                                    $normalizedStatus = strtolower($lease->status);
+                                    $badgeClass = $statusColors[$normalizedStatus] ?? 'bg-gray-100 text-gray-800';
+                                    @endphp
+                                    {{ $badgeClass }}">
                                     {{ ucfirst($lease->status) }}
                                 </span>
                                 @if($lease->isExpiringSoon() && $lease->status === 'Active')

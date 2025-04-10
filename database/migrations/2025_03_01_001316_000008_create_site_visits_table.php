@@ -19,7 +19,10 @@ return new class extends Migration
             $table->string('inspector_name')->nullable();
             $table->text('notes')->nullable();
             $table->string('attachment')->nullable();
-            $table->string('status')->default('scheduled');
+            $table->string('status')->default('pending');
+            $table->string('prepared_by')->nullable();
+            $table->string('verified_by')->nullable();
+            $table->dateTime('approval_datetime')->nullable();
             $table->timestamps();
             $table->softDeletes();
             

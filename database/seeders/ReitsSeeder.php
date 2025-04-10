@@ -13,6 +13,42 @@ class ReitsSeeder extends Seeder
      */
     public function run(): void
     {
+        // Define possible statuses
+        $statuses = [
+            'pending', 
+            'active', 
+            'inactive', 
+            'rejected', 
+            'draft', 
+            'withdrawn', 
+            'completed', 
+            'scheduled', 
+            'cancelled',
+            'in progress',
+            'on hold',
+            'reviewing',
+            'approved',
+            'expired'
+        ];
+
+        // Define colors for each status
+        $statusColors = [
+            'pending' => 'bg-yellow-100 text-yellow-800',
+            'active' => 'bg-green-100 text-green-800',
+            'inactive' => 'bg-gray-100 text-gray-800',
+            'rejected' => 'bg-red-100 text-red-800',
+            'draft' => 'bg-blue-100 text-blue-800',
+            'withdrawn' => 'bg-purple-100 text-purple-800',
+            'completed' => 'bg-green-100 text-green-800',
+            'scheduled' => 'bg-blue-100 text-blue-800',
+            'cancelled' => 'bg-red-100 text-red-800',
+            'in progress' => 'bg-indigo-100 text-indigo-800',
+            'on hold' => 'bg-orange-100 text-orange-800',
+            'reviewing' => 'bg-teal-100 text-teal-800',
+            'approved' => 'bg-emerald-100 text-emerald-800',
+            'expired' => 'bg-rose-100 text-rose-800'
+        ];
+
         // Seed Financial Types
         $financialTypes = [
             ['name' => 'Islamic Banking Financing', 'description' => 'Shariah-compliant financing options'],
@@ -36,7 +72,10 @@ class ReitsSeeder extends Seeder
             DB::table('financial_types')->insert([
                 'name' => $type['name'],
                 'description' => $type['description'],
-                'status' => 'active',
+                'status' => $statuses[array_rand($statuses)],
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'approval_datetime' => now(),
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -65,12 +104,14 @@ class ReitsSeeder extends Seeder
             DB::table('banks')->insert([
                 'name' => $bank['name'],
                 'description' => $bank['description'],
-                'status' => 'active',
+                'status' => $statuses[array_rand($statuses)],
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'approval_datetime' => now(),
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
         }
-       
 
         // Seed Portfolio Types
         $portfolioTypes = [
@@ -95,13 +136,16 @@ class ReitsSeeder extends Seeder
             DB::table('portfolio_types')->insert([
                 'name' => $type['name'],
                 'description' => $type['description'],
-                'status' => 'active',
+                'status' => $statuses[array_rand($statuses)],
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'approval_datetime' => now(),
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
         }
 
-        // Seed Portfolios
+        // Seed Portfolios - MODIFIED: Adding all 15 portfolios here
         $portfolios = [
             [
                 'portfolio_types_id' => 1, // Residential
@@ -110,7 +154,6 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/skyline_trust_deed.pdf',
                 'insurance_document' => 'insurance/skyline_policy.pdf',
                 'valuation_report' => 'valuation/skyline_q4_2024.pdf',
-                'status' => 'Active'
             ],
             [
                 'portfolio_types_id' => 2, // Commercial
@@ -119,7 +162,6 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/dbc_trust_deed.pdf',
                 'insurance_document' => 'insurance/dbc_policy.pdf',
                 'valuation_report' => 'valuation/dbc_q3_2024.pdf',
-                'status' => 'Active'
             ],
             [
                 'portfolio_types_id' => 3, // Mixed Use
@@ -128,7 +170,6 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/urban_trust_deed.pdf',
                 'insurance_document' => 'insurance/urban_policy.pdf',
                 'valuation_report' => 'valuation/urban_q2_2024.pdf',
-                'status' => 'Active'
             ],
             [
                 'portfolio_types_id' => 4, // Retail
@@ -137,7 +178,6 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/csm_trust_deed.pdf',
                 'insurance_document' => 'insurance/csm_policy.pdf',
                 'valuation_report' => 'valuation/csm_q1_2024.pdf',
-                'status' => 'Active'
             ],
             [
                 'portfolio_types_id' => 5, // Industrial
@@ -146,8 +186,8 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/tip_trust_deed.pdf',
                 'insurance_document' => 'insurance/tip_policy.pdf',
                 'valuation_report' => 'valuation/tip_q4_2024.pdf',
-                'status' => 'Active'
             ],
+            // NEW ADDITIONS BELOW - These portfolios were missing
             [
                 'portfolio_types_id' => 6, // Office
                 'portfolio_name' => 'Executive Tower',
@@ -155,7 +195,6 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/et_trust_deed.pdf',
                 'insurance_document' => 'insurance/et_policy.pdf',
                 'valuation_report' => 'valuation/et_q3_2024.pdf',
-                'status' => 'Active'
             ],
             [
                 'portfolio_types_id' => 7, // Hospitality
@@ -164,7 +203,6 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/lrc_trust_deed.pdf',
                 'insurance_document' => 'insurance/lrc_policy.pdf',
                 'valuation_report' => 'valuation/lrc_q2_2024.pdf',
-                'status' => 'Active'
             ],
             [
                 'portfolio_types_id' => 8, // Healthcare
@@ -173,7 +211,6 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/mp_trust_deed.pdf',
                 'insurance_document' => 'insurance/mp_policy.pdf',
                 'valuation_report' => 'valuation/mp_q1_2024.pdf',
-                'status' => 'Active'
             ],
             [
                 'portfolio_types_id' => 9, // Educational
@@ -182,7 +219,6 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/cp_trust_deed.pdf',
                 'insurance_document' => 'insurance/cp_policy.pdf',
                 'valuation_report' => 'valuation/cp_q4_2023.pdf',
-                'status' => 'Draft'
             ],
             [
                 'portfolio_types_id' => 10, // Logistics
@@ -191,7 +227,6 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/dh_trust_deed.pdf',
                 'insurance_document' => 'insurance/dh_policy.pdf',
                 'valuation_report' => 'valuation/dh_q3_2023.pdf',
-                'status' => 'Active'
             ],
             [
                 'portfolio_types_id' => 11, // Data Centers
@@ -200,16 +235,14 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/ci_trust_deed.pdf',
                 'insurance_document' => 'insurance/ci_policy.pdf',
                 'valuation_report' => 'valuation/ci_q2_2023.pdf',
-                'status' => 'Active'
             ],
             [
                 'portfolio_types_id' => 12, // Self Storage
                 'portfolio_name' => 'SecureSpace Facilities',
-                'annual_report' => 'reports/ss_annual_2024.pdf',
-                'trust_deed_document' => 'legal/ss_trust_deed.pdf',
-                'insurance_document' => 'insurance/ss_policy.pdf',
-                'valuation_report' => 'valuation/ss_q1_2023.pdf',
-                'status' => 'Active'
+                'annual_report' => 'reports/ssf_annual_2024.pdf',
+                'trust_deed_document' => 'legal/ssf_trust_deed.pdf',
+                'insurance_document' => 'insurance/ssf_policy.pdf',
+                'valuation_report' => 'valuation/ssf_q1_2023.pdf',
             ],
             [
                 'portfolio_types_id' => 13, // Agricultural
@@ -218,7 +251,6 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/fi_trust_deed.pdf',
                 'insurance_document' => 'insurance/fi_policy.pdf',
                 'valuation_report' => 'valuation/fi_q4_2022.pdf',
-                'status' => 'Draft'
             ],
             [
                 'portfolio_types_id' => 14, // Leisure
@@ -227,7 +259,6 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/rp_trust_deed.pdf',
                 'insurance_document' => 'insurance/rp_policy.pdf',
                 'valuation_report' => 'valuation/rp_q3_2022.pdf',
-                'status' => 'Active'
             ],
             [
                 'portfolio_types_id' => 15, // Student Housing
@@ -236,8 +267,7 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => 'legal/ua_trust_deed.pdf',
                 'insurance_document' => 'insurance/ua_policy.pdf',
                 'valuation_report' => 'valuation/ua_q2_2022.pdf',
-                'status' => 'Active'
-            ]
+            ],
         ];
 
         foreach ($portfolios as $portfolio) {
@@ -248,7 +278,10 @@ class ReitsSeeder extends Seeder
                 'trust_deed_document' => $portfolio['trust_deed_document'],
                 'insurance_document' => $portfolio['insurance_document'],
                 'valuation_report' => $portfolio['valuation_report'],
-                'status' => $portfolio['status'],
+                'status' => $statuses[array_rand($statuses)],
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'approval_datetime' => now(),
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -272,8 +305,7 @@ class ReitsSeeder extends Seeder
                 'value' => 25000000.00,
                 'ownership' => 'Freehold',
                 'share_amount' => 25000000.00,
-                'market_value' => 28000000.00,
-                'status' => 'Active',
+                'market_value' => 28000000.00, 
                 'prepared_by' => 'John Smith',
                 'verified_by' => 'Sarah Johnson',
                 'remarks' => 'Luxury apartment building with 25 floors'
@@ -294,8 +326,7 @@ class ReitsSeeder extends Seeder
                 'value' => 23000000.00,
                 'ownership' => 'Freehold',
                 'share_amount' => 23000000.00,
-                'market_value' => 25500000.00,
-                'status' => 'Active',
+                'market_value' => 25500000.00, 
                 'prepared_by' => 'John Smith',
                 'verified_by' => 'Sarah Johnson',
                 'remarks' => 'Luxury apartment building with 23 floors'
@@ -316,8 +347,7 @@ class ReitsSeeder extends Seeder
                 'value' => 45000000.00,
                 'ownership' => 'Leasehold',
                 'share_amount' => 45000000.00,
-                'market_value' => 48000000.00,
-                'status' => 'Active',
+                'market_value' => 48000000.00, 
                 'prepared_by' => 'David Wong',
                 'verified_by' => 'Michelle Tan',
                 'remarks' => 'Prime office location in the financial district'
@@ -338,8 +368,7 @@ class ReitsSeeder extends Seeder
                 'value' => 62000000.00,
                 'ownership' => 'Freehold',
                 'share_amount' => 62000000.00,
-                'market_value' => 68000000.00,
-                'status' => 'Active',
+                'market_value' => 68000000.00, 
                 'prepared_by' => 'Ahmad Yusof',
                 'verified_by' => 'Nadia Ibrahim',
                 'remarks' => 'Combined residential and commercial complex'
@@ -360,8 +389,7 @@ class ReitsSeeder extends Seeder
                 'value' => 78000000.00,
                 'ownership' => 'Freehold',
                 'share_amount' => 78000000.00,
-                'market_value' => 85000000.00,
-                'status' => 'Active',
+                'market_value' => 85000000.00, 
                 'prepared_by' => 'Somchai Patel',
                 'verified_by' => 'Picha Wong',
                 'remarks' => 'Major shopping mall with 300 retail units'
@@ -382,8 +410,7 @@ class ReitsSeeder extends Seeder
                 'value' => 32000000.00,
                 'ownership' => 'Leasehold',
                 'share_amount' => 32000000.00,
-                'market_value' => 34000000.00,
-                'status' => 'Active',
+                'market_value' => 34000000.00, 
                 'prepared_by' => 'Tan Wei Liang',
                 'verified_by' => 'Lim Mei Ling',
                 'remarks' => 'Advanced manufacturing facility for electronics'
@@ -404,8 +431,7 @@ class ReitsSeeder extends Seeder
                 'value' => 55000000.00,
                 'ownership' => 'Freehold',
                 'share_amount' => 55000000.00,
-                'market_value' => 60000000.00,
-                'status' => 'Active',
+                'market_value' => 60000000.00, 
                 'prepared_by' => 'Jennifer Koh',
                 'verified_by' => 'Michael Lee',
                 'remarks' => 'Grade A office building in prime CBD location'
@@ -426,8 +452,7 @@ class ReitsSeeder extends Seeder
                 'value' => 45000000.00,
                 'ownership' => 'Leasehold',
                 'share_amount' => 45000000.00,
-                'market_value' => 52000000.00,
-                'status' => 'Active',
+                'market_value' => 52000000.00, 
                 'prepared_by' => 'Putu Wijaya',
                 'verified_by' => 'Made Sukma',
                 'remarks' => '5-star beachfront resort with 120 rooms and villas'
@@ -448,8 +473,7 @@ class ReitsSeeder extends Seeder
                 'value' => 38000000.00,
                 'ownership' => 'Freehold',
                 'share_amount' => 38000000.00,
-                'market_value' => 40000000.00,
-                'status' => 'Active',
+                'market_value' => 40000000.00, 
                 'prepared_by' => 'Maria Santos',
                 'verified_by' => 'Jose Cruz',
                 'remarks' => 'Modern medical facility with specialized units'
@@ -470,8 +494,7 @@ class ReitsSeeder extends Seeder
                 'value' => 28000000.00,
                 'ownership' => 'Leasehold',
                 'share_amount' => 28000000.00,
-                'market_value' => 30000000.00,
-                'status' => 'Draft',
+                'market_value' => 30000000.00, 
                 'prepared_by' => 'Ravi Kumar',
                 'verified_by' => null,
                 'remarks' => 'Research facility leased to major university'
@@ -492,8 +515,7 @@ class ReitsSeeder extends Seeder
                 'value' => 25000000.00,
                 'ownership' => 'Leasehold',
                 'share_amount' => 25000000.00,
-                'market_value' => 27000000.00,
-                'status' => 'Active',
+                'market_value' => 27000000.00, 
                 'prepared_by' => 'Nguyen Van Minh',
                 'verified_by' => 'Tran Thi Hoa',
                 'remarks' => 'Modern distribution center with cold storage'
@@ -514,8 +536,7 @@ class ReitsSeeder extends Seeder
                 'value' => 65000000.00,
                 'ownership' => 'Freehold',
                 'share_amount' => 65000000.00,
-                'market_value' => 70000000.00,
-                'status' => 'Active',
+                'market_value' => 70000000.00, 
                 'prepared_by' => 'Desmond Lim',
                 'verified_by' => 'Rachel Teo',
                 'remarks' => 'Tier 4 data center with redundant systems'
@@ -523,90 +544,170 @@ class ReitsSeeder extends Seeder
             [
                 'portfolio_id' => 12, // SecureSpace Facilities
                 'category' => 'Self Storage',
-                'batch_no' => 'SS-001',
-                'name' => 'SecureSpace Center',
-                'address' => '55 Storage Road',
+                'batch_no' => 'SSF-001',
+                'name' => 'SecureSpace Storage Center',
+                'address' => '55 Storage Boulevard',
                 'city' => 'Kuala Lumpur',
-                'state' => 'Selangor',
+                'state' => 'Federal Territory',
                 'country' => 'Malaysia',
-                'postal_code' => '47500',
+                'postal_code' => '51000',
                 'land_size' => 10000.00,
                 'gross_floor_area' => 8500.00,
                 'usage' => 'Storage',
                 'value' => 15000000.00,
                 'ownership' => 'Freehold',
                 'share_amount' => 15000000.00,
-                'market_value' => 16500000.00,
-                'status' => 'Active',
+                'market_value' => 16500000.00, 
                 'prepared_by' => 'Amir Hassan',
-                'verified_by' => 'Farah Ahmad',
-                'remarks' => 'Climate-controlled storage facility with 500 units'
+                'verified_by' => 'Lina Abdullah',
+                'remarks' => 'Modern climate-controlled storage facility with 24/7 security'
             ],
             [
                 'portfolio_id' => 13, // Farmland Investments
                 'category' => 'Agricultural',
                 'batch_no' => 'FI-001',
-                'name' => 'Palm Plantation Estate',
-                'address' => 'Rural Route 25',
+                'name' => 'Green Valley Estates',
+                'address' => '200 Rural Highway',
                 'city' => 'Johor Bahru',
                 'state' => 'Johor',
                 'country' => 'Malaysia',
-                'postal_code' => '81200',
-                'land_size' => 500000.00,
+                'postal_code' => '80100',
+                'land_size' => 150000.00,
                 'gross_floor_area' => 2500.00,
                 'usage' => 'Agricultural',
                 'value' => 18000000.00,
                 'ownership' => 'Freehold',
                 'share_amount' => 18000000.00,
-                'market_value' => 20000000.00,
-                'status' => 'Draft',
-                'prepared_by' => 'Chong Wei Ming',
-                'verified_by' => null,
-                'remarks' => 'Palm oil plantation with processing facilities'
+                'market_value' => 20000000.00, 
+                'prepared_by' => 'Ahmad Rizal',
+                'verified_by' => 'Siti Aminah',
+                'remarks' => 'Prime agricultural land with irrigation infrastructure'
             ],
             [
                 'portfolio_id' => 14, // Recreation Parks
                 'category' => 'Leisure',
                 'batch_no' => 'RP-001',
                 'name' => 'Family Fun Park',
-                'address' => '200 Recreation Boulevard',
+                'address' => '75 Entertainment Drive',
                 'city' => 'Bangkok',
-                'state' => 'Pathum Thani',
+                'state' => 'Bangkok Metropolitan',
                 'country' => 'Thailand',
-                'postal_code' => '12120',
-                'land_size' => 85000.00,
-                'gross_floor_area' => 12000.00,
+                'postal_code' => '10250',
+                'land_size' => 35000.00,
+                'gross_floor_area' => 8000.00,
                 'usage' => 'Recreation',
                 'value' => 22000000.00,
                 'ownership' => 'Leasehold',
                 'share_amount' => 22000000.00,
-                'market_value' => 24000000.00,
-                'status' => 'Active',
-                'prepared_by' => 'Chai Sombat',
-                'verified_by' => 'Naree Wattana',
-                'remarks' => 'Theme park with water attractions and amenities'
+                'market_value' => 24000000.00, 
+                'prepared_by' => 'Supachai Wattana',
+                'verified_by' => 'Somchai Thongchai',
+                'remarks' => 'Family entertainment complex with indoor and outdoor attractions'
             ],
             [
-                'portfolio_id' => 15, // University Accommodations
-                'category' => 'Student Housing',
-                'batch_no' => 'UA-001',
+                'portfolio_id' => 15, // Student Housing
+                'category' => 'Residential',
+                'batch_no' => 'SH-001',
                 'name' => 'Campus View Residences',
-                'address' => '75 University Avenue',
+                'address' => '30 University Road',
                 'city' => 'Singapore',
                 'state' => 'Western Region',
                 'country' => 'Singapore',
-                'postal_code' => '639789',
-                'land_size' => 4000.00,
-                'gross_floor_area' => 18000.00,
-                'usage' => 'Residential',
+                'postal_code' => '639798',
+                'land_size' => 5500.00,
+                'gross_floor_area' => 30000.00,
+                'usage' => 'Student Housing',
                 'value' => 32000000.00,
                 'ownership' => 'Leasehold',
                 'share_amount' => 32000000.00,
-                'market_value' => 35000000.00,
-                'status' => 'Active',
-                'prepared_by' => 'Teo Jia Ming',
-                'verified_by' => 'Linda Kwok',
-                'remarks' => 'Modern student accommodation with 500 beds'
+                'market_value' => 35000000.00, 
+                'prepared_by' => 'Jasmine Teo',
+                'verified_by' => 'Benjamin Tan',
+                'remarks' => 'Modern student housing complex with 500 beds near major universities'
+            ],
+            [
+                'portfolio_id' => 13, // Farmland Investments 
+                'category' => 'Agricultural',
+                'batch_no' => 'FI-002',
+                'name' => 'Sunshine Orchards',
+                'address' => '500 Plantation Road',
+                'city' => 'Ipoh',
+                'state' => 'Perak',
+                'country' => 'Malaysia',
+                'postal_code' => '31300',
+                'land_size' => 80000.00,
+                'gross_floor_area' => 1200.00,
+                'usage' => 'Agricultural',
+                'value' => 12000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 12000000.00,
+                'market_value' => 13500000.00, 
+                'prepared_by' => 'Lee Chong Wei',
+                'verified_by' => 'Tan Mei Lin',
+                'remarks' => 'Fruit orchard with processing facilities and visitor center'
+            ],
+            [
+                'portfolio_id' => 8, // Medical Plaza
+                'category' => 'Healthcare',
+                'batch_no' => 'MP-002',
+                'name' => 'Wellness Specialist Center',
+                'address' => '75 Healthcare Avenue',
+                'city' => 'Manila',
+                'state' => 'Metro Manila',
+                'country' => 'Philippines',
+                'postal_code' => '1001',
+                'land_size' => 3800.00,
+                'gross_floor_area' => 15000.00,
+                'usage' => 'Healthcare',
+                'value' => 25000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 25000000.00,
+                'market_value' => 27500000.00, 
+                'prepared_by' => 'Maria Santos',
+                'verified_by' => 'Jose Cruz',
+                'remarks' => 'Specialized outpatient facility focused on preventive healthcare'
+            ],
+            [
+                'portfolio_id' => 6, // Executive Tower
+                'category' => 'Office',
+                'batch_no' => 'ET-002',
+                'name' => 'Innovation Hub',
+                'address' => '8 Technology Park',
+                'city' => 'Singapore',
+                'state' => 'Western Region',
+                'country' => 'Singapore',
+                'postal_code' => '619898',
+                'land_size' => 4500.00,
+                'gross_floor_area' => 20000.00,
+                'usage' => 'Commercial',
+                'value' => 40000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 40000000.00,
+                'market_value' => 43000000.00, 
+                'prepared_by' => 'Jennifer Koh',
+                'verified_by' => 'Michael Lee',
+                'remarks' => 'Modern office complex designed for tech startups and innovation companies'
+            ],
+            [
+                'portfolio_id' => 5, // Tech Industrial Park
+                'category' => 'Industrial',
+                'batch_no' => 'TIP-002',
+                'name' => 'Precision Engineering Facility',
+                'address' => '38 Industrial Road',
+                'city' => 'Penang',
+                'state' => 'Penang',
+                'country' => 'Malaysia',
+                'postal_code' => '11950',
+                'land_size' => 9000.00,
+                'gross_floor_area' => 12000.00,
+                'usage' => 'Industrial',
+                'value' => 22000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 22000000.00,
+                'market_value' => 24000000.00, 
+                'prepared_by' => 'Tan Wei Liang',
+                'verified_by' => 'Lim Mei Ling',
+                'remarks' => 'Advanced facility for precision engineering and component manufacturing'
             ]
         ];
         
@@ -628,7 +729,7 @@ class ReitsSeeder extends Seeder
                 'ownership' => $property['ownership'],
                 'share_amount' => $property['share_amount'],
                 'market_value' => $property['market_value'],
-                'status' => $property['status'],
+                'status' => $statuses[array_rand($statuses)],
                 'prepared_by' => $property['prepared_by'],
                 'verified_by' => $property['verified_by'],
                 'remarks' => $property['remarks'],
@@ -647,8 +748,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+65 9123 4567',
                 'commencement_date' => '2023-06-01',
                 'approval_date' => '2023-05-15',
-                'expiry_date' => '2028-05-31',
-                'status' => 'active',
+                'expiry_date' => '2028-05-31', 
                 'approval_status' => 'approved'
             ],
             [
@@ -659,8 +759,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+65 9234 5678',
                 'commencement_date' => '2024-01-01',
                 'approval_date' => '2023-12-10',
-                'expiry_date' => '2026-12-31',
-                'status' => 'active',
+                'expiry_date' => '2026-12-31', 
                 'approval_status' => 'approved'
             ],
             [
@@ -671,20 +770,18 @@ class ReitsSeeder extends Seeder
                 'phone' => '+65 9345 6789',
                 'commencement_date' => '2023-09-15',
                 'approval_date' => '2023-08-30',
-                'expiry_date' => '2026-09-14',
-                'status' => 'active',
+                'expiry_date' => '2026-09-14', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 3, // Central Business Tower
+                'property_id' => 3, // Central Business Tower 
                 'name' => 'Standard Insurance Group',
                 'contact_person' => 'David Lee',
                 'email' => 'dlee@standardinsurance.com',
                 'phone' => '+60 12 345 6789',
                 'commencement_date' => '2022-11-01',
                 'approval_date' => '2022-10-15',
-                'expiry_date' => '2027-10-31',
-                'status' => 'active',
+                'expiry_date' => '2027-10-31', 
                 'approval_status' => 'approved'
             ],
             [
@@ -695,8 +792,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 12 456 7890',
                 'commencement_date' => '2023-02-01',
                 'approval_date' => '2023-01-15',
-                'expiry_date' => '2028-01-31',
-                'status' => 'active',
+                'expiry_date' => '2028-01-31', 
                 'approval_status' => 'approved'
             ],
             [
@@ -707,8 +803,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+62 21 1234 5678',
                 'commencement_date' => '2023-04-01',
                 'approval_date' => '2023-03-15',
-                'expiry_date' => '2028-03-31',
-                'status' => 'active',
+                'expiry_date' => '2028-03-31', 
                 'approval_status' => 'approved'
             ],
             [
@@ -719,8 +814,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+66 2 123 4567',
                 'commencement_date' => '2023-07-01',
                 'approval_date' => '2023-06-15',
-                'expiry_date' => '2028-06-30',
-                'status' => 'active',
+                'expiry_date' => '2028-06-30', 
                 'approval_status' => 'approved'
             ],
             [
@@ -731,8 +825,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+66 2 234 5678',
                 'commencement_date' => '2023-08-01',
                 'approval_date' => '2023-07-15',
-                'expiry_date' => '2028-07-31',
-                'status' => 'active',
+                'expiry_date' => '2028-07-31', 
                 'approval_status' => 'approved'
             ],
             [
@@ -743,8 +836,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 4 123 4567',
                 'commencement_date' => '2022-05-01',
                 'approval_date' => '2022-04-15',
-                'expiry_date' => '2032-04-30',
-                'status' => 'active',
+                'expiry_date' => '2032-04-30', 
                 'approval_status' => 'approved'
             ],
             [
@@ -755,8 +847,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+65 9456 7890',
                 'commencement_date' => '2023-03-01',
                 'approval_date' => '2023-02-15',
-                'expiry_date' => '2028-02-29',
-                'status' => 'active',
+                'expiry_date' => '2028-02-29', 
                 'approval_status' => 'approved'
             ],
             [
@@ -767,8 +858,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+65 9567 8901',
                 'commencement_date' => '2023-05-01',
                 'approval_date' => '2023-04-15',
-                'expiry_date' => '2028-04-30',
-                'status' => 'active',
+                'expiry_date' => '2028-04-30', 
                 'approval_status' => 'approved'
             ],
             [
@@ -779,8 +869,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+62 361 123 456',
                 'commencement_date' => '2022-12-01',
                 'approval_date' => '2022-11-15',
-                'expiry_date' => '2037-11-30',
-                'status' => 'active',
+                'expiry_date' => '2037-11-30', 
                 'approval_status' => 'approved'
             ],
             [
@@ -791,8 +880,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+63 2 123 4567',
                 'commencement_date' => '2022-10-01',
                 'approval_date' => '2022-09-15',
-                'expiry_date' => '2032-09-30',
-                'status' => 'active',
+                'expiry_date' => '2032-09-30', 
                 'approval_status' => 'approved'
             ],
             [
@@ -803,8 +891,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+65 9678 9012',
                 'commencement_date' => '2023-01-01',
                 'approval_date' => '2022-12-15',
-                'expiry_date' => '2027-12-31',
-                'status' => 'active',
+                'expiry_date' => '2027-12-31', 
                 'approval_status' => 'approved'
             ],
             [
@@ -815,8 +902,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+84 28 1234 5678',
                 'commencement_date' => '2023-02-01',
                 'approval_date' => '2023-01-15',
-                'expiry_date' => '2028-01-31',
-                'status' => 'active',
+                'expiry_date' => '2028-01-31', 
                 'approval_status' => 'approved'
             ]
         ];
@@ -831,7 +917,7 @@ class ReitsSeeder extends Seeder
                 'commencement_date' => $tenant['commencement_date'],
                 'approval_date' => $tenant['approval_date'],
                 'expiry_date' => $tenant['expiry_date'],
-                'status' => $tenant['status'],
+                'status' => $statuses[array_rand($statuses)],
                 'approval_status' => $tenant['approval_status'],
                 'last_approval_date' => $tenant['approval_date'],
                 'created_at' => now(),
@@ -851,8 +937,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '5',
                 'start_date' => '2023-06-01',
-                'end_date' => '2028-05-31',
-                'status' => 'active'
+                'end_date' => '2028-05-31', 
             ],
             [
                 'tenant_id' => 2, // Tech Innovations Pte Ltd
@@ -864,8 +949,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '3',
                 'start_date' => '2024-01-01',
-                'end_date' => '2026-12-31',
-                'status' => 'active'
+                'end_date' => '2026-12-31', 
             ],
             [
                 'tenant_id' => 3, // Legal Associates LLP
@@ -877,8 +961,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '3',
                 'start_date' => '2023-09-15',
-                'end_date' => '2026-09-14',
-                'status' => 'active'
+                'end_date' => '2026-09-14', 
             ],
             [
                 'tenant_id' => 4, // Standard Insurance Group
@@ -890,8 +973,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '5',
                 'start_date' => '2022-11-01',
-                'end_date' => '2027-10-31',
-                'status' => 'active'
+                'end_date' => '2027-10-31', 
             ],
             [
                 'tenant_id' => 5, // Consulting Partners International
@@ -903,8 +985,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '5',
                 'start_date' => '2023-02-01',
-                'end_date' => '2028-01-31',
-                'status' => 'active'
+                'end_date' => '2028-01-31', 
             ],  
             [
                 'tenant_id' => 6, // Skyline Retailers
@@ -916,8 +997,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '5',
                 'start_date' => '2023-04-01',
-                'end_date' => '2028-03-31',
-                'status' => 'active'
+                'end_date' => '2028-03-31', 
             ],
             [
                 'tenant_id' => 7, // Fashion Forward
@@ -929,8 +1009,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '5',
                 'start_date' => '2023-07-01',
-                'end_date' => '2028-06-30',
-                'status' => 'active'
+                'end_date' => '2028-06-30', 
             ],
             [
                 'tenant_id' => 8, // Global Electronics
@@ -942,8 +1021,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '5',
                 'start_date' => '2023-08-01',
-                'end_date' => '2028-07-31',
-                'status' => 'active'
+                'end_date' => '2028-07-31', 
             ],
             [
                 'tenant_id' => 9, // Advanced Semiconductors Inc.
@@ -955,8 +1033,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '10',
                 'start_date' => '2022-05-01',
-                'end_date' => '2032-04-30',
-                'status' => 'active'
+                'end_date' => '2032-04-30', 
             ],
             [
                 'tenant_id' => 10, // Global Ventures Capital
@@ -968,8 +1045,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '5',
                 'start_date' => '2023-03-01',
-                'end_date' => '2028-02-29',
-                'status' => 'active'
+                'end_date' => '2028-02-29', 
             ],
             [
                 'tenant_id' => 11, // Pacific Trading Group
@@ -981,8 +1057,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '5',
                 'start_date' => '2023-05-01',
-                'end_date' => '2028-04-30',
-                'status' => 'active'
+                'end_date' => '2028-04-30', 
             ],
             [
                 'tenant_id' => 12, // Luxury Escapes
@@ -994,8 +1069,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '15',
                 'start_date' => '2022-12-01',
-                'end_date' => '2037-11-30',
-                'status' => 'active'
+                'end_date' => '2037-11-30', 
             ],
             [
                 'tenant_id' => 13, // Premier Healthcare Systems
@@ -1007,8 +1081,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '10',
                 'start_date' => '2022-10-01',
-                'end_date' => '2032-09-30',
-                'status' => 'active'
+                'end_date' => '2032-09-30', 
             ],
             [
                 'tenant_id' => 14, // National University Research
@@ -1020,8 +1093,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '5',
                 'start_date' => '2023-01-01',
-                'end_date' => '2027-12-31',
-                'status' => 'active'
+                'end_date' => '2027-12-31', 
             ],
             [
                 'tenant_id' => 15, // Asia Logistics Solutions
@@ -1033,8 +1105,7 @@ class ReitsSeeder extends Seeder
                 'option_to_renew' => true,
                 'term_years' => '5',
                 'start_date' => '2023-02-01',
-                'end_date' => '2028-01-31',
-                'status' => 'active'
+                'end_date' => '2028-01-31', 
             ]
         ];
         
@@ -1050,7 +1121,7 @@ class ReitsSeeder extends Seeder
                 'term_years' => $lease['term_years'],
                 'start_date' => $lease['start_date'],
                 'end_date' => $lease['end_date'],
-                'status' => $lease['status'],
+                'status' => $statuses[array_rand($statuses)],
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -1064,8 +1135,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '10:00:00',
                 'inspector_name' => 'John Smith',
                 'notes' => 'Routine annual inspection of the property',
-                'attachment' => 'visits/skyline_a_2024_01_15.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/skyline_a_2024_01_15.pdf', 
             ],
             [
                 'property_id' => 2, // Skyline Tower B
@@ -1073,8 +1143,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '14:00:00',
                 'inspector_name' => 'John Smith',
                 'notes' => 'Routine annual inspection of the property',
-                'attachment' => 'visits/skyline_b_2024_01_16.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/skyline_b_2024_01_16.pdf', 
             ],
             [
                 'property_id' => 3, // Central Business Tower
@@ -1082,8 +1151,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '09:30:00',
                 'inspector_name' => 'David Wong',
                 'notes' => 'Inspection of newly renovated floors',
-                'attachment' => 'visits/cbt_2024_02_10.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/cbt_2024_02_10.pdf', 
             ],
             [
                 'property_id' => 4, // Urban Heights
@@ -1091,8 +1159,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '11:00:00',
                 'inspector_name' => 'Ahmad Rizal',
                 'notes' => 'Assessment of common areas and facilities',
-                'attachment' => 'visits/urban_heights_2024_02_20.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/urban_heights_2024_02_20.pdf', 
             ],
             [
                 'property_id' => 5, // Central Mall Plaza
@@ -1100,8 +1167,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '10:00:00',
                 'inspector_name' => 'Nattapong Chai',
                 'notes' => 'Inspection of retail spaces and food court',
-                'attachment' => 'visits/mall_plaza_2024_03_05.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/mall_plaza_2024_03_05.pdf', 
             ],
             [
                 'property_id' => 6, // Tech Manufacturing Facility
@@ -1109,8 +1175,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '09:00:00',
                 'inspector_name' => 'Lim Eng Huat',
                 'notes' => 'Safety and compliance inspection of industrial facility',
-                'attachment' => 'visits/tech_facility_2024_03_15.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/tech_facility_2024_03_15.pdf', 
             ],
             [
                 'property_id' => 7, // Executive Plaza
@@ -1118,8 +1183,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '14:30:00',
                 'inspector_name' => 'Kenneth Wong',
                 'notes' => 'Review of building systems and tenant improvements',
-                'attachment' => 'visits/exec_plaza_2024_04_10.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/exec_plaza_2024_04_10.pdf', 
             ],
             [
                 'property_id' => 8, // Beach Resort & Spa
@@ -1127,8 +1191,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '11:00:00',
                 'inspector_name' => 'Made Surya',
                 'notes' => 'Inspection of resort facilities and guest accommodations',
-                'attachment' => 'visits/beach_resort_2024_04_20.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/beach_resort_2024_04_20.pdf', 
             ],
             [
                 'property_id' => 9, // Central Medical Center
@@ -1136,8 +1199,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '10:00:00',
                 'inspector_name' => 'Elena Santos',
                 'notes' => 'Review of medical facility compliance and systems',
-                'attachment' => 'visits/medical_center_2024_05_05.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/medical_center_2024_05_05.pdf', 
             ],
             [
                 'property_id' => 10, // University Research Building
@@ -1145,8 +1207,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '13:00:00',
                 'inspector_name' => 'Dr. Tan Li Wei',
                 'notes' => 'Inspection of research facilities and laboratories',
-                'attachment' => 'visits/uni_research_2024_05_15.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/uni_research_2024_05_15.pdf', 
             ],
             [
                 'property_id' => 11, // Central Distribution Warehouse
@@ -1154,8 +1215,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '09:00:00',
                 'inspector_name' => 'Tran Van Duc',
                 'notes' => 'Safety inspection of warehouse operations',
-                'attachment' => 'visits/warehouse_2024_06_01.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/warehouse_2024_06_01.pdf', 
             ],
             [
                 'property_id' => 12, // Cloud Data Center
@@ -1163,8 +1223,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '10:30:00',
                 'inspector_name' => 'Desmond Lim',
                 'notes' => 'Inspection of data center infrastructure and cooling systems',
-                'attachment' => 'visits/data_center_2024_06_15.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/data_center_2024_06_15.pdf', 
             ],
             [
                 'property_id' => 13, // SecureSpace Center
@@ -1172,8 +1231,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '11:00:00',
                 'inspector_name' => 'Amir Hassan',
                 'notes' => 'Review of storage facility security and climate control',
-                'attachment' => 'visits/securespace_2024_07_01.pdf',
-                'status' => 'completed'
+                'attachment' => 'visits/securespace_2024_07_01.pdf', 
             ],
             [
                 'property_id' => 1, // Skyline Tower A
@@ -1181,8 +1239,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '10:00:00',
                 'inspector_name' => 'John Smith',
                 'notes' => 'Follow-up inspection for maintenance issues',
-                'attachment' => null,
-                'status' => 'scheduled'
+                'attachment' => null, 
             ],
             [
                 'property_id' => 3, // Central Business Tower
@@ -1190,8 +1247,7 @@ class ReitsSeeder extends Seeder
                 'time_visit' => '14:00:00',
                 'inspector_name' => 'David Wong',
                 'notes' => 'Tenant improvement inspection',
-                'attachment' => null,
-                'status' => 'scheduled'
+                'attachment' => null, 
             ]
         ];
 
@@ -1203,7 +1259,7 @@ class ReitsSeeder extends Seeder
                 'inspector_name' => $visit['inspector_name'],
                 'notes' => $visit['notes'],
                 'attachment' => $visit['attachment'],
-                'status' => $visit['status'],
+                'status' => $statuses[array_rand($statuses)],
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -1216,7 +1272,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-01-15',
                 'purpose' => 'Annual facility inspection and tenant feedback collection',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-01-20',
                 'report_attachment' => 'reports/skyline_a_inspection_2024.pdf',
                 'follow_up_required' => false,
@@ -1227,7 +1282,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-01-16',
                 'purpose' => 'Annual facility inspection and tenant feedback collection',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-01-21',
                 'report_attachment' => 'reports/skyline_b_inspection_2024.pdf',
                 'follow_up_required' => true,
@@ -1238,7 +1292,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-02-10',
                 'purpose' => 'Inspection of newly renovated floors and tenant spaces',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-02-15',
                 'report_attachment' => 'reports/cbt_renovation_inspection_2024.pdf',
                 'follow_up_required' => false,
@@ -1249,7 +1302,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-02-20',
                 'purpose' => 'Assessment of common areas and facilities',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-02-25',
                 'report_attachment' => 'reports/urban_heights_assessment_2024.pdf',
                 'follow_up_required' => true,
@@ -1260,7 +1312,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-03-05',
                 'purpose' => 'Inspection of retail spaces and food court',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-03-10',
                 'report_attachment' => 'reports/mall_plaza_retail_inspection_2024.pdf',
                 'follow_up_required' => false,
@@ -1271,7 +1322,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-03-15',
                 'purpose' => 'Safety and compliance inspection of industrial facility',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-03-20',
                 'report_attachment' => 'reports/tech_facility_safety_inspection_2024.pdf',
                 'follow_up_required' => true,
@@ -1282,7 +1332,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-04-10',
                 'purpose' => 'Review of building systems and tenant improvements',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-04-15',
                 'report_attachment' => 'reports/exec_plaza_systems_review_2024.pdf',
                 'follow_up_required' => false,
@@ -1293,7 +1342,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-04-20',
                 'purpose' => 'Inspection of resort facilities and guest accommodations',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-04-25',
                 'report_attachment' => 'reports/beach_resort_facilities_inspection_2024.pdf',
                 'follow_up_required' => true,
@@ -1304,7 +1352,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-05-05',
                 'purpose' => 'Review of medical facility compliance and systems',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-05-10',
                 'report_attachment' => 'reports/medical_center_compliance_review_2024.pdf',
                 'follow_up_required' => false,
@@ -1315,7 +1362,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-05-15',
                 'purpose' => 'Inspection of research facilities and laboratories',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-05-20',
                 'report_attachment' => 'reports/uni_research_lab_inspection_2024.pdf',
                 'follow_up_required' => true,
@@ -1326,7 +1372,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-06-01',
                 'purpose' => 'Safety inspection of warehouse operations',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-06-06',
                 'report_attachment' => 'reports/warehouse_safety_inspection_2024.pdf',
                 'follow_up_required' => false,
@@ -1337,7 +1382,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-06-15',
                 'purpose' => 'Inspection of data center infrastructure and cooling systems',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-06-20',
                 'report_attachment' => 'reports/data_center_infrastructure_inspection_2024.pdf',
                 'follow_up_required' => true,
@@ -1348,7 +1392,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-07-01',
                 'purpose' => 'Review of storage facility security and climate control',
-                'status' => 'Completed',
                 'report_submission_date' => '2024-07-06',
                 'report_attachment' => 'reports/securespace_security_review_2024.pdf',
                 'follow_up_required' => false,
@@ -1359,7 +1402,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-09-15',
                 'purpose' => 'Follow-up inspection for maintenance issues',
-                'status' => 'Scheduled',
                 'report_submission_date' => null,
                 'report_attachment' => null,
                 'follow_up_required' => false,
@@ -1370,7 +1412,6 @@ class ReitsSeeder extends Seeder
                 'no' => 1,
                 'visitation_date' => '2024-09-20',
                 'purpose' => 'Tenant improvement inspection',
-                'status' => 'Scheduled',
                 'report_submission_date' => null,
                 'report_attachment' => null,
                 'follow_up_required' => false,
@@ -1384,7 +1425,7 @@ class ReitsSeeder extends Seeder
                 'no' => $log['no'],
                 'visitation_date' => $log['visitation_date'],
                 'purpose' => $log['purpose'],
-                'status' => $log['status'],
+                'status' => $statuses[array_rand($statuses)],
                 'report_submission_date' => $log['report_submission_date'],
                 'report_attachment' => $log['report_attachment'],
                 'follow_up_required' => $log['follow_up_required'],
@@ -1413,8 +1454,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 28000000.00,
                 'facilities_agent' => 'Premier Real Estate Financials',
                 'agent_contact' => '+65 9123 4567',
-                'valuer' => 'Singapore Property Valuers',
-                'status' => 'active'
+                'valuer' => 'Singapore Property Valuers', 
             ],
             [
                 'portfolio_id' => 2, // Downtown Business Center
@@ -1433,8 +1473,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 48000000.00,
                 'facilities_agent' => 'KL Commercial Finance',
                 'agent_contact' => '+60 12 345 6789',
-                'valuer' => 'Malaysia Property Consultants',
-                'status' => 'active'
+                'valuer' => 'Malaysia Property Consultants', 
             ],
             [
                 'portfolio_id' => 3, // Urban Complex
@@ -1453,8 +1492,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 68000000.00,
                 'facilities_agent' => 'Jakarta Investment Finance',
                 'agent_contact' => '+62 21 987 6543',
-                'valuer' => 'Indonesian Property Services',
-                'status' => 'active'
+                'valuer' => 'Indonesian Property Services', 
             ],
             [
                 'portfolio_id' => 4, // Central Shopping Mall
@@ -1473,8 +1511,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 85000000.00,
                 'facilities_agent' => 'Bangkok Commercial Finance',
                 'agent_contact' => '+66 2 345 6789',
-                'valuer' => 'Thai Property Appraisers',
-                'status' => 'active'
+                'valuer' => 'Thai Property Appraisers', 
             ],
             [
                 'portfolio_id' => 5, // Tech Industrial Park
@@ -1493,8 +1530,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 34000000.00,
                 'facilities_agent' => 'Penang Industrial Finance',
                 'agent_contact' => '+60 4 567 8901',
-                'valuer' => 'MYS Industrial Valuers',
-                'status' => 'active'
+                'valuer' => 'MYS Industrial Valuers', 
             ],
             [
                 'portfolio_id' => 6, // Executive Tower
@@ -1513,8 +1549,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 60000000.00,
                 'facilities_agent' => 'SG Commercial Property Finance',
                 'agent_contact' => '+65 9456 7890',
-                'valuer' => 'Singapore Commercial Appraisers',
-                'status' => 'active'
+                'valuer' => 'Singapore Commercial Appraisers', 
             ],
             [
                 'portfolio_id' => 7, // Luxury Resort Collection
@@ -1533,8 +1568,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 52000000.00,
                 'facilities_agent' => 'Bali Resort Finance',
                 'agent_contact' => '+62 361 234 5678',
-                'valuer' => 'Indonesian Hospitality Valuers',
-                'status' => 'active'
+                'valuer' => 'Indonesian Hospitality Valuers', 
             ],
             [
                 'portfolio_id' => 8, // Medical Plaza
@@ -1553,8 +1587,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 40000000.00,
                 'facilities_agent' => 'Manila Healthcare Finance',
                 'agent_contact' => '+63 2 345 6789',
-                'valuer' => 'Philippine Medical Property Appraisers',
-                'status' => 'active'
+                'valuer' => 'Philippine Medical Property Appraisers', 
             ],
             [
                 'portfolio_id' => 9, // Campus Properties
@@ -1573,8 +1606,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 30000000.00,
                 'facilities_agent' => 'SG Educational Finance',
                 'agent_contact' => '+65 9678 9012',
-                'valuer' => 'Singapore Educational Property Valuers',
-                'status' => 'active'
+                'valuer' => 'Singapore Educational Property Valuers', 
             ],
             [
                 'portfolio_id' => 10, // Distribution Hub
@@ -1593,8 +1625,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 27000000.00,
                 'facilities_agent' => 'Vietnam Logistics Finance',
                 'agent_contact' => '+84 28 234 5678',
-                'valuer' => 'Vietnam Industrial Property Consultants',
-                'status' => 'active'
+                'valuer' => 'Vietnam Industrial Property Consultants', 
             ],
             [
                 'portfolio_id' => 11, // Cloud Infrastructure
@@ -1613,8 +1644,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 70000000.00,
                 'facilities_agent' => 'SG Technology Finance',
                 'agent_contact' => '+65 9789 0123',
-                'valuer' => 'Singapore Tech Infrastructure Valuers',
-                'status' => 'active'
+                'valuer' => 'Singapore Tech Infrastructure Valuers', 
             ],
             [
                 'portfolio_id' => 12, // SecureSpace Facilities
@@ -1633,8 +1663,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 16500000.00,
                 'facilities_agent' => 'KL Storage Finance',
                 'agent_contact' => '+60 3 456 7890',
-                'valuer' => 'Malaysia Storage Facility Valuers',
-                'status' => 'active'
+                'valuer' => 'Malaysia Storage Facility Valuers', 
             ],
             [
                 'portfolio_id' => 13, // Farmland Investments
@@ -1653,8 +1682,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 20000000.00,
                 'facilities_agent' => 'Malaysia Agricultural Finance',
                 'agent_contact' => '+60 7 345 6789',
-                'valuer' => 'Malaysian Agricultural Land Valuers',
-                'status' => 'active'
+                'valuer' => 'Malaysian Agricultural Land Valuers', 
             ],
             [
                 'portfolio_id' => 14, // Recreation Parks
@@ -1673,8 +1701,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 24000000.00,
                 'facilities_agent' => 'Thai Leisure Properties Finance',
                 'agent_contact' => '+66 2 456 7890',
-                'valuer' => 'Thai Recreational Property Valuers',
-                'status' => 'active'
+                'valuer' => 'Thai Recreational Property Valuers', 
             ],
             [
                 'portfolio_id' => 15, // University Accommodations
@@ -1693,8 +1720,7 @@ class ReitsSeeder extends Seeder
                 'security_value_monthly' => 35000000.00,
                 'facilities_agent' => 'SG Student Housing Finance',
                 'agent_contact' => '+65 9890 1234',
-                'valuer' => 'Singapore Educational Property Valuers',
-                'status' => 'active'
+                'valuer' => 'Singapore Educational Property Valuers', 
             ]
         ];
 
@@ -1717,7 +1743,7 @@ class ReitsSeeder extends Seeder
                 'facilities_agent' => $financial['facilities_agent'],
                 'agent_contact' => $financial['agent_contact'],
                 'valuer' => $financial['valuer'],
-                'status' => $financial['status'],
+                'status' => $statuses[array_rand($statuses)],
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -1823,7 +1849,6 @@ class ReitsSeeder extends Seeder
 
                 // System information
                 'site_visit_id' => 1,
-                'status' => 'Approved',
                 'prepared_by' => 'John Smith',
                 'verified_by' => 'Sarah Johnson',
                 'remarks' => 'Annual inspection complete with satisfactory results',
@@ -1904,8 +1929,10 @@ class ReitsSeeder extends Seeder
                 'renovation_completion_status' => $checklist['renovation_completion_status'],
                 'repainting_date' => $checklist['repainting_date'],
                 'external_repainting_status' => $checklist['external_repainting_status'],
+                'repainting_date' => $checklist['repainting_date'],
+                'external_repainting_status' => $checklist['external_repainting_status'],
                 'repainting_completion_status' => $checklist['repainting_completion_status'],
-                
+
                 // 5.4 Disposal/Installation/Replacement
                 'water_tank_date' => $checklist['water_tank_date'],
                 'water_tank_status' => $checklist['water_tank_status'],
@@ -1926,14 +1953,240 @@ class ReitsSeeder extends Seeder
                 'other_property' => $checklist['other_property'],
                 'other_completion_status' => $checklist['other_completion_status'],
                 'other_proposals_approvals' => $checklist['other_proposals_approvals'],
-                
+
                 // System information
                 'site_visit_id' => $checklist['site_visit_id'],
-                'status' => $checklist['status'],
+                'status' => $statuses[array_rand($statuses)],
                 'prepared_by' => $checklist['prepared_by'],
                 'verified_by' => $checklist['verified_by'],
                 'remarks' => $checklist['remarks'],
                 'approval_datetime' => $checklist['approval_datetime'],
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        // Seed Appointments (New Table)
+         $appointments = [
+            [
+                'portfolio_id' => 1, // Skyline Residences
+                'party_name' => 'Master Alliance Innovations Sdn Bhd',
+                'date_of_approval' => '2024-03-18',
+                'appointment_title' => 'CONSULTANT FOR PUBLICATION OF ANNUAL REPORT',
+                'appointment_description' => 'APPOINTMENT OF MASTER ALLIANCE INNOVATIONS SDN BHD AS CONSULTANT FOR PUBLICATION OF AL-SALAM REIT 2023 ANNUAL REPORT',
+                'estimated_amount' => 64200.00,
+                'remarks' => 'Annual appointment for report preparation',
+                'year' => 2024,
+                'reference_no' => 'APP/2024/001',
+            ],
+            [
+                'portfolio_id' => 1, // Skyline Residences
+                'party_name' => 'CONSULTANT',
+                'date_of_approval' => '2024-03-29',
+                'appointment_title' => 'CONSULTANT FOR AGM',
+                'appointment_description' => 'PROPOSED APPOINTMENT OF CONSULTANT FOR AGM FOR AL-SALAM REIT',
+                'estimated_amount' => 32681.20,
+                'remarks' => 'For AGM coordination and execution',
+                'year' => 2024,
+                'reference_no' => 'APP/2024/002',
+            ],
+            [
+                'portfolio_id' => 2, // Downtown Business Center
+                'party_name' => 'KAF INVESTMENT BANK BERHAD ABDUL RAMAN SAAD & ASSOCIATES',
+                'date_of_approval' => '2024-04-08',
+                'appointment_title' => 'MANDATE FOR RECURRENT RELATED PARTY TRANSACTION',
+                'appointment_description' => 'PROPOSED UNITHOLDERS MANDATE FOR RECURRENT RELATED PARTY TRANSACTION OF A REVENUE OR TRADING NATURE FOR AL-SALAM REIT REAL ESTATE INVESTMENT TRUST ("AL-SALAM")',
+                'estimated_amount' => 53000.00,
+                'remarks' => 'Required for regulatory compliance',
+                'year' => 2024,
+                'reference_no' => 'APP/2024/003',
+            ],
+            [
+                'portfolio_id' => 3, // Urban Complex
+                'party_name' => 'KOMTAR JBCC, JOHOR',
+                'date_of_approval' => '2024-04-24',
+                'appointment_title' => 'TRADEMARK RENEWAL',
+                'appointment_description' => 'RENEWAL, RECORDAL AND REGISTRATION OF TRADEMARK FOR KOMTAR JBCC, JOHOR ("JBCC") ("Proposed Exercise")',
+                'estimated_amount' => 15000.00,
+                'remarks' => 'Intellectual property protection',
+                'year' => 2024,
+                'reference_no' => 'APP/2024/005',
+            ],
+            [
+                'portfolio_id' => 1, // Skyline Residences
+                'party_name' => 'AL-SALAM REIT',
+                'date_of_approval' => '2024-05-10',
+                'appointment_title' => 'AGM COST',
+                'appointment_description' => 'PROPOSED COST FOR ANNUAL GENERAL MEETING OF AL-AQAR AND AL-SALAM REIT 2024 ("Proposed Cost")',
+                'estimated_amount' => 50000.00,
+                'remarks' => 'Annual general meeting expenses',
+                'year' => 2024,
+                'reference_no' => 'APP/2024/006',
+            ],
+            [
+                'portfolio_id' => 2, // Downtown Business Center
+                'party_name' => 'DELOITTE TAX SERVICES SDN BHD',
+                'date_of_approval' => '2024-05-23',
+                'appointment_title' => 'TAX SERVICES APPOINTMENT',
+                'appointment_description' => 'PROPOSED APPOINTMENT OF DELOITTE TAX SERVICES SDN BHD',
+                'estimated_amount' => 27500.00,
+                'remarks' => 'Tax advisory and compliance services',
+                'year' => 2024,
+                'reference_no' => 'APP/2024/007',
+            ]
+        ];
+
+        foreach ($appointments as $appointment) {
+            DB::table('appointments')->insert([
+                'portfolio_id' => $appointment['portfolio_id'],
+                'party_name' => $appointment['party_name'],
+                'date_of_approval' => $appointment['date_of_approval'],
+                'appointment_title' => $appointment['appointment_title'],
+                'appointment_description' => $appointment['appointment_description'],
+                'estimated_amount' => $appointment['estimated_amount'],
+                'remarks' => $appointment['remarks'],
+                'attachment' => null,
+                'year' => $appointment['year'],
+                'reference_no' => $appointment['reference_no'],
+                'status' => $statuses[array_rand($statuses)],
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'approval_datetime' => now(),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        // Seed Approval Forms (New Table)
+        $approvalForms = [
+            [
+                'portfolio_id' => 1, // Skyline Residences
+                'property_id' => null,
+                'form_number' => '1',
+                'form_title' => '@Mart Kempas - CAPEX 24-2023(PA)',
+                'form_category' => 'CAPEX',
+                'reference_code' => 'CAPEX/2023/001',
+                'received_date' => '2024-01-05',
+                'send_date' => '2024-01-15',
+                'location' => 'Finance Department',
+                'description' => 'Capital expenditure approval form for Mart Kempas',
+            ],
+            [
+                'portfolio_id' => 2, // Downtown Business Center 
+                'property_id' => null,
+                'form_number' => '1',
+                'form_title' => 'Komtar JBCC - Admin-23-06',
+                'form_category' => 'Admin',
+                'reference_code' => 'ADMIN/2023/006',
+                'received_date' => '2024-01-05',
+                'send_date' => '2024-01-15',
+                'location' => 'Admin Department',
+                'description' => 'Administrative approval form for Komtar JBCC operations',
+            ],
+            [
+                'portfolio_id' => 3, // Urban Complex
+                'property_id' => null,
+                'form_number' => '1',
+                'form_title' => 'Komtar JBCC - TECH - 23-188',
+                'form_category' => 'Tech',
+                'reference_code' => 'TECH/2023/188',
+                'received_date' => '2023-12-21',
+                'send_date' => '2024-01-15',
+                'location' => 'IT Department',
+                'description' => 'Technology implementation approval for Komtar JBCC',
+            ],
+            [
+                'portfolio_id' => 2, // Downtown Business Center
+                'property_id' => null,
+                'form_number' => '1',
+                'form_title' => 'Komtar JBCC - LEASING-12-2023 (Marrybrown)',
+                'form_category' => 'Leasing',
+                'reference_code' => 'LEASE/2023/012',
+                'received_date' => '2024-01-03',
+                'send_date' => '2024-01-15',
+                'location' => 'Leasing Department',
+                'description' => 'Lease agreement approval for Marrybrown at Komtar JBCC',
+            ],
+            [
+                'portfolio_id' => 1, // Skyline Residences
+                'property_id' => null,
+                'form_number' => '1',
+                'form_title' => '@Mart Kempas - LEASING-056-2023',
+                'form_category' => 'Leasing',
+                'reference_code' => 'LEASE/2023/056',
+                'received_date' => '2023-12-21',
+                'send_date' => '2024-01-15',
+                'location' => 'Leasing Department',
+                'description' => 'Lease agreement approval for Mart Kempas',
+            ],
+            [
+                'portfolio_id' => 3, // Urban Complex
+                'property_id' => null,
+                'form_number' => '1',
+                'form_title' => 'Menara Komtar - LSG 23/8',
+                'form_category' => 'LSG',
+                'reference_code' => 'LSG/2023/008',
+                'received_date' => '2023-12-21',
+                'send_date' => '2024-01-15',
+                'location' => 'Legal Department',
+                'description' => 'Legal services approval for Menara Komtar',
+            ],
+            [
+                'portfolio_id' => 3, // Urban Complex
+                'property_id' => null,
+                'form_number' => '2',
+                'form_title' => 'Menara Komtar - LSG 23/38',
+                'form_category' => 'LSG',
+                'reference_code' => 'LSG/2023/038',
+                'received_date' => '2023-12-21',
+                'send_date' => '2024-01-15',
+                'location' => 'Legal Department',
+                'description' => 'Legal services approval for Menara Komtar operations',
+            ],
+            [
+                'portfolio_id' => 2, // Downtown Business Center
+                'property_id' => null,
+                'form_number' => '1',
+                'form_title' => 'Komtar JBCC - Leasing-2023-11-1 (New Trading Name - FRKE)',
+                'form_category' => 'Leasing',
+                'reference_code' => 'LEASE/2023/111',
+                'received_date' => '2024-01-16',
+                'send_date' => '2024-01-23',
+                'location' => 'Leasing Department',
+                'description' => 'Lease agreement approval for new tenant FRKE at Komtar JBCC',
+            ],
+            [
+                'portfolio_id' => 2, // Downtown Business Center
+                'property_id' => null,
+                'form_number' => '2',
+                'form_title' => 'Komtar JBCC - Leasing-2023-11-2 (New Trading Name - POULET)',
+                'form_category' => 'Leasing',
+                'reference_code' => 'LEASE/2023/112',
+                'received_date' => '2024-01-16',
+                'send_date' => '2024-01-23',
+                'location' => 'Leasing Department',
+                'description' => 'Lease agreement approval for new tenant POULET at Komtar JBCC',
+            ]
+        ];
+
+        foreach ($approvalForms as $form) {
+            DB::table('approval_forms')->insert([
+                'portfolio_id' => $form['portfolio_id'],
+                'property_id' => $form['property_id'],
+                'form_number' => $form['form_number'],
+                'form_title' => $form['form_title'],
+                'form_category' => $form['form_category'],
+                'reference_code' => $form['reference_code'],
+                'received_date' => $form['received_date'],
+                'send_date' => $form['send_date'],
+                'attachment' => null,
+                'location' => $form['location'],
+                'description' => $form['description'],
+                'remarks' => null,
+                'status' => $statuses[array_rand($statuses)],
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'approval_datetime' => now(),
                 'created_at' => now(),
                 'updated_at' => now()
             ]);

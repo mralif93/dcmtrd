@@ -26,15 +26,6 @@
                 <!-- Header Section -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">Portfolio Information</h3>
-                    <div class="flex space-x-2">
-                        <a href="{{ route('portfolio-m.edit', $portfolio) }}" 
-                           class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                            </svg>
-                            Edit
-                        </a>
-                    </div>
                 </div>
 
                 <!-- Status Section -->
@@ -43,8 +34,24 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $portfolio->status == 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                    {{ match(strtolower($portfolio->status)) {
+                                        'completed' => 'bg-green-100 text-green-800',
+                                        'scheduled' => 'bg-blue-100 text-blue-800',
+                                        'cancelled' => 'bg-red-100 text-red-800',
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'active' => 'bg-green-100 text-green-800',
+                                        'inactive' => 'bg-gray-100 text-gray-800',
+                                        'rejected' => 'bg-red-100 text-red-800',
+                                        'draft' => 'bg-blue-100 text-blue-800',
+                                        'withdrawn' => 'bg-purple-100 text-purple-800',
+                                        'in progress' => 'bg-indigo-100 text-indigo-800',
+                                        'on hold' => 'bg-orange-100 text-orange-800',
+                                        'reviewing' => 'bg-teal-100 text-teal-800',
+                                        'approved' => 'bg-emerald-100 text-emerald-800',
+                                        'expired' => 'bg-rose-100 text-rose-800',
+                                        default => 'bg-gray-100 text-gray-800'
+                                    } }}">
                                     {{ ucfirst($portfolio->status) }}
                                 </span>
                             </dd>
@@ -164,8 +171,24 @@
                                                     RM {{ number_format($property->value, 2) }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                        {{ match(strtolower($property->status)) {
+                                                            'completed' => 'bg-green-100 text-green-800',
+                                                            'scheduled' => 'bg-blue-100 text-blue-800',
+                                                            'cancelled' => 'bg-red-100 text-red-800',
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            'draft' => 'bg-blue-100 text-blue-800',
+                                                            'withdrawn' => 'bg-purple-100 text-purple-800',
+                                                            'in progress' => 'bg-indigo-100 text-indigo-800',
+                                                            'on hold' => 'bg-orange-100 text-orange-800',
+                                                            'reviewing' => 'bg-teal-100 text-teal-800',
+                                                            'approved' => 'bg-emerald-100 text-emerald-800',
+                                                            'expired' => 'bg-rose-100 text-rose-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($property->status) }}
                                                     </span>
                                                 </td>
@@ -226,8 +249,24 @@
                                                     RM {{ number_format($financial->outstanding_amount, 2) }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $financial->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                        {{ match(strtolower($financial->status)) {
+                                                            'completed' => 'bg-green-100 text-green-800',
+                                                            'scheduled' => 'bg-blue-100 text-blue-800',
+                                                            'cancelled' => 'bg-red-100 text-red-800',
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            'draft' => 'bg-blue-100 text-blue-800',
+                                                            'withdrawn' => 'bg-purple-100 text-purple-800',
+                                                            'in progress' => 'bg-indigo-100 text-indigo-800',
+                                                            'on hold' => 'bg-orange-100 text-orange-800',
+                                                            'reviewing' => 'bg-teal-100 text-teal-800',
+                                                            'approved' => 'bg-emerald-100 text-emerald-800',
+                                                            'expired' => 'bg-rose-100 text-rose-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($financial->status) }}
                                                     </span>
                                                 </td>
@@ -270,6 +309,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
                             </svg>
                             Back to List
+                        </a>
+                        <a href="{{ route('portfolio-m.edit', $portfolio) }}" 
+                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Edit Financial
                         </a>
                     </div>
                 </div>

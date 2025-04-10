@@ -68,10 +68,13 @@
                                 <select name="job_title" id="job_title" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">Select Job Title</option>
-                                    <option value="ceo" @selected(old('job_title') == 'ceo')>CEO</option>
-                                    <option value="manager" @selected(old('job_title') == 'manager')>Manager</option>
-                                    <option value="executive" @selected(old('job_title') == 'executive')>Executive</option>
-                                    <option value="developer" @selected(old('job_title') == 'developer')>Developer</option>
+                                    <option value="CEO" @selected(old('job_title') == 'CEO')>CEO</option>
+                                    <option value="SENIOR MANAGER" @selected(old('job_title') == 'SENIOR MANAGER')>SENIOR MANAGER</option>
+                                    <option value="MANAGER" @selected(old('job_title') == 'MANAGER')>MANAGER</option>
+                                    <option value="ASSISTANT MANAGER" @selected(old('job_title') == 'ASSISTANT MANAGER')>ASSISTANT MANAGER</option>
+                                    <option value="SENIOR EXECUTIVE" @selected(old('job_title') == 'SENIOR EXECUTIVE')>SENIOR EXECUTIVE</option>
+                                    <option value="EXECUTIVE" @selected(old('job_title') == 'EXECUTIVE')>EXECUTIVE</option>
+                                    <option value="DEVELOPER" @selected(old('job_title') == 'DEVELOPER')>DEVELOPER</option>
                                 </select>
                             </div>
                             <div>

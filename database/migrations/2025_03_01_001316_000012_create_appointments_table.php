@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('leases', function (Blueprint $table) {
+        Schema::create('appointments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
-            $table->string('lease_name');
-            $table->string('demised_premises');
-            $table->string('permitted_use');
-            $table->decimal('rental_amount', 15, 2)->unsigned();
-            $table->string('rental_frequency')->default('monthly');
-            $table->boolean('option_to_renew')->default(true);
-            $table->string('term_years');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
+            $table->string('party_name');
+            $table->date('date_of_approval');
+            $table->string('appointment_title');
+            $table->text('appointment_description');
+            $table->decimal('estimated_amount', 15, 2)->unsigned()->nullable();
+            $table->text('remarks')->nullable();
+            $table->string('attachment')->nullable();
+            $table->integer('year')->nullable();
+            $table->string('reference_no')->nullable();
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->softDeletes();
             
             // Add indexes for better performance
-            $table->index(['lease_name', 'start_date', 'end_date']);
+            $table->index(['party_name', 'date_of_approval', 'year']);
         });
     }
 
@@ -40,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('leases');
+        Schema::dropIfExists('appointments');
     }
 };

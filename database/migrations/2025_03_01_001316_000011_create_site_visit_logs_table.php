@@ -17,11 +17,14 @@ return new class extends Migration
             $table->integer('no');
             $table->date('visitation_date');
             $table->text('purpose');
-            $table->string('status');
+            $table->string('status')->default('pending');
             $table->date('report_submission_date')->nullable();
             $table->string('report_attachment')->nullable();
             $table->boolean('follow_up_required')->default(false);
             $table->text('remarks')->nullable();
+            $table->string('prepared_by')->nullable();
+            $table->string('verified_by')->nullable();
+            $table->dateTime('approval_datetime')->nullable();
             $table->timestamps();
             $table->softDeletes();
             

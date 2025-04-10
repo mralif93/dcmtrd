@@ -58,11 +58,11 @@ class DefaultUsersSeeder extends Seeder
         $usersData = [
             // Admin Users
             [
-                'name' => 'Admin User',
+                'name' => 'ADMINISTRATOR',
                 'email' => 'admin@example.com',
                 'role' => 'admin',
-                'job_title' => 'Executive',
-                'department' => 'Administration',
+                'job_title' => 'EXECUTIVE',
+                'department' => 'ADMINISTRATOR',
                 'office_location' => 'Headquarters',
                 'email_verified_at' => now(),
                 'password' => bcrypt('P@ssw0rd123'), // Use bcrypt for password hashing

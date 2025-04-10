@@ -111,7 +111,7 @@ return new class extends Migration
             $table->foreignId('site_visit_id')->nullable()->constrained()->onDelete('cascade');
             
             // System information
-            $table->string('status')->nullable();
+            $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();

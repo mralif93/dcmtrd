@@ -466,10 +466,21 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ $portfolio->status == 'Active' ? 'bg-green-100 text-green-800' : 
-                                        ($portfolio->status == 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                        ($portfolio->status == 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
-                                        {{ $portfolio->status }}
+                                        @php
+                                        $statusColors = [
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            'draft' => 'bg-blue-100 text-blue-800',
+                                            'withdrawn' => 'bg-purple-100 text-purple-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800'
+                                        ];
+                                        
+                                        $normalizedStatus = strtolower($portfolio->status);
+                                        $badgeClass = $statusColors[$normalizedStatus] ?? 'bg-gray-100 text-gray-800';
+                                        @endphp
+                                        {{ $badgeClass }}">
+                                        {{ ucfirst($portfolio->status) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

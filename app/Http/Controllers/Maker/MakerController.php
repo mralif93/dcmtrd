@@ -1739,7 +1739,7 @@ class MakerController extends Controller
         return view('maker.portfolio.show', compact('portfolio'));
     }
 
-    public function PortfolioApproval(ActivityDiary $activity)
+    public function PortfolioApproval(Portfolio $portfolio)
     {
         try {
             $activity->update([
@@ -2007,6 +2007,7 @@ class MakerController extends Controller
             ->withQueryString();
         
         $siteVisits = $property->siteVisits()
+            ->with('checklist')
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
@@ -2074,7 +2075,7 @@ class MakerController extends Controller
     }
 
     // Lease Module
-    public function leaseIndex(Property $property)
+    public function LeaseIndex(Property $property)
     {
         // Get all tenants for this property
         $tenantIds = $property->tenants->pluck('id');
@@ -2294,7 +2295,7 @@ class MakerController extends Controller
 
     public function ChecklistCreate(Property $property)
     {
-        $siteVisits = SiteVisit::where('status', 'Active')->get();
+        $siteVisits = SiteVisit::where('status', 'active')->get();
         return view('maker.checklist.create', compact('property', 'siteVisits'));
     }
 
@@ -2315,7 +2316,7 @@ class MakerController extends Controller
 
     public function ChecklistEdit(Checklist $checklist)
     {
-        $siteVisits = SiteVisit::where('status', 'Active')->get();
+        $siteVisits = SiteVisit::where('status', 'active')->get();
         return view('maker.checklist.edit', compact('checklist', 'siteVisits'));
     }
 

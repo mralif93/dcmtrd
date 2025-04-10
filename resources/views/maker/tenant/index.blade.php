@@ -172,14 +172,26 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $tenant->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                            {{ ucfirst($tenant->status) }}
-                                        </span>
-                                        <!-- @if($isExpiringSoon)
-                                            <span class="ml-1 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                Expiring Soon
-                                            </span>
-                                        @endif -->
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {{ match(strtolower($tenant->status)) {
+                                            'completed' => 'bg-green-100 text-green-800',
+                                            'scheduled' => 'bg-blue-100 text-blue-800',
+                                            'cancelled' => 'bg-red-100 text-red-800',
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            'draft' => 'bg-blue-100 text-blue-800',
+                                            'withdrawn' => 'bg-purple-100 text-purple-800',
+                                            'in progress' => 'bg-indigo-100 text-indigo-800',
+                                            'on hold' => 'bg-orange-100 text-orange-800',
+                                            'reviewing' => 'bg-teal-100 text-teal-800',
+                                            'approved' => 'bg-emerald-100 text-emerald-800',
+                                            'expired' => 'bg-rose-100 text-rose-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
+                                        {{ ucfirst($tenant->status) }}
+                                    </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end space-x-2">
@@ -272,7 +284,24 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $visit->status_badge_class }}">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {{ match(strtolower($visit->status)) {
+                                            'completed' => 'bg-green-100 text-green-800',
+                                            'scheduled' => 'bg-blue-100 text-blue-800',
+                                            'cancelled' => 'bg-red-100 text-red-800',
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            'draft' => 'bg-blue-100 text-blue-800',
+                                            'withdrawn' => 'bg-purple-100 text-purple-800',
+                                            'in progress' => 'bg-indigo-100 text-indigo-800',
+                                            'on hold' => 'bg-orange-100 text-orange-800',
+                                            'reviewing' => 'bg-teal-100 text-teal-800',
+                                            'approved' => 'bg-emerald-100 text-emerald-800',
+                                            'expired' => 'bg-rose-100 text-rose-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         {{ ucfirst($visit->status) }}
                                     </span>
                                 </td>
@@ -289,6 +318,13 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                         </a>
+                                        @if($visit->checklist)
+                                            <a href="{{ route('checklist-m.show', $visit->checklist) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                                </svg>
+                                            </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
