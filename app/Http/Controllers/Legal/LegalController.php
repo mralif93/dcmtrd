@@ -27,10 +27,16 @@ class LegalController extends Controller
         return view('legal.index', compact('checklists'));
     }
 
+    // Site Visit Module
+    public function SiteVisitShow(SiteVisit $siteVisit)
+    {
+        return view('legal.site-visit.show', compact('siteVisit'));
+    }
+
     // Checklist Module
     public function ChecklistEdit(Checklist $checklist)
     {
-        $siteVisits = SiteVisit::where('status', 'Active')->get();
+        $siteVisits = SiteVisit::where('status', 'active')->get();
         return view('legal.checklist.edit', compact('checklist', 'siteVisits'));
     }
 

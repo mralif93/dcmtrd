@@ -135,10 +135,25 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            {{ $checklist->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                               ($checklist->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
-                                            {{ ucfirst($checklist->status ?? 'N/A') }}
+                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ match(strtolower($checklist->status)) {
+                                                'completed' => 'bg-green-100 text-green-800',
+                                                'scheduled' => 'bg-blue-100 text-blue-800',
+                                                'cancelled' => 'bg-red-100 text-red-800',
+                                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                                'active' => 'bg-green-100 text-green-800',
+                                                'inactive' => 'bg-gray-100 text-gray-800',
+                                                'rejected' => 'bg-red-100 text-red-800',
+                                                'draft' => 'bg-blue-100 text-blue-800',
+                                                'withdrawn' => 'bg-purple-100 text-purple-800',
+                                                'in progress' => 'bg-indigo-100 text-indigo-800',
+                                                'on hold' => 'bg-orange-100 text-orange-800',
+                                                'reviewing' => 'bg-teal-100 text-teal-800',
+                                                'approved' => 'bg-emerald-100 text-emerald-800',
+                                                'expired' => 'bg-rose-100 text-rose-800',
+                                                default => 'bg-gray-100 text-gray-800'
+                                            } }}">
+                                            {{ ucfirst($checklist->status) }}
                                         </span>
                                         @if($checklist->approval_datetime)
                                             <div class="text-xs text-gray-500 mt-1">
@@ -148,6 +163,11 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end space-x-2">
+                                            <a href="{{ route('checklist-l.edit', $checklist) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </a>
                                             <a href="{{ route('checklist-l.show', $checklist) }}" class="text-indigo-600 hover:text-indigo-900">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>

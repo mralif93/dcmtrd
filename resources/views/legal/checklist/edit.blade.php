@@ -150,7 +150,7 @@
                         </div>
 
                         <!-- 2.0 Tenancy Agreement -->
-                        <div class="p-4 mb-6">
+                        <div class="hidden p-4 mb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">2.0 Tenancy Agreement</h3>
                             
                             <div class="overflow-x-auto">
@@ -188,7 +188,7 @@
                         </div>
 
                         <!-- 3.0 External Area Conditions -->
-                        <div class="p-4 mb-6">
+                        <div class="hidden p-4 mb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">3.0 External Area Conditions</h3>
                             
                             <div class="overflow-x-auto">
@@ -327,7 +327,7 @@
                         </div>
 
                         <!-- 4.0 Internal Area Conditions -->
-                        <div class="p-4 mb-6">
+                        <div class="hidden p-4 mb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">4.0 Internal Area Conditions</h3>
                             
                             <div class="overflow-x-auto">
@@ -482,7 +482,7 @@
                         </div>
 
                         <!-- 5.0 Property Development -->
-                        <div class="p-4 mb-6">
+                        <div class="hidden p-4 mb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">5.0 Property Development</h3>
                             
                             <div class="overflow-x-auto">
@@ -553,7 +553,7 @@
                         </div>
 
                         <!-- 5.4 Disposal/Installation/Replacement -->
-                        <div class="p-4 mb-6">
+                        <div class="hidden p-4 mb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">5.4 Disposal/Installation/Replacement</h3>
                             
                             <div class="overflow-x-auto">
@@ -658,7 +658,7 @@
                         </div>
 
                         <!-- 5.5 Other Proposals/Approvals -->
-                        <div class="p-4 mb-6">
+                        <div class="hidden p-4 mb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">5.5 Other Proposals/Approvals</h3>
                             
                             <div class="overflow-x-auto">

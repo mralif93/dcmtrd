@@ -2326,9 +2326,9 @@ class MakerController extends Controller
 
         try {
             $checklist->update($validated);
-            return redirect()->route('tenant-m.index', $checklist->property)->with('success', 'Checklist created successfully.');
+            return redirect()->route('checklist-m.index', $checklist->siteVisit)->with('success', 'Checklist created successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error creating checklist: ' . $e->getMessage());
+            return back()->with('error', 'Error updating checklist: ' . $e->getMessage());
         }
     }
 
