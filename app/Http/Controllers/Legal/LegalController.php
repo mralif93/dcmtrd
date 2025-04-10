@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Legal;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 // REITs
@@ -42,7 +43,7 @@ class LegalController extends Controller
 
         try {
             $checklist->update($validated);
-            return redirect()->route('legal.dashboard')->with('success', 'Checklist updated successfully.');
+            return redirect()->route('legal.dashboard', ['section' => 'reits'])->with('success', 'Checklist updated successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error updating checklist: ' . $e->getMessage());
         }
