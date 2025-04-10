@@ -296,7 +296,8 @@
                 Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'reits']) : 
                 (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'reits']) : 
                 (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'reits']) : 
-                route('dashboard', ['section' => 'reits']))) 
+                (Auth::user()->role === 'legal' ? route('legal.dashboard', ['section' => 'reits']) : 
+                route('dashboard', ['section' => 'reits'])))) 
             }}" class="card reit-card shadow-lg">
                 <div class="p-8">
                     <div class="icon-container green-bg-light">
@@ -319,7 +320,8 @@
                 Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'legal']) : 
                 (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'legal']) : 
                 (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'legal']) : 
-                route('dashboard', ['section' => 'legal']))) 
+                (Auth::user()->role === 'legal' ? route('legal.dashboard', ['section' => 'legal']) : 
+                route('dashboard', ['section' => 'legal'])))) 
             }}" class="card legal-card shadow-lg">
                 <div class="p-8">
                     <div class="icon-container purple-bg-light">
@@ -342,7 +344,7 @@
                 Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'compliance']) : 
                 (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'compliance']) : 
                 (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'compliance']) : 
-                route('dashboard', ['section' => 'compliance']))) 
+                route('compliance.dashboard', ['section' => 'compliance']))) 
             }}" class="card compliance-card shadow-lg">
                 <div class="p-8">
                     <div class="icon-container yellow-bg-light">

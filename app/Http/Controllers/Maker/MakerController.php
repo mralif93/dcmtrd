@@ -2313,13 +2313,13 @@ class MakerController extends Controller
         }
     }
 
-    public function ChecklistEdit(Request $request, Checklist $checklist)
+    public function ChecklistEdit(Checklist $checklist)
     {
         $siteVisits = SiteVisit::where('status', 'Active')->get();
         return view('maker.checklist.edit', compact('checklist', 'siteVisits'));
     }
 
-    public function ChecklistUpdate()
+    public function ChecklistUpdate(Request $request, Checklist $checklist)
     {
         $validated = $this->ChecklistValidate($request);
 

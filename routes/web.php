@@ -356,6 +356,11 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
 Route::middleware(['auth', 'two-factor', 'role:legal'])->group(function () {
     // Dashboard
     Route::get('/legal/dashboard', [LegalController::class, 'index'])->name('legal.dashboard');
+
+    // Checklist Module
+    Route::get('legal/checklist/{checklist}/edit', [LegalController::class, 'ChecklistEdit'])->name('checklist-l.edit')->middleware('permission:REITS');
+    Route::patch('legal/checklist/{checklist}/update', [LegalController::class, 'ChecklistUpdate'])->name('checklist-l.update')->middleware('permission:REITS');
+    Route::get('legal/checklist/{checklist}/show', [LegalController::class, 'ChecklistShow'])->name('checklist-l.show')->middleware('permission:REITS');
 });
 
 // Compliance routes
