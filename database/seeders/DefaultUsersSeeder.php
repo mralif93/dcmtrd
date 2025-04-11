@@ -541,8 +541,9 @@ class DefaultUsersSeeder extends Seeder
         // Now we need to create the permission_users relationships
         $permissionUserData = [];
         
-        // Admin users get DCMTRD permission
+        // Admin users get ALL permissions
         $adminEmails = [
+            'admin@example.com',
             'ashraf_azmi@artrustees.com.my',
             'muqri.amin@artrustees.com.my',
             'nurfarzana@artrustees.com.my'
@@ -550,9 +551,32 @@ class DefaultUsersSeeder extends Seeder
         
         foreach ($adminEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
+            
+            // Give admin users all permissions
             $permissionUserData[] = [
                 'user_id' => $userId,
                 'permission_id' => $dcmtrdPermissionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+            
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $reitsPermissionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+            
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $legalPermissionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+            
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $compliancePermissionId,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

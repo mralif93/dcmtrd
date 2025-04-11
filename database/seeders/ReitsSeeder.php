@@ -129,7 +129,11 @@ class ReitsSeeder extends Seeder
             ['name' => 'Self Storage', 'description' => 'Self-storage facilities'],
             ['name' => 'Agricultural', 'description' => 'Agricultural land investments'],
             ['name' => 'Leisure', 'description' => 'Recreation and leisure facilities'],
-            ['name' => 'Student Housing', 'description' => 'Purpose-built student accommodations']
+            ['name' => 'Student Housing', 'description' => 'Purpose-built student accommodations'],
+            ['name' => 'Real Estate', 'description' => 'Properties including residential, commercial, and industrial buildings.'],
+            ['name' => 'Healthcare Facilities', 'description' => 'Hospitals, clinics, and wellness centers under management.'],
+            ['name' => 'Retail Spaces', 'description' => 'Shopping malls and retail properties leased to tenants.'],
+            ['name' => 'Office Buildings', 'description' => 'Corporate office spaces and business hubs.'],
         ];
 
         foreach ($portfolioTypes as $type) {
@@ -148,125 +152,36 @@ class ReitsSeeder extends Seeder
         // Seed Portfolios - MODIFIED: Adding all 15 portfolios here
         $portfolios = [
             [
-                'portfolio_types_id' => 1, // Residential
-                'portfolio_name' => 'Skyline Residences',
-                'annual_report' => 'reports/skyline_annual_2024.pdf',
-                'trust_deed_document' => 'legal/skyline_trust_deed.pdf',
-                'insurance_document' => 'insurance/skyline_policy.pdf',
-                'valuation_report' => 'valuation/skyline_q4_2024.pdf',
+                'portfolio_types_id' => 1,
+                'portfolio_name' => 'AL AQAR',
+                'annual_report' => 'annual_reports/al_aqar_2024.pdf',
+                'trust_deed_document' => 'trust_deeds/al_aqar_trust.pdf',
+                'insurance_document' => 'insurance/al_aqar_insurance.pdf',
+                'valuation_report' => 'valuations/al_aqar_valuation.pdf',
             ],
             [
-                'portfolio_types_id' => 2, // Commercial
-                'portfolio_name' => 'Downtown Business Center',
-                'annual_report' => 'reports/dbc_annual_2024.pdf',
-                'trust_deed_document' => 'legal/dbc_trust_deed.pdf',
-                'insurance_document' => 'insurance/dbc_policy.pdf',
-                'valuation_report' => 'valuation/dbc_q3_2024.pdf',
+                'portfolio_types_id' => 1,
+                'portfolio_name' => 'AL SALAM',
+                'annual_report' => 'annual_reports/al_salam_2024.pdf',
+                'trust_deed_document' => 'trust_deeds/al_salam_trust.pdf',
+                'insurance_document' => 'insurance/al_salam_insurance.pdf',
+                'valuation_report' => 'valuations/al_salam_valuation.pdf',
             ],
             [
-                'portfolio_types_id' => 3, // Mixed Use
-                'portfolio_name' => 'Urban Complex',
-                'annual_report' => 'reports/urban_annual_2024.pdf',
-                'trust_deed_document' => 'legal/urban_trust_deed.pdf',
-                'insurance_document' => 'insurance/urban_policy.pdf',
-                'valuation_report' => 'valuation/urban_q2_2024.pdf',
+                'portfolio_types_id' => 1,
+                'portfolio_name' => 'AMANAH HARTA TANAH PNB (AHP)',
+                'annual_report' => 'annual_reports/amanah_harta_tanah_pnb_2024.pdf',
+                'trust_deed_document' => 'trust_deeds/amanah_harta_tanah_pnb_trust.pdf',
+                'insurance_document' => 'insurance/amanah_harta_tanah_pnb_insurance.pdf',
+                'valuation_report' => 'valuations/amanah_harta_tanah_pnb_valuation.pdf',
             ],
             [
-                'portfolio_types_id' => 4, // Retail
-                'portfolio_name' => 'Central Shopping Mall',
-                'annual_report' => 'reports/csm_annual_2024.pdf',
-                'trust_deed_document' => 'legal/csm_trust_deed.pdf',
-                'insurance_document' => 'insurance/csm_policy.pdf',
-                'valuation_report' => 'valuation/csm_q1_2024.pdf',
-            ],
-            [
-                'portfolio_types_id' => 5, // Industrial
-                'portfolio_name' => 'Tech Industrial Park',
-                'annual_report' => 'reports/tip_annual_2024.pdf',
-                'trust_deed_document' => 'legal/tip_trust_deed.pdf',
-                'insurance_document' => 'insurance/tip_policy.pdf',
-                'valuation_report' => 'valuation/tip_q4_2024.pdf',
-            ],
-            // NEW ADDITIONS BELOW - These portfolios were missing
-            [
-                'portfolio_types_id' => 6, // Office
-                'portfolio_name' => 'Executive Tower',
-                'annual_report' => 'reports/et_annual_2024.pdf',
-                'trust_deed_document' => 'legal/et_trust_deed.pdf',
-                'insurance_document' => 'insurance/et_policy.pdf',
-                'valuation_report' => 'valuation/et_q3_2024.pdf',
-            ],
-            [
-                'portfolio_types_id' => 7, // Hospitality
-                'portfolio_name' => 'Luxury Resort Collection',
-                'annual_report' => 'reports/lrc_annual_2024.pdf',
-                'trust_deed_document' => 'legal/lrc_trust_deed.pdf',
-                'insurance_document' => 'insurance/lrc_policy.pdf',
-                'valuation_report' => 'valuation/lrc_q2_2024.pdf',
-            ],
-            [
-                'portfolio_types_id' => 8, // Healthcare
-                'portfolio_name' => 'Medical Plaza',
-                'annual_report' => 'reports/mp_annual_2024.pdf',
-                'trust_deed_document' => 'legal/mp_trust_deed.pdf',
-                'insurance_document' => 'insurance/mp_policy.pdf',
-                'valuation_report' => 'valuation/mp_q1_2024.pdf',
-            ],
-            [
-                'portfolio_types_id' => 9, // Educational
-                'portfolio_name' => 'Campus Properties',
-                'annual_report' => 'reports/cp_annual_2024.pdf',
-                'trust_deed_document' => 'legal/cp_trust_deed.pdf',
-                'insurance_document' => 'insurance/cp_policy.pdf',
-                'valuation_report' => 'valuation/cp_q4_2023.pdf',
-            ],
-            [
-                'portfolio_types_id' => 10, // Logistics
-                'portfolio_name' => 'Distribution Hub',
-                'annual_report' => 'reports/dh_annual_2024.pdf',
-                'trust_deed_document' => 'legal/dh_trust_deed.pdf',
-                'insurance_document' => 'insurance/dh_policy.pdf',
-                'valuation_report' => 'valuation/dh_q3_2023.pdf',
-            ],
-            [
-                'portfolio_types_id' => 11, // Data Centers
-                'portfolio_name' => 'Cloud Infrastructure',
-                'annual_report' => 'reports/ci_annual_2024.pdf',
-                'trust_deed_document' => 'legal/ci_trust_deed.pdf',
-                'insurance_document' => 'insurance/ci_policy.pdf',
-                'valuation_report' => 'valuation/ci_q2_2023.pdf',
-            ],
-            [
-                'portfolio_types_id' => 12, // Self Storage
-                'portfolio_name' => 'SecureSpace Facilities',
-                'annual_report' => 'reports/ssf_annual_2024.pdf',
-                'trust_deed_document' => 'legal/ssf_trust_deed.pdf',
-                'insurance_document' => 'insurance/ssf_policy.pdf',
-                'valuation_report' => 'valuation/ssf_q1_2023.pdf',
-            ],
-            [
-                'portfolio_types_id' => 13, // Agricultural
-                'portfolio_name' => 'Farmland Investments',
-                'annual_report' => 'reports/fi_annual_2024.pdf',
-                'trust_deed_document' => 'legal/fi_trust_deed.pdf',
-                'insurance_document' => 'insurance/fi_policy.pdf',
-                'valuation_report' => 'valuation/fi_q4_2022.pdf',
-            ],
-            [
-                'portfolio_types_id' => 14, // Leisure
-                'portfolio_name' => 'Recreation Parks',
-                'annual_report' => 'reports/rp_annual_2024.pdf',
-                'trust_deed_document' => 'legal/rp_trust_deed.pdf',
-                'insurance_document' => 'insurance/rp_policy.pdf',
-                'valuation_report' => 'valuation/rp_q3_2022.pdf',
-            ],
-            [
-                'portfolio_types_id' => 15, // Student Housing
-                'portfolio_name' => 'University Accommodations',
-                'annual_report' => 'reports/ua_annual_2024.pdf',
-                'trust_deed_document' => 'legal/ua_trust_deed.pdf',
-                'insurance_document' => 'insurance/ua_policy.pdf',
-                'valuation_report' => 'valuation/ua_q2_2022.pdf',
+                'portfolio_types_id' => 1,
+                'portfolio_name' => 'AMANAH HARTANAH BUMIPUTERA (AHB)',
+                'annual_report' => 'annual_reports/amanah_hartanah_bumiputera_2024.pdf',
+                'trust_deed_document' => 'trust_deeds/amanah_hartanah_bumiputera_trust.pdf',
+                'insurance_document' => 'insurance/amanah_hartanah_bumiputera_insurance.pdf',
+                'valuation_report' => 'valuations/amanah_hartanah_bumiputera_valuation.pdf',
             ],
         ];
 
@@ -289,428 +204,688 @@ class ReitsSeeder extends Seeder
 
         // Seed Properties
         $properties = [
+            // Portfolio ID 1 (Al Aqar)
             [
-                'portfolio_id' => 1, // Skyline Residences
-                'category' => 'Apartments',
-                'batch_no' => 'SR-001',
-                'name' => 'Skyline Tower A',
-                'address' => '123 Skyview Road',
-                'city' => 'Singapore',
-                'state' => 'Central Region',
-                'country' => 'Singapore',
-                'postal_code' => '123456',
-                'land_size' => 2500.00,
-                'gross_floor_area' => 15000.00,
-                'usage' => 'Residential',
-                'value' => 25000000.00,
-                'ownership' => 'Freehold',
-                'share_amount' => 25000000.00,
-                'market_value' => 28000000.00, 
-                'prepared_by' => 'John Smith',
-                'verified_by' => 'Sarah Johnson',
-                'remarks' => 'Luxury apartment building with 25 floors'
-            ],
-            [
-                'portfolio_id' => 1, // Skyline Residences
-                'category' => 'Apartments',
-                'batch_no' => 'SR-002',
-                'name' => 'Skyline Tower B',
-                'address' => '125 Skyview Road',
-                'city' => 'Singapore',
-                'state' => 'Central Region',
-                'country' => 'Singapore',
-                'postal_code' => '123457',
-                'land_size' => 2300.00,
-                'gross_floor_area' => 14000.00,
-                'usage' => 'Residential',
-                'value' => 23000000.00,
-                'ownership' => 'Freehold',
-                'share_amount' => 23000000.00,
-                'market_value' => 25500000.00, 
-                'prepared_by' => 'John Smith',
-                'verified_by' => 'Sarah Johnson',
-                'remarks' => 'Luxury apartment building with 23 floors'
-            ],
-            [
-                'portfolio_id' => 2, // Downtown Business Center
-                'category' => 'Office',
-                'batch_no' => 'DBC-001',
-                'name' => 'Central Business Tower',
-                'address' => '500 Business Avenue',
-                'city' => 'Kuala Lumpur',
-                'state' => 'Federal Territory',
-                'country' => 'Malaysia',
-                'postal_code' => '50000',
-                'land_size' => 3500.00,
-                'gross_floor_area' => 28000.00,
-                'usage' => 'Commercial',
-                'value' => 45000000.00,
-                'ownership' => 'Leasehold',
-                'share_amount' => 45000000.00,
-                'market_value' => 48000000.00, 
-                'prepared_by' => 'David Wong',
-                'verified_by' => 'Michelle Tan',
-                'remarks' => 'Prime office location in the financial district'
-            ],
-            [
-                'portfolio_id' => 3, // Urban Complex
-                'category' => 'Mixed Use',
-                'batch_no' => 'UC-001',
-                'name' => 'Urban Heights',
-                'address' => '888 Metro Boulevard',
-                'city' => 'Jakarta',
-                'state' => 'Jakarta Capital Region',
-                'country' => 'Indonesia',
-                'postal_code' => '10110',
-                'land_size' => 6500.00,
-                'gross_floor_area' => 45000.00,
-                'usage' => 'Mixed Use',
-                'value' => 62000000.00,
-                'ownership' => 'Freehold',
-                'share_amount' => 62000000.00,
-                'market_value' => 68000000.00, 
-                'prepared_by' => 'Ahmad Yusof',
-                'verified_by' => 'Nadia Ibrahim',
-                'remarks' => 'Combined residential and commercial complex'
-            ],
-            [
-                'portfolio_id' => 4, // Central Shopping Mall
-                'category' => 'Retail',
-                'batch_no' => 'CSM-001',
-                'name' => 'Central Mall Plaza',
-                'address' => '100 Shopping Avenue',
-                'city' => 'Bangkok',
-                'state' => 'Bangkok Metropolitan',
-                'country' => 'Thailand',
-                'postal_code' => '10330',
-                'land_size' => 8000.00,
-                'gross_floor_area' => 52000.00,
-                'usage' => 'Retail',
-                'value' => 78000000.00,
-                'ownership' => 'Freehold',
-                'share_amount' => 78000000.00,
-                'market_value' => 85000000.00, 
-                'prepared_by' => 'Somchai Patel',
-                'verified_by' => 'Picha Wong',
-                'remarks' => 'Major shopping mall with 300 retail units'
-            ],
-            [
-                'portfolio_id' => 5, // Tech Industrial Park
-                'category' => 'Industrial',
-                'batch_no' => 'TIP-001',
-                'name' => 'Tech Manufacturing Facility',
-                'address' => '25 Industrial Road',
-                'city' => 'Penang',
-                'state' => 'Penang',
-                'country' => 'Malaysia',
-                'postal_code' => '11900',
-                'land_size' => 12000.00,
-                'gross_floor_area' => 18000.00,
-                'usage' => 'Industrial',
-                'value' => 32000000.00,
-                'ownership' => 'Leasehold',
-                'share_amount' => 32000000.00,
-                'market_value' => 34000000.00, 
-                'prepared_by' => 'Tan Wei Liang',
-                'verified_by' => 'Lim Mei Ling',
-                'remarks' => 'Advanced manufacturing facility for electronics'
-            ],
-            [
-                'portfolio_id' => 6, // Executive Tower
-                'category' => 'Office',
-                'batch_no' => 'ET-001',
-                'name' => 'Executive Plaza',
-                'address' => '1 Corporate Drive',
-                'city' => 'Singapore',
-                'state' => 'Central Region',
-                'country' => 'Singapore',
-                'postal_code' => '068883',
-                'land_size' => 3200.00,
-                'gross_floor_area' => 35000.00,
-                'usage' => 'Commercial',
-                'value' => 55000000.00,
-                'ownership' => 'Freehold',
-                'share_amount' => 55000000.00,
-                'market_value' => 60000000.00, 
-                'prepared_by' => 'Jennifer Koh',
-                'verified_by' => 'Michael Lee',
-                'remarks' => 'Grade A office building in prime CBD location'
-            ],
-            [
-                'portfolio_id' => 7, // Luxury Resort Collection
-                'category' => 'Hospitality',
-                'batch_no' => 'LRC-001',
-                'name' => 'Beach Resort & Spa',
-                'address' => '25 Beachfront Avenue',
-                'city' => 'Bali',
-                'state' => 'Badung',
-                'country' => 'Indonesia',
-                'postal_code' => '80361',
-                'land_size' => 25000.00,
-                'gross_floor_area' => 18000.00,
-                'usage' => 'Hospitality',
-                'value' => 45000000.00,
-                'ownership' => 'Leasehold',
-                'share_amount' => 45000000.00,
-                'market_value' => 52000000.00, 
-                'prepared_by' => 'Putu Wijaya',
-                'verified_by' => 'Made Sukma',
-                'remarks' => '5-star beachfront resort with 120 rooms and villas'
-            ],
-            [
-                'portfolio_id' => 8, // Medical Plaza
+                'portfolio_id' => 1,
                 'category' => 'Healthcare',
-                'batch_no' => 'MP-001',
-                'name' => 'Central Medical Center',
-                'address' => '50 Health Boulevard',
-                'city' => 'Manila',
-                'state' => 'Metro Manila',
-                'country' => 'Philippines',
-                'postal_code' => '1000',
-                'land_size' => 5500.00,
+                'batch_no' => 'AQ-001',
+                'name' => 'KUANTAN WELLNESS CENTRE',
+                'address' => '123 Wellness Avenue',
+                'city' => 'Kuantan',
+                'state' => 'Pahang',
+                'country' => 'Malaysia',
+                'postal_code' => '25000',
+                'land_size' => 3000.00,
+                'gross_floor_area' => 18000.00,
+                'usage' => 'Healthcare',
+                'value' => 20000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 20000000.00,
+                'market_value' => 22000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Modern wellness facility'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-002',
+                'name' => 'KPJ KAJANG SPECIALIST HOSPITAL',
+                'address' => '456 Medical Drive',
+                'city' => 'Kajang',
+                'state' => 'Selangor',
+                'country' => 'Malaysia',
+                'postal_code' => '43000',
+                'land_size' => 5000.00,
                 'gross_floor_area' => 25000.00,
                 'usage' => 'Healthcare',
-                'value' => 38000000.00,
-                'ownership' => 'Freehold',
-                'share_amount' => 38000000.00,
-                'market_value' => 40000000.00, 
-                'prepared_by' => 'Maria Santos',
-                'verified_by' => 'Jose Cruz',
-                'remarks' => 'Modern medical facility with specialized units'
+                'value' => 35000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 35000000.00,
+                'market_value' => 38000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Specialist hospital facility'
             ],
             [
-                'portfolio_id' => 9, // Campus Properties
-                'category' => 'Educational',
-                'batch_no' => 'CP-001',
-                'name' => 'University Research Building',
-                'address' => '15 Academia Drive',
-                'city' => 'Singapore',
-                'state' => 'Western Region',
-                'country' => 'Singapore',
-                'postal_code' => '639798',
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-003',
+                'name' => 'KPJ SELANGOR SPECIALIST HOSPITAL',
+                'address' => '789 Healthcare Boulevard',
+                'city' => 'Shah Alam',
+                'state' => 'Selangor',
+                'country' => 'Malaysia',
+                'postal_code' => '40000',
+                'land_size' => 6000.00,
+                'gross_floor_area' => 30000.00,
+                'usage' => 'Healthcare',
+                'value' => 40000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 40000000.00,
+                'market_value' => 43000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Comprehensive specialist hospital'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-004',
+                'name' => 'KPJ PERDANA SPECIALIST HOSPITAL',
+                'address' => '101 Medical Center Road',
+                'city' => 'Kota Bharu',
+                'state' => 'Kelantan',
+                'country' => 'Malaysia',
+                'postal_code' => '15000',
                 'land_size' => 4500.00,
-                'gross_floor_area' => 18000.00,
-                'usage' => 'Educational',
-                'value' => 28000000.00,
+                'gross_floor_area' => 20000.00,
+                'usage' => 'Healthcare',
+                'value' => 30000000.00,
                 'ownership' => 'Leasehold',
-                'share_amount' => 28000000.00,
-                'market_value' => 30000000.00, 
-                'prepared_by' => 'Ravi Kumar',
-                'verified_by' => null,
-                'remarks' => 'Research facility leased to major university'
+                'share_amount' => 30000000.00,
+                'market_value' => 32000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Specialized medical facility'
             ],
             [
-                'portfolio_id' => 10, // Distribution Hub
-                'category' => 'Logistics',
-                'batch_no' => 'DH-001',
-                'name' => 'Central Distribution Warehouse',
-                'address' => '8 Logistics Way',
-                'city' => 'Ho Chi Minh City',
-                'state' => 'District 9',
-                'country' => 'Vietnam',
-                'postal_code' => '700000',
-                'land_size' => 18000.00,
-                'gross_floor_area' => 15000.00,
-                'usage' => 'Logistics',
-                'value' => 25000000.00,
-                'ownership' => 'Leasehold',
-                'share_amount' => 25000000.00,
-                'market_value' => 27000000.00, 
-                'prepared_by' => 'Nguyen Van Minh',
-                'verified_by' => 'Tran Thi Hoa',
-                'remarks' => 'Modern distribution center with cold storage'
-            ],
-            [
-                'portfolio_id' => 11, // Cloud Infrastructure
-                'category' => 'Data Center',
-                'batch_no' => 'CI-001',
-                'name' => 'Cloud Data Center',
-                'address' => '10 Digital Avenue',
-                'city' => 'Singapore',
-                'state' => 'Eastern Region',
-                'country' => 'Singapore',
-                'postal_code' => '486048',
-                'land_size' => 8500.00,
-                'gross_floor_area' => 12000.00,
-                'usage' => 'Technology',
-                'value' => 65000000.00,
-                'ownership' => 'Freehold',
-                'share_amount' => 65000000.00,
-                'market_value' => 70000000.00, 
-                'prepared_by' => 'Desmond Lim',
-                'verified_by' => 'Rachel Teo',
-                'remarks' => 'Tier 4 data center with redundant systems'
-            ],
-            [
-                'portfolio_id' => 12, // SecureSpace Facilities
-                'category' => 'Self Storage',
-                'batch_no' => 'SSF-001',
-                'name' => 'SecureSpace Storage Center',
-                'address' => '55 Storage Boulevard',
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-005',
+                'name' => 'DAMAI WELLNESS CENTRE',
+                'address' => '250 Damai Street',
                 'city' => 'Kuala Lumpur',
                 'state' => 'Federal Territory',
                 'country' => 'Malaysia',
-                'postal_code' => '51000',
-                'land_size' => 10000.00,
-                'gross_floor_area' => 8500.00,
-                'usage' => 'Storage',
-                'value' => 15000000.00,
-                'ownership' => 'Freehold',
-                'share_amount' => 15000000.00,
-                'market_value' => 16500000.00, 
-                'prepared_by' => 'Amir Hassan',
-                'verified_by' => 'Lina Abdullah',
-                'remarks' => 'Modern climate-controlled storage facility with 24/7 security'
+                'postal_code' => '50400',
+                'land_size' => 2800.00,
+                'gross_floor_area' => 15000.00,
+                'usage' => 'Healthcare',
+                'value' => 25000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 25000000.00,
+                'market_value' => 27000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Wellness and rehabilitation center'
             ],
             [
-                'portfolio_id' => 13, // Farmland Investments
-                'category' => 'Agricultural',
-                'batch_no' => 'FI-001',
-                'name' => 'Green Valley Estates',
-                'address' => '200 Rural Highway',
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-006',
+                'name' => 'KPJ PENANG SPECIALIST HOSPITAL',
+                'address' => '570 Medical Complex',
+                'city' => 'Georgetown',
+                'state' => 'Penang',
+                'country' => 'Malaysia',
+                'postal_code' => '10450',
+                'land_size' => 5500.00,
+                'gross_floor_area' => 28000.00,
+                'usage' => 'Healthcare',
+                'value' => 38000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 38000000.00,
+                'market_value' => 42000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Advanced specialty hospital'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-007',
+                'name' => 'KPJ DAMANSARA SPECIALIST HOSPITAL',
+                'address' => '119 Damansara Heights',
+                'city' => 'Petaling Jaya',
+                'state' => 'Selangor',
+                'country' => 'Malaysia',
+                'postal_code' => '50490',
+                'land_size' => 7000.00,
+                'gross_floor_area' => 35000.00,
+                'usage' => 'Healthcare',
+                'value' => 45000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 45000000.00,
+                'market_value' => 48000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Premium specialist hospital'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-008',
+                'name' => 'KPJ AMPANG PUTERI SPECIALIST HOSPITAL',
+                'address' => '1 Jalan Ampang',
+                'city' => 'Ampang',
+                'state' => 'Selangor',
+                'country' => 'Malaysia',
+                'postal_code' => '68000',
+                'land_size' => 6500.00,
+                'gross_floor_area' => 32000.00,
+                'usage' => 'Healthcare',
+                'value' => 42000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 42000000.00,
+                'market_value' => 45000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Comprehensive medical center'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-009',
+                'name' => 'KPJ PUTERI SPECIALIST HOSPITAL',
+                'address' => '33 Jalan Puteri',
                 'city' => 'Johor Bahru',
                 'state' => 'Johor',
                 'country' => 'Malaysia',
                 'postal_code' => '80100',
-                'land_size' => 150000.00,
-                'gross_floor_area' => 2500.00,
-                'usage' => 'Agricultural',
-                'value' => 18000000.00,
-                'ownership' => 'Freehold',
-                'share_amount' => 18000000.00,
-                'market_value' => 20000000.00, 
-                'prepared_by' => 'Ahmad Rizal',
-                'verified_by' => 'Siti Aminah',
-                'remarks' => 'Prime agricultural land with irrigation infrastructure'
-            ],
-            [
-                'portfolio_id' => 14, // Recreation Parks
-                'category' => 'Leisure',
-                'batch_no' => 'RP-001',
-                'name' => 'Family Fun Park',
-                'address' => '75 Entertainment Drive',
-                'city' => 'Bangkok',
-                'state' => 'Bangkok Metropolitan',
-                'country' => 'Thailand',
-                'postal_code' => '10250',
-                'land_size' => 35000.00,
-                'gross_floor_area' => 8000.00,
-                'usage' => 'Recreation',
-                'value' => 22000000.00,
+                'land_size' => 5200.00,
+                'gross_floor_area' => 26000.00,
+                'usage' => 'Healthcare',
+                'value' => 36000000.00,
                 'ownership' => 'Leasehold',
-                'share_amount' => 22000000.00,
-                'market_value' => 24000000.00, 
-                'prepared_by' => 'Supachai Wattana',
-                'verified_by' => 'Somchai Thongchai',
-                'remarks' => 'Family entertainment complex with indoor and outdoor attractions'
+                'share_amount' => 36000000.00,
+                'market_value' => 39000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Modern healthcare facility'
             ],
             [
-                'portfolio_id' => 15, // Student Housing
-                'category' => 'Residential',
-                'batch_no' => 'SH-001',
-                'name' => 'Campus View Residences',
-                'address' => '30 University Road',
-                'city' => 'Singapore',
-                'state' => 'Western Region',
-                'country' => 'Singapore',
-                'postal_code' => '639798',
-                'land_size' => 5500.00,
-                'gross_floor_area' => 30000.00,
-                'usage' => 'Student Housing',
-                'value' => 32000000.00,
-                'ownership' => 'Leasehold',
-                'share_amount' => 32000000.00,
-                'market_value' => 35000000.00, 
-                'prepared_by' => 'Jasmine Teo',
-                'verified_by' => 'Benjamin Tan',
-                'remarks' => 'Modern student housing complex with 500 beds near major universities'
-            ],
-            [
-                'portfolio_id' => 13, // Farmland Investments 
-                'category' => 'Agricultural',
-                'batch_no' => 'FI-002',
-                'name' => 'Sunshine Orchards',
-                'address' => '500 Plantation Road',
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-010',
+                'name' => 'KPJ IPOH SPECIALIST HOSPITAL',
+                'address' => '26 Jalan Raja',
                 'city' => 'Ipoh',
                 'state' => 'Perak',
                 'country' => 'Malaysia',
-                'postal_code' => '31300',
-                'land_size' => 80000.00,
-                'gross_floor_area' => 1200.00,
-                'usage' => 'Agricultural',
-                'value' => 12000000.00,
-                'ownership' => 'Freehold',
-                'share_amount' => 12000000.00,
-                'market_value' => 13500000.00, 
-                'prepared_by' => 'Lee Chong Wei',
-                'verified_by' => 'Tan Mei Lin',
-                'remarks' => 'Fruit orchard with processing facilities and visitor center'
-            ],
-            [
-                'portfolio_id' => 8, // Medical Plaza
-                'category' => 'Healthcare',
-                'batch_no' => 'MP-002',
-                'name' => 'Wellness Specialist Center',
-                'address' => '75 Healthcare Avenue',
-                'city' => 'Manila',
-                'state' => 'Metro Manila',
-                'country' => 'Philippines',
-                'postal_code' => '1001',
-                'land_size' => 3800.00,
-                'gross_floor_area' => 15000.00,
+                'postal_code' => '30450',
+                'land_size' => 5800.00,
+                'gross_floor_area' => 29000.00,
                 'usage' => 'Healthcare',
-                'value' => 25000000.00,
-                'ownership' => 'Freehold',
-                'share_amount' => 25000000.00,
-                'market_value' => 27500000.00, 
-                'prepared_by' => 'Maria Santos',
-                'verified_by' => 'Jose Cruz',
-                'remarks' => 'Specialized outpatient facility focused on preventive healthcare'
+                'value' => 38000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 38000000.00,
+                'market_value' => 41000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Full-service specialist hospital'
             ],
             [
-                'portfolio_id' => 6, // Executive Tower
-                'category' => 'Office',
-                'batch_no' => 'ET-002',
-                'name' => 'Innovation Hub',
-                'address' => '8 Technology Park',
-                'city' => 'Singapore',
-                'state' => 'Western Region',
-                'country' => 'Singapore',
-                'postal_code' => '619898',
-                'land_size' => 4500.00,
-                'gross_floor_area' => 20000.00,
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-011',
+                'name' => 'KPJ KLANG SPECIALIST HOSPITAL',
+                'address' => '300 Jalan Klang',
+                'city' => 'Klang',
+                'state' => 'Selangor',
+                'country' => 'Malaysia',
+                'postal_code' => '41200',
+                'land_size' => 5000.00,
+                'gross_floor_area' => 25000.00,
+                'usage' => 'Healthcare',
+                'value' => 34000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 34000000.00,
+                'market_value' => 37000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Specialist medical facility'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-012',
+                'name' => 'KPJ JOHOR SPECIALIST HOSPITAL',
+                'address' => '39 Jalan Tebrau',
+                'city' => 'Johor Bahru',
+                'state' => 'Johor',
+                'country' => 'Malaysia',
+                'postal_code' => '80100',
+                'land_size' => 6200.00,
+                'gross_floor_area' => 31000.00,
+                'usage' => 'Healthcare',
+                'value' => 40000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 40000000.00,
+                'market_value' => 43000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Advanced medical center'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Education',
+                'batch_no' => 'AQ-013',
+                'name' => 'KPJ INTERNATIONAL COLLEGE BUKIT MERTAJAM',
+                'address' => '100 College Road',
+                'city' => 'Bukit Mertajam',
+                'state' => 'Penang',
+                'country' => 'Malaysia',
+                'postal_code' => '14000',
+                'land_size' => 12000.00,
+                'gross_floor_area' => 40000.00,
+                'usage' => 'Education',
+                'value' => 50000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 50000000.00,
+                'market_value' => 53000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Medical education facility'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-014',
+                'name' => 'TAIPING MEDICAL CENTRE',
+                'address' => '5 Medical Park',
+                'city' => 'Taiping',
+                'state' => 'Perak',
+                'country' => 'Malaysia',
+                'postal_code' => '34000',
+                'land_size' => 4000.00,
+                'gross_floor_area' => 18000.00,
+                'usage' => 'Healthcare',
+                'value' => 28000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 28000000.00,
+                'market_value' => 30000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Regional medical center'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Education',
+                'batch_no' => 'AQ-015',
+                'name' => 'KPJH INTERNATIONAL COLLEGE NILAI',
+                'address' => '25 Education Park',
+                'city' => 'Nilai',
+                'state' => 'Negeri Sembilan',
+                'country' => 'Malaysia',
+                'postal_code' => '71800',
+                'land_size' => 15000.00,
+                'gross_floor_area' => 45000.00,
+                'usage' => 'Education',
+                'value' => 55000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 55000000.00,
+                'market_value' => 58000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Healthcare education campus'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-016',
+                'name' => 'PROJECT OTTO',
+                'address' => '88 Development Zone',
+                'city' => 'Kuala Lumpur',
+                'state' => 'Federal Territory',
+                'country' => 'Malaysia',
+                'postal_code' => '50250',
+                'land_size' => 8000.00,
+                'gross_floor_area' => 35000.00,
+                'usage' => 'Healthcare',
+                'value' => 60000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 60000000.00,
+                'market_value' => 65000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'New healthcare development project'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-017',
+                'name' => 'KEDAH MEDICAL CENTRE',
+                'address' => '15 Medical Avenue',
+                'city' => 'Alor Setar',
+                'state' => 'Kedah',
+                'country' => 'Malaysia',
+                'postal_code' => '05100',
+                'land_size' => 5500.00,
+                'gross_floor_area' => 27000.00,
+                'usage' => 'Healthcare',
+                'value' => 32000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 32000000.00,
+                'market_value' => 34000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Regional medical facility'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-018',
+                'name' => 'KPJ PASIR GUDANG SH',
+                'address' => '55 Jalan Industri',
+                'city' => 'Pasir Gudang',
+                'state' => 'Johor',
+                'country' => 'Malaysia',
+                'postal_code' => '81700',
+                'land_size' => 4800.00,
+                'gross_floor_area' => 22000.00,
+                'usage' => 'Healthcare',
+                'value' => 30000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 30000000.00,
+                'market_value' => 32000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Specialist hospital facility'
+            ],
+            [
+                'portfolio_id' => 1,
+                'category' => 'Healthcare',
+                'batch_no' => 'AQ-019',
+                'name' => 'KPJ Tawakkal Sh & KPJ Damansara SH',
+                'address' => '9 Tawakkal Street',
+                'city' => 'Kuala Lumpur',
+                'state' => 'Federal Territory',
+                'country' => 'Malaysia',
+                'postal_code' => '50300',
+                'land_size' => 12500.00,
+                'gross_floor_area' => 60000.00,
+                'usage' => 'Healthcare',
+                'value' => 85000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 85000000.00,
+                'market_value' => 90000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Combined specialist hospital facilities'
+            ],
+            
+            // Portfolio ID 2 (Al Salam)
+            [
+                'portfolio_id' => 2,
+                'category' => 'Food & Beverage',
+                'batch_no' => 'AS-001',
+                'name' => 'KFC AYER HITAM',
+                'address' => '123 Ayer Hitam Street',
+                'city' => 'Ayer Hitam',
+                'state' => 'Johor',
+                'country' => 'Malaysia',
+                'postal_code' => '86100',
+                'land_size' => 800.00,
+                'gross_floor_area' => 1200.00,
+                'usage' => 'Commercial',
+                'value' => 3000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 3000000.00,
+                'market_value' => 3200000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Fast food restaurant'
+            ],
+            [
+                'portfolio_id' => 2,
+                'category' => 'Retail',
+                'batch_no' => 'AS-002',
+                'name' => 'KOMTAR JBCC',
+                'address' => '80 Jalan Wong Ah Fook',
+                'city' => 'Johor Bahru',
+                'state' => 'Johor',
+                'country' => 'Malaysia',
+                'postal_code' => '80000',
+                'land_size' => 15000.00,
+                'gross_floor_area' => 75000.00,
+                'usage' => 'Commercial',
+                'value' => 150000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 150000000.00,
+                'market_value' => 165000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Shopping mall and commercial complex'
+            ],
+            [
+                'portfolio_id' => 2,
+                'category' => 'Food & Beverage',
+                'batch_no' => 'AS-003',
+                'name' => 'QSR PROPERTIES',
+                'address' => '500 QSR Avenue',
+                'city' => 'Kuala Lumpur',
+                'state' => 'Federal Territory',
+                'country' => 'Malaysia',
+                'postal_code' => '50400',
+                'land_size' => 5000.00,
+                'gross_floor_area' => 15000.00,
+                'usage' => 'Commercial',
+                'value' => 25000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 25000000.00,
+                'market_value' => 28000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Quick service restaurant properties'
+            ],
+            [
+                'portfolio_id' => 2,
+                'category' => 'Retail',
+                'batch_no' => 'AS-004',
+                'name' => 'MART KEMPAS',
+                'address' => '25 Jalan Kempas',
+                'city' => 'Johor Bahru',
+                'state' => 'Johor',
+                'country' => 'Malaysia',
+                'postal_code' => '81200',
+                'land_size' => 10000.00,
+                'gross_floor_area' => 35000.00,
                 'usage' => 'Commercial',
                 'value' => 40000000.00,
                 'ownership' => 'Leasehold',
                 'share_amount' => 40000000.00,
-                'market_value' => 43000000.00, 
-                'prepared_by' => 'Jennifer Koh',
-                'verified_by' => 'Michael Lee',
-                'remarks' => 'Modern office complex designed for tech startups and innovation companies'
+                'market_value' => 42000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Shopping mart and retail complex'
             ],
             [
-                'portfolio_id' => 5, // Tech Industrial Park
+                'portfolio_id' => 2,
                 'category' => 'Industrial',
-                'batch_no' => 'TIP-002',
-                'name' => 'Precision Engineering Facility',
-                'address' => '38 Industrial Road',
-                'city' => 'Penang',
-                'state' => 'Penang',
+                'batch_no' => 'AS-005',
+                'name' => 'CENTRE WAREHOUSE',
+                'address' => '100 Industrial Zone',
+                'city' => 'Shah Alam',
+                'state' => 'Selangor',
                 'country' => 'Malaysia',
-                'postal_code' => '11950',
-                'land_size' => 9000.00,
-                'gross_floor_area' => 12000.00,
+                'postal_code' => '40100',
+                'land_size' => 15000.00,
+                'gross_floor_area' => 25000.00,
                 'usage' => 'Industrial',
                 'value' => 22000000.00,
                 'ownership' => 'Leasehold',
                 'share_amount' => 22000000.00,
-                'market_value' => 24000000.00, 
-                'prepared_by' => 'Tan Wei Liang',
-                'verified_by' => 'Lim Mei Ling',
-                'remarks' => 'Advanced facility for precision engineering and component manufacturing'
-            ]
+                'market_value' => 24000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Central distribution warehouse'
+            ],
+            [
+                'portfolio_id' => 2,
+                'category' => 'Food & Beverage',
+                'batch_no' => 'AS-006',
+                'name' => 'KFC DT WANGSA MAJU',
+                'address' => '45 Wangsa Maju Boulevard',
+                'city' => 'Kuala Lumpur',
+                'state' => 'Federal Territory',
+                'country' => 'Malaysia',
+                'postal_code' => '53300',
+                'land_size' => 1000.00,
+                'gross_floor_area' => 1500.00,
+                'usage' => 'Commercial',
+                'value' => 4500000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 4500000.00,
+                'market_value' => 4800000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Fast food restaurant with drive-through'
+            ],
+            [
+                'portfolio_id' => 2,
+                'category' => 'Office',
+                'batch_no' => 'AS-007',
+                'name' => 'CTOS DATA SYSTEMS SDN BHD',
+                'address' => '200 Technology Park',
+                'city' => 'Petaling Jaya',
+                'state' => 'Selangor',
+                'country' => 'Malaysia',
+                'postal_code' => '46000',
+                'land_size' => 5000.00,
+                'gross_floor_area' => 20000.00,
+                'usage' => 'Office',
+                'value' => 35000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 35000000.00,
+                'market_value' => 37000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Office building for data systems company'
+            ],
+            [
+                'portfolio_id' => 2,
+                'category' => 'Education',
+                'batch_no' => 'AS-008',
+                'name' => 'KPJ INTERNATIONAL COLLEGE (MCMH)',
+                'address' => '75 Education Drive',
+                'city' => 'Johor Bahru',
+                'state' => 'Johor',
+                'country' => 'Malaysia',
+                'postal_code' => '80200',
+                'land_size' => 12000.00,
+                'gross_floor_area' => 35000.00,
+                'usage' => 'Education',
+                'value' => 45000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 45000000.00,
+                'market_value' => 47000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Medical college campus'
+            ],
+            [
+                'portfolio_id' => 2,
+                'category' => 'Food & Beverage',
+                'batch_no' => 'AS-009',
+                'name' => 'PHD ULU TIRAM',
+                'address' => '18 Ulu Tiram Street',
+                'city' => 'Ulu Tiram',
+                'state' => 'Johor',
+                'country' => 'Malaysia',
+                'postal_code' => '81800',
+                'land_size' => 900.00,
+                'gross_floor_area' => 1300.00,
+                'usage' => 'Commercial',
+                'value' => 2800000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 2800000.00,
+                'market_value' => 3000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Pizza restaurant outlet'
+            ],
+            [
+                'portfolio_id' => 2,
+                'category' => 'Mixed Use',
+                'batch_no' => 'AS-010',
+                'name' => 'KOMTAR JBCC & MCHM',
+                'address' => '85 Jalan Wong Ah Fook',
+                'city' => 'Johor Bahru',
+                'state' => 'Johor',
+                'country' => 'Malaysia',
+                'postal_code' => '80000',
+                'land_size' => 20000.00,
+                'gross_floor_area' => 100000.00,
+                'usage' => 'Mixed',
+                'value' => 180000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 180000000.00,
+                'market_value' => 195000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Shopping mall and medical center complex'
+            ],
+            
+            // Portfolio ID 3 (AMANAH HARTA TANAH PNB (AHP))
+            [
+                'portfolio_id' => 3,
+                'category' => 'Commercial',
+                'batch_no' => 'AHP-001',
+                'name' => 'CX1, CYBERJAYA',
+                'address' => '1 Tech Boulevard',
+                'city' => 'Cyberjaya',
+                'state' => 'Selangor',
+                'country' => 'Malaysia',
+                'postal_code' => '63000',
+                'land_size' => 10000.00,
+                'gross_floor_area' => 45000.00,
+                'usage' => 'Office',
+                'value' => 80000000.00,
+                'ownership' => 'Freehold',
+                'share_amount' => 80000000.00,
+                'market_value' => 85000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Premium office building'
+            ],
+            [
+                'portfolio_id' => 3,
+                'category' => 'Retail',
+                'batch_no' => 'AHP-002',
+                'name' => 'MYDIN HYPERMARKET, SEREMBAN 2',
+                'address' => '25 Seremban 2 Avenue',
+                'city' => 'Seremban',
+                'state' => 'Negeri Sembilan',
+                'country' => 'Malaysia',
+                'postal_code' => '70300',
+                'land_size' => 25000.00,
+                'gross_floor_area' => 60000.00,
+                'usage' => 'Retail',
+                'value' => 90000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 90000000.00,
+                'market_value' => 95000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Large hypermarket complex'
+            ],
+            
+            // Portfolio ID 4 (AMANAH HARTANAH BUMIPUTERA (AHB))
+            [
+                'portfolio_id' => 4,
+                'category' => 'Government',
+                'batch_no' => 'AHB-001',
+                'name' => 'PENTADBIR TANAH JOHOR BAHRU',
+                'address' => '10 Land Office Road',
+                'city' => 'Johor Bahru',
+                'state' => 'Johor',
+                'country' => 'Malaysia',
+                'postal_code' => '80000',
+                'land_size' => 2500.00,
+                'gross_floor_area' => 8000.00,
+                'usage' => 'Government Office',
+                'value' => 15000000.00,
+                'ownership' => 'Leasehold',
+                'share_amount' => 15000000.00,
+                'market_value' => 16000000.00,
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'remarks' => 'Land administration office'
+            ],
         ];
-        
+
+        // Database insertion code
         foreach ($properties as $property) {
             DB::table('properties')->insert([
                 'portfolio_id' => $property['portfolio_id'],
@@ -729,7 +904,6 @@ class ReitsSeeder extends Seeder
                 'ownership' => $property['ownership'],
                 'share_amount' => $property['share_amount'],
                 'market_value' => $property['market_value'],
-                'status' => $statuses[array_rand($statuses)],
                 'prepared_by' => $property['prepared_by'],
                 'verified_by' => $property['verified_by'],
                 'remarks' => $property['remarks'],
@@ -739,174 +913,248 @@ class ReitsSeeder extends Seeder
         }
 
         // Seed Tenants
+        // Find property IDs by name
+        $komtarJbcc = DB::table('properties')->where('name', 'KOMTAR JBCC')->first();
+        $martKempas = DB::table('properties')->where('name', 'MART KEMPAS')->first();
+
+        // Define tenant data
         $tenants = [
+            // KOMTAR JBCC tenants
             [
-                'property_id' => 1, // Skyline Tower A
-                'name' => 'Global Finance Corp',
-                'contact_person' => 'James Wilson',
-                'email' => 'jwilson@globalfinance.com',
-                'phone' => '+65 9123 4567',
-                'commencement_date' => '2023-06-01',
-                'approval_date' => '2023-05-15',
-                'expiry_date' => '2028-05-31', 
-                'approval_status' => 'approved'
-            ],
-            [
-                'property_id' => 1, // Skyline Tower A
-                'name' => 'Tech Innovations Pte Ltd',
-                'contact_person' => 'Sarah Chen',
-                'email' => 'schen@techinnovations.com',
-                'phone' => '+65 9234 5678',
-                'commencement_date' => '2024-01-01',
-                'approval_date' => '2023-12-10',
+                'property_id' => $komtarJbcc->id,
+                'name' => 'JOHOR CORPORATION',
+                'contact_person' => 'Ahmad Razif',
+                'email' => 'ahmad@johorcorp.com.my',
+                'phone' => '+60 12 345 6789',
+                'commencement_date' => '2021-01-01',
+                'approval_date' => '2020-12-15',
                 'expiry_date' => '2026-12-31', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 2, // Skyline Tower B
-                'name' => 'Legal Associates LLP',
-                'contact_person' => 'Michael Brown',
-                'email' => 'mbrown@legalassociates.com',
-                'phone' => '+65 9345 6789',
-                'commencement_date' => '2023-09-15',
-                'approval_date' => '2023-08-30',
-                'expiry_date' => '2026-09-14', 
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Al Bagus Food and Beverage Sdn Bhd',
+                'contact_person' => 'Mohd Faisal',
+                'email' => 'faisal@albagus.com.my',
+                'phone' => '+60 13 456 7890',
+                'commencement_date' => '2020-10-01',
+                'approval_date' => '2020-09-15',
+                'expiry_date' => '2025-09-30', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 3, // Central Business Tower 
-                'name' => 'Standard Insurance Group',
-                'contact_person' => 'David Lee',
-                'email' => 'dlee@standardinsurance.com',
-                'phone' => '+60 12 345 6789',
-                'commencement_date' => '2022-11-01',
-                'approval_date' => '2022-10-15',
-                'expiry_date' => '2027-10-31', 
+                'property_id' => $komtarJbcc->id,
+                'name' => 'BNX Delight Sdn Bhd',
+                'contact_person' => 'Lim Wei Ling',
+                'email' => 'weiling@bnxdelight.com',
+                'phone' => '+60 14 567 8901',
+                'commencement_date' => '2022-03-15',
+                'approval_date' => '2022-02-28',
+                'expiry_date' => '2025-03-14', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 3, // Central Business Tower
-                'name' => 'Consulting Partners International',
-                'contact_person' => 'Rachel Tan',
-                'email' => 'rtan@consultingpartners.com',
-                'phone' => '+60 12 456 7890',
-                'commencement_date' => '2023-02-01',
-                'approval_date' => '2023-01-15',
-                'expiry_date' => '2028-01-31', 
+                'property_id' => $komtarJbcc->id,
+                'name' => 'BNX Takahara Sdn Bhd',
+                'contact_person' => 'Takahara Kenji',
+                'email' => 'kenji@bnxtakahara.com',
+                'phone' => '+60 15 678 9012',
+                'commencement_date' => '2021-05-01',
+                'approval_date' => '2021-04-15',
+                'expiry_date' => '2026-04-30', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 4, // Urban Heights
-                'name' => 'Skyline Retailers',
-                'contact_person' => 'Ahmad Rizal',
-                'email' => 'arizal@skylineretailers.com',
-                'phone' => '+62 21 1234 5678',
-                'commencement_date' => '2023-04-01',
-                'approval_date' => '2023-03-15',
-                'expiry_date' => '2028-03-31', 
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Caring Pharmacy Retail Management Sdn Bhd',
+                'contact_person' => 'Sarah Lee',
+                'email' => 'sarahlee@caringpharmacy.com',
+                'phone' => '+60 16 789 0123',
+                'commencement_date' => '2019-11-01',
+                'approval_date' => '2019-10-15',
+                'expiry_date' => '2024-10-31', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 5, // Central Mall Plaza
-                'name' => 'Fashion Forward',
-                'contact_person' => 'Nattapong Chai',
-                'email' => 'nchai@fashionforward.com',
-                'phone' => '+66 2 123 4567',
-                'commencement_date' => '2023-07-01',
-                'approval_date' => '2023-06-15',
-                'expiry_date' => '2028-06-30', 
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Chamelon Sdn Bhd',
+                'contact_person' => 'Tan Mei Hua',
+                'email' => 'meihua@chamelon.com.my',
+                'phone' => '+60 17 890 1234',
+                'commencement_date' => '2022-01-15',
+                'approval_date' => '2021-12-30',
+                'expiry_date' => '2027-01-14', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 5, // Central Mall Plaza
-                'name' => 'Global Electronics',
-                'contact_person' => 'Supaporn Wattana',
-                'email' => 'swattana@globalelectronics.com',
-                'phone' => '+66 2 234 5678',
-                'commencement_date' => '2023-08-01',
-                'approval_date' => '2023-07-15',
-                'expiry_date' => '2028-07-31', 
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Chrisna Jenio Sdn Bhd',
+                'contact_person' => 'Christina Wong',
+                'email' => 'christina@chrisnajenio.com',
+                'phone' => '+60 18 901 2345',
+                'commencement_date' => '2020-07-01',
+                'approval_date' => '2020-06-15',
+                'expiry_date' => '2025-06-30', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 6, // Tech Manufacturing Facility
-                'name' => 'Advanced Semiconductors Inc.',
-                'contact_person' => 'Lim Eng Huat',
-                'email' => 'ehuat@advancedsemi.com',
-                'phone' => '+60 4 123 4567',
-                'commencement_date' => '2022-05-01',
-                'approval_date' => '2022-04-15',
-                'expiry_date' => '2032-04-30', 
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Era Sag (JB) Sdn Bhd',
+                'contact_person' => 'Amirul Rashid',
+                'email' => 'amirul@erasag.com.my',
+                'phone' => '+60 19 012 3456',
+                'commencement_date' => '2021-09-01',
+                'approval_date' => '2021-08-15',
+                'expiry_date' => '2026-08-31', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 7, // Executive Plaza
-                'name' => 'Global Ventures Capital',
-                'contact_person' => 'Jennifer Lim',
-                'email' => 'jlim@globalventures.com',
-                'phone' => '+65 9456 7890',
-                'commencement_date' => '2023-03-01',
-                'approval_date' => '2023-02-15',
-                'expiry_date' => '2028-02-29', 
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Eyeflex Optometrix Sdn Bhd',
+                'contact_person' => 'Dr. Wong Kai Yee',
+                'email' => 'drwong@eyeflex.com.my',
+                'phone' => '+60 12 123 4567',
+                'commencement_date' => '2022-02-15',
+                'approval_date' => '2022-01-30',
+                'expiry_date' => '2025-02-14', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 7, // Executive Plaza
-                'name' => 'Pacific Trading Group',
-                'contact_person' => 'Kenneth Wong',
-                'email' => 'kwong@pacifictrading.com',
-                'phone' => '+65 9567 8901',
-                'commencement_date' => '2023-05-01',
-                'approval_date' => '2023-04-15',
-                'expiry_date' => '2028-04-30', 
+                'property_id' => $komtarJbcc->id,
+                'name' => 'F.O.S Apparel Group Sdn Bhd',
+                'contact_person' => 'Tony Lim',
+                'email' => 'tony@fosapparel.com',
+                'phone' => '+60 13 234 5678',
+                'commencement_date' => '2019-04-01',
+                'approval_date' => '2019-03-15',
+                'expiry_date' => '2024-03-31', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 8, // Beach Resort & Spa
-                'name' => 'Luxury Escapes',
-                'contact_person' => 'Made Surya',
-                'email' => 'msurya@luxuryescapes.com',
-                'phone' => '+62 361 123 456',
-                'commencement_date' => '2022-12-01',
-                'approval_date' => '2022-11-15',
-                'expiry_date' => '2037-11-30', 
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Grand Companies Sdn Bhd',
+                'contact_person' => 'Lee Chong Wei',
+                'email' => 'chongwei@grandcompanies.com',
+                'phone' => '+60 14 345 6789',
+                'commencement_date' => '2020-05-01',
+                'approval_date' => '2020-04-15',
+                'expiry_date' => '2025-04-30', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 9, // Central Medical Center
-                'name' => 'Premier Healthcare Systems',
-                'contact_person' => 'Elena Santos',
-                'email' => 'esantos@premierhealthcare.com',
-                'phone' => '+63 2 123 4567',
-                'commencement_date' => '2022-10-01',
-                'approval_date' => '2022-09-15',
-                'expiry_date' => '2032-09-30', 
+                'property_id' => $komtarJbcc->id,
+                'name' => 'KPK Quantity Surveyors (Semenanjung) Sdn Bhd',
+                'contact_person' => 'Dato\' Seri Khairul',
+                'email' => 'khairul@kpkqs.com.my',
+                'phone' => '+60 15 456 7890',
+                'commencement_date' => '2021-03-01',
+                'approval_date' => '2021-02-15',
+                'expiry_date' => '2026-02-28', 
                 'approval_status' => 'approved'
             ],
             [
-                'property_id' => 10, // University Research Building
-                'name' => 'National University Research',
-                'contact_person' => 'Dr. Tan Li Wei',
-                'email' => 'tlwei@nationaluniv.edu',
-                'phone' => '+65 9678 9012',
-                'commencement_date' => '2023-01-01',
-                'approval_date' => '2022-12-15',
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Habib Jewels Franchise Sdn Bhd',
+                'contact_person' => 'Habib Rahman',
+                'email' => 'habib@habibjewels.com.my',
+                'phone' => '+60 16 567 8901',
+                'commencement_date' => '2019-06-01',
+                'approval_date' => '2019-05-15',
+                'expiry_date' => '2024-05-31', 
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => $komtarJbcc->id,
+                'name' => 'JPS Fashions (Malaysia) Sdn Bhd',
+                'contact_person' => 'Jessica Phua',
+                'email' => 'jessica@jpsfashions.com',
+                'phone' => '+60 17 678 9012',
+                'commencement_date' => '2022-04-01',
+                'approval_date' => '2022-03-15',
+                'expiry_date' => '2027-03-31', 
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => $komtarJbcc->id,
+                'name' => 'La Mior Sdn Bhd',
+                'contact_person' => 'Mior Ahmad',
+                'email' => 'mior@lamior.com.my',
+                'phone' => '+60 18 789 0123',
+                'commencement_date' => '2020-09-01',
+                'approval_date' => '2020-08-15',
+                'expiry_date' => '2025-08-31', 
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => $komtarJbcc->id,
+                'name' => 'LAC Global Brands (Malaysia) Sdn Bhd',
+                'contact_person' => 'Wendy Chong',
+                'email' => 'wendy@lacglobal.com.my',
+                'phone' => '+60 19 890 1234',
+                'commencement_date' => '2021-11-01',
+                'approval_date' => '2021-10-15',
+                'expiry_date' => '2026-10-31', 
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Luxe Hair Group Sdn Bhd',
+                'contact_person' => 'Aishah Mahmood',
+                'email' => 'aishah@luxehair.com.my',
+                'phone' => '+60 12 901 2345',
+                'commencement_date' => '2022-05-15',
+                'approval_date' => '2022-04-30',
+                'expiry_date' => '2027-05-14', 
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Johor Plantations Group Berhad',
+                'contact_person' => 'Tan Sri Ibrahim',
+                'email' => 'ibrahim@johorplantations.com.my',
+                'phone' => '+60 13 012 3456',
+                'commencement_date' => '2019-02-01',
+                'approval_date' => '2019-01-15',
+                'expiry_date' => '2024-01-31', 
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Yayasan Johor Corporation',
+                'contact_person' => 'Dr. Hasnul Ariffin',
+                'email' => 'hasnul@yjcorp.org.my',
+                'phone' => '+60 14 123 4567',
+                'commencement_date' => '2020-12-01',
+                'approval_date' => '2020-11-15',
+                'expiry_date' => '2025-11-30', 
+                'approval_status' => 'approved'
+            ],
+            [
+                'property_id' => $komtarJbcc->id,
+                'name' => 'Maxenta Cosmeceuticals Sdn Bhd',
+                'contact_person' => 'Dr. Suzana Rashid',
+                'email' => 'suzana@maxenta.com.my',
+                'phone' => '+60 15 234 5678',
+                'commencement_date' => '2021-06-15',
+                'approval_date' => '2021-05-30',
+                'expiry_date' => '2026-06-14', 
+                'approval_status' => 'approved'
+            ],
+            // MART KEMPAS tenant
+            [
+                'property_id' => $martKempas->id,
+                'name' => 'Family Jaya Enterprise',
+                'contact_person' => 'Jayadev Singh',
+                'email' => 'jayadev@familyjaya.com.my',
+                'phone' => '+60 12 876 5432',
+                'commencement_date' => '2022-01-01',
+                'approval_date' => '2021-12-15',
                 'expiry_date' => '2027-12-31', 
                 'approval_status' => 'approved'
             ],
-            [
-                'property_id' => 11, // Central Distribution Warehouse
-                'name' => 'Asia Logistics Solutions',
-                'contact_person' => 'Tran Van Duc',
-                'email' => 'tvduc@asialogistics.com',
-                'phone' => '+84 28 1234 5678',
-                'commencement_date' => '2023-02-01',
-                'approval_date' => '2023-01-15',
-                'expiry_date' => '2028-01-31', 
-                'approval_status' => 'approved'
-            ]
         ];
 
+        // Insert all tenant records
         foreach ($tenants as $tenant) {
             DB::table('tenants')->insert([
                 'property_id' => $tenant['property_id'],
@@ -917,9 +1165,7 @@ class ReitsSeeder extends Seeder
                 'commencement_date' => $tenant['commencement_date'],
                 'approval_date' => $tenant['approval_date'],
                 'expiry_date' => $tenant['expiry_date'],
-                'status' => $statuses[array_rand($statuses)],
                 'approval_status' => $tenant['approval_status'],
-                'last_approval_date' => $tenant['approval_date'],
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -1486,7 +1732,7 @@ class ReitsSeeder extends Seeder
         // Seed Financials
         $financials = [
             [
-                'portfolio_id' => 1, // Skyline Residences
+                'portfolio_id' => 1, // AL AQAR (was: Skyline Residences)
                 'bank_id' => 1, // HSBC Bank
                 'financial_type_id' => 2, // Conventional Loan
                 'purpose' => 'Property Acquisition',
@@ -1505,7 +1751,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Singapore Property Valuers', 
             ],
             [
-                'portfolio_id' => 2, // Downtown Business Center
+                'portfolio_id' => 2, // AL SALAM (was: Downtown Business Center)
                 'bank_id' => 3, // JP Morgan Chase
                 'financial_type_id' => 4, // Term Loan
                 'purpose' => 'Property Acquisition',
@@ -1524,7 +1770,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Malaysia Property Consultants', 
             ],
             [
-                'portfolio_id' => 3, // Urban Complex
+                'portfolio_id' => 3, // AMANAH HARTA TANAH PNB (AHP) (was: Urban Complex)
                 'bank_id' => 9, // Maybank
                 'financial_type_id' => 1, // Islamic Banking Financing
                 'purpose' => 'Property Acquisition',
@@ -1543,7 +1789,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Indonesian Property Services', 
             ],
             [
-                'portfolio_id' => 4, // Central Shopping Mall
+                'portfolio_id' => 4, // AMANAH HARTANAH BUMIPUTERA (AHB) (was: Central Shopping Mall)
                 'bank_id' => 5, // DBS Bank
                 'financial_type_id' => 6, // Syndicated Loan
                 'purpose' => 'Property Acquisition',
@@ -1562,7 +1808,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Thai Property Appraisers', 
             ],
             [
-                'portfolio_id' => 5, // Tech Industrial Park
+                'portfolio_id' => 1, // AL AQAR (was: Tech Industrial Park)
                 'bank_id' => 10, // CIMB Bank
                 'financial_type_id' => 5, // Bridge Financing
                 'purpose' => 'Facility Upgrade',
@@ -1581,7 +1827,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'MYS Industrial Valuers', 
             ],
             [
-                'portfolio_id' => 6, // Executive Tower
+                'portfolio_id' => 2, // AL SALAM (was: Executive Tower)
                 'bank_id' => 2, // Citibank
                 'financial_type_id' => 2, // Conventional Loan
                 'purpose' => 'Property Acquisition',
@@ -1600,7 +1846,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Singapore Commercial Appraisers', 
             ],
             [
-                'portfolio_id' => 7, // Luxury Resort Collection
+                'portfolio_id' => 3, // AMANAH HARTA TANAH PNB (AHP) (was: Luxury Resort Collection)
                 'bank_id' => 8, // UOB Bank
                 'financial_type_id' => 4, // Term Loan
                 'purpose' => 'Property Acquisition',
@@ -1619,7 +1865,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Indonesian Hospitality Valuers', 
             ],
             [
-                'portfolio_id' => 8, // Medical Plaza
+                'portfolio_id' => 4, // AMANAH HARTANAH BUMIPUTERA (AHB) (was: Medical Plaza)
                 'bank_id' => 7, // OCBC Bank
                 'financial_type_id' => 2, // Conventional Loan
                 'purpose' => 'Property Acquisition',
@@ -1638,7 +1884,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Philippine Medical Property Appraisers', 
             ],
             [
-                'portfolio_id' => 9, // Campus Properties
+                'portfolio_id' => 1, // AL AQAR (was: Campus Properties)
                 'bank_id' => 6, // Standard Chartered
                 'financial_type_id' => 4, // Term Loan
                 'purpose' => 'Property Acquisition',
@@ -1657,7 +1903,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Singapore Educational Property Valuers', 
             ],
             [
-                'portfolio_id' => 10, // Distribution Hub
+                'portfolio_id' => 2, // AL SALAM (was: Distribution Hub)
                 'bank_id' => 11, // RHB Bank
                 'financial_type_id' => 8, // Construction Loan
                 'purpose' => 'Property Acquisition',
@@ -1676,7 +1922,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Vietnam Industrial Property Consultants', 
             ],
             [
-                'portfolio_id' => 11, // Cloud Infrastructure
+                'portfolio_id' => 3, // AMANAH HARTA TANAH PNB (AHP) (was: Cloud Infrastructure)
                 'bank_id' => 4, // Bank of America
                 'financial_type_id' => 2, // Conventional Loan
                 'purpose' => 'Property Acquisition',
@@ -1695,7 +1941,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Singapore Tech Infrastructure Valuers', 
             ],
             [
-                'portfolio_id' => 12, // SecureSpace Facilities
+                'portfolio_id' => 4, // AMANAH HARTANAH BUMIPUTERA (AHB) (was: SecureSpace Facilities)
                 'bank_id' => 13, // Public Bank
                 'financial_type_id' => 2, // Conventional Loan
                 'purpose' => 'Property Acquisition',
@@ -1714,7 +1960,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Malaysia Storage Facility Valuers', 
             ],
             [
-                'portfolio_id' => 13, // Farmland Investments
+                'portfolio_id' => 1, // AL AQAR (was: Farmland Investments)
                 'bank_id' => 12, // Bank Islam
                 'financial_type_id' => 1, // Islamic Banking Financing
                 'purpose' => 'Property Acquisition',
@@ -1733,7 +1979,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Malaysian Agricultural Land Valuers', 
             ],
             [
-                'portfolio_id' => 14, // Recreation Parks
+                'portfolio_id' => 2, // AL SALAM (was: Recreation Parks)
                 'bank_id' => 14, // Hong Leong Bank
                 'financial_type_id' => 4, // Term Loan
                 'purpose' => 'Property Acquisition',
@@ -1752,7 +1998,7 @@ class ReitsSeeder extends Seeder
                 'valuer' => 'Thai Recreational Property Valuers', 
             ],
             [
-                'portfolio_id' => 15, // University Accommodations
+                'portfolio_id' => 3, // AMANAH HARTA TANAH PNB (AHP) (was: University Accommodations)
                 'bank_id' => 15, // AmBank
                 'financial_type_id' => 4, // Term Loan
                 'purpose' => 'Property Acquisition',
