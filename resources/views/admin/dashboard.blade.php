@@ -5,7 +5,8 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    @if(Auth::user()->hasPermission('DCMTRD'))
+    <div class="hidden py-12 dashboard-section" id="dcmtrd-section" data-section="dcmtrd">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="pb-6">
                 <h2 class="font-bold text-xl text-gray-800 leading-tight">
@@ -178,8 +179,10 @@
             </div>
         </div>
     </div>
+    @endif
 
-    <div class="py-12">
+    @if(Auth::user()->hasPermission('REITS'))
+    <div class="hidden py-12 dashboard-section" id="reits-section" data-section="reits">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="pb-6">
                 <h2 class="font-bold text-xl text-gray-800 leading-tight">
@@ -289,4 +292,46 @@
             </div>
         </div>
     </div>
+    @endif
+
+    <!-- JavaScript for handling section display -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the section parameter from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const section = urlParams.get('section');
+            
+            // Initially hide the default message (will show it if no valid section is found)
+            const defaultMessage = document.getElementById('default-message');
+            
+            // Select all section elements
+            const sections = document.querySelectorAll('.dashboard-section');
+            
+            // If a section parameter is present
+            if (section) {
+                // Find the target section
+                const targetSection = document.querySelector(`[data-section="${section}"]`);
+                
+                if (targetSection) {
+                    // Hide default message
+                    if (defaultMessage) {
+                        defaultMessage.classList.add('hidden');
+                    }
+                    
+                    // Show only the target section
+                    targetSection.classList.remove('hidden');
+                } else {
+                    // If no valid section was found, show the default message
+                    if (defaultMessage) {
+                        defaultMessage.classList.remove('hidden');
+                    }
+                }
+            } else {
+                // If no section parameter, show the default message
+                if (defaultMessage) {
+                    defaultMessage.classList.remove('hidden');
+                }
+            }
+        });
+    </script>
 </x-app-layout>
