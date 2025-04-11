@@ -91,7 +91,8 @@ class MakerController extends Controller
                     (SELECT COUNT(*) FROM financials) AS financials_count,
                     (SELECT COUNT(*) FROM tenants) AS tenants_count,
                     (SELECT COUNT(*) FROM appointments) AS appointments_count,
-                    (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count
+                    (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
+                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count
             ");
             return (array) $result[0];
         });
@@ -122,6 +123,7 @@ class MakerController extends Controller
             'tenantsCount' => $counts['tenants_count'],
             'appointmentsCount' => $counts['appointments_count'],
             'approvalFormsCount' => $counts['approval_forms_count'],
+            'siteVisitLogsCount' => $counts['site_visit_logs_count'],
         ]);
     }
 
