@@ -26,14 +26,6 @@
                 <div class="flex items-center justify-between px-6 py-4 sm:px-6">
                     <h3 class="text-lg font-semibold text-gray-900">Audit Log</h3>
                     <div class="flex gap-2">
-                        <a href="#"
-                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 border border-transparent rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Trash
-                        </a>
                         <a href="{{ route('related-documents.create') }}"
                             class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,26 +37,32 @@
                     </div>
                 </div>
 
-                <!-- Search and Filter Bar -->
                 <div class="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6 rounded-t-md">
-                    <form method="GET" action="{{ route('related-documents.index') }}">
+                    <form method="GET" action="{{ route('audit-trail.index') }}">
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
-                            <!-- Date Range Filter -->
+                            <!-- Start Date Filter -->
                             <div>
-                                <label for="date_filter" class="block text-sm font-medium text-gray-700">Range
+                                <label for="start_date" class="block text-sm font-medium text-gray-700">Start
                                     Date</label>
-                                <input type="date" name="date_filter" id="date_filter"
-                                    value="{{ request('date_filter') }}"
+                                <input type="date" name="start_date" id="start_date"
+                                    value="{{ request('start_date') }}"
+                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+
+                            <!-- End Date Filter -->
+                            <div>
+                                <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
+                                <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
 
                             <!-- Search Field -->
                             <div>
                                 <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
-                                <input type="text" name="search" id="search" value="{{ $searchTerm ?? '' }}"
+                                <input type="text" name="search" id="search" value="{{ request('search') }}"
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                    placeholder="Search by document name...">
+                                    placeholder="Search by user name...">
                             </div>
 
                             <!-- Filter Button -->
@@ -78,8 +76,8 @@
                                     Search
                                 </button>
 
-                                @if (request('facility_id') || request('document_type') || request('date_filter') || request('search'))
-                                    <a href="{{ route('related-documents.index') }}"
+                                @if (request('search') || request('start_date') || request('end_date'))
+                                    <a href="{{ route('audit-trail.index') }}"
                                         class="inline-flex items-center px-4 py-2 ml-2 font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
                                         Clear
                                     </a>
@@ -88,6 +86,7 @@
                         </div>
                     </form>
                 </div>
+
 
                 <!-- Related Documents Table -->
                 <div class="overflow-x-auto bg-white rounded-lg shadow-md">
@@ -162,7 +161,7 @@
                                             $userAgent = $audit->user_agent;
                                             $device = 'Unknown';
                                             $browser = 'Unknown';
-                                    
+
                                             // Detect Device
                                             if (Str::contains($userAgent, 'Windows')) {
                                                 $device = 'Windows';
@@ -173,40 +172,51 @@
                                             } elseif (Str::contains($userAgent, ['Android', 'iPhone'])) {
                                                 $device = 'Mobile';
                                             }
-                                    
+
                                             // Detect Browser
-                                            if (Str::contains($userAgent, 'Chrome') && !Str::contains($userAgent, 'Edg')) {
+                                            if (
+                                                Str::contains($userAgent, 'Chrome') &&
+                                                !Str::contains($userAgent, 'Edg')
+                                            ) {
                                                 $browser = 'Chrome';
-                                            } elseif (Str::contains($userAgent, 'Safari') && !Str::contains($userAgent, 'Chrome')) {
+                                            } elseif (
+                                                Str::contains($userAgent, 'Safari') &&
+                                                !Str::contains($userAgent, 'Chrome')
+                                            ) {
                                                 $browser = 'Safari';
                                             } elseif (Str::contains($userAgent, 'Firefox')) {
                                                 $browser = 'Firefox';
                                             } elseif (Str::contains($userAgent, 'Edg')) {
                                                 $browser = 'Edge';
-                                            } elseif (Str::contains($userAgent, 'Opera') || Str::contains($userAgent, 'OPR')) {
+                                            } elseif (
+                                                Str::contains($userAgent, 'Opera') ||
+                                                Str::contains($userAgent, 'OPR')
+                                            ) {
                                                 $browser = 'Opera';
                                             }
                                         @endphp
-                                    
+
                                         <div class="flex items-center space-x-2">
                                             <!-- Device Type -->
-                                            <span class="inline-block px-3 py-1 text-xs font-medium rounded-full 
-                                                @if($device === 'Windows') bg-blue-100 text-blue-800 @elseif($device === 'Mac') bg-gray-100 text-gray-800 
+                                            <span
+                                                class="inline-block px-3 py-1 text-xs font-medium rounded-full 
+                                                @if ($device === 'Windows') bg-blue-100 text-blue-800 @elseif($device === 'Mac') bg-gray-100 text-gray-800 
                                                 @elseif($device === 'Linux') bg-yellow-100 text-yellow-800 @elseif($device === 'Mobile') bg-green-100 text-green-800 
                                                 @else bg-gray-200 text-gray-600 @endif">
                                                 {{ $device }}
                                             </span>
-                                    
+
                                             <!-- Browser Type -->
-                                            <span class="inline-block px-3 py-1 text-xs font-medium rounded-full 
-                                                @if($browser === 'Chrome') bg-blue-100 text-blue-800 @elseif($browser === 'Safari') bg-gray-100 text-gray-800 
+                                            <span
+                                                class="inline-block px-3 py-1 text-xs font-medium rounded-full 
+                                                @if ($browser === 'Chrome') bg-blue-100 text-blue-800 @elseif($browser === 'Safari') bg-gray-100 text-gray-800 
                                                 @elseif($browser === 'Firefox') bg-red-100 text-red-800 @elseif($browser === 'Edge') bg-teal-100 text-teal-800 
                                                 @elseif($browser === 'Opera') bg-purple-100 text-purple-800 @else bg-gray-200 text-gray-600 @endif">
                                                 {{ $browser }}
                                             </span>
                                         </div>
                                     </td>
-                                    
+
 
                                     <td class="px-6 py-4 text-sm">
                                         @if (!empty($audit->new_values))
@@ -215,15 +225,18 @@
                                                     @php
                                                         $oldValue = $audit->old_values[$key] ?? null; // Get old value (if exists)
                                                     @endphp
-                                                    <span class="px-2 py-1 text-xs font-semibold text-gray-700 bg-gray-200 rounded-lg">
-                                                        {{ ucfirst(str_replace('_', ' ', $key)) }}: 
-                                                        
+                                                    <span
+                                                        class="px-2 py-1 text-xs font-semibold text-gray-700 bg-gray-200 rounded-lg">
+                                                        {{ ucfirst(str_replace('_', ' ', $key)) }}:
+
                                                         @if ($oldValue !== null)
-                                                            <span class="text-red-600 line-through">{{ is_array($oldValue) ? json_encode($oldValue) : $oldValue }}</span> 
-                                                            → 
+                                                            <span
+                                                                class="text-red-600 line-through">{{ is_array($oldValue) ? json_encode($oldValue) : $oldValue }}</span>
+                                                            →
                                                         @endif
-                                                        
-                                                        <span class="text-green-600">{{ is_array($newValue) ? json_encode($newValue) : $newValue }}</span>
+
+                                                        <span
+                                                            class="text-green-600">{{ is_array($newValue) ? json_encode($newValue) : $newValue }}</span>
                                                     </span>
                                                 @endforeach
                                             </div>
@@ -231,8 +244,8 @@
                                             <span class="italic text-gray-400">No changes</span>
                                         @endif
                                     </td>
-                                    
-                                    
+
+
                                 </tr>
                             @endforeach
                         </tbody>
