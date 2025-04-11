@@ -129,7 +129,6 @@
                                         {{ $audit->user->name ?? 'System' }}
                                     </td>
 
-                                    <!-- Event -->
                                     <td class="px-6 py-4 text-sm">
                                         @php
                                             $event = strtolower($audit->event);
@@ -137,6 +136,8 @@
                                                 'created' => 'text-blue-600 bg-blue-100',
                                                 'updated' => 'text-green-600 bg-green-100',
                                                 'deleted' => 'text-red-600 bg-red-100',
+                                                'login' => 'text-purple-600 bg-purple-100',
+                                                'logout' => 'text-yellow-600 bg-yellow-100',
                                                 default => 'text-gray-600 bg-gray-100',
                                             };
                                         @endphp
@@ -144,7 +145,6 @@
                                             {{ ucfirst($event) }}
                                         </span>
                                     </td>
-
 
                                     <!-- Route -->
                                     <td class="px-6 py-4 text-sm text-gray-700">
