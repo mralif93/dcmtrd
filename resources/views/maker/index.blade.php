@@ -362,6 +362,15 @@
                     :href="route('approval-form-m.index')"
                     color="bg-blue-100"
                 />
+
+                <!-- Site Visit Logs Form -->
+                <x-dashboard-card
+                    title="Activity Diary"
+                    icon="users"
+                    :count="$siteVisitLogsCount ?? 0"
+                    :href="route('site-visit-log-m.index')"
+                    color="bg-blue-100"
+                />
             </div>
 
             <!-- Table Portfolio -->
@@ -560,42 +569,42 @@
 
     <!-- JavaScript for handling section display -->
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get the section parameter from the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const section = urlParams.get('section');
-        
-        // Initially hide the default message (will show it if no valid section is found)
-        const defaultMessage = document.getElementById('default-message');
-        
-        // Select all section elements
-        const sections = document.querySelectorAll('.dashboard-section');
-        
-        // If a section parameter is present
-        if (section) {
-            // Find the target section
-            const targetSection = document.querySelector(`[data-section="${section}"]`);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the section parameter from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const section = urlParams.get('section');
             
-            if (targetSection) {
-                // Hide default message
-                if (defaultMessage) {
-                    defaultMessage.classList.add('hidden');
-                }
+            // Initially hide the default message (will show it if no valid section is found)
+            const defaultMessage = document.getElementById('default-message');
+            
+            // Select all section elements
+            const sections = document.querySelectorAll('.dashboard-section');
+            
+            // If a section parameter is present
+            if (section) {
+                // Find the target section
+                const targetSection = document.querySelector(`[data-section="${section}"]`);
                 
-                // Show only the target section
-                targetSection.classList.remove('hidden');
+                if (targetSection) {
+                    // Hide default message
+                    if (defaultMessage) {
+                        defaultMessage.classList.add('hidden');
+                    }
+                    
+                    // Show only the target section
+                    targetSection.classList.remove('hidden');
+                } else {
+                    // If no valid section was found, show the default message
+                    if (defaultMessage) {
+                        defaultMessage.classList.remove('hidden');
+                    }
+                }
             } else {
-                // If no valid section was found, show the default message
+                // If no section parameter, show the default message
                 if (defaultMessage) {
                     defaultMessage.classList.remove('hidden');
                 }
             }
-        } else {
-            // If no section parameter, show the default message
-            if (defaultMessage) {
-                defaultMessage.classList.remove('hidden');
-            }
-        }
-    });
+        });
     </script>
 </x-app-layout>

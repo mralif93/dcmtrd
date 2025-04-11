@@ -2798,4 +2798,86 @@ class MakerController extends Controller
 
         return response()->download($path);
     }
+
+    // Site Visit Log (Activity Diary)
+    public function SiteVisitLogIndex(Request $request)
+    {
+        $query = SiteVisitLog::query();
+        
+        // Filter by status if provided
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter by date range if provided
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $query->whereBetween('visitation_date', [$request->start_date, $request->end_date]);
+        }
+        
+        // Order by visitation date descending by default
+        $siteVisitLogs = $query->orderBy('visitation_date', 'desc')
+                              ->paginate(10);
+
+        $siteVisits = SiteVisit::where('status', 'active')->get();
+
+        return view('maker.site-visit-log.index', compact('siteVisitLogs', 'siteVisits'));
+    }
+
+    public function SiteVisitLogCreate()
+    {
+        $siteVisits = SiteVisit::where('status', 'active')->get();
+        return view('maker.site-visit-log.create', compact('siteVisits'));
+    }
+
+    public function SiteVisitLogStore(Request $request)
+    {
+        $validated = $this->SiteVisitLogValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'status';
+
+        try {
+            SiteVisitLog::create($validated);
+            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log created successfully.');
+        } catch(\Exception $e) {
+            return back()->with('Error creating site visit log : ' . $e->getMessage());
+        }
+    }
+
+    public function SiteVisitLogEdit(SiteVisitLog $siteVisitLog)
+    {
+        $siteVisits = SiteVisit::where('status', 'active')->get();
+        return view('maker.site-visit-log.edit', compact('siteVisitLog', 'siteVisits'));
+    }
+
+    public function SiteVisitLogUpdate(Request $request, SiteVisitLog $siteVisitLog)
+    {
+        $validated = $this->SiteVisitLogValidate($request);
+
+        try {
+            $siteVisitLog->update($validated);
+            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log updated successfully.');
+        } catch(\Exception $e) {
+            return back()->with('Error updating site visit log : ' . $e->getMessage());
+        }
+    }
+
+    public function SiteVisitLogShow(SiteVisitLog $siteVisitLog)
+    {
+        return view('maker.site-visit-log.show', compact('siteVisitLog'));
+    }
+
+    public function SiteVisitLogValidate(Request $request, SiteVisitLog $siteVisitLog)
+    {
+        return $request->validate([
+            'site_visit_id' => 'required|exists:site_visits,id',
+            'no' => 'required|integer',
+            'visitation_date' => 'required|date',
+            'purpose' => 'required|string',
+            'report_submission_date' => 'nullable|date',
+            'report_attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'follow_up_required' => 'boolean',
+            'remarks' => 'nullable|string',
+        ]);
+    }
 }

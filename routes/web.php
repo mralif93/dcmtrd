@@ -576,6 +576,15 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/approval-form/{approvalForm}/update', [MakerController::class, 'ApprovalFormUpdate'])->name('approval-form-m.update')->middleware('permission:REITS');
     Route::get('maker/approval-form/{approvalForm}/show', [MakerController::class, 'ApprovalFormShow'])->name('approval-form-m.show')->middleware('permission:REITS');
     Route::get('maker/approval-form/{approvalForm}/submit-for-approval', [MakerController::class, 'SubmitApprovalForm'])->name('approval-form-m.approval')->middleware('permission:REITS');
+
+    // Site Visit Log Module
+    Route::get('maker/site-visit-log/', [MakerController::class, 'SiteVisitLogIndex'])->name('site-visit-log-m.index')->middleware('permission:REITS');
+    Route::get('maker/site-visit-log/create', [MakerController::class, 'SiteVisitLogCreate'])->name('site-visit-log-m.create')->middleware('permission:REITS');
+    Route::post('maker/site-visit-log/create', [MakerController::class, 'SiteVisitLogStore'])->name('site-visit-log-m.store')->middleware('permission:REITS');
+    Route::get('maker/site-visit-log/{siteVisitLog}/edit', [MakerController::class, 'SiteVisitLogEdit'])->name('site-visit-log-m.edit')->middleware('permission:REITS');
+    Route::put('maker/site-visit-log/{siteVisitLog}/update', [MakerController::class, 'SiteVisitLogUpdate'])->name('site-visit-log-m.update')->middleware('permission:REITS');
+    Route::get('maker/site-visit-log/{siteVisitLog}/show', [MakerController::class, 'SiteVisitLogShow'])->name('site-visit-log-m.show')->middleware('permission:REITS');
+    Route::get('maker/site-visit-log/{siteVisitLog}/follow-up', [MakerController::class, 'SiteVisitLogFollowUp'])->name('site-visit-log-m.follow-up')->middleware('permission:REITS');
 });
 
 // Approver routes

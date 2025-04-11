@@ -26,6 +26,10 @@ class SiteVisitLog extends Model
         'visitation_date' => 'date',
         'report_submission_date' => 'date',
         'follow_up_required' => 'boolean',
+        'approval_datetime' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**
@@ -67,16 +71,14 @@ class SiteVisitLog extends Model
     {
         return $query->whereBetween('visitation_date', [$startDate, $endDate]);
     }
-
+    
     /**
-     * Get the full attachment URL.
+     * Get the report attachment URL
+     *
+     * @return string|null
      */
     public function getReportAttachmentUrlAttribute()
     {
-        if (!$this->report_attachment) {
-            return null;
-        }
-        
-        return asset('storage/' . $this->report_attachment);
+        return $this->report_attachment ? asset('storage/' . $this->report_attachment) : null;
     }
 }
