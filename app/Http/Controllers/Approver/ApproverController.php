@@ -2,42 +2,44 @@
 
 namespace App\Http\Controllers\Approver;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Validation\Rule;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Http\Request;
+use App\Models\Bank;
+use App\Models\Bond;
+use App\Models\Lease;
+use App\Models\Issuer;
+use App\Models\Tenant;
+use App\Models\Property;
+use App\Models\Checklist;
+use App\Models\Financial;
 
 // Bonds
-use App\Models\Issuer;
-use App\Models\Bond;
+use App\Models\Portfolio;
+use App\Models\SiteVisit;
+use App\Models\Redemption;
+use App\Models\TrusteeFee;
 use App\Models\Announcement;
-use App\Models\RelatedDocument;
-use App\Models\FacilityInformation;
+use App\Models\CallSchedule;
+use Illuminate\Http\Request;
+use App\Models\ActivityDiary;
+use App\Models\FinancialType;
+use App\Models\LockoutPeriod;
+use App\Models\PortfolioType;
 use App\Models\RatingMovement;
 use App\Models\PaymentSchedule;
-use App\Models\Redemption;
-use App\Models\CallSchedule;
-use App\Models\LockoutPeriod;
-use App\Models\TradingActivity;
-use App\Models\TrusteeFee;
-use App\Models\ComplianceCovenant;
-use App\Models\ActivityDiary;
+use App\Models\RelatedDocument;
 
 // REITs
-use App\Models\Bank;
-use App\Models\FinancialType;
-use App\Models\PortfolioType;
-use App\Models\Portfolio;
-use App\Models\Property;
-use App\Models\Tenant;
-use App\Models\Lease;
-use App\Models\Financial;
-use App\Models\Checklist;
-use App\Models\SiteVisit;
+use App\Models\TradingActivity;
+use Illuminate\Validation\Rule;
+use App\Models\ComplianceCovenant;
+use Illuminate\Support\Facades\DB;
+use App\Models\FacilityInformation;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\Jobs\Issuer\SendIssuerApprovedNotification;
+use App\Jobs\Issuer\SendIssuerRejectedNotification;
 
 class ApproverController extends Controller
 {
@@ -113,6 +115,8 @@ class ApproverController extends Controller
                 'verified_by' => Auth::user()->name,
                 'approval_datetime' => now(),
             ]);
+
+            SendIssuerApprovedNotification::dispatch($issuer);
             
             return redirect()->route('dashboard')->with('success', 'Issuer approved successfully.');
         } catch (\Exception $e) {
@@ -135,6 +139,8 @@ class ApproverController extends Controller
                 'verified_by' => Auth::user()->name,
                 'remarks' => $request->input('rejection_reason'),
             ]);
+
+            SendIssuerRejectedNotification::dispatch($issuer);
             
             return redirect()->route('dashboard')->with('success', 'Issuer rejected successfully.');
         } catch (\Exception $e) {

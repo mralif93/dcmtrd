@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Issuer;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Builder;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ComplianceCovenant extends Model implements Auditable
 {
-    use HasFactory, SoftDelete, \OwenIt\Auditing\Auditable;
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
     /**
      * The attributes that are mass assignable.

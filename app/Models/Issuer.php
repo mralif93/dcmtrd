@@ -2,10 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Bond;
+use App\Models\User;
+use App\Models\Announcement;
+use App\Models\RelatedDocument;
+use App\Models\FacilityInformation;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Issuer extends Model implements Auditable
 {
@@ -33,6 +39,11 @@ class Issuer extends Model implements Auditable
         'trust_deed_date' => 'date',
         'approval_datetime' => 'datetime',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'prepared_by');
+    }
 
     public function bonds()
     {
