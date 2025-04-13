@@ -26,11 +26,11 @@
                 <div class="flex items-center justify-between px-6 py-4 sm:px-6">
                     <h3 class="text-lg font-semibold text-gray-900">Audit Log</h3>
                     <div class="flex gap-2">
-                        <a href="{{ route('related-documents.create') }}"
+                        <a href="{{ route('audit-trail.export', request()->query()) }}"
                             class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4" />
+                                    d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
                             </svg>
                             Export Audit Log
                         </a>
@@ -256,15 +256,6 @@
                         {{ $audits->links() }}
                     </div>
                 </div>
-
-
-
-
-
-                <!-- Pagination Links -->
-                {{-- <div class="px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
-                    {{ $documents->links() }}
-                </div> --}}
             </div>
         </div>
     </div>

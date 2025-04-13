@@ -172,8 +172,8 @@
                 <x-dashboard-card
                     title="Reports"
                     icon="document"
-                    :count="$reportsCount ?? 0"
-                    href="#"
+                    :count="$reportsCount ?? 2"
+                    :href="route('dcmt-reports.index')"
                     color="bg-blue-100"
                 />
             </div>

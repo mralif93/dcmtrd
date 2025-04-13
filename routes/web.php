@@ -34,9 +34,10 @@ use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\User\UserIssuerController;
 use App\Http\Controllers\User\UserTenantController;
 use App\Http\Controllers\User\UserUploadController;
-use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\DcmtReportController;
 
 // REITs
+use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RedemptionController;
 use App\Http\Controllers\Admin\TrusteeFeeController;
 use App\Http\Controllers\Approver\ApproverController;
@@ -47,8 +48,8 @@ use App\Http\Controllers\Admin\SiteVisitLogController;
 use App\Http\Controllers\User\UserChecklistController;
 use App\Http\Controllers\User\UserFinancialController;
 use App\Http\Controllers\User\UserPortfolioController;
-use App\Http\Controllers\User\UserSiteVisitController;
 
+use App\Http\Controllers\User\UserSiteVisitController;
 use App\Http\Controllers\Admin\ActivityDiaryController;
 use App\Http\Controllers\Admin\FinancialTypeController;
 use App\Http\Controllers\Admin\LockoutPeriodController;
@@ -64,9 +65,9 @@ use App\Http\Controllers\Compliance\ComplianceController;
 use App\Http\Controllers\User\UserAnnouncementController;
 use App\Http\Controllers\User\UserCallScheduleController;
 use App\Http\Controllers\User\UserSiteVisitLogController;
-use App\Http\Controllers\User\UserActivityDiaryController;
 
 // REITs
+use App\Http\Controllers\User\UserActivityDiaryController;
 use App\Http\Controllers\User\UserLockoutPeriodController;
 use App\Http\Controllers\User\UserRatingMovementController;
 use App\Http\Controllers\Admin\ComplianceCovenantController;
@@ -204,7 +205,14 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     });
 
     Route::prefix('/admin/audit-trail')->name('audit-trail.')->group(function () {
-        Route::get('/admin/audit-trail/list', [AuditLogController::class, 'index'])->name('index');
+        Route::get('/list', [AuditLogController::class, 'index'])->name('index');
+        Route::get('/export', [AuditLogController::class, 'export'])->name('export');
+    });
+
+    Route::prefix('/admin/dcmt')->name('dcmt-reports.')->group(function () {
+        Route::get('/reports', [DcmtReportController::class, 'index'])->name('index');
+        Route::get('/cb-reports', [DcmtReportController::class, 'cbReports'])->name('cb-reports');
+        Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports');
     });
 });
 
