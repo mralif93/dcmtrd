@@ -635,8 +635,8 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     // Portfolio Module
     Route::get('approver/portfolio', [ApproverController::class, 'PortfolioIndex'])->name('portfolio-a.index')->middleware('permission:REITS');
     Route::get('approver/portfolio/{portfolio}/show', [ApproverController::class, 'PortfolioShow'])->name('portfolio-a.show')->middleware('permission:REITS');
-    Route::get('approver/portfolio/{portfolio}/approve', [ApproverController::class, 'PortfolioApprove'])->name('portfolio-a.approve')->middleware('permission:REITS');
-    Route::get('approver/portfolio/{portfolio}/reject', [ApproverController::class, 'PortfolioReject'])->name('portfolio-a.reject')->middleware('permission:REITS');
+    Route::post('approver/portfolio/{portfolio}/approve', [ApproverController::class, 'PortfolioApprove'])->name('portfolio-a.approve')->middleware('permission:REITS');
+    Route::post('approver/portfolio/{portfolio}/reject', [ApproverController::class, 'PortfolioReject'])->name('portfolio-a.reject')->middleware('permission:REITS');
 
     // Property Module
     Route::get('approver/property/{portfolio}', [ApproverController::class, 'PropertyIndex'])->name('property-a.index')->middleware('permission:REITS');

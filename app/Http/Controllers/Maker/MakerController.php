@@ -98,7 +98,8 @@ class MakerController extends Controller
         });
     
         // Query for portfolios
-        $portfolioQuery = Portfolio::query();
+        $portfolioQuery = Portfolio::query()->whereIn('status', ['draft', 'active', 'rejected']);
+        $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
         
         // Apply search filter to portfolios
         if ($request->has('search') && !empty($request->search)) {
@@ -109,8 +110,6 @@ class MakerController extends Controller
         if ($request->has('status') && !empty($request->status)) {
             $portfolioQuery->where('status', $request->status);
         }
-        
-        $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
     
         return view('maker.index', [
             'issuers' => $issuers,
@@ -139,7 +138,7 @@ class MakerController extends Controller
         
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'draft';
 
         try {
             $issuer = Issuer::create($validated);
@@ -1194,7 +1193,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'draft';
 
         $trusteeFee = TrusteeFee::create($validated);
 
@@ -1345,7 +1344,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'draft';
 
         $compliance = ComplianceCovenant::create($validated);
 
@@ -1474,7 +1473,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'draft';
 
         $activity = ActivityDiary::create($validated);
 
@@ -1723,7 +1722,7 @@ class MakerController extends Controller
         
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'draft';
         
         $portfolio = Portfolio::create($validated);
         
@@ -1753,13 +1752,13 @@ class MakerController extends Controller
     public function PortfolioApproval(Portfolio $portfolio)
     {
         try {
-            $activity->update([
+            $portfolio->update([
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
             
             return redirect()
-                ->route('portfolio-m.show', $activity)
+                ->route('portfolio-m.show', $portfolio)
                 ->with('success', 'Portfolio submitted for approval successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
@@ -2351,7 +2350,7 @@ class MakerController extends Controller
         $validated = $this->ChecklistValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'draft';
 
         try {
             $checklist = Checklist::create($validated);

@@ -67,7 +67,8 @@ class ApproverController extends Controller
                         ->withQueryString();
 
         // Query for portfolios
-        $portfolios = Portfolio::query()->where('status', ['active', 'pending', 'rejected'])->latest()->paginate(10)->withQueryString();
+        $portfolioQuery = Portfolio::query()->whereIn('status', ['pending', 'active', 'rejected']);
+        $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
 
         $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
             $result = DB::select("
@@ -622,11 +623,11 @@ class ApproverController extends Controller
         try {
             $portfolio->update([
                 'status' => "Active",
-                'verified_by' => Auth::user->name,
+                'verified_by' => Auth::user()->name,
                 'approval_datetime' => now(),
             ]);
 
-            return redirect()->route('approver.dashboard')->with('success', 'Portfolio approved successfully.');
+            return redirect()->route('approver.dashboard', ['section' => 'reits'])->with('success', 'Portfolio approved successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error approving activity diary: ' . $e->getMessage());
         }
@@ -641,11 +642,11 @@ class ApproverController extends Controller
         try {
             $portfolio->update([
                 'status' => "Active",
-                'verified_by' => Auth::user->name,
+                'verified_by' => Auth::user()->name,
                 'approval_datetime' => now(),
             ]);
 
-            return redirect()->route('approver.dashboard')->with('success', 'Portfolio rejected successfully.');
+            return redirect()->route('approver.dashboard', ['section' => 'reits'])->with('success', 'Portfolio rejected successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
         }

@@ -42,6 +42,21 @@
                         @csrf
 
                         <div class="mb-4">
+                            <label for="portfolio_types_id" class="block text-sm font-medium text-gray-700">Portfolio Type</label>
+                            <select id="portfolio_types_id" name="portfolio_types_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                                <option value="">Select a portfolio type</option>
+                                @foreach($portfolioTypes as $type)
+                                    <option value="{{ $type->id }}" {{ old('portfolio_types_id') == $type->id ? 'selected' : '' }}>
+                                        {{ $type->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('portfolio_types_id')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
                             <label for="portfolio_name" class="block text-sm font-medium text-gray-700">Portfolio Name</label>
                             <input id="portfolio_name" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="portfolio_name" value="{{ old('portfolio_name') }}" required autofocus>
                             @error('portfolio_name')
@@ -83,6 +98,52 @@
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                             <p class="text-gray-500 text-xs mt-1">Accepted file types: PDF, DOC, DOCX. Max size: 10MB.</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                            <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="draft" {{ old('status', $portfolio->status) == 'draft' ? 'selected' : '' }}>Draft</option>    
+                                <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="pending" {{ old('status', 'pending') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="reject" {{ old('status') == 'reject' ? 'selected' : '' }}>Reject</option>
+                                <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                            @error('status')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="prepared_by" class="block text-sm font-medium text-gray-700">Prepared By</label>
+                            <input id="prepared_by" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="prepared_by" value="{{ old('prepared_by') }}">
+                            @error('prepared_by')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified By</label>
+                            <input id="verified_by" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="verified_by" value="{{ old('verified_by') }}">
+                            @error('verified_by')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="remarks" class="block text-sm font-medium text-gray-700">Remarks</label>
+                            <textarea id="remarks" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="remarks" rows="3">{{ old('remarks') }}</textarea>
+                            @error('remarks')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="approval_datetime" class="block text-sm font-medium text-gray-700">Approval Date & Time</label>
+                            <input id="approval_datetime" type="datetime-local" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="approval_datetime" value="{{ old('approval_datetime') }}">
+                            @error('approval_datetime')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="flex justify-end space-x-4">
