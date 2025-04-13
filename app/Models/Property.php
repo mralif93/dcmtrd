@@ -120,4 +120,14 @@ class Property extends Model
     {
         return $this->tenants()->where('status', 'active')->exists();
     }
+
+    /**
+     * The financials that belong to the property.
+     */
+    public function financials()
+    {
+        return $this->belongsToMany(Financial::class, 'financial_property')
+                    ->withPivot('property_value', 'financed_amount', 'security_value', 'valuation_date', 'remarks', 'status', 'prepared_by', 'verified_by', 'approval_datetime')
+                    ->withTimestamps();
+    }
 }

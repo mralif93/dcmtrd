@@ -75,4 +75,14 @@ class Financial extends Model
     {
         return $this->belongsTo(FinancialType::class);
     }
+
+    /**
+     * The properties that belong to the financial.
+     */
+    public function properties()
+    {
+        return $this->belongsToMany(Property::class, 'financial_property')
+                    ->withPivot('property_value', 'financed_amount', 'security_value', 'valuation_date', 'remarks', 'status', 'prepared_by', 'verified_by', 'approval_datetime')
+                    ->withTimestamps();
+    }
 }

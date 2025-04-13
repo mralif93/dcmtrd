@@ -1781,7 +1781,7 @@ class MakerController extends Controller
     // Financial Module
     public function FinancialIndex(Portfolio $portfolio, Request $request)
     {
-        $query = Financial::orderBy('bank_id')->get();
+        $query = Financial::with(['bank', 'financialType', 'properties'])->orderBy('bank_id')->get();
         $financials = $query->where('portfolio_id', $portfolio->id);
         return view('maker.financial.index', compact('financials', 'portfolio'));
     }
@@ -1792,21 +1792,54 @@ class MakerController extends Controller
         $portfolios = Portfolio::orderBy('portfolio_name')->get();
         $banks = Bank::orderBy('name')->get();
         $financialTypes = FinancialType::orderBy('name')->get();
+        
+        // Get all properties from the portfolio for selection
+        $properties = Property::where('portfolio_id', $portfolio->id)
+            ->orderBy('name')
+            ->get();
 
-        return view('maker.financial.create', compact('portfolios', 'banks', 'financialTypes', 'portfolioInfo'));
+        return view('maker.financial.create', compact('portfolios', 'banks', 'financialTypes', 'portfolioInfo', 'properties'));
     }
 
     public function FinancialStore(Request $request)
     {
+        // Validate financial data
         $validated = $this->FinancialValidate($request);
-
+    
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
-
+        $validated['status'] = 'active';
+        
         try {
+            // Create the financial record
             $financial = Financial::create($validated);
-            return redirect()->route()->with('success', 'Financial created successfully.');
+            
+            // Process property data from flat arrays to nested format
+            if ($request->has('property_ids') && !empty($request->property_ids)) {
+                $count = count($request->property_ids);
+                $propertyData = [];
+                
+                for ($i = 0; $i < $count; $i++) {
+                    if (empty($request->property_ids[$i])) continue;
+                    
+                    $propertyData[$request->property_ids[$i]] = [
+                        'property_value' => $request->property_values[$i] ?? 0,
+                        'financed_amount' => $request->financed_amounts[$i] ?? 0,
+                        'security_value' => $request->security_values[$i] ?? 0,
+                        'valuation_date' => $request->valuation_dates[$i] ?? null,
+                        'remarks' => $request->property_remarks[$i] ?? null,
+                        'status' => 'active',
+                        'prepared_by' => Auth::user()->name,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
+                }
+                
+                // Attach properties to the financial
+                $financial->properties()->attach($propertyData);
+            }
+            
+            return redirect()->route('maker.financial-m.show', $financial)->with('success', 'Financial created successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error creating financial: ' . $e->getMessage());
         }
@@ -1817,24 +1850,65 @@ class MakerController extends Controller
         $portfolios = Portfolio::orderBy('portfolio_name')->get();
         $banks = Bank::orderBy('name')->get();
         $financialTypes = FinancialType::orderBy('name')->get();
+        
+        // Get all properties from the portfolio
+        $properties = Property::where('portfolio_id', $financial->portfolio_id)
+            ->orderBy('name')
+            ->get();
+        
+        // Load existing properties attached to this financial
+        $financial->load('properties');
 
-        return view('maker.financial.edit', compact('financial', 'portfolios', 'banks', 'financialTypes'));
+        return view('maker.financial.edit', compact('financial', 'portfolios', 'banks', 'financialTypes', 'properties'));
     }
 
     public function FinancialUpdate(Financial $financial, Request $request)
     {
+        // Validate financial data
         $validated = $this->FinancialValidate($request);
-
+        
+        // Remove the dd() statement that's stopping execution
+        // dd($request->toArray());
+        
         try {
+            // Update the financial record
             $financial->update($validated);
-            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial created successfully.');
+            
+            // Process property data from flat arrays to nested format
+            $syncData = [];
+            if ($request->has('property_ids') && !empty($request->property_ids)) {
+                $count = count($request->property_ids);
+                
+                for ($i = 0; $i < $count; $i++) {
+                    if (empty($request->property_ids[$i])) continue;
+                    
+                    $syncData[$request->property_ids[$i]] = [
+                        'property_value' => $request->property_values[$i] ?? 0,
+                        'financed_amount' => $request->financed_amounts[$i] ?? 0,
+                        'security_value' => $request->security_values[$i] ?? 0,
+                        'valuation_date' => $request->valuation_dates[$i] ?? null,
+                        'remarks' => $request->property_remarks[$i] ?? null,
+                        'status' => 'active',
+                        'prepared_by' => Auth::user()->name,
+                        'updated_at' => now()
+                    ];
+                }
+            }
+            
+            // Sync will remove any properties that are not in the request
+            $financial->properties()->sync($syncData);
+            
+            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial updated successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error creating financial: ' . $e->getMessage());
+            return back()->with('error', 'Error updating financial: ' . $e->getMessage());
         }
     }
 
     public function FinancialShow(Financial $financial)
     {
+        // Load the properties associated with this financial
+        $financial->load(['properties', 'portfolio', 'bank', 'financialType']);
+        
         return view('maker.financial.show', compact('financial'));
     }
 
@@ -1845,7 +1919,7 @@ class MakerController extends Controller
             'financial_type_id' => 'required|exists:financial_types,id',
             'purpose' => 'required|string|max:255',
             'tenure' => 'required|string|max:255',
-            'installment_date' => 'required|date',
+            'installment_date' => 'required|string|max:255',
             'profit_type' => 'nullable|string|max:255',
             'profit_rate' => 'nullable|numeric|min:0|max:100',
             'process_fee' => 'nullable|numeric|min:0',
@@ -1857,6 +1931,17 @@ class MakerController extends Controller
             'facilities_agent' => 'nullable|string|max:255',
             'agent_contact' => 'nullable|string|max:255',
             'valuer' => 'nullable|string|max:255',
+        ]);
+    }
+    
+    public function FinancialPropertyValidate(Request $request) {
+        return $request->validate([
+            'property_ids' => 'required|array|min:1',
+            'property_ids.*' => 'required|exists:properties,id',
+            'property_values.*' => 'required|numeric|min:0',
+            'financed_amounts.*' => 'required|numeric|min:0',
+            'security_values.*' => 'required|numeric|min:0',
+            'valuation_dates.*' => 'required|date',
         ]);
     }
 

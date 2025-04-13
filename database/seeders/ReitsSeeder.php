@@ -908,6 +908,7 @@ class ReitsSeeder extends Seeder
                 'ownership' => $property['ownership'],
                 'share_amount' => $property['share_amount'],
                 'market_value' => $property['market_value'],
+                'status' => 'active',
                 'prepared_by' => $property['prepared_by'],
                 'verified_by' => $property['verified_by'],
                 'remarks' => $property['remarks'],
@@ -2144,6 +2145,214 @@ class ReitsSeeder extends Seeder
                 'status' => $statuses[array_rand($statuses)],
                 'created_at' => now(),
                 'updated_at' => now()
+            ]);
+        }
+
+        // Create financial_property records
+        $financialProperties = [
+            // Financial ID 1 (Commodity Murabahah Term Financing-I for Al Aqar)
+            [
+                'financial_id' => 1,
+                'property_id' => 7, // KPJ DAMANSARA SPECIALIST HOSPITAL
+                'property_value' => 48000000.00,
+                'financed_amount' => 45000000.00,
+                'security_value' => 53000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 8, // KPJ AMPANG PUTERI SPECIALIST HOSPITAL
+                'property_value' => 45000000.00,
+                'financed_amount' => 42000000.00,
+                'security_value' => 50000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 3, // KPJ SELANGOR SPECIALIST HOSPITAL
+                'property_value' => 43000000.00,
+                'financed_amount' => 40000000.00,
+                'security_value' => 48000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 11, // KPJ KLANG SPECIALIST HOSPITAL
+                'property_value' => 37000000.00,
+                'financed_amount' => 34000000.00,
+                'security_value' => 42000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 12, // KPJ JOHOR SPECIALIST HOSPITAL
+                'property_value' => 43000000.00,
+                'financed_amount' => 40000000.00,
+                'security_value' => 48000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 10, // KPJ IPOH SPECIALIST HOSPITAL
+                'property_value' => 41000000.00,
+                'financed_amount' => 38000000.00,
+                'security_value' => 46000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 6, // KPJ PENANG SPECIALIST HOSPITAL
+                'property_value' => 42000000.00,
+                'financed_amount' => 38000000.00,
+                'security_value' => 47000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 4, // KPJ PERDANA SPECIALIST HOSPITAL
+                'property_value' => 32000000.00,
+                'financed_amount' => 30000000.00,
+                'security_value' => 36000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 17, // KEDAH MEDICAL CENTRE
+                'property_value' => 34000000.00,
+                'financed_amount' => 32000000.00,
+                'security_value' => 38000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 2, // KPJ KAJANG SPECIALIST HOSPITAL
+                'property_value' => 38000000.00,
+                'financed_amount' => 35000000.00,
+                'security_value' => 42000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 18, // KPJ PASIR GUDANG SH
+                'property_value' => 32000000.00,
+                'financed_amount' => 30000000.00,
+                'security_value' => 35000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 19, // KPJ Tawakkal Sh & KPJ Damansara SH
+                'property_value' => 90000000.00,
+                'financed_amount' => 85000000.00,
+                'security_value' => 100000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Combined property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 1,
+                'property_id' => 1, // KUANTAN WELLNESS CENTRE
+                'property_value' => 22000000.00,
+                'financed_amount' => 20000000.00,
+                'security_value' => 24000000.00,
+                'valuation_date' => '2024-08-01',
+                'remarks' => 'Property used as security for Commodity Murabahah Financing',
+                'status' => 'active'
+            ],
+            
+            // Financial ID 2 (Term Financing for Al Salam)
+            [
+                'financial_id' => 2,
+                'property_id' => 20, // KFC AYER HITAM
+                'property_value' => 3200000.00,
+                'financed_amount' => 2500000.00,
+                'security_value' => 3500000.00,
+                'valuation_date' => '2024-07-15',
+                'remarks' => 'Property used as security for Term Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 2,
+                'property_id' => 21, // KOMTAR JBCC
+                'property_value' => 165000000.00,
+                'financed_amount' => 120000000.00,
+                'security_value' => 175000000.00,
+                'valuation_date' => '2024-07-15',
+                'remarks' => 'Primary security for Term Financing',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 2,
+                'property_id' => 23, // MART KEMPAS
+                'property_value' => 42000000.00,
+                'financed_amount' => 30000000.00,
+                'security_value' => 45000000.00,
+                'valuation_date' => '2024-07-15',
+                'remarks' => 'Property used as security for Term Financing',
+                'status' => 'active'
+            ],
+            
+            // Financial ID 3 (Islamic Bond for AMANAH HARTA TANAH PNB)
+            [
+                'financial_id' => 3,
+                'property_id' => 31, // CX1, CYBERJAYA
+                'property_value' => 85000000.00,
+                'financed_amount' => 70000000.00,
+                'security_value' => 90000000.00,
+                'valuation_date' => '2024-06-30',
+                'remarks' => 'Premium office building used as security for Islamic Bond',
+                'status' => 'active'
+            ],
+            [
+                'financial_id' => 3,
+                'property_id' => 32, // MYDIN HYPERMARKET, SEREMBAN 2
+                'property_value' => 95000000.00,
+                'financed_amount' => 80000000.00,
+                'security_value' => 100000000.00,
+                'valuation_date' => '2024-06-30',
+                'remarks' => 'Hypermarket used as security for Islamic Bond',
+                'status' => 'active'
+            ]
+        ];
+
+        // Insert financial_property records
+        foreach ($financialProperties as $financialProperty) {
+            DB::table('financial_property')->insert([
+                'financial_id' => $financialProperty['financial_id'],
+                'property_id' => $financialProperty['property_id'],
+                'property_value' => $financialProperty['property_value'],
+                'financed_amount' => $financialProperty['financed_amount'],
+                'security_value' => $financialProperty['security_value'],
+                'valuation_date' => $financialProperty['valuation_date'],
+                'remarks' => $financialProperty['remarks'],
+                'status' => $financialProperty['status'],
+                'prepared_by' => 'System Admin',
+                'verified_by' => 'System Verifier',
+                'approval_datetime' => Carbon::now(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
             ]);
         }
 
