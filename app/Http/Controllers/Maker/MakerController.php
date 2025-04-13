@@ -51,35 +51,35 @@ use App\Models\Appointment;
 use App\Models\ApprovalForm;
 
 use App\Http\Requests\User\BondFormRequest;
-
+use App\Jobs\Issuer\SendCreatedIssuerToApproval;
 
 class MakerController extends Controller
 {
     public function index(Request $request)
     {
         $query = Issuer::query();
-        
+
         // Apply search filter
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('issuer_name', 'LIKE', '%' . $search . '%')
-                ->orWhere('issuer_short_name', 'LIKE', '%' . $search . '%')
-                ->orWhere('registration_number', 'LIKE', '%' . $search . '%');
+                    ->orWhere('issuer_short_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('registration_number', 'LIKE', '%' . $search . '%');
             });
         }
-        
+
         // Apply status filter
         if ($request->has('status') && !empty($request->status)) {
             $query->where('status', $request->status);
         }
-    
+
         // Get filtered issuers with latest first and paginate
-        $issuers = $query->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])
-                        ->latest()
-                        ->paginate(10)
-                        ->withQueryString(); // This preserves the query parameters in pagination links
-    
+        $issuers = $query->whereIn('status', ['Active', 'Pending', 'Inactive', 'Rejected', 'Draft'])
+            ->latest()
+            ->paginate(10)
+            ->withQueryString(); // This preserves the query parameters in pagination links
+
         // Get count data from cache or database
         $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
             $result = DB::select("
@@ -96,22 +96,22 @@ class MakerController extends Controller
             ");
             return (array) $result[0];
         });
-    
+
         // Query for portfolios
         $portfolioQuery = Portfolio::query();
-        
+
         // Apply search filter to portfolios
         if ($request->has('search') && !empty($request->search)) {
             $portfolioQuery->where('portfolio_name', 'LIKE', '%' . $request->search . '%');
         }
-        
+
         // Apply status filter to portfolios
         if ($request->has('status') && !empty($request->status)) {
             $portfolioQuery->where('status', $request->status);
         }
-        
+
         $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
-    
+
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
@@ -136,7 +136,7 @@ class MakerController extends Controller
     public function IssuerStore(Request $request, Issuer $issuer)
     {
         $validated = $this->validateIssuer($request);
-        
+
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'Draft';
@@ -183,7 +183,7 @@ class MakerController extends Controller
         return $request->validate([
             'issuer_short_name' => 'nullable|string|max:50',
             'issuer_name' => 'required|string|max:100',
-            'registration_number' => 'required' . ($issuer ? '|unique:issuers,registration_number,'.$issuer->id : '|unique:issuers'),
+            'registration_number' => 'required' . ($issuer ? '|unique:issuers,registration_number,' . $issuer->id : '|unique:issuers'),
             'debenture' => 'nullable|string|max:255',
             'trustee_role_1' => 'nullable|string|max:255',
             'trustee_role_2' => 'nullable|string|max:255',
@@ -209,7 +209,9 @@ class MakerController extends Controller
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
-            
+
+            SendCreatedIssuerToApproval::dispatch($issuer);
+
             return redirect()->route('maker.dashboard', $issuer)->with('success', 'Issuer submitted for approval successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
@@ -259,7 +261,7 @@ class MakerController extends Controller
     public function BondStore(BondFormRequest $request, Bond $bond)
     {
         $validated = $request->validated();
-        
+
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'Pending';
@@ -301,18 +303,18 @@ class MakerController extends Controller
             'redemption.lockoutPeriods',
             'charts'
         ]);
-        
+
         // Get related documents through the issuer
         $relatedDocuments = null;
         if ($bond->issuer) {
             // Get the facilityInformation linked to this bond
             $facilityCode = $bond->facility_code;
-            
+
             if ($facilityCode) {
                 $facilityInfo = $bond->issuer->facilities()
                     ->where('facility_code', $facilityCode)
                     ->first();
-                    
+
                 if ($facilityInfo) {
                     $relatedDocuments = $facilityInfo->documents()
                         ->orderBy('upload_date', 'desc')
@@ -438,7 +440,7 @@ class MakerController extends Controller
         $issuers = Issuer::all();
         return view('maker.announcement.edit', compact('announcement', 'issuers'));
     }
-    
+
     public function AnnouncementUpdate(Request $request, Announcement $announcement)
     {
         $validated = $this->validateAnnouncement($request);
@@ -474,8 +476,8 @@ class MakerController extends Controller
             'source' => 'required|string|max:100',
             'announcement_date' => 'required|date',
             'title' => 'required|string|max:200',
-            'description' => 'required|string',
-            'content' => 'required|string',
+            'description' => 'nullable|string',
+            'content' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         ]);
     }
@@ -486,7 +488,7 @@ class MakerController extends Controller
         $facilities = FacilityInformation::all();
         return view('maker.related-document.create', compact('facilities', 'issuer'));
     }
-    
+
     public function DocumentStore(Request $request)
     {
         $validated = $this->validateDocument($request);
@@ -581,17 +583,17 @@ class MakerController extends Controller
     {
         // Items per page
         $perPage = 10;
-    
+
         // Fetch bonds with pagination
         $bonds = $facility->issuer->bonds()
             ? $facility->issuer->bonds()->paginate($perPage, ['*'], 'bondsPage')
             : collect(); // Use an empty collection instead of $emptyPaginator
-    
+
         // Documents Pagination
         $documents = $facility->documents()
             ? $facility->documents()->paginate($perPage, ['*'], 'documentsPage')
             : collect(); // Use an empty collection instead of $emptyPaginator
-    
+
         // Load all rating movements across all bonds
         $allRatingMovements = $facility->issuer->bonds->flatMap(function ($bond) {
             return $bond->ratingMovements; // Collect rating movements from each bond
@@ -618,8 +620,8 @@ class MakerController extends Controller
     {
         return $request->validate([
             'issuer_id' => 'required|exists:issuers,id',
-            'facility_code' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_code,'.$facility->id : 'unique:facility_informations'),
-            'facility_number' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_number,'.$facility->id : 'unique:facility_informations'),
+            'facility_code' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_code,' . $facility->id : 'unique:facility_informations'),
+            'facility_number' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_number,' . $facility->id : 'unique:facility_informations'),
             'facility_name' => 'required|max:100',
             'principle_type' => 'nullable|max:50',
             'islamic_concept' => 'nullable|max:100',
@@ -784,7 +786,7 @@ class MakerController extends Controller
             'adjustment_date' => 'nullable|date',
         ]);
 
-        try{
+        try {
             $payment->update($validated);
             return redirect()->route('bond-m.show', $payment->bond)->with('success', 'Payment schedule updated successfully');
         } catch (\Exception $e) {
@@ -796,7 +798,7 @@ class MakerController extends Controller
     {
         try {
             $payment->delete();
-            return redirect()->route('payment-schedules-info.index')>with('success', 'Payment schedule deleted successfully');
+            return redirect()->route('payment-schedules-info.index') > with('success', 'Payment schedule deleted successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
         }
@@ -876,7 +878,7 @@ class MakerController extends Controller
             'redeem_nearest_denomination' => 'nullable|boolean'
         ]);
 
-        try{
+        try {
             $redemption->update($validated);
             return redirect()->route('bond-m.show', $redemption->bond)->with('success', 'Redemption updated successfully');
         } catch (\Exception $e) {
@@ -888,7 +890,7 @@ class MakerController extends Controller
     {
         try {
             $redemption->delete();
-            return redirect()->route('bond-m.show', $redemption->bond)>with('success', 'Redemption deleted successfully');
+            return redirect()->route('bond-m.show', $redemption->bond) > with('success', 'Redemption deleted successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
         }
@@ -914,7 +916,7 @@ class MakerController extends Controller
         $exists = CallSchedule::where('redemption_id', $validated['redemption_id'])
             ->where(function ($query) use ($validated) {
                 $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
-                      ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
+                    ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
             })
             ->exists();
 
@@ -956,7 +958,7 @@ class MakerController extends Controller
             ->where('id', '!=', $call->id)
             ->where(function ($query) use ($validated) {
                 $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
-                      ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
+                    ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
             })
             ->exists();
 
@@ -1097,7 +1099,7 @@ class MakerController extends Controller
             'value_date' => 'nullable|date|after:trade_date',
         ]);
 
-        try{
+        try {
             $trading->update($validated);
             return redirect()->route('bond-m.show', $trading->bond)->with('success', 'Trading activity updated successfully');
         } catch (\Exception $e) {
@@ -1111,7 +1113,7 @@ class MakerController extends Controller
 
         try {
             $paymentSchedule->delete();
-            return redirect()->route('dashboard')>with('success', 'Payment schedule deleted successfully');
+            return redirect()->route('dashboard') > with('success', 'Payment schedule deleted successfully');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
         }
@@ -1138,27 +1140,27 @@ class MakerController extends Controller
     {
         // Use the proper relationship - facility.issuer instead of direct issuer
         $query = TrusteeFee::with(['facility', 'facility.issuer']);
-        
+
         // Filter by facility_information_id if provided
         if ($request->has('facility_information_id') && !empty($request->facility_information_id)) {
             $query->where('facility_information_id', $request->facility_information_id);
         }
-        
+
         // Filter by issuer_id through the facility relationship
         if ($request->has('issuer_id') && !empty($request->issuer_id)) {
-            $query->whereHas('facility', function($q) use ($request) {
+            $query->whereHas('facility', function ($q) use ($request) {
                 $q->where('issuer_id', $request->issuer_id);
             });
         }
-        
+
         if ($request->has('invoice_no') && !empty($request->invoice_no)) {
             $query->where('invoice_no', 'LIKE', '%' . $request->invoice_no . '%');
         }
-        
+
         if ($request->has('month') && !empty($request->month)) {
             $query->where('month', $request->month);
         }
-        
+
         if ($request->has('payment_status') && !empty($request->payment_status)) {
             if ($request->payment_status === 'paid') {
                 $query->whereNotNull('payment_received');
@@ -1166,13 +1168,13 @@ class MakerController extends Controller
                 $query->whereNull('payment_received');
             }
         }
-        
+
         // Get all issuers for the dropdown
         $issuers = Issuer::orderBy('issuer_name')->get();
-        
+
         // Get facilities for dropdown if needed
         $facilities = FacilityInformation::orderBy('facility_name')->get();
-        
+
         $trustee_fees = $query->latest()->paginate(10);
         return view('maker.trustee-fee.index', compact('trustee_fees', 'issuers', 'facilities'));
     }
@@ -1184,7 +1186,7 @@ class MakerController extends Controller
 
         // Get facilities for dropdown if needed
         $facilities = FacilityInformation::orderBy('facility_name')->get();
-        
+
         return view('maker.trustee-fee.create', compact('issuers', 'facilities'));
     }
 
@@ -1244,7 +1246,7 @@ class MakerController extends Controller
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
-            
+
             return redirect()
                 ->route('trustee-fee-m.show', $trusteeFee)
                 ->with('success', 'Trustee Fee submitted for approval successfully.');
@@ -1262,7 +1264,7 @@ class MakerController extends Controller
             'trustee_fee_amount_2' => 'nullable|numeric',
             'start_anniversary_date' => 'required|date',
             'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
-            'invoice_no' => 'required|string|' . ($trusteeFee ? 'unique:trustee_fees,invoice_no,'.$trusteeFee->id : 'unique:trustee_fees'),
+            'invoice_no' => 'required|string|' . ($trusteeFee ? 'unique:trustee_fees,invoice_no,' . $trusteeFee->id : 'unique:trustee_fees'),
             'month' => 'nullable|string|max:10',
             'date' => 'nullable|integer|min:1|max:31',
             'memo_to_fad' => 'nullable|date',
@@ -1329,7 +1331,7 @@ class MakerController extends Controller
         // Get results with pagination
         $covenants = $query->latest()->paginate(10);
         $covenants->appends($request->all());
-        
+
         return view('maker.compliance-covenant.index', compact('covenants', 'issuers'));
     }
 
@@ -1392,7 +1394,7 @@ class MakerController extends Controller
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
-            
+
             return redirect()
                 ->route('compliance-covenant-m.show', $compliance)
                 ->with('success', 'Compliance Covenant submitted for approval successfully.');
@@ -1429,25 +1431,25 @@ class MakerController extends Controller
     public function ActivityIndex(Request $request)
     {
         $query = ActivityDiary::with('issuer');
-        
+
         // Filter by issuer_id
         if ($request->has('issuer_id') && !empty($request->issuer_id)) {
             $query->where('issuer_id', $request->issuer_id);
         }
-        
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-        
+
         if ($request->filled('due_date')) {
             $query->whereDate('due_date', $request->due_date);
         }
 
         // Get all issuers for the dropdown
         $issuers = Issuer::orderBy('issuer_name')->get();
-        
+
         $activities = $query->latest()->paginate(10)->withQueryString();
-        
+
         return view('maker.activity-diary.index', compact('activities', 'issuers'));
     }
 
@@ -1555,18 +1557,18 @@ class MakerController extends Controller
     {
         $issuer = Issuer::findOrFail($issuerId);
         $query = ActivityDiary::where('issuer_id', $issuerId);
-        
+
         // Apply filters if provided
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-        
+
         if ($request->filled('due_date')) {
             $query->whereDate('due_date', $request->due_date);
         }
-        
+
         $activities = $query->latest()->paginate(10)->withQueryString();
-        
+
         return view('maker.activity-diary.by-issuer', compact('activities', 'issuer'));
     }
 
@@ -1579,25 +1581,25 @@ class MakerController extends Controller
     {
         $today = now()->format('Y-m-d');
         $nextWeek = now()->addDays(7)->format('Y-m-d');
-        
+
         $query = ActivityDiary::with('issuer')
             ->whereBetween('due_date', [$today, $nextWeek])
             ->where('status', '!=', 'completed');
-        
+
         // Apply filters if provided
         if ($request->filled('issuer')) {
-            $query->whereHas('issuer', function($q) use ($request) {
+            $query->whereHas('issuer', function ($q) use ($request) {
                 $q->where('issuer_name', 'like', '%' . $request->issuer . '%')
-                  ->orWhere('issuer_short_name', 'like', '%' . $request->issuer . '%');
+                    ->orWhere('issuer_short_name', 'like', '%' . $request->issuer . '%');
             });
         }
-        
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-        
+
         $activities = $query->latest()->paginate(10)->withQueryString();
-        
+
         return view('maker.activity-diary.upcoming', compact('activities'));
     }
 
@@ -1639,18 +1641,28 @@ class MakerController extends Controller
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="activities.csv"',
         ];
-        
-        $callback = function() use ($activities) {
+
+        $callback = function () use ($activities) {
             $file = fopen('php://output', 'w');
-            
+
             // Add CSV headers
             fputcsv($file, [
-                'ID', 'Issuer', 'Purpose', 'Letter Date', 'Due Date', 
-                'Extension Date 1', 'Extension Note 1', 
-                'Extension Date 2', 'Extension Note 2',
-                'Status', 'Remarks', 'Prepared By', 'Verified By', 'Approval Date'
+                'ID',
+                'Issuer',
+                'Purpose',
+                'Letter Date',
+                'Due Date',
+                'Extension Date 1',
+                'Extension Note 1',
+                'Extension Date 2',
+                'Extension Note 2',
+                'Status',
+                'Remarks',
+                'Prepared By',
+                'Verified By',
+                'Approval Date'
             ]);
-            
+
             // Add data rows
             foreach ($activities as $activity) {
                 fputcsv($file, [
@@ -1670,10 +1682,10 @@ class MakerController extends Controller
                     $activity->approval_datetime ? $activity->approval_datetime->format('Y-m-d H:i:s') : null
                 ]);
             }
-            
+
             fclose($file);
         };
-        
+
         return response()->stream($callback, 200, $headers);
     }
 
@@ -1684,7 +1696,7 @@ class MakerController extends Controller
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
-            
+
             return redirect()
                 ->route('activity-diary-m.show', $activity)
                 ->with('success', 'Activity diary submitted for approval successfully.');
@@ -1720,13 +1732,13 @@ class MakerController extends Controller
     public function PortfolioStore(Request $request)
     {
         $validated = $this->validatePortfolio($request);
-        
+
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'Draft';
-        
+
         $portfolio = Portfolio::create($validated);
-        
+
         return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio created successfully');
     }
 
@@ -1739,9 +1751,9 @@ class MakerController extends Controller
     public function PortfolioUpdate(Request $request, Portfolio $portfolio)
     {
         $validated = $this->validatePortfolio($request, $portfolio);
-        
+
         $portfolio->update($validated);
-        
+
         return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio updated successfully');
     }
 
@@ -1757,7 +1769,7 @@ class MakerController extends Controller
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
-            
+
             return redirect()
                 ->route('portfolio-m.show', $activity)
                 ->with('success', 'Portfolio submitted for approval successfully.');
@@ -1765,7 +1777,7 @@ class MakerController extends Controller
             return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
     }
-    
+
     protected function validatePortfolio(Request $request, Portfolio $portfolio = null)
     {
         return $request->validate([
@@ -1799,18 +1811,18 @@ class MakerController extends Controller
 
     public function FinancialStore(Request $request)
     {
-        $validated = $this->FinancialValidate($request);
+        // $validated = $this->FinancialValidate($request);
 
-        // Add prepared_by from authenticated user and set status
-        $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
+        // // Add prepared_by from authenticated user and set status
+        // $validated['prepared_by'] = Auth::user()->name;
+        // $validated['status'] = 'Active';
 
-        try {
-            $financial = Financial::create($validated);
-            return redirect()->route()->with('success', 'Financial created successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error creating financial: ' . $e->getMessage());
-        }
+        // try {
+        //     $financial = Financial::create($validated);
+        //     return redirect()->route()->with('success', 'Financial created successfully.');
+        // } catch (\Exception $e) {
+        //     return back()->with('error', 'Error creating financial: ' . $e->getMessage());
+        // }
     }
 
     public function FinancialEdit(Financial $financial)
@@ -1839,7 +1851,8 @@ class MakerController extends Controller
         return view('maker.financial.show', compact('financial'));
     }
 
-    public function FinancialValidate(Request $request, Financial $financial = null) {
+    public function FinancialValidate(Request $request, Financial $financial = null)
+    {
         return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
             'bank_id' => 'required|exists:banks,id',
@@ -1867,18 +1880,18 @@ class MakerController extends Controller
         // Start with a base query, including relevant relationships
         $query = Property::with([
             'portfolio',
-            'tenants' => function($q) {
+            'tenants' => function ($q) {
                 $q->where('status', 'active');
             },
-            'siteVisits' => function($q) {
+            'siteVisits' => function ($q) {
                 $q->where('status', 'scheduled');
             }
         ]);
-        
+
         // Filter by portfolio if provided
         if ($portfolio->exists) {
             $query->where('portfolio_id', $portfolio->id);
-            
+
             // Eager load portfolio with its relationships when we're looking at a specific portfolio
             $portfolio->load([
                 'portfolioType',
@@ -1888,49 +1901,49 @@ class MakerController extends Controller
                 'financials.financialType'
             ]);
         }
-        
+
         // Apply filters based on request parameters
         if ($request->filled('batch_no')) {
             $query->where('batch_no', $request->batch_no);
         }
-        
+
         if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
-        
+
         if ($request->filled('city')) {
             $query->where('city', $request->city);
         }
-        
+
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('address', 'like', "%{$search}%")
-                  ->orWhere('batch_no', 'like', "%{$search}%");
+                    ->orWhere('address', 'like', "%{$search}%")
+                    ->orWhere('batch_no', 'like', "%{$search}%");
             });
         }
-        
+
         // Add sorting capability
         $sortField = $request->filled('sort') ? $request->sort : 'created_at';
         $sortDirection = $request->filled('direction') ? $request->direction : 'desc';
         $query->orderBy($sortField, $sortDirection);
-        
+
         // Execute the query with pagination
         $properties = $query->paginate(10)->appends($request->except('page'));
-        
+
         // Get unique values for filters dropdowns
         $batchNumbers = Property::select('batch_no')->distinct()->pluck('batch_no');
         $categories = Property::select('category')->distinct()->pluck('category');
         $cities = Property::select('city')->distinct()->pluck('city');
         $statuses = Property::select('status')->distinct()->pluck('status');
         $portfolios = Portfolio::where('status', 'active')->get();
-        
+
         return view('maker.property.index', compact(
             'portfolios',
             'properties',
-            'batchNumbers', 
-            'categories', 
+            'batchNumbers',
+            'categories',
             'cities',
             'statuses',
             'portfolio',
@@ -1942,7 +1955,7 @@ class MakerController extends Controller
     public function PropertyCreate(Portfolio $portfolio)
     {
         $portfolioInfo = $portfolio;
-        $portfolios = Portfolio::orderBy('property_name')->get();
+        $portfolios = Portfolio::orderBy('portfolio_name')->get();
         return view('maker.property.create', compact('portfolios', 'portfolioInfo'));
     }
 
@@ -1964,7 +1977,7 @@ class MakerController extends Controller
 
     public function PropertyEdit(Property $property)
     {
-        $portfolios = Portfolio::orderBy('property_name')->get();
+        $portfolios = Portfolio::orderBy('portfolio_name')->get();
         return view('maker.property.edit', compact('portfolios', 'property'));
     }
 
@@ -2016,20 +2029,20 @@ class MakerController extends Controller
             ->orderBy('name')
             ->paginate(10)
             ->withQueryString();
-        
+
         $siteVisits = $property->siteVisits()
             ->with('checklist')
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
-    
+
         return view('maker.tenant.index', compact('tenants', 'siteVisits', 'property'));
     }
 
     public function TenantCreate(Property $property)
     {
         $propertyInfo = $property;
-        $properties = Property::orderBy('property_name')->get();
+        $properties = Property::orderBy('name')->get();
         return view('maker.tenant.create', compact('properties', 'propertyInfo'));
     }
 
@@ -2043,14 +2056,14 @@ class MakerController extends Controller
         try {
             $tenant = Tenant::create($validated);
             return redirect()->route('tenant-m.index', $tenant->property)->with('success', 'Tenant created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error creating tenant: ' . $e->getMessage());
         }
     }
 
     public function TenantEdit(Tenant $tenant)
     {
-        $properties = Property::orderBy('property_name')->get();
+        $properties = Property::orderBy('name')->get();
         return view('maker.tenant.edit', compact('tenant', 'properties'));
     }
 
@@ -2061,7 +2074,7 @@ class MakerController extends Controller
         try {
             $tenant->update($validated);
             return redirect()->route('tenant-m.index', $tenant->property)->with('success', 'Tenant updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating tenant: ' . $e->getMessage());
         }
     }
@@ -2090,27 +2103,27 @@ class MakerController extends Controller
     {
         // Get all tenants for this property
         $tenantIds = $property->tenants->pluck('id');
-        
+
         // Get all leases for these tenants with pagination
         $leases = Lease::whereIn('tenant_id', $tenantIds)
             ->with(['tenant', 'tenant.property']) // Eager load relationships
             ->latest()
             ->paginate(10);
-        
+
         // Get property details with necessary relationships
         $property->load(['portfolio', 'portfolio.portfolioType']);
-        
+
         // Calculate lease metrics for property summary
         $activeLeaseCount = Lease::whereIn('tenant_id', $tenantIds)
             ->where('status', 'active')
             ->count();
-        
+
         $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)->count();
-        
+
         $totalActiveRental = Lease::whereIn('tenant_id', $tenantIds)
             ->where('status', 'active')
             ->sum('rental_amount');
-        
+
         // Pass calculated metrics to view
         return view('maker.lease.index', compact(
             'property',
@@ -2137,7 +2150,7 @@ class MakerController extends Controller
         try {
             $lease = Lease::create($validated);
             return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error creating lease: ' . $e->getMessage());
         }
     }
@@ -2158,7 +2171,7 @@ class MakerController extends Controller
         try {
             $lease->update($validated);
             return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error updating lease: ' . $e->getMessage());
         }
     }
@@ -2188,10 +2201,10 @@ class MakerController extends Controller
     public function SiteVisitIndex(Property $property)
     {
         $siteVisits = $property->siteVisits()
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(10)
-                        ->withQueryString();
-                        
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('maker.site-visit.index', compact('siteVisits', 'propertyInfo'));
     }
 
@@ -2212,7 +2225,7 @@ class MakerController extends Controller
         try {
             $siteVisit = SiteVisit::create($validated);
             return redirect()->route('tenant-m.index', $siteVisit->property)->with('success', 'Site visit created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error creating site visit: ' . $e->getMEssage());
         }
     }
@@ -2230,7 +2243,7 @@ class MakerController extends Controller
         try {
             $siteVisit->update($validated);
             return redirect()->route('tenant-m.index', $siteVisit->property)->with('success', 'Site visit updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error updating site visit: ' . $e->getMessage());
         }
     }
@@ -2260,50 +2273,50 @@ class MakerController extends Controller
     {
         // Start with a base query that includes the relationship
         $query = Checklist::with('siteVisit');
-        
+
         // Filter by property if provided
         if ($property->exists) {
-            $query->where('site_visit_id', function ($subquery) use ($property) {
+            $query->whereIn('site_visit_id', function ($subquery) use ($property) {
                 $subquery->select('id')
                     ->from('site_visits')
                     ->where('property_id', $property->id);
             });
         }
-        
+
         // Handle search functionality
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('property_title', 'like', "%{$search}%")
-                  ->orWhere('property_location', 'like', "%{$search}%")
-                  ->orWhere('tenant_name', 'like', "%{$search}%")
-                  ->orWhere('title_ref', 'like', "%{$search}%")
-                  ->orWhere('remarks', 'like', "%{$search}%");
+                    ->orWhere('property_location', 'like', "%{$search}%")
+                    ->orWhere('tenant_name', 'like', "%{$search}%")
+                    ->orWhere('title_ref', 'like', "%{$search}%")
+                    ->orWhere('remarks', 'like', "%{$search}%");
             });
         }
-        
+
         // Handle status filtering
         if ($request->has('status') && !empty($request->status)) {
             $query->where('status', $request->status);
         }
-        
+
         // Get paginated results
         $checklists = $query->latest()->paginate(10)->withQueryString();
-        
+
         // Get related data for summary statistics if we're viewing a specific property
         if ($property->exists) {
             // You might want to add additional statistics here if needed
             $pendingCount = $checklists->where('status', 'pending')->count();
             $completedCount = $checklists->where('status', 'completed')->count();
-            
+
             return view('maker.checklist.index', compact(
-                'property', 
+                'property',
                 'checklists',
                 'pendingCount',
                 'completedCount'
             ));
         }
-        
+
         return view('maker.checklist.index', compact('checklists'));
     }
 
@@ -2358,7 +2371,7 @@ class MakerController extends Controller
             'property_title' => 'required|string|max:255',
             'property_location' => 'required|string|max:255',
             'site_visit_id' => 'nullable|exists:site_visits,id',
-            
+
             // 1.0 Legal Documentation
             'title_ref' => 'nullable|string|max:255',
             'title_location' => 'nullable|string|max:255',
@@ -2372,14 +2385,14 @@ class MakerController extends Controller
             'maintenance_agreement_location' => 'nullable|string|max:255',
             'development_agreement' => 'nullable|string|max:255',
             'other_legal_docs' => 'nullable|string',
-            
+
             // 2.0 Tenancy Agreement
             'tenant_name' => 'nullable|string|max:255',
             'tenant_property' => 'nullable|string|max:255',
             'tenancy_approval_date' => 'nullable|date',
             'tenancy_commencement_date' => 'nullable|date',
             'tenancy_expiry_date' => 'nullable|date',
-            
+
             // 3.0 External Area Conditions
             'is_general_cleanliness_satisfied' => 'nullable|boolean',
             'general_cleanliness_remarks' => 'nullable|string',
@@ -2396,7 +2409,7 @@ class MakerController extends Controller
             'is_drainage_satisfied' => 'nullable|boolean',
             'drainage_remarks' => 'nullable|string',
             'external_remarks' => 'nullable|string',
-            
+
             // 4.0 Internal Area Conditions
             'is_door_window_satisfied' => 'nullable|boolean',
             'door_window_remarks' => 'nullable|string',
@@ -2415,7 +2428,7 @@ class MakerController extends Controller
             'is_basement_car_park_satisfied' => 'nullable|boolean',
             'basement_car_park_remarks' => 'nullable|string',
             'internal_remarks' => 'nullable|string',
-            
+
             // 5.0 Property Development
             'development_date' => 'nullable|date',
             'development_expansion_status' => 'nullable|string',
@@ -2426,7 +2439,7 @@ class MakerController extends Controller
             'repainting_date' => 'nullable|date',
             'external_repainting_status' => 'nullable|string',
             'repainting_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            
+
             // 5.4 Disposal/Installation/Replacement
             'water_tank_date' => 'nullable|date',
             'water_tank_status' => 'nullable|string',
@@ -2446,22 +2459,22 @@ class MakerController extends Controller
             'other_system_date' => 'nullable|date',
             'other_property' => 'nullable|string',
             'other_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            
+
             // 5.5 Other Proposals/Approvals
             'other_proposals_approvals' => 'nullable|string',
-            
+
             // System Information
             'status' => 'nullable|string|in:Scheduled,Pending Action,Approved',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
             'approval_datetime' => 'nullable|date',
-            
+
             // Attachments - if you plan to have file uploads
             // 'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
         ]);
     }
-    
+
     public function ChecklistSubmissionLegal(Checklist $checklist)
     {
         try {
@@ -2469,7 +2482,7 @@ class MakerController extends Controller
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
-            
+
             return redirect()
                 ->route('tenant-m.index', $checklist->property)
                 ->with('success', 'Checklist submitted for legal approval successfully.');
@@ -2485,12 +2498,12 @@ class MakerController extends Controller
         // Retrieve appointments with related portfolio, handling search and filtering
         $query = Appointment::with('portfolio')
             ->when($request->input('search'), function ($query, $search) {
-                return $query->where(function($q) use ($search) {
+                return $query->where(function ($q) use ($search) {
                     $q->where('party_name', 'like', "%{$search}%")
-                    ->orWhere('appointment_title', 'like', "%{$search}%")
-                    ->orWhereHas('portfolio', function($portfolio) use ($search) {
-                        $portfolio->where('portfolio_name', 'like', "%{$search}%");
-                    });
+                        ->orWhere('appointment_title', 'like', "%{$search}%")
+                        ->orWhereHas('portfolio', function ($portfolio) use ($search) {
+                            $portfolio->where('portfolio_name', 'like', "%{$search}%");
+                        });
                 });
             })
             ->when($request->input('status'), function ($query, $status) {
@@ -2622,16 +2635,16 @@ class MakerController extends Controller
         // Retrieve approval forms with related portfolio and property, handling search and filtering
         $query = ApprovalForm::with(['portfolio', 'property'])
             ->when($request->input('search'), function ($query, $search) {
-                return $query->where(function($q) use ($search) {
+                return $query->where(function ($q) use ($search) {
                     $q->where('form_title', 'like', "%{$search}%")
-                    ->orWhere('form_number', 'like', "%{$search}%")
-                    ->orWhere('reference_code', 'like', "%{$search}%")
-                    ->orWhereHas('portfolio', function($portfolio) use ($search) {
-                        $portfolio->where('portfolio_name', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('property', function($property) use ($search) {
-                        $property->where('name', 'like', "%{$search}%");
-                    });
+                        ->orWhere('form_number', 'like', "%{$search}%")
+                        ->orWhere('reference_code', 'like', "%{$search}%")
+                        ->orWhereHas('portfolio', function ($portfolio) use ($search) {
+                            $portfolio->where('portfolio_name', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('property', function ($property) use ($search) {
+                            $property->where('name', 'like', "%{$search}%");
+                        });
                 });
             })
             ->when($request->input('status'), function ($query, $status) {
@@ -2805,20 +2818,20 @@ class MakerController extends Controller
     public function SiteVisitLogIndex(Request $request)
     {
         $query = SiteVisitLog::query();
-        
+
         // Filter by status if provided
         if ($request->has('status')) {
             $query->where('status', $request->status);
         }
-        
+
         // Filter by date range if provided
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereBetween('visitation_date', [$request->start_date, $request->end_date]);
         }
-        
+
         // Order by visitation date descending by default
         $siteVisitLogs = $query->orderBy('visitation_date', 'desc')
-                              ->paginate(10);
+            ->paginate(10);
 
         $siteVisits = SiteVisit::where('status', 'active')->get();
 
@@ -2841,7 +2854,7 @@ class MakerController extends Controller
         try {
             SiteVisitLog::create($validated);
             return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('Error creating site visit log : ' . $e->getMessage());
         }
     }
@@ -2859,7 +2872,7 @@ class MakerController extends Controller
         try {
             $siteVisitLog->update($validated);
             return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('Error updating site visit log : ' . $e->getMessage());
         }
     }
