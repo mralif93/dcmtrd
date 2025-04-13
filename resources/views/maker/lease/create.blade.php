@@ -36,7 +36,7 @@
             @endif
 
             <div class="bg-white shadow rounded-lg p-6">
-                <form method="POST" action="{{ route('lease-m.store', $property) }}">
+                <form method="POST" action="{{ route('lease-m.store', $property) }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="mb-6">
@@ -70,7 +70,7 @@
 
                             <div class="mb-4">
                                 <label for="demised_premises" class="block text-sm font-medium text-gray-700">Demised Premises</label>
-                                <input id="demised_premises" type="text" name="demised_premises" value="{{ old('demised_premises') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <input id="demised_premises" type="text" name="demised_premises" value="{{ old('demised_premises') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('demised_premises')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -78,7 +78,7 @@
 
                             <div class="mb-4">
                                 <label for="permitted_use" class="block text-sm font-medium text-gray-700">Permitted Use</label>
-                                <input id="permitted_use" type="text" name="permitted_use" value="{{ old('permitted_use') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <input id="permitted_use" type="text" name="permitted_use" value="{{ old('permitted_use') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('permitted_use')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -86,7 +86,7 @@
 
                             <div class="mb-4">
                                 <label for="term_years" class="block text-sm font-medium text-gray-700">Term (Years)</label>
-                                <input id="term_years" type="text" name="term_years" value="{{ old('term_years') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <input id="term_years" type="text" name="term_years" value="{{ old('term_years') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('term_years')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -94,7 +94,7 @@
 
                             <div class="mb-4">
                                 <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
-                                <input id="start_date" type="date" name="start_date" value="{{ old('start_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <input id="start_date" type="date" name="start_date" value="{{ old('start_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('start_date')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -102,7 +102,7 @@
 
                             <div class="mb-4">
                                 <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
-                                <input id="end_date" type="date" name="end_date" value="{{ old('end_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <input id="end_date" type="date" name="end_date" value="{{ old('end_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('end_date')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -118,31 +118,120 @@
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
+                            
+                            <div class="mb-4">
+                                <label for="tenancy_type" class="block text-sm font-medium text-gray-700">Tenancy Type</label>
+                                <input id="tenancy_type" type="text" name="tenancy_type" value="{{ old('tenancy_type') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                @error('tenancy_type')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="space" class="block text-sm font-medium text-gray-700">Space (sq ft/m²)</label>
+                                <input id="space" type="number" step="0.01" min="0" name="space" value="{{ old('space') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                @error('space')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
                     </div>
 
                     <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Financial Information</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Rental Information</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="mb-4">
-                                <label for="rental_amount" class="block text-sm font-medium text-gray-700">Rental Amount</label>
-                                <input id="rental_amount" type="number" step="0.01" min="0" name="rental_amount" value="{{ old('rental_amount') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                                @error('rental_amount')
+                                <label for="base_rate_year_1" class="block text-sm font-medium text-gray-700">Base Rate Year 1</label>
+                                <input id="base_rate_year_1" type="number" step="0.01" min="0" name="base_rate_year_1" value="{{ old('base_rate_year_1') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                @error('base_rate_year_1')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
-
+                            
                             <div class="mb-4">
-                                <label for="rental_frequency" class="block text-sm font-medium text-gray-700">Rental Frequency</label>
-                                <select id="rental_frequency" name="rental_frequency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="monthly" {{ old('rental_frequency', 'monthly') == 'monthly' ? 'selected' : '' }}>Monthly</option>
-                                    <option value="quarterly" {{ old('rental_frequency') == 'quarterly' ? 'selected' : '' }}>Quarterly</option>
-                                    <option value="biannual" {{ old('rental_frequency') == 'biannual' ? 'selected' : '' }}>Bi-annual</option>
-                                    <option value="annual" {{ old('rental_frequency') == 'annual' ? 'selected' : '' }}>Annual</option>
-                                    <option value="weekly" {{ old('rental_frequency') == 'weekly' ? 'selected' : '' }}>Weekly</option>
-                                    <option value="daily" {{ old('rental_frequency') == 'daily' ? 'selected' : '' }}>Daily</option>
+                                <label for="monthly_gsto_year_1" class="block text-sm font-medium text-gray-700">Monthly GSTO Year 1</label>
+                                <input id="monthly_gsto_year_1" type="number" step="0.01" min="0" name="monthly_gsto_year_1" value="{{ old('monthly_gsto_year_1') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                @error('monthly_gsto_year_1')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="base_rate_year_2" class="block text-sm font-medium text-gray-700">Base Rate Year 2</label>
+                                <input id="base_rate_year_2" type="number" step="0.01" min="0" name="base_rate_year_2" value="{{ old('base_rate_year_2') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                @error('base_rate_year_2')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="monthly_gsto_year_2" class="block text-sm font-medium text-gray-700">Monthly GSTO Year 2</label>
+                                <input id="monthly_gsto_year_2" type="number" step="0.01" min="0" name="monthly_gsto_year_2" value="{{ old('monthly_gsto_year_2') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                @error('monthly_gsto_year_2')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="base_rate_year_3" class="block text-sm font-medium text-gray-700">Base Rate Year 3</label>
+                                <input id="base_rate_year_3" type="number" step="0.01" min="0" name="base_rate_year_3" value="{{ old('base_rate_year_3') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                @error('base_rate_year_3')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="monthly_gsto_year_3" class="block text-sm font-medium text-gray-700">Monthly GSTO Year 3</label>
+                                <input id="monthly_gsto_year_3" type="number" step="0.01" min="0" name="monthly_gsto_year_3" value="{{ old('monthly_gsto_year_3') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                @error('monthly_gsto_year_3')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Attachment</h3>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="mb-4">
+                                <label for="attachment" class="block text-sm font-medium text-gray-700">Upload Lease Document</label>
+                                <input id="attachment" type="file" name="attachment" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <p class="mt-1 text-sm text-gray-500">Accepts PDF, Word documents, and images (maximum 10MB)</p>
+                                @error('attachment')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Administrative Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="mb-4">
+                                <label for="prepared_by" class="block text-sm font-medium text-gray-700">Prepared By</label>
+                                <input id="prepared_by" type="text" name="prepared_by" value="{{ old('prepared_by') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                @error('prepared_by')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified By</label>
+                                <input id="verified_by" type="text" name="verified_by" value="{{ old('verified_by') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                @error('verified_by')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="pending" {{ old('status', 'pending') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="expired" {{ old('status') == 'expired' ? 'selected' : '' }}>Expired</option>
+                                    <option value="terminated" {{ old('status') == 'terminated' ? 'selected' : '' }}>Terminated</option>
                                 </select>
-                                @error('rental_frequency')
+                                @error('status')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>

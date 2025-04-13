@@ -2119,11 +2119,12 @@ class MakerController extends Controller
             ->count();
 
         $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)->count();
-
+        
+        // Calculate total rental for active leases using base rate year 1
         $totalActiveRental = Lease::whereIn('tenant_id', $tenantIds)
             ->where('status', 'active')
             ->sum('rental_amount');
-
+        
         // Pass calculated metrics to view
         return view('maker.lease.index', compact(
             'property',
@@ -2140,24 +2141,30 @@ class MakerController extends Controller
         return view('maker.lease.create', compact('tenants', 'property'));
     }
 
-    public function LeaseStore(Request $request)
+    public function LeaseStore(Request $request, Property $property)
     {
         $validated = $this->LeaseValidate($request);
 
+        // Set default values
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
+        $validated['status'] = 'pending'; // Setting initial status to pending
+        
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('lease-attachments', 'public');
+        }
 
         try {
             $lease = Lease::create($validated);
-            return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease created successfully.');
-        } catch (\Exception $e) {
+            return redirect()->route('lease-m.index', $property)->with('success', 'Lease created successfully.');
+        } catch(\Exception $e) {
             return back()->with('error', 'Error creating lease: ' . $e->getMessage());
         }
     }
 
     public function LeaseEdit(Lease $lease)
     {
-        $tenants = Tenant::orderBy('name')->get();
+        $tenants = Tenant::where('property_id', $lease->tenant->property_id)->orderBy('name')->get();
         return view('maker.lease.edit', compact('tenants', 'lease'));
     }
 
@@ -2165,8 +2172,23 @@ class MakerController extends Controller
     {
         $validated = $this->LeaseValidate($request);
 
-        $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
+        // Update prepared_by field only if not already set
+        if (empty($lease->prepared_by)) {
+            $validated['prepared_by'] = Auth::user()->name;
+        }
+        
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            // Delete old file if exists
+            if ($lease->attachment && Storage::disk('public')->exists($lease->attachment)) {
+                Storage::disk('public')->delete($lease->attachment);
+            }
+            
+            $validated['attachment'] = $request->file('attachment')->store('lease-attachments', 'public');
+        } else {
+            // If no new file is uploaded, keep the existing one
+            unset($validated['attachment']);
+        }
 
         try {
             $lease->update($validated);
@@ -2188,12 +2210,23 @@ class MakerController extends Controller
             'lease_name' => 'required|string|max:255',
             'demised_premises' => 'nullable|string|max:255',
             'permitted_use' => 'nullable|string|max:255',
-            'rental_amount' => 'nullable|numeric|min:0',
-            'rental_frequency' => 'nullable|in:daily,weekly,monthly,quarterly,biannual,annual',
-            'option_to_renew' => 'nullable|boolean',
+            'option_to_renew' => 'boolean',
             'term_years' => 'nullable|string|max:255',
             'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after:start_date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'base_rate_year_1' => 'required|numeric|min:0',
+            'monthly_gsto_year_1' => 'required|numeric|min:0',
+            'base_rate_year_2' => 'required|numeric|min:0',
+            'monthly_gsto_year_2' => 'required|numeric|min:0',
+            'base_rate_year_3' => 'required|numeric|min:0',
+            'monthly_gsto_year_3' => 'required|numeric|min:0',
+            'space' => 'required|numeric|min:0',
+            'tenancy_type' => 'nullable|string|max:255',
+            'attachment' => $lease ? 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240' : 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'status' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'approval_datetime' => 'nullable|date',
         ]);
     }
 

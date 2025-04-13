@@ -611,6 +611,15 @@ class DefaultUsersSeeder extends Seeder
             'updated_at' => now(),
         ];
         
+        // Special case: FARAEDALISMALINA BINTI ZAKARIA should have REITS permission too
+        $faraedId = DB::table('users')->where('email', 'faraedalismalina@artrustees.com.my')->value('id');
+        $permissionUserData[] = [
+            'user_id' => $faraedId,
+            'permission_id' => $reitsPermissionId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+        
         // REITS Users
         $reitsEmails = [
             'fathihah@artrustees.com.my',
