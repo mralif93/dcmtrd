@@ -25,7 +25,7 @@
                     x-transition:leave-end="transform opacity-0 scale-95">
                     <div class="py-1">
                         <!-- Dashboard -->
-                        <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <a href="{{ route('maker.dashboard', ['section' => 'dcmtrd']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Dashboard') }}
                         </a>
 

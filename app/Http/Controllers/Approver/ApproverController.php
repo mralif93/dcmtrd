@@ -61,13 +61,13 @@ class ApproverController extends Controller
         }
         
         // Get filtered issuers with latest first and paginate
-        $issuers = $query->whereIn('status', ['Active', 'Pending', 'Rejected', 'Draft'])
+        $issuers = $query->whereIn('status', ['active', 'pending', 'rejected', 'draft'])
                         ->latest()
                         ->paginate(10)
                         ->withQueryString();
 
         // Query for portfolios
-        $portfolios = Portfolio::query()->where('status', ['Active', 'Pending', 'Rejected'])->latest()->paginate(10)->withQueryString();
+        $portfolios = Portfolio::query()->where('status', ['active', 'pending', 'rejected'])->latest()->paginate(10)->withQueryString();
 
         $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
             $result = DB::select("

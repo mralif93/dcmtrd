@@ -1942,7 +1942,7 @@ class MakerController extends Controller
     public function PropertyCreate(Portfolio $portfolio)
     {
         $portfolioInfo = $portfolio;
-        $portfolios = Portfolio::orderBy('property_name')->get();
+        $portfolios = Portfolio::orderBy('portfolio_name')->get();
         return view('maker.property.create', compact('portfolios', 'portfolioInfo'));
     }
 
@@ -1964,7 +1964,7 @@ class MakerController extends Controller
 
     public function PropertyEdit(Property $property)
     {
-        $portfolios = Portfolio::orderBy('property_name')->get();
+        $portfolios = Portfolio::orderBy('portfolio_name')->get();
         return view('maker.property.edit', compact('portfolios', 'property'));
     }
 
