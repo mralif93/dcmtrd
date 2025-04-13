@@ -2882,7 +2882,7 @@ class MakerController extends Controller
         return view('maker.site-visit-log.show', compact('siteVisitLog'));
     }
 
-    public function SiteVisitLogValidate(Request $request, SiteVisitLog $siteVisitLog)
+    public function SiteVisitLogValidate(Request $request)
     {
         return $request->validate([
             'site_visit_id' => 'required|exists:site_visits,id',
