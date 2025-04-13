@@ -508,7 +508,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/portfolio/{portfolio}/edit', [MakerController::class, 'PortfolioEdit'])->name('portfolio-m.edit')->middleware('permission:REITS');
     Route::put('maker/portfolio/{portfolio}/update', [MakerController::class, 'PortfolioUpdate'])->name('portfolio-m.update')->middleware('permission:REITS');
     Route::get('maker/portfolio/{portfolio}/show', [MakerController::class, 'PortfolioShow'])->name('portfolio-m.show')->middleware('permission:REITS');
-    Route::get('maker/portfolio/{portfolio}/submit-for-approval', [MakerController::class, 'PortfolioApproval'])->name('portfolio-m.approval')->middleware('permission:REITS');
+    Route::get('maker/portfolio/{portfolio}/submit-for-approval', [MakerController::class, 'SubmitApprovalPortfolio'])->name('portfolio-m.approval')->middleware('permission:REITS');
 
     // Financial Module
     Route::get('maker/financial/{portfolio}/', [MakerController::class, 'FinancialIndex'])->name('financial-m.index')->middleware('permission:REITS');

@@ -136,7 +136,7 @@
                                 <option value="draft" {{ old('status', $portfolio->status) == 'draft' ? 'selected' : '' }}>Draft</option>
                                 <option value="active" {{ old('status', $portfolio->status) == 'active' ? 'selected' : '' }}>Active</option>
                                 <option value="pending" {{ old('status', $portfolio->status) == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="reject" {{ old('status', $portfolio->status) == 'reject' ? 'selected' : '' }}>Reject</option>
+                                <option value="rejected" {{ old('status', $portfolio->status) == 'rejected' ? 'selected' : '' }}>Rejected</option>
                                 <option value="inactive" {{ old('status', $portfolio->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
                             </select>
                             @error('status')

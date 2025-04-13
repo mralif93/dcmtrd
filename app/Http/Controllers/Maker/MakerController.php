@@ -1478,7 +1478,7 @@ class MakerController extends Controller
         $activity = ActivityDiary::create($validated);
 
         return redirect()
-            ->route('activity-diary-m.show', $activity)
+            ->route('activity-diary-m.index')
             ->with('success', 'Activity diary created successfully');
     }
 
@@ -1525,7 +1525,7 @@ class MakerController extends Controller
         $activity->update($validated);
 
         return redirect()
-            ->route('activity-diary-m.show', $activity)
+            ->route('activity-diary-m.index')
             ->with('success', 'Activity diary updated successfully');
     }
 
@@ -1726,7 +1726,7 @@ class MakerController extends Controller
         
         $portfolio = Portfolio::create($validated);
         
-        return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio created successfully');
+        return redirect()->route('maker.dashboard', ['section' => 'reits'])->with('success', 'Portfolio created successfully');
     }
 
     public function PortfolioEdit(Portfolio $portfolio)
@@ -1749,16 +1749,16 @@ class MakerController extends Controller
         return view('maker.portfolio.show', compact('portfolio'));
     }
 
-    public function PortfolioApproval(Portfolio $portfolio)
+    public function SubmitApprovalPortfolio(Portfolio $portfolio)
     {
         try {
             $portfolio->update([
-                'status' => 'Pending',
+                'status' => 'pending',
                 'prepared_by' => Auth::user()->name,
             ]);
             
             return redirect()
-                ->route('portfolio-m.show', $portfolio)
+                ->route('maker.dashboard', ['section' => 'reits'])
                 ->with('success', 'Portfolio submitted for approval successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());

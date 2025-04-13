@@ -622,7 +622,7 @@ class ApproverController extends Controller
     {
         try {
             $portfolio->update([
-                'status' => "Active",
+                'status' => 'active',
                 'verified_by' => Auth::user()->name,
                 'approval_datetime' => now(),
             ]);
@@ -641,9 +641,9 @@ class ApproverController extends Controller
 
         try {
             $portfolio->update([
-                'status' => "Active",
+                'status' => 'rejected',
                 'verified_by' => Auth::user()->name,
-                'approval_datetime' => now(),
+                'remarks' => $request->input('rejection_reason'),
             ]);
 
             return redirect()->route('approver.dashboard', ['section' => 'reits'])->with('success', 'Portfolio rejected successfully.');
