@@ -222,7 +222,7 @@
             </div>
 
             <!-- External Conditions Section -->
-            <div class="bg-white shadow overflow-hidden sm:rounded-lg mt-6">
+            <div class="hidden bg-white shadow overflow-hidden sm:rounded-lg mt-6">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">External Condition Summary</h3>
                 </div>

@@ -22,7 +22,11 @@ class Tenant extends Model
         'email',
         'phone',
         'commencement_date',
+        'approval_date',
         'expiry_date',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
         'status'
     ];
 
@@ -33,6 +37,7 @@ class Tenant extends Model
      */
     protected $casts = [
         'commencement_date' => 'date',
+        'approval_date' => 'date',
         'expiry_date' => 'date'
     ];
 
@@ -54,9 +59,6 @@ class Tenant extends Model
 
     /**
      * Scope a query to only include active tenants.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeActive($query)
     {
@@ -65,8 +67,6 @@ class Tenant extends Model
 
     /**
      * Check if tenant's lease is expired.
-     *
-     * @return bool
      */
     public function isExpired()
     {
@@ -75,8 +75,6 @@ class Tenant extends Model
 
     /**
      * Get the remaining days until expiry.
-     *
-     * @return int
      */
     public function daysUntilExpiry()
     {
