@@ -2263,7 +2263,7 @@ class MakerController extends Controller
 
         try {
             $lease->update($validated);
-            return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease updated successfully.');
+            return redirect()->route('lease-m.show', $lease->tenant->property)->with('success', 'Lease updated successfully.');
         } catch(\Exception $e) {
             return back()->with('error', 'Error updating lease: ' . $e->getMessage());
         }
@@ -2281,7 +2281,7 @@ class MakerController extends Controller
             'lease_name' => 'required|string|max:255',
             'demised_premises' => 'nullable|string|max:255',
             'permitted_use' => 'nullable|string|max:255',
-            'option_to_renew' => 'boolean',
+            'option_to_renew' => 'nullable|string|max:255',
             'term_years' => 'nullable|string|max:255',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
