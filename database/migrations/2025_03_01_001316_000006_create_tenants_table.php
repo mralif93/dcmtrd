@@ -22,8 +22,6 @@ return new class extends Migration
             $table->date('approval_date')->nullable();
             $table->date('expiry_date');
             $table->string('status')->default('pending');
-            $table->string('approval_status')->nullable(); // Added for checklist integration
-            $table->date('last_approval_date')->nullable(); // Added for checklist integration
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->dateTime('approval_datetime')->nullable();

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('financial_type_id')->constrained('financial_types')->onDelete('restrict');
             $table->string('purpose');
             $table->string('tenure');
-            $table->date('installment_date');
+            $table->string('installment_date');
             $table->string('profit_type');
             $table->decimal('profit_rate', 8, 4)->unsigned();
             $table->decimal('process_fee', 15, 2)->unsigned();

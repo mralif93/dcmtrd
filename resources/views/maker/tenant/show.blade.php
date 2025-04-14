@@ -145,6 +145,7 @@
                                             <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Premises</th>
                                             <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
                                             <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Rental Amount</th>
+                                            <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tenancy Type</th>
                                             <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         </tr>
                                     </thead>
@@ -160,6 +161,9 @@
                                                 <td class="px-4 py-3 text-sm text-gray-500 text-right">
                                                     {{ number_format($lease->rental_amount, 2) }}
                                                     <span class="text-xs text-gray-500">({{ $lease->rental_frequency }})</span>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-500 text-center">
+                                                    {{ $lease->tenancy_type ? ucfirst($lease->tenancy_type) : 'N/A' }}
                                                 </td>
                                                 <td class="px-4 py-3 text-sm text-center">
                                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $lease->status === 'active' ? 'bg-green-100 text-green-800' : ($lease->status === 'inactive' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
