@@ -2380,11 +2380,13 @@ class MakerController extends Controller
         
         // Filter by property if provided
         if ($property->exists) {
-            $query->where('site_visit_id', function ($subquery) use ($property) {
-                $subquery->select('id')
-                    ->from('site_visits')
-                    ->where('property_id', $property->id);
+            $query->whereHas('siteVisit', function ($query) use ($property) {
+                $query->where('property_id', $property->id);
             });
+            
+            // For statistics, we need to get counts from the entire dataset
+            $pendingCount = (clone $query)->where('status', 'pending')->count();
+            $completedCount = (clone $query)->where('status', 'completed')->count();
         }
         
         // Handle search functionality
@@ -2407,12 +2409,8 @@ class MakerController extends Controller
         // Get paginated results
         $checklists = $query->latest()->paginate(10)->withQueryString();
         
-        // Get related data for summary statistics if we're viewing a specific property
+        // If we're viewing a specific property, include the statistics
         if ($property->exists) {
-            // You might want to add additional statistics here if needed
-            $pendingCount = $checklists->where('status', 'pending')->count();
-            $completedCount = $checklists->where('status', 'completed')->count();
-            
             return view('maker.checklist.index', compact(
                 'property', 
                 'checklists',
@@ -2472,9 +2470,9 @@ class MakerController extends Controller
     {
         return $request->validate([
             // General Property Info
-            'property_title' => 'required|string|max:255',
-            'property_location' => 'required|string|max:255',
-            'site_visit_id' => 'nullable|exists:site_visits,id',
+            'property_title' => 'nullable|string|max:255',
+            'property_location' => 'nullable|string|max:255',
+            'site_visit_id' => 'required|exists:site_visits,id',
             
             // 1.0 Legal Documentation
             'title_ref' => 'nullable|string|max:255',
