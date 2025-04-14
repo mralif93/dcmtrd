@@ -1,4 +1,3 @@
-<!-- resources/views/financials/edit.blade.php -->
 
 <x-app-layout>
     <x-slot name="header">
@@ -6,7 +5,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Edit Financial Record') }}
             </h2>
-            <a href="{{ route('property-m.index', $financial->portfolio) }}" class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
+            <a href="{{ route('property-m.index', $financial->portfolio) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 disabled:opacity-25 transition ease-in-out duration-150">
                 Back
             </a>
         </div>
@@ -39,7 +38,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('financials-info.update', $financial) }}">
+                    <form method="POST" action="{{ route('financial-m.update', $financial) }}">
                         @csrf
                         @method('PUT')
 
@@ -118,7 +117,7 @@
                                 <!-- Installment Date -->
                                 <div>
                                     <label for="installment_date" class="block text-sm font-medium text-gray-500">Installment Date</label>
-                                    <input id="installment_date" type="date" name="installment_date" value="{{ old('installment_date', $financial->installment_date->format('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="installment_date" type="text" name="installment_date" value="{{ old('installment_date', $financial->installment_date) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     @error('installment_date')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -133,7 +132,10 @@
                                 <!-- Profit Type -->
                                 <div>
                                     <label for="profit_type" class="block text-sm font-medium text-gray-500">Profit Type</label>
-                                    <input id="profit_type" type="text" name="profit_type" value="{{ old('profit_type', $financial->profit_type) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <select id="profit_type" name="profit_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        <option value="fixed" {{ old('profit_type', $financial->profit_type) == 'fixed' ? 'selected' : '' }}>Fixed</option>
+                                        <option value="variable" {{ old('profit_type', $financial->profit_type) == 'variable' ? 'selected' : '' }}>Variable</option>
+                                    </select>
                                     @error('profit_type')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -256,6 +258,107 @@
                             </div>
                         </div>
 
+                        <!-- Associated Properties Section -->
+                        <div class="col-span-1">
+                            <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4 mt-4">Associated Properties</h3>
+                        </div>
+
+                        <div id="properties-container">
+                            @forelse($financial->properties as $index => $property)
+                                <div class="property-item p-4 bg-gray-50 rounded-md mb-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Property</label>
+                                            <select name="property_ids[]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                                <option value="">Select Property</option>
+                                                @foreach($properties as $prop)
+                                                    <option value="{{ $prop->id }}" {{ $prop->id == $property->id ? 'selected' : '' }}>
+                                                        {{ $prop->name }} ({{ $prop->address }})
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Property Value</label>
+                                            <input type="number" name="property_values[]" value="{{ old('property_values.'.$index, $property->pivot->property_value ?? '') }}" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Financed Amount</label>
+                                            <input type="number" name="financed_amounts[]" value="{{ old('financed_amounts.'.$index, $property->pivot->financed_amount ?? '') }}" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Security Value</label>
+                                            <input type="number" name="security_values[]" value="{{ old('security_values.'.$index, $property->pivot->security_value ?? '') }}" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Valuation Date</label>
+                                            <input type="date" name="valuation_dates[]" value="{{ old('valuation_dates.'.$index, $property->pivot->valuation_date ? date('Y-m-d', strtotime($property->pivot->valuation_date)) : '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Remarks</label>
+                                            <input type="text" name="property_remarks[]" value="{{ old('property_remarks.'.$index, $property->pivot->remarks ?? '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-end">
+                                        <button type="button" class="remove-property inline-flex items-center px-3 py-1 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-400 focus:outline-none focus:border-red-600 focus:ring focus:ring-red-200 focus:ring-opacity-50 disabled:opacity-25 transition ease-in-out duration-150">
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="property-item p-4 bg-gray-50 rounded-md mb-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Property</label>
+                                            <select name="property_ids[]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                                <option value="">Select Property</option>
+                                                @foreach($properties as $prop)
+                                                    <option value="{{ $prop->id }}">
+                                                        {{ $prop->name }} ({{ $prop->address }})
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Property Value</label>
+                                            <input type="number" name="property_values[]" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Financed Amount</label>
+                                            <input type="number" name="financed_amounts[]" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Security Value</label>
+                                            <input type="number" name="security_values[]" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Valuation Date</label>
+                                            <input type="date" name="valuation_dates[]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500">Remarks</label>
+                                            <input type="text" name="property_remarks[]" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-end">
+                                        <button type="button" class="remove-property inline-flex items-center px-3 py-1 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-400 focus:outline-none focus:border-red-600 focus:ring focus:ring-red-200 focus:ring-opacity-50 disabled:opacity-25 transition ease-in-out duration-150">
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            @endforelse
+                        </div>
+
+                        <div class="mt-3 mb-8">
+                            <button type="button" id="add-property" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 disabled:opacity-25 transition ease-in-out duration-150">
+                                Add Another Property
+                            </button>
+                        </div>
+
                         <div class="border-t border-gray-200 py-4 mt-6">
                             <div class="flex justify-end gap-4">
                                 <a href="{{ route('property-m.index', $financial->portfolio) }}" 
@@ -279,4 +382,72 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add Property
+            document.getElementById('add-property').addEventListener('click', function() {
+                const container = document.getElementById('properties-container');
+                const propertyItems = container.querySelectorAll('.property-item');
+                const newItem = propertyItems[0].cloneNode(true);
+                
+                // Clear input values
+                newItem.querySelectorAll('input').forEach(input => {
+                    input.value = '';
+                });
+                
+                // Reset select
+                newItem.querySelector('select').selectedIndex = 0;
+                
+                // Add remove event listener
+                newItem.querySelector('.remove-property').addEventListener('click', function() {
+                    if (container.querySelectorAll('.property-item').length > 1) {
+                        this.closest('.property-item').remove();
+                    }
+                });
+                
+                container.appendChild(newItem);
+            });
+            
+            // Initialize remove buttons
+            document.querySelectorAll('.remove-property').forEach(button => {
+                button.addEventListener('click', function() {
+                    const container = document.getElementById('properties-container');
+                    if (container.querySelectorAll('.property-item').length > 1) {
+                        this.closest('.property-item').remove();
+                    }
+                });
+            });
+
+            // Filter properties by selected portfolio
+            document.getElementById('portfolio_id').addEventListener('change', function() {
+                const portfolioId = this.value;
+                
+                if (portfolioId) {
+                    fetch(`/api/portfolios/${portfolioId}/properties`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.querySelectorAll('select[name="property_ids[]"]').forEach(select => {
+                                // Clear existing options except the first one
+                                while (select.options.length > 1) {
+                                    select.remove(1);
+                                }
+                                
+                                // Add new options
+                                data.forEach(property => {
+                                    const option = new Option(
+                                        `${property.name} (${property.address})`, 
+                                        property.id
+                                    );
+                                    select.add(option);
+                                });
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching properties:', error);
+                        });
+                }
+            });
+        });
+    </script>
 </x-app-layout>

@@ -98,8 +98,9 @@ class MakerController extends Controller
         });
 
         // Query for portfolios
-        $portfolioQuery = Portfolio::query();
-
+        $portfolioQuery = Portfolio::query()->whereIn('status', ['draft', 'active', 'rejected']);
+        $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
+        
         // Apply search filter to portfolios
         if ($request->has('search') && !empty($request->search)) {
             $portfolioQuery->where('portfolio_name', 'LIKE', '%' . $request->search . '%');
@@ -109,9 +110,9 @@ class MakerController extends Controller
         if ($request->has('status') && !empty($request->status)) {
             $portfolioQuery->where('status', $request->status);
         }
-
+        
         $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
-
+    
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
@@ -139,7 +140,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'draft';
 
         try {
             $issuer = Issuer::create($validated);
@@ -1196,7 +1197,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'draft';
 
         $trusteeFee = TrusteeFee::create($validated);
 
@@ -1347,7 +1348,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'draft';
 
         $compliance = ComplianceCovenant::create($validated);
 
@@ -1476,12 +1477,12 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'draft';
 
         $activity = ActivityDiary::create($validated);
 
         return redirect()
-            ->route('activity-diary-m.show', $activity)
+            ->route('activity-diary-m.index')
             ->with('success', 'Activity diary created successfully');
     }
 
@@ -1528,7 +1529,7 @@ class MakerController extends Controller
         $activity->update($validated);
 
         return redirect()
-            ->route('activity-diary-m.show', $activity)
+            ->route('activity-diary-m.index')
             ->with('success', 'Activity diary updated successfully');
     }
 
@@ -1736,9 +1737,9 @@ class MakerController extends Controller
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'Draft';
-
+        
         $portfolio = Portfolio::create($validated);
-
+        
         return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio created successfully');
     }
 
@@ -1762,16 +1763,16 @@ class MakerController extends Controller
         return view('maker.portfolio.show', compact('portfolio'));
     }
 
-    public function PortfolioApproval(Portfolio $portfolio)
+    public function SubmitApprovalPortfolio(Portfolio $portfolio)
     {
         try {
-            $activity->update([
-                'status' => 'Pending',
+            $portfolio->update([
+                'status' => 'pending',
                 'prepared_by' => Auth::user()->name,
             ]);
 
             return redirect()
-                ->route('portfolio-m.show', $activity)
+                ->route('maker.dashboard', ['section' => 'reits'])
                 ->with('success', 'Portfolio submitted for approval successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
@@ -1794,7 +1795,7 @@ class MakerController extends Controller
     // Financial Module
     public function FinancialIndex(Portfolio $portfolio, Request $request)
     {
-        $query = Financial::orderBy('bank_id')->get();
+        $query = Financial::with(['bank', 'financialType', 'properties'])->orderBy('bank_id')->get();
         $financials = $query->where('portfolio_id', $portfolio->id);
         return view('maker.financial.index', compact('financials', 'portfolio'));
     }
@@ -1805,24 +1806,29 @@ class MakerController extends Controller
         $portfolios = Portfolio::orderBy('portfolio_name')->get();
         $banks = Bank::orderBy('name')->get();
         $financialTypes = FinancialType::orderBy('name')->get();
+        
+        // Get all properties from the portfolio for selection
+        $properties = Property::where('portfolio_id', $portfolio->id)
+            ->orderBy('name')
+            ->get();
 
-        return view('maker.financial.create', compact('portfolios', 'banks', 'financialTypes', 'portfolioInfo'));
+        return view('maker.financial.create', compact('portfolios', 'banks', 'financialTypes', 'portfolioInfo', 'properties'));
     }
 
     public function FinancialStore(Request $request)
     {
-        // $validated = $this->FinancialValidate($request);
+        $validated = $this->FinancialValidate($request);
 
-        // // Add prepared_by from authenticated user and set status
-        // $validated['prepared_by'] = Auth::user()->name;
-        // $validated['status'] = 'Active';
+        // Add prepared_by from authenticated user and set status
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'Active';
 
-        // try {
-        //     $financial = Financial::create($validated);
-        //     return redirect()->route()->with('success', 'Financial created successfully.');
-        // } catch (\Exception $e) {
-        //     return back()->with('error', 'Error creating financial: ' . $e->getMessage());
-        // }
+        try {
+            $financial = Financial::create($validated);
+            return redirect()->route()->with('success', 'Financial created successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error creating financial: ' . $e->getMessage());
+        }
     }
 
     public function FinancialEdit(Financial $financial)
@@ -1830,24 +1836,65 @@ class MakerController extends Controller
         $portfolios = Portfolio::orderBy('portfolio_name')->get();
         $banks = Bank::orderBy('name')->get();
         $financialTypes = FinancialType::orderBy('name')->get();
+        
+        // Get all properties from the portfolio
+        $properties = Property::where('portfolio_id', $financial->portfolio_id)
+            ->orderBy('name')
+            ->get();
+        
+        // Load existing properties attached to this financial
+        $financial->load('properties');
 
-        return view('maker.financial.edit', compact('financial', 'portfolios', 'banks', 'financialTypes'));
+        return view('maker.financial.edit', compact('financial', 'portfolios', 'banks', 'financialTypes', 'properties'));
     }
 
     public function FinancialUpdate(Financial $financial, Request $request)
     {
+        // Validate financial data
         $validated = $this->FinancialValidate($request);
-
+        
+        // Remove the dd() statement that's stopping execution
+        // dd($request->toArray());
+        
         try {
+            // Update the financial record
             $financial->update($validated);
-            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial created successfully.');
+            
+            // Process property data from flat arrays to nested format
+            $syncData = [];
+            if ($request->has('property_ids') && !empty($request->property_ids)) {
+                $count = count($request->property_ids);
+                
+                for ($i = 0; $i < $count; $i++) {
+                    if (empty($request->property_ids[$i])) continue;
+                    
+                    $syncData[$request->property_ids[$i]] = [
+                        'property_value' => $request->property_values[$i] ?? 0,
+                        'financed_amount' => $request->financed_amounts[$i] ?? 0,
+                        'security_value' => $request->security_values[$i] ?? 0,
+                        'valuation_date' => $request->valuation_dates[$i] ?? null,
+                        'remarks' => $request->property_remarks[$i] ?? null,
+                        'status' => 'active',
+                        'prepared_by' => Auth::user()->name,
+                        'updated_at' => now()
+                    ];
+                }
+            }
+            
+            // Sync will remove any properties that are not in the request
+            $financial->properties()->sync($syncData);
+            
+            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial updated successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error creating financial: ' . $e->getMessage());
+            return back()->with('error', 'Error updating financial: ' . $e->getMessage());
         }
     }
 
     public function FinancialShow(Financial $financial)
     {
+        // Load the properties associated with this financial
+        $financial->load(['properties', 'portfolio', 'bank', 'financialType']);
+        
         return view('maker.financial.show', compact('financial'));
     }
 
@@ -1859,7 +1906,7 @@ class MakerController extends Controller
             'financial_type_id' => 'required|exists:financial_types,id',
             'purpose' => 'required|string|max:255',
             'tenure' => 'required|string|max:255',
-            'installment_date' => 'required|date',
+            'installment_date' => 'required|string|max:255',
             'profit_type' => 'nullable|string|max:255',
             'profit_rate' => 'nullable|numeric|min:0|max:100',
             'process_fee' => 'nullable|numeric|min:0',
@@ -1871,6 +1918,17 @@ class MakerController extends Controller
             'facilities_agent' => 'nullable|string|max:255',
             'agent_contact' => 'nullable|string|max:255',
             'valuer' => 'nullable|string|max:255',
+        ]);
+    }
+    
+    public function FinancialPropertyValidate(Request $request) {
+        return $request->validate([
+            'property_ids' => 'required|array|min:1',
+            'property_ids.*' => 'required|exists:properties,id',
+            'property_values.*' => 'required|numeric|min:0',
+            'financed_amounts.*' => 'required|numeric|min:0',
+            'security_values.*' => 'required|numeric|min:0',
+            'valuation_dates.*' => 'required|date',
         ]);
     }
 
@@ -2193,7 +2251,7 @@ class MakerController extends Controller
         try {
             $lease->update($validated);
             return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease updated successfully.');
-        } catch (\Exception $e) {
+        } catch(\Exception $e) {
             return back()->with('error', 'Error updating lease: ' . $e->getMessage());
         }
     }
@@ -2210,7 +2268,7 @@ class MakerController extends Controller
             'lease_name' => 'required|string|max:255',
             'demised_premises' => 'nullable|string|max:255',
             'permitted_use' => 'nullable|string|max:255',
-            'option_to_renew' => 'boolean',
+            'option_to_renew' => 'nullable|string|max:255',
             'term_years' => 'nullable|string|max:255',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
@@ -2309,7 +2367,7 @@ class MakerController extends Controller
 
         // Filter by property if provided
         if ($property->exists) {
-            $query->whereIn('site_visit_id', function ($subquery) use ($property) {
+            $query->where('site_visit_id', function ($subquery) use ($property) {
                 $subquery->select('id')
                     ->from('site_visits')
                     ->where('property_id', $property->id);
@@ -2335,13 +2393,13 @@ class MakerController extends Controller
 
         // Get paginated results
         $checklists = $query->latest()->paginate(10)->withQueryString();
-
+        
         // Get related data for summary statistics if we're viewing a specific property
         if ($property->exists) {
             // You might want to add additional statistics here if needed
             $pendingCount = $checklists->where('status', 'pending')->count();
             $completedCount = $checklists->where('status', 'completed')->count();
-
+            
             return view('maker.checklist.index', compact(
                 'property',
                 'checklists',
@@ -2364,7 +2422,7 @@ class MakerController extends Controller
         $validated = $this->ChecklistValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
+        $validated['status'] = 'draft';
 
         try {
             $checklist = Checklist::create($validated);
@@ -2404,7 +2462,7 @@ class MakerController extends Controller
             'property_title' => 'required|string|max:255',
             'property_location' => 'required|string|max:255',
             'site_visit_id' => 'nullable|exists:site_visits,id',
-
+            
             // 1.0 Legal Documentation
             'title_ref' => 'nullable|string|max:255',
             'title_location' => 'nullable|string|max:255',

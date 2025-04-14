@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('lease_name');
             $table->string('demised_premises')->nullable();
             $table->string('permitted_use')->nullable();
-            $table->boolean('option_to_renew')->default(true);
+            $table->string('option_to_renew')->nullable();
             $table->string('term_years')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();

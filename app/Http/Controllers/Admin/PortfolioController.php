@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Portfolio;
+use App\Models\PortfolioType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -28,7 +29,8 @@ class PortfolioController extends Controller
      */
     public function create()
     {
-        return view('admin.portfolios.create');
+        $portfolioTypes = PortfolioType::where('status', 'active')->get();
+        return view('admin.portfolios.create', compact('portfolioTypes'));
     }
 
     /**
@@ -40,42 +42,54 @@ class PortfolioController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'portfolio_types_id' => 'required|exists:portfolio_types,id',
             'portfolio_name' => 'required|string|max:255',
             'annual_report' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'trust_deed_document' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'insurance_document' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'valuation_report' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'status' => 'nullable|string|in:draft,active,pending,rejected,inactive',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
         ]);
-
+    
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
-
+    
         try {
             $portfolio = new Portfolio();
+            $portfolio->portfolio_types_id = $request->portfolio_types_id;
             $portfolio->portfolio_name = $request->portfolio_name;
+            $portfolio->status = $request->status ?? 'pending'; // Default to pending if not provided
+            $portfolio->prepared_by = $request->prepared_by;
+            $portfolio->verified_by = $request->verified_by;
+            $portfolio->remarks = $request->remarks;
+            $portfolio->approval_datetime = $request->approval_datetime;
             
             // Handle file uploads
             if ($request->hasFile('annual_report')) {
                 $portfolio->annual_report = $request->file('annual_report')->store('portfolios/annual_reports');
             }
-
+    
             if ($request->hasFile('trust_deed_document')) {
                 $portfolio->trust_deed_document = $request->file('trust_deed_document')->store('portfolios/trust_deeds');
             }
-
+    
             if ($request->hasFile('insurance_document')) {
                 $portfolio->insurance_document = $request->file('insurance_document')->store('portfolios/insurance');
             }
-
+    
             if ($request->hasFile('valuation_report')) {
                 $portfolio->valuation_report = $request->file('valuation_report')->store('portfolios/valuations');
             }
-
+    
             $portfolio->save();
-
+    
             return redirect()->route('portfolios.index')
                 ->with('success', 'Portfolio created successfully.');
         } catch (\Exception $e) {
@@ -104,7 +118,8 @@ class PortfolioController extends Controller
      */
     public function edit(Portfolio $portfolio)
     {
-        return view('admin.portfolios.edit', compact('portfolio'));
+        $portfolioTypes = PortfolioType::where('status', 'active')->get();
+        return view('admin.portfolios.edit', compact('portfolio', 'portfolioTypes'));
     }
 
     /**
@@ -117,22 +132,35 @@ class PortfolioController extends Controller
     public function update(Request $request, Portfolio $portfolio)
     {
         $validator = Validator::make($request->all(), [
+            'portfolio_types_id' => 'required|exists:portfolio_types,id',
             'portfolio_name' => 'required|string|max:255',
             'annual_report' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'trust_deed_document' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'insurance_document' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'valuation_report' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'status' => 'nullable|string|in:draft,active,pending,rejected,inactive',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
         ]);
-
+    
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
-
+    
         try {
+            // Update all the basic fields
+            $portfolio->portfolio_types_id = $request->portfolio_types_id;
             $portfolio->portfolio_name = $request->portfolio_name;
-
+            $portfolio->status = $request->status;
+            $portfolio->prepared_by = $request->prepared_by;
+            $portfolio->verified_by = $request->verified_by;
+            $portfolio->remarks = $request->remarks;
+            $portfolio->approval_datetime = $request->approval_datetime;
+    
             // Handle file uploads
             if ($request->hasFile('annual_report')) {
                 // Delete old file if exists
@@ -141,30 +169,30 @@ class PortfolioController extends Controller
                 }
                 $portfolio->annual_report = $request->file('annual_report')->store('portfolios/annual_reports');
             }
-
+    
             if ($request->hasFile('trust_deed_document')) {
                 if ($portfolio->trust_deed_document) {
                     Storage::delete($portfolio->trust_deed_document);
                 }
                 $portfolio->trust_deed_document = $request->file('trust_deed_document')->store('portfolios/trust_deeds');
             }
-
+    
             if ($request->hasFile('insurance_document')) {
                 if ($portfolio->insurance_document) {
                     Storage::delete($portfolio->insurance_document);
                 }
                 $portfolio->insurance_document = $request->file('insurance_document')->store('portfolios/insurance');
             }
-
+    
             if ($request->hasFile('valuation_report')) {
                 if ($portfolio->valuation_report) {
                     Storage::delete($portfolio->valuation_report);
                 }
                 $portfolio->valuation_report = $request->file('valuation_report')->store('portfolios/valuations');
             }
-
-            $portfolio->save();
-
+    
+            $portfolio->save(); // Changed from update() to save()
+    
             return redirect()->route('portfolios.index')
                 ->with('success', 'Portfolio updated successfully.');
         } catch (\Exception $e) {

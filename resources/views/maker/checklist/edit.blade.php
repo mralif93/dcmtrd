@@ -54,7 +54,7 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Property Information</h3>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
+                                <!-- <div>
                                     <label for="property_title" class="block text-sm font-medium text-gray-700">Property Title</label>
                                     <input id="property_title" type="text" name="property_title" value="{{ old('property_title', $checklist->property_title) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 </div>
@@ -62,15 +62,15 @@
                                 <div>
                                     <label for="property_location" class="block text-sm font-medium text-gray-700">Property Location</label>
                                     <input id="property_location" type="text" name="property_location" value="{{ old('property_location', $checklist->property_location) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                                </div>
+                                </div> -->
 
                                 <div class="md:col-span-2">
-                                    <label for="site_visit_id" class="block text-sm font-medium text-gray-700">Related Site Visit (Optional)</label>
+                                    <label for="site_visit_id" class="block text-sm font-medium text-gray-700">Site Visit</label>
                                     <select id="site_visit_id" name="site_visit_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">No Related Site Visit</option>
+                                        <option value="">-- Choose Site Visit --</option>
                                         @foreach($siteVisits ?? [] as $siteVisit)
                                             <option value="{{ $siteVisit->id }}" {{ old('site_visit_id', $checklist->site_visit_id) == $siteVisit->id ? 'selected' : '' }}>
-                                                {{ $siteVisit->property->name }} - {{ $siteVisit->date_visit->format('d/m/Y') }} by {{ $siteVisit->inspector_name }}
+                                                {{ $siteVisit->property->name }} - {{ $siteVisit->date_visit->format('d/m/Y') }} by {{ $siteVisit->trustee }}
                                             </option>
                                         @endforeach
                                     </select>

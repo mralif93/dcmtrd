@@ -1,9 +1,14 @@
 <!-- resources/views/portfolios/show.blade.php -->
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Portfolio Details') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Portfolio Details') }}
+            </h2>
+            <a href="{{ route('portfolios.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                &larr; Back to List
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-12">
@@ -35,8 +40,72 @@
                             <dt class="text-sm font-medium text-gray-500">Name</dt>
                             <dd class="mt-1 text-sm text-gray-900">{{ $portfolio->portfolio_name }}</dd>
                         </div>
+                        
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Portfolio Type</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $portfolio->portfolioType ? $portfolio->portfolioType->name : 'Not assigned' }}
+                            </dd>
+                        </div>
+                        
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Status</dt>
+                            <dd class="mt-1 text-sm">
+                                @if($portfolio->status == 'active')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        Active
+                                    </span>
+                                @elseif($portfolio->status == 'pending')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        Pending
+                                    </span>
+                                @elseif($portfolio->status == 'reject')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                        Rejected
+                                    </span>
+                                @elseif($portfolio->status == 'inactive')
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        Inactive
+                                    </span>
+                                @else
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        {{ $portfolio->status }}
+                                    </span>
+                                @endif
+                            </dd>
+                        </div>
+                        
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $portfolio->prepared_by ?: 'Not specified' }}
+                            </dd>
+                        </div>
+                        
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $portfolio->verified_by ?: 'Not verified' }}
+                            </dd>
+                        </div>
+                        
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Approval Date & Time</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $portfolio->approval_datetime ? date('M j, Y h:i A', strtotime($portfolio->approval_datetime)) : 'Not approved yet' }}
+                            </dd>
+                        </div>
                     </dl>
                 </div>
+                
+                @if($portfolio->remarks)
+                <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Remarks</h3>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <p class="text-sm text-gray-700 whitespace-pre-line">{{ $portfolio->remarks }}</p>
+                    </div>
+                </div>
+                @endif
 
                 <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Documents</h3>
@@ -102,12 +171,6 @@
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Portfolio Types</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
-                                <p class="text-sm text-gray-900">{{ $portfolio->portfolioTypes->count() }} types</p>
-                            </dd>
-                        </div>
-                        <div>
                             <dt class="text-sm font-medium text-gray-500">Financials</dt>
                             <dd class="mt-1 text-sm text-gray-900">
                             <p class="text-sm text-gray-900">{{ $portfolio->financials->count() }} financial records</p>
@@ -119,9 +182,9 @@
                 <!-- System Information Section -->
                 <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
-                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+                    <dl class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-4">
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Account Created</dt>
+                            <dt class="text-sm font-medium text-gray-500">Created At</dt>
                             <dd class="mt-1 text-sm text-gray-900">
                                 {{ $portfolio->created_at->format('M j, Y h:i A') }}
                             </dd>
@@ -132,6 +195,14 @@
                                 {{ $portfolio->updated_at->format('M j, Y h:i A') }}
                             </dd>
                         </div>
+                        @if($portfolio->deleted_at)
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Deleted At</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $portfolio->deleted_at->format('M j, Y h:i A') }}
+                            </dd>
+                        </div>
+                        @endif
                     </dl>
                 </div>
 

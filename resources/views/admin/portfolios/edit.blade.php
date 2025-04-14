@@ -39,9 +39,24 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $portfolio->portfolio_name }}</h3>
-                    <form action="{{ route('portfolios.update', $portfolio->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('portfolios.update', $portfolio) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
+
+                        <div class="mb-4">
+                            <label for="portfolio_types_id" class="block text-sm font-medium text-gray-700">Portfolio Type</label>
+                            <select id="portfolio_types_id" name="portfolio_types_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                                <option value="">Select a portfolio type</option>
+                                @foreach($portfolioTypes as $type)
+                                    <option value="{{ $type->id }}" {{ old('portfolio_types_id', $portfolio->portfolio_types_id) == $type->id ? 'selected' : '' }}>
+                                        {{ $type->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('portfolio_types_id')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
 
                         <div class="mb-4">
                             <label for="portfolio_name" class="block text-sm font-medium text-gray-700">Portfolio Name</label>
@@ -115,6 +130,52 @@
                             <p class="text-gray-500 text-xs mt-1">Accepted file types: PDF, DOC, DOCX. Max size: 10MB.</p>
                         </div>
 
+                        <div class="mb-4">
+                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                            <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="draft" {{ old('status', $portfolio->status) == 'draft' ? 'selected' : '' }}>Draft</option>
+                                <option value="active" {{ old('status', $portfolio->status) == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="pending" {{ old('status', $portfolio->status) == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="rejected" {{ old('status', $portfolio->status) == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                <option value="inactive" {{ old('status', $portfolio->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                            @error('status')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="prepared_by" class="block text-sm font-medium text-gray-700">Prepared By</label>
+                            <input id="prepared_by" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="prepared_by" value="{{ old('prepared_by', $portfolio->prepared_by) }}">
+                            @error('prepared_by')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified By</label>
+                            <input id="verified_by" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="verified_by" value="{{ old('verified_by', $portfolio->verified_by) }}">
+                            @error('verified_by')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="remarks" class="block text-sm font-medium text-gray-700">Remarks</label>
+                            <textarea id="remarks" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="remarks" rows="3">{{ old('remarks', $portfolio->remarks) }}</textarea>
+                            @error('remarks')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="approval_datetime" class="block text-sm font-medium text-gray-700">Approval Date & Time</label>
+                            <input id="approval_datetime" type="datetime-local" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="approval_datetime" value="{{ old('approval_datetime', $portfolio->approval_datetime ? date('Y-m-d\TH:i', strtotime($portfolio->approval_datetime)) : '') }}">
+                            @error('approval_datetime')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div class="flex justify-end gap-4">
                             <a href="{{ route('portfolios.index') }}"
                             class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
@@ -122,7 +183,7 @@
                             </a>
                             <button type="submit"
                                     class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                                Create Portfolio
+                                Update Portfolio
                             </button>
                         </div>
                     </form>

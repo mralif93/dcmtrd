@@ -23,7 +23,11 @@ class Tenant extends Model implements Auditable
         'email',
         'phone',
         'commencement_date',
+        'approval_date',
         'expiry_date',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
         'status'
     ];
 
@@ -34,6 +38,7 @@ class Tenant extends Model implements Auditable
      */
     protected $casts = [
         'commencement_date' => 'date',
+        'approval_date' => 'date',
         'expiry_date' => 'date'
     ];
 
@@ -55,9 +60,6 @@ class Tenant extends Model implements Auditable
 
     /**
      * Scope a query to only include active tenants.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeActive($query)
     {
@@ -66,8 +68,6 @@ class Tenant extends Model implements Auditable
 
     /**
      * Check if tenant's lease is expired.
-     *
-     * @return bool
      */
     public function isExpired()
     {
@@ -76,8 +76,6 @@ class Tenant extends Model implements Auditable
 
     /**
      * Get the remaining days until expiry.
-     *
-     * @return int
      */
     public function daysUntilExpiry()
     {

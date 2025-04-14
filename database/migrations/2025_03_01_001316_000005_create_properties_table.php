@@ -29,6 +29,8 @@ return new class extends Migration
             $table->string('ownership')->nullable();
             $table->decimal('share_amount', 15, 2)->unsigned()->nullable();
             $table->decimal('market_value', 15, 2)->unsigned()->nullable();
+            $table->string('master_lease_agreement')->nullable();
+            $table->string('valuation_report')->nullable();
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();

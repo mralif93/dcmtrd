@@ -521,7 +521,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/portfolio/{portfolio}/edit', [MakerController::class, 'PortfolioEdit'])->name('portfolio-m.edit')->middleware('permission:REITS');
     Route::put('maker/portfolio/{portfolio}/update', [MakerController::class, 'PortfolioUpdate'])->name('portfolio-m.update')->middleware('permission:REITS');
     Route::get('maker/portfolio/{portfolio}/show', [MakerController::class, 'PortfolioShow'])->name('portfolio-m.show')->middleware('permission:REITS');
-    Route::get('maker/portfolio/{portfolio}/submit-for-approval', [MakerController::class, 'PortfolioApproval'])->name('portfolio-m.approval')->middleware('permission:REITS');
+    Route::get('maker/portfolio/{portfolio}/submit-for-approval', [MakerController::class, 'SubmitApprovalPortfolio'])->name('portfolio-m.approval')->middleware('permission:REITS');
 
     // Financial Module
     Route::get('maker/financial/{portfolio}/', [MakerController::class, 'FinancialIndex'])->name('financial-m.index')->middleware('permission:REITS');
@@ -648,8 +648,8 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     // Portfolio Module
     Route::get('approver/portfolio', [ApproverController::class, 'PortfolioIndex'])->name('portfolio-a.index')->middleware('permission:REITS');
     Route::get('approver/portfolio/{portfolio}/show', [ApproverController::class, 'PortfolioShow'])->name('portfolio-a.show')->middleware('permission:REITS');
-    Route::get('approver/portfolio/{portfolio}/approve', [ApproverController::class, 'PortfolioApprove'])->name('portfolio-a.approve')->middleware('permission:REITS');
-    Route::get('approver/portfolio/{portfolio}/reject', [ApproverController::class, 'PortfolioReject'])->name('portfolio-a.reject')->middleware('permission:REITS');
+    Route::post('approver/portfolio/{portfolio}/approve', [ApproverController::class, 'PortfolioApprove'])->name('portfolio-a.approve')->middleware('permission:REITS');
+    Route::post('approver/portfolio/{portfolio}/reject', [ApproverController::class, 'PortfolioReject'])->name('portfolio-a.reject')->middleware('permission:REITS');
 
     // Property Module
     Route::get('approver/property/{portfolio}', [ApproverController::class, 'PropertyIndex'])->name('property-a.index')->middleware('permission:REITS');

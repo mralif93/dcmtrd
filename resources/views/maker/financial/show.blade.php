@@ -73,7 +73,25 @@
                                 </a>
                             </dd>
                         </div>
+                        @if($financial->prepared_by)
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->prepared_by }}</dd>
+                        </div>
+                        @endif
+                        @if($financial->verified_by)
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->verified_by }}</dd>
+                        </div>
+                        @endif
+                        @if($financial->approval_datetime)
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ \Carbon\Carbon::parse($financial->approval_datetime)->format('d/m/Y H:i') }}</dd>
+                        </div>
+                        @endif
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Bank</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->bank->name }}</dd>
                         </div>
@@ -91,7 +109,7 @@
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Installment Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->installment_date->format('d/m/Y') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->installment_date }}</dd>
                         </div>
                     </dl>
                 </div>
@@ -151,6 +169,92 @@
                             </dd>
                         </div>
                     </dl>
+                </div>
+
+                <!-- Associated Properties Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Associated Properties</h3>
+                    </div>
+                    <div class="px-4 py-5 sm:px-6">
+                        @if($financial->properties->count() > 0)
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property Name</th>
+                                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                            <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Property Value</th>
+                                            <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Financed Amount</th>
+                                            <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Security Value</th>
+                                            <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Valuation Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach($financial->properties as $property)
+                                            <tr>
+                                                <td class="px-4 py-3 text-sm font-medium text-gray-900">
+                                                    <a href="{{ route('properties-info.show', $property->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                        {{ $property->name }}
+                                                    </a>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-500">
+                                                    {{ $property->address }}, {{ $property->city }}, {{ $property->state }}
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-right text-gray-900">
+                                                    RM {{ number_format($property->pivot->property_value ?? 0, 2) }}
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-right text-gray-900">
+                                                    RM {{ number_format($property->pivot->financed_amount ?? 0, 2) }}
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-right text-gray-900">
+                                                    RM {{ number_format($property->pivot->security_value ?? 0, 2) }}
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-center text-gray-500">
+                                                    {{ $property->pivot->valuation_date ? date('d/m/Y', strtotime($property->pivot->valuation_date)) : 'N/A' }}
+                                                </td>
+                                            </tr>
+                                            @if($property->pivot->remarks)
+                                                <tr class="bg-gray-50">
+                                                    <td class="px-4 py-2 text-sm text-gray-500 italic">Remarks:</td>
+                                                    <td colspan="5" class="px-4 py-2 text-sm text-gray-500">{{ $property->pivot->remarks }}</td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Property Financing Summary -->
+                            <div class="mt-6 bg-gray-50 p-4 rounded-md">
+                                <h4 class="text-md font-medium text-gray-700 mb-3">Property Financing Summary</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="p-3 bg-white rounded-md shadow-sm">
+                                        <div class="text-sm font-medium text-gray-500">Total Property Value</div>
+                                        <div class="mt-1 text-lg font-semibold text-gray-900">
+                                            RM {{ number_format($financial->properties->sum(function($property) { return $property->pivot->property_value ?? 0; }), 2) }}
+                                        </div>
+                                    </div>
+                                    <div class="p-3 bg-white rounded-md shadow-sm">
+                                        <div class="text-sm font-medium text-gray-500">Total Financed Amount</div>
+                                        <div class="mt-1 text-lg font-semibold text-gray-900">
+                                            RM {{ number_format($financial->properties->sum(function($property) { return $property->pivot->financed_amount ?? 0; }), 2) }}
+                                        </div>
+                                    </div>
+                                    <div class="p-3 bg-white rounded-md shadow-sm">
+                                        <div class="text-sm font-medium text-gray-500">Total Security Value</div>
+                                        <div class="mt-1 text-lg font-semibold text-gray-900">
+                                            RM {{ number_format($financial->properties->sum(function($property) { return $property->pivot->security_value ?? 0; }), 2) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="bg-gray-50 rounded-md p-4 text-center">
+                                <p class="text-gray-500">No properties are currently associated with this financial record.</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
                 <!-- Contact Information Section -->
@@ -264,6 +368,23 @@
                                                number_format(($financial->security_value_monthly / $financial->outstanding_amount) * 100, 2) : 0 }}%
                                         </td>
                                     </tr>
+                                    @if($financial->properties->count() > 0)
+                                    <tr>
+                                        <td class="px-4 py-3 text-sm font-medium text-gray-900">Financed Amount vs. Property Value</td>
+                                        <td class="px-4 py-3 text-sm text-right text-gray-900">
+                                            RM {{ number_format($financial->properties->sum(function($property) { return $property->pivot->financed_amount ?? 0; }), 2) }} / 
+                                            RM {{ number_format($financial->properties->sum(function($property) { return $property->pivot->property_value ?? 0; }), 2) }}
+                                        </td>
+                                        <td class="px-4 py-3 text-sm text-right text-gray-900">
+                                            @php
+                                                $totalPropertyValue = $financial->properties->sum(function($property) { return $property->pivot->property_value ?? 0; });
+                                                $totalFinancedAmount = $financial->properties->sum(function($property) { return $property->pivot->financed_amount ?? 0; });
+                                            @endphp
+                                            {{ $totalPropertyValue > 0 ? 
+                                               number_format(($totalFinancedAmount / $totalPropertyValue) * 100, 2) : 0 }}%
+                                        </td>
+                                    </tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -284,6 +405,12 @@
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->updated_at->format('d/m/Y H:i') }}</dd>
                         </div>
+                        @if($financial->prepared_by)
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->prepared_by }}</dd>
+                        </div>
+                        @endif
                     </dl>
                 </div>
 

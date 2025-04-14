@@ -110,10 +110,7 @@
 
                             <div class="mb-4">
                                 <label for="option_to_renew" class="block text-sm font-medium text-gray-700">Option to Renew</label>
-                                <select id="option_to_renew" name="option_to_renew" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="1" {{ old('option_to_renew', '1') == '1' ? 'selected' : '' }}>Yes</option>
-                                    <option value="0" {{ old('option_to_renew') == '0' ? 'selected' : '' }}>No</option>
-                                </select>
+                                <input id="option_to_renew" type="text" name="option_to_renew" value="{{ old('option_to_renew') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('option_to_renew')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -198,40 +195,6 @@
                                 <input id="attachment" type="file" name="attachment" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <p class="mt-1 text-sm text-gray-500">Accepts PDF, Word documents, and images (maximum 10MB)</p>
                                 @error('attachment')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Administrative Details</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="mb-4">
-                                <label for="prepared_by" class="block text-sm font-medium text-gray-700">Prepared By</label>
-                                <input id="prepared_by" type="text" name="prepared_by" value="{{ old('prepared_by') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                @error('prepared_by')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified By</label>
-                                <input id="verified_by" type="text" name="verified_by" value="{{ old('verified_by') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                @error('verified_by')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="pending" {{ old('status', 'pending') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="expired" {{ old('status') == 'expired' ? 'selected' : '' }}>Expired</option>
-                                    <option value="terminated" {{ old('status') == 'terminated' ? 'selected' : '' }}>Terminated</option>
-                                </select>
-                                @error('status')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
