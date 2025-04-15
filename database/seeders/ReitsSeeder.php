@@ -1653,7 +1653,6 @@ class ReitsSeeder extends Seeder
         $siteVisitLogs = [
             [
                 'site_visit_id' => 1,
-                'no' => 1,
                 'visitation_date' => '2024-01-15',
                 'purpose' => 'Annual facility inspection and tenant feedback collection',
                 'report_submission_date' => '2024-01-20',
@@ -1663,7 +1662,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 2,
-                'no' => 1,
                 'visitation_date' => '2024-01-16',
                 'purpose' => 'Annual facility inspection and tenant feedback collection',
                 'report_submission_date' => '2024-01-21',
@@ -1673,7 +1671,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 3,
-                'no' => 1,
                 'visitation_date' => '2024-02-10',
                 'purpose' => 'Inspection of newly renovated floors and tenant spaces',
                 'report_submission_date' => '2024-02-15',
@@ -1683,7 +1680,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 4,
-                'no' => 1,
                 'visitation_date' => '2024-02-20',
                 'purpose' => 'Assessment of common areas and facilities',
                 'report_submission_date' => '2024-02-25',
@@ -1693,7 +1689,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 5,
-                'no' => 1,
                 'visitation_date' => '2024-03-05',
                 'purpose' => 'Inspection of retail spaces and food court',
                 'report_submission_date' => '2024-03-10',
@@ -1703,7 +1698,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 6,
-                'no' => 1,
                 'visitation_date' => '2024-03-15',
                 'purpose' => 'Safety and compliance inspection of industrial facility',
                 'report_submission_date' => '2024-03-20',
@@ -1713,7 +1707,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 7,
-                'no' => 1,
                 'visitation_date' => '2024-04-10',
                 'purpose' => 'Review of building systems and tenant improvements',
                 'report_submission_date' => '2024-04-15',
@@ -1723,7 +1716,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 8,
-                'no' => 1,
                 'visitation_date' => '2024-04-20',
                 'purpose' => 'Inspection of resort facilities and guest accommodations',
                 'report_submission_date' => '2024-04-25',
@@ -1733,7 +1725,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 9,
-                'no' => 1,
                 'visitation_date' => '2024-05-05',
                 'purpose' => 'Review of medical facility compliance and systems',
                 'report_submission_date' => '2024-05-10',
@@ -1743,7 +1734,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 10,
-                'no' => 1,
                 'visitation_date' => '2024-05-15',
                 'purpose' => 'Inspection of research facilities and laboratories',
                 'report_submission_date' => '2024-05-20',
@@ -1753,7 +1743,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 11,
-                'no' => 1,
                 'visitation_date' => '2024-06-01',
                 'purpose' => 'Safety inspection of warehouse operations',
                 'report_submission_date' => '2024-06-06',
@@ -1763,7 +1752,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 12,
-                'no' => 1,
                 'visitation_date' => '2024-06-15',
                 'purpose' => 'Inspection of data center infrastructure and cooling systems',
                 'report_submission_date' => '2024-06-20',
@@ -1773,7 +1761,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 13,
-                'no' => 1,
                 'visitation_date' => '2024-07-01',
                 'purpose' => 'Review of storage facility security and climate control',
                 'report_submission_date' => '2024-07-06',
@@ -1783,7 +1770,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 14,
-                'no' => 1,
                 'visitation_date' => '2024-09-15',
                 'purpose' => 'Follow-up inspection for maintenance issues',
                 'report_submission_date' => null,
@@ -1793,7 +1779,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 15,
-                'no' => 1,
                 'visitation_date' => '2024-09-20',
                 'purpose' => 'Tenant improvement inspection',
                 'report_submission_date' => null,
@@ -1806,7 +1791,6 @@ class ReitsSeeder extends Seeder
         foreach ($siteVisitLogs as $log) {
             DB::table('site_visit_logs')->insert([
                 'site_visit_id' => $log['site_visit_id'],
-                'no' => $log['no'],
                 'visitation_date' => $log['visitation_date'],
                 'purpose' => $log['purpose'],
                 'status' => $statuses[array_rand($statuses)],

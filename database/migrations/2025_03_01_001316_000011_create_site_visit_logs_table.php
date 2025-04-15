@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('site_visit_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('site_visit_id')->constrained()->onDelete('cascade');
-            $table->integer('no');
             $table->date('visitation_date');
             $table->text('purpose');
             $table->date('report_submission_date')->nullable();
