@@ -184,11 +184,6 @@
                 <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
                     {{ $leases->links() }}
                 </div>
-                
-                <!-- Results count -->
-                <div class="bg-white px-4 py-2 border-t border-gray-200 sm:px-6 text-sm text-gray-500">
-                    Showing {{ $leases->firstItem() ?? 0 }} to {{ $leases->lastItem() ?? 0 }} of {{ $leases->total() }} leases
-                </div>
             </div>
         </div>
     </div>

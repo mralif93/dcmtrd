@@ -84,4 +84,14 @@ class Tenant extends Model
         
         return now()->diffInDays($this->expiry_date);
     }
+
+    /**
+     * The checklists associated with this tenant.
+     */
+    public function checklists()
+    {
+        return $this->belongsToMany(Checklist::class, 'checklist_tenant')
+                    ->withPivot('notes', 'status', 'prepared_by', 'verified_by', 'approval_datetime')
+                    ->withTimestamps();
+    }
 }

@@ -2422,42 +2422,163 @@ class MakerController extends Controller
         return view('maker.checklist.index', compact('checklists'));
     }
 
-    public function ChecklistCreate(Property $property)
+    public function checklistCreate(Property $property)
     {
-        $siteVisits = SiteVisit::where('status', 'active')->get();
+        // Get only active site visits related to the current property
+        $siteVisits = SiteVisit::where('property_id', $property->id)
+                            ->where('status', 'completed')
+                            ->orderBy('date_visit', 'desc')
+                            ->get();
+        
+        // Eager load the tenants relationship to avoid N+1 query issues
+        // Only get active tenants
+        $property->load(['tenants' => function($query) {
+            $query->where('status', 'active');
+        }]);
+        
         return view('maker.checklist.create', compact('property', 'siteVisits'));
     }
 
-    public function ChecklistStore(Request $request)
+    public function checklistStore(Request $request)
     {
-        $validated = $this->ChecklistValidate($request);
+        // Get the validated data from your existing validation method
+        $validated = $this->checklistValidate($request);
+        
+        // Add validation for tenant-related fields
+        $request->validate([
+            'site_visit_id' => 'required|exists:site_visits,id',
+            'tenants' => 'nullable|array',
+            'tenants.*' => 'exists:tenants,id',
+            'tenant_notes' => 'nullable|array',
+            'tenant_notes.*' => 'nullable|string',
+        ]);
 
+        // Add the authenticated user's name as prepared_by
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'draft';
-
+        
+        // Set default status to 'pending' to match schema default
+        $validated['status'] = 'pending';
+        
         try {
+            // Create the checklist with validated data
             $checklist = Checklist::create($validated);
-            return redirect()->route('tenant-m.index', $checklist->property)->with('success', 'Checklist created successfully.');
+            
+            // Attach tenants if any were selected
+            if ($request->has('tenants') && !empty($request->tenants)) {
+                $pivotData = [];
+                
+                foreach ($request->tenants as $tenantId) {
+                    $pivotData[$tenantId] = [
+                        'notes' => $request->input('tenant_notes.' . $tenantId),
+                        'status' => 'pending',
+                        'prepared_by' => Auth::id(), // Store user ID, not name
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
+                }
+                
+                $checklist->tenants()->attach($pivotData);
+            }
+            
+            // Get property_id from site_visit for redirection
+            $siteVisit = SiteVisit::findOrFail($request->site_visit_id);
+            
+            return redirect()->route('tenant-m.index', $siteVisit->property_id)
+                ->with('success', 'Checklist created successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error creating checklist: ' . $e->getMessage());
+            return back()->withInput()
+                ->with('error', 'Error creating checklist: ' . $e->getMessage());
         }
     }
 
-    public function ChecklistEdit(Checklist $checklist)
+    public function checklistEdit(Checklist $checklist)
     {
-        $siteVisits = SiteVisit::where('status', 'active')->get();
-        return view('maker.checklist.edit', compact('checklist', 'siteVisits'));
+        // Check if the user has permission to edit this checklist
+        // Only allow editing if status is pending
+        if ($checklist->status !== 'pending') {
+            return redirect()->route('checklist-m.show', $checklist->id)
+                ->with('error', 'Cannot edit a checklist that has already been processed.');
+        }
+        
+        // Get site visits related to the property
+        $property = $checklist->siteVisit->property;
+        $siteVisits = SiteVisit::where('property_id', $property->id)
+                            ->whereIn('status', ['completed', 'scheduled'])
+                            ->orderBy('date_visit', 'desc')
+                            ->get();
+        
+        // Eager load the property's tenants
+        $property->load(['tenants' => function($query) {
+            $query->where('status', 'active');
+        }]);
+        
+        // Eager load the tenants associated with this checklist along with pivot data
+        $checklist->load(['tenants' => function($query) {
+            $query->withPivot('notes', 'status', 'prepared_by', 'verified_by');
+        }]);
+        
+        return view('maker.checklist.edit', compact('checklist', 'siteVisits', 'property'));
     }
 
-    public function ChecklistUpdate(Request $request, Checklist $checklist)
+    public function checklistUpdate(Request $request, Checklist $checklist)
     {
-        $validated = $this->ChecklistValidate($request);
+        // Check if the user has permission to update this checklist
+        if ($checklist->status !== 'pending') {
+            return redirect()->route('checklist-m.show', $checklist->id)
+                ->with('error', 'Cannot update a checklist that has already been processed.');
+        }
+        
+        $validated = $this->checklistValidate($request);
+        
+        // Add validation for tenant-related fields
+        $request->validate([
+            'site_visit_id' => 'required|exists:site_visits,id',
+            'tenants' => 'nullable|array',
+            'tenants.*' => 'exists:tenants,id',
+            'tenant_notes' => 'nullable|array',
+            'tenant_notes.*' => 'nullable|string',
+        ]);
 
+        // Update prepared_by only if it's not already set
+        if (empty($checklist->prepared_by)) {
+            $validated['prepared_by'] = Auth::user()->name;
+        }
+        
+        // Record the last update
+        $validated['updated_at'] = now();
+        
         try {
+            // Update the checklist with validated data
             $checklist->update($validated);
-            return redirect()->route('checklist-m.index', $checklist->siteVisit)->with('success', 'Checklist created successfully.');
+            
+            // Sync tenants (this will detach any removed tenants and attach any new ones)
+            $syncData = [];
+            if ($request->has('tenants') && !empty($request->tenants)) {
+                foreach ($request->tenants as $tenantId) {
+                    // Get existing pivot data if any
+                    $existingPivot = $checklist->tenants()
+                        ->where('tenant_id', $tenantId)
+                        ->first()?->pivot;
+                    
+                    $syncData[$tenantId] = [
+                        'notes' => $request->input('tenant_notes.' . $tenantId),
+                        'status' => 'pending',
+                        'prepared_by' => $existingPivot?->prepared_by ?? Auth::id(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+            
+            $checklist->tenants()->sync($syncData);
+            
+            DB::commit();
+            
+            return redirect()->route('checklist-m.show', $checklist->id)
+                ->with('success', 'Checklist updated successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error updating checklist: ' . $e->getMessage());
+            DB::rollBack();
+            return back()->withInput()
+                ->with('error', 'Error updating checklist: ' . $e->getMessage());
         }
     }
 
@@ -2489,11 +2610,6 @@ class MakerController extends Controller
             'other_legal_docs' => 'nullable|string',
             
             // 2.0 Tenancy Agreement
-            'tenant_name' => 'nullable|string|max:255',
-            'tenant_property' => 'nullable|string|max:255',
-            'tenancy_approval_date' => 'nullable|date',
-            'tenancy_commencement_date' => 'nullable|date',
-            'tenancy_expiry_date' => 'nullable|date',
             
             // 3.0 External Area Conditions
             'is_general_cleanliness_satisfied' => 'nullable|boolean',
