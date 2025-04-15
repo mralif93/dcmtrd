@@ -157,4 +157,14 @@ class Checklist extends Model implements Auditable
     {
         return $this->belongsTo(SiteVisit::class);
     }
+
+    /**
+     * The tenants associated with this checklist.
+     */
+    public function tenants()
+    {
+        return $this->belongsToMany(Tenant::class, 'checklist_tenant')
+                    ->withPivot('notes', 'status', 'prepared_by', 'verified_by', 'approval_datetime')
+                    ->withTimestamps();
+    }
 }

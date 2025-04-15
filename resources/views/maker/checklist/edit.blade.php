@@ -159,39 +159,58 @@
 
                         <!-- 2.0 Tenancy Agreement -->
                         <div class="p-4 mb-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">2.0 Tenancy Agreement</h3>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Associated Tenants</h3>
                             
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="border-b">
-                                        <tr>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenant Name</th>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Approval</th>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Commencement Tenancy</th>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-200">
-                                        <tr>
-                                            <td class="px-4 py-3">
-                                                <input id="tenant_name" type="text" name="tenant_name" value="{{ old('tenant_name', $checklist->tenant_name) }}" placeholder="Tenant Name" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <input id="tenant_property" type="text" name="tenant_property" value="{{ old('tenant_property', $checklist->tenant_property) }}" placeholder="Property" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <input id="tenancy_approval_date" type="date" name="tenancy_approval_date" value="{{ old('tenancy_approval_date', $checklist->tenancy_approval_date ? $checklist->tenancy_approval_date->format('Y-m-d') : '') }}" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <input id="tenancy_commencement_date" type="date" name="tenancy_commencement_date" value="{{ old('tenancy_commencement_date', $checklist->tenancy_commencement_date ? $checklist->tenancy_commencement_date->format('Y-m-d') : '') }}" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <input id="tenancy_expiry_date" type="date" name="tenancy_expiry_date" value="{{ old('tenancy_expiry_date', $checklist->tenancy_expiry_date ? $checklist->tenancy_expiry_date->format('Y-m-d') : '') }}" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="mb-4">
+                                <p class="text-sm text-gray-600 mb-2">Select tenants associated with this checklist (optional)</p>
+                                
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200">
+                                        <thead class="border-b">
+                                            <tr>
+                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Select</th>
+                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenant Name</th>
+                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person</th>
+                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Commencement Date</th>
+                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry Date</th>
+                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                            @forelse($property->tenants as $tenant)
+                                                <tr>
+                                                    <td class="px-4 py-3 text-center">
+                                                        <input type="checkbox" name="tenants[]" value="{{ $tenant->id }}" 
+                                                            {{ (is_array(old('tenants', $checklist->tenants->pluck('id')->toArray())) && in_array($tenant->id, old('tenants', $checklist->tenants->pluck('id')->toArray()))) ? 'checked' : '' }}
+                                                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                                    </td>
+                                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $tenant->name }}</td>
+                                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $tenant->contact_person }}</td>
+                                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $tenant->commencement_date->format('d/m/Y') }}</td>
+                                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $tenant->expiry_date->format('d/m/Y') }}</td>
+                                                    <td class="px-4 py-3">
+                                                        @php
+                                                            $pivotNotes = null;
+                                                            if($checklist->tenants->contains($tenant->id)) {
+                                                                $pivotNotes = $checklist->tenants->find($tenant->id)->pivot->notes;
+                                                            }
+                                                        @endphp
+                                                        <input type="text" name="tenant_notes[{{ $tenant->id }}]" 
+                                                            value="{{ old('tenant_notes.' . $tenant->id, $pivotNotes) }}" 
+                                                            placeholder="Add notes for this tenant" 
+                                                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="6" class="px-4 py-3 text-center text-sm text-gray-500">
+                                                        No tenants available for this property.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
 

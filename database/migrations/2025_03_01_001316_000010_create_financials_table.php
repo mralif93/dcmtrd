@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
             $table->foreignId('bank_id')->constrained('banks')->onDelete('restrict');
             $table->foreignId('financial_type_id')->constrained('financial_types')->onDelete('restrict');
+            $table->string('batch_no')->nullable();
             $table->string('purpose');
             $table->string('tenure');
             $table->string('installment_date');

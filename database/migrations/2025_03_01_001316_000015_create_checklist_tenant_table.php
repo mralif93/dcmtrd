@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('site_visit_logs', function (Blueprint $table) {
+        Schema::create('checklist_tenant', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('site_visit_id')->constrained()->onDelete('cascade');
-            $table->date('visitation_date');
-            $table->text('purpose');
-            $table->date('report_submission_date')->nullable();
-            $table->string('report_attachment')->nullable();
-            $table->boolean('follow_up_required')->default(false);
-            $table->text('remarks')->nullable();
+            $table->foreignId('checklist_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->text('notes')->nullable();
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
@@ -27,8 +23,11 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
             
-            $table->index('visitation_date');
-            $table->index('status');
+            // Prevent duplicate associations
+            $table->unique(['checklist_id', 'tenant_id']);
+            
+            // Add indexes for better performance
+            $table->index(['checklist_id', 'tenant_id']);
         });
     }
 
@@ -37,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('site_visit_logs');
+        Schema::dropIfExists('checklist_tenant');
     }
 };

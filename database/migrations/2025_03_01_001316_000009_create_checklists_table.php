@@ -14,10 +14,6 @@ return new class extends Migration
         Schema::create('checklists', function (Blueprint $table) {
             $table->id();
             
-            // General property info
-            $table->string('property_title')->nullable();
-            $table->string('property_location')->nullable();
-            
             // Legal Documentation section (1.0)
             $table->string('title_ref')->nullable();
             $table->string('title_location')->nullable();
@@ -33,11 +29,7 @@ return new class extends Migration
             $table->text('other_legal_docs')->nullable();
             
             // Tenancy Agreement section (2.0)
-            $table->string('tenant_name')->nullable();
-            $table->string('tenant_property')->nullable();
-            $table->date('tenancy_approval_date')->nullable();
-            $table->date('tenancy_commencement_date')->nullable();
-            $table->date('tenancy_expiry_date')->nullable();
+            // based on checklist_tenant_table
             
             // External Area Conditions (3.0)
             $table->boolean('is_general_cleanliness_satisfied')->nullable();
