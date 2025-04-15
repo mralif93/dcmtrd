@@ -3,12 +3,11 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\TrusteeFee;
 use Illuminate\Console\Command;
-use Symfony\Component\Clock\now;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\Issuer\PendingIssuerForApprovalEmails;
+use App\Jobs\TrusteeFee\SendTrusteeFeeReminderEmail;
 
 class SendTrusteeFeeReminders extends Command
 {
@@ -24,14 +23,14 @@ class SendTrusteeFeeReminders extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Send reminders for Trustee Fees';
 
     /**
      * Execute the console command.
-     */ public function handle()
+     */
+    public function handle()
     {
-        $today = now()->startOfDay();
-        $daysBefore = 30;
+        $today = now()->startOfDay(); // today = 2025-05-19 (for example)
 
         $reminderFields = [
             'first_reminder',
@@ -40,18 +39,33 @@ class SendTrusteeFeeReminders extends Command
         ];
 
         foreach ($reminderFields as $field) {
-            $fees = TrusteeFee::whereDate($field, $today->copy()->addDays($daysBefore))
+            $fees = TrusteeFee::whereDate($field, $today)
                 ->whereNotNull('prepared_by')
                 ->get();
 
-            Log::info("Sending reminders for $field: ", $fees->toArray());
+            if ($fees->isEmpty()) {
+                $this->info("No reminders for $field today.");
+                continue;
+            }
+
+            Log::info("Sending reminders for $field on $today:", $fees->toArray());
 
             foreach ($fees as $fee) {
-                $message = "[$field Reminder] TrusteeFee #{$fee->id} is due on {$fee->$field}.\nPrepared by: {$fee->prepared_by}";
-
+                // Ensure you don't send duplicate emails for the same date
+                $message = "[$field Reminder] TrusteeFee #{$fee->id} is due today ({$fee->$field}).\nPrepared by: {$fee->prepared_by}";
                 $this->info($message);
-                // Mail::to($user->email)->send(new PendingIssuerForApprovalEmails($this->issuer, $user));
 
+                // Find the issuer's email and send the reminder
+
+                $user = User::where('name', $fee->prepared_by)->first();
+
+                if ($user && $user->email) {
+                    // Check if an email has already been sent for this fee on the same day
+                    if (!isset($sentReminders[$fee->id])) {
+                        SendTrusteeFeeReminderEmail::dispatch($user, $fee);
+                        $sentReminders[$fee->id] = true;
+                    }
+                }
             }
         }
 
