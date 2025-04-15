@@ -177,7 +177,7 @@ class MakerController extends Controller
     /**
      * Validate issuer data based on schema
      */
-    protected function validateIssuer(Request $request, Issuer $issuer = null)
+    protected function validateIssuer(Request $request)
     {
         return $request->validate([
             'issuer_short_name' => 'nullable|string|max:50',
@@ -339,7 +339,7 @@ class MakerController extends Controller
             ->with('success', 'Bond data uploaded successfully');
     }
 
-    protected function validateBond(Request $request, Bond $bond = null)
+    protected function validateBond(Request $request)
     {
         return $request->validate([
             'bond_sukuk_name' => 'required|string|max:255',
@@ -613,7 +613,7 @@ class MakerController extends Controller
         ]);
     }
 
-    protected function validateFacilityInfo(Request $request, FacilityInformation $facility = null)
+    protected function validateFacilityInfo(Request $request)
     {
         return $request->validate([
             'issuer_id' => 'required|exists:issuers,id',
@@ -1252,7 +1252,7 @@ class MakerController extends Controller
         }
     }
 
-    protected function validateTrusteeFee(Request $request, TrusteeFee $trusteeFee = null)
+    protected function validateTrusteeFee(Request $request)
     {
         return $request->validate([
             'facility_information_id' => 'required|exists:facility_informations,id',
@@ -1765,7 +1765,7 @@ class MakerController extends Controller
         }
     }
     
-    protected function validatePortfolio(Request $request, Portfolio $portfolio = null)
+    protected function validatePortfolio(Request $request)
     {
         return $request->validate([
             'portfolio_types_id' => 'required|exists:portfolio_types,id',
@@ -1914,7 +1914,7 @@ class MakerController extends Controller
         return view('maker.financial.show', compact('financial'));
     }
 
-    public function FinancialValidate(Request $request, Financial $financial = null) {
+    public function FinancialValidate(Request $request) {
         return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
             'bank_id' => 'required|exists:banks,id',
@@ -2071,7 +2071,7 @@ class MakerController extends Controller
         return view('maker.property.show', compact('property'));
     }
 
-    public function PropertyValidate(Request $request, Property $property = null)
+    public function PropertyValidate(Request $request)
     {
         return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
@@ -2156,7 +2156,7 @@ class MakerController extends Controller
         return view('maker.tenant.show', compact('tenant'));
     }
 
-    public function TenantValidate(Request $request, Tenant $tenant = null)
+    public function TenantValidate(Request $request)
     {
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
@@ -2275,7 +2275,7 @@ class MakerController extends Controller
         return view('maker.lease.show', compact('lease'));
     }
 
-    public function LeaseValidate(Request $request, Lease $lease = null)
+    public function LeaseValidate(Request $request)
     {
         return $request->validate([
             'tenant_id' => 'required|exists:tenants,id',
@@ -2358,7 +2358,7 @@ class MakerController extends Controller
         return view('maker.site-visit.show', compact('siteVisit'));
     }
 
-    public function SiteVisitValidate(Request $request, SiteVisit $siteVisit = null)
+    public function SiteVisitValidate(Request $request)
     {
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
@@ -2427,7 +2427,7 @@ class MakerController extends Controller
     {
         // Get only active site visits related to the current property
         $siteVisits = SiteVisit::where('property_id', $property->id)
-                            ->where('status', 'completed')
+                            ->where('status', 'active')
                             ->orderBy('date_visit', 'desc')
                             ->get();
         
@@ -3134,7 +3134,7 @@ class MakerController extends Controller
         return view('maker.site-visit-log.show', compact('siteVisitLog'));
     }
 
-    public function SiteVisitLogValidate(Request $request, SiteVisitLog $siteVisitLog = null)
+    public function SiteVisitLogValidate(Request $request)
     {
         return $request->validate([
             'site_visit_id' => 'required|exists:site_visits,id',

@@ -144,7 +144,6 @@
                                             <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lease Name</th>
                                             <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Premises</th>
                                             <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
-                                            <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Rental Amount</th>
                                             <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tenancy Type</th>
                                             <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         </tr>
@@ -157,10 +156,6 @@
                                                 <td class="px-4 py-3 text-sm text-gray-500">
                                                     {{ date('d/m/Y', strtotime($lease->start_date)) }} - 
                                                     {{ date('d/m/Y', strtotime($lease->end_date)) }}
-                                                </td>
-                                                <td class="px-4 py-3 text-sm text-gray-500 text-right">
-                                                    {{ number_format($lease->rental_amount, 2) }}
-                                                    <span class="text-xs text-gray-500">({{ $lease->rental_frequency }})</span>
                                                 </td>
                                                 <td class="px-4 py-3 text-sm text-gray-500 text-center">
                                                     {{ $lease->tenancy_type ? ucfirst($lease->tenancy_type) : 'N/A' }}
