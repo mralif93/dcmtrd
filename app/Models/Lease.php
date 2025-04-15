@@ -26,7 +26,19 @@ class Lease extends Model
         'term_years',
         'start_date',
         'end_date',
+        'base_rate_year_1',
+        'monthly_gsto_year_1',
+        'base_rate_year_2',
+        'monthly_gsto_year_2',
+        'base_rate_year_3',
+        'monthly_gsto_year_3',
+        'space',
+        'tenancy_type',
+        'attachment',
         'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
     ];
 
     /**
@@ -35,10 +47,9 @@ class Lease extends Model
      * @var array
      */
     protected $casts = [
-        'rental_amount' => 'decimal:2',
-        'option_to_renew' => 'boolean',
         'start_date' => 'date',
         'end_date' => 'date',
+        'approval_datetime' => 'date',
     ];
 
     /**
