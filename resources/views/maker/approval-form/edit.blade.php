@@ -61,7 +61,7 @@
                                         <option value="">-- Select Property --</option>
                                         @foreach($properties as $property)
                                             <option value="{{ $property->id }}" @selected(old('property_id', $approvalForm->property_id) == $property->id)>
-                                                {{ $property->name }}
+                                            {{ $property->portfolio->portfolio_name }} - {{ $property->name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -121,16 +121,6 @@
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                                 <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                    <select name="status" id="status"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="pending" @selected(old('status', $approvalForm->status) == 'pending')>Pending</option>
-                                        <option value="in_progress" @selected(old('status', $approvalForm->status) == 'in_progress')>In Progress</option>
-                                        <option value="approved" @selected(old('status', $approvalForm->status) == 'approved')>Approved</option>
-                                        <option value="rejected" @selected(old('status', $approvalForm->status) == 'rejected')>Rejected</option>
-                                    </select>
-                                </div>
-                                <div>
                                     <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
                                     <input type="text" name="location" id="location" 
                                         value="{{ old('location', $approvalForm->location) }}"
@@ -174,47 +164,10 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Approval Information Section -->
-                        <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Approval Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="prepared_by" class="block text-sm font-medium text-gray-700">Prepared By</label>
-                                    <select name="prepared_by" id="prepared_by"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">-- Select User --</option>
-                                        @foreach($users as $user)
-                                            <option value="{{ $user->id }}" @selected(old('prepared_by', $approvalForm->prepared_by) == $user->id)>
-                                                {{ $user->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified By</label>
-                                    <select name="verified_by" id="verified_by"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">-- Select User --</option>
-                                        @foreach($users as $user)
-                                            <option value="{{ $user->id }}" @selected(old('verified_by', $approvalForm->verified_by) == $user->id)>
-                                                {{ $user->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="approval_datetime" class="block text-sm font-medium text-gray-700">Approval Date/Time</label>
-                                    <input type="datetime-local" name="approval_datetime" id="approval_datetime" 
-                                        value="{{ old('approval_datetime', $approvalForm->approval_datetime ? $approvalForm->approval_datetime->format('Y-m-d\TH:i') : '') }}"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Form Actions -->
-                    <div class="flex justify-end gap-4 border-t border-gray-200 pt-6">
+                    <div class="flex justify-end gap-4">
                         <a href="{{ route('approval-form-m.index') }}" 
                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
