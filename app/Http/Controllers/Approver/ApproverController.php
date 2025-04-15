@@ -786,8 +786,7 @@ class ApproverController extends Controller
         $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)->count();
         
         $totalActiveRental = Lease::whereIn('tenant_id', $tenantIds)
-            ->where('status', 'active')
-            ->sum('rental_amount');
+            ->where('status', 'active');
 
         return view('approver.lease.index', compact(
             'property',
