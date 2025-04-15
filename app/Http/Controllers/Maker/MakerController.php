@@ -1851,7 +1851,7 @@ class MakerController extends Controller
                 $financial->properties()->attach($propertyData);
             }
             
-            return redirect()->route('maker.financial-m.show', $financial)->with('success', 'Financial created successfully.');
+            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial created successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error creating financial: ' . $e->getMessage());
         }
