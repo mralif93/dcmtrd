@@ -1839,7 +1839,7 @@ class MakerController extends Controller
                 $financial->properties()->attach($propertyData);
             }
             
-            return redirect()->route('maker.financial-m.show', $financial)->with('success', 'Financial created successfully.');
+            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial created successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error creating financial: ' . $e->getMessage());
         }
@@ -3133,7 +3133,7 @@ class MakerController extends Controller
         return view('maker.site-visit-log.show', compact('siteVisitLog'));
     }
 
-    public function SiteVisitLogValidate(Request $request, SiteVisitLog $siteVisitLog)
+    public function SiteVisitLogValidate(Request $request, SiteVisitLog $siteVisitLog = null)
     {
         return $request->validate([
             'site_visit_id' => 'required|exists:site_visits,id',
