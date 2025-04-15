@@ -20,8 +20,6 @@ class Lease extends Model
         'lease_name',
         'demised_premises',
         'permitted_use',
-        'rental_amount',
-        'rental_frequency',
         'option_to_renew',
         'term_years',
         'start_date',
@@ -104,21 +102,17 @@ class Lease extends Model
     {
         $months = $this->start_date->diffInMonths($this->end_date);
         
-        switch ($this->rental_frequency) {
-            case 'daily':
-                return $this->rental_amount * 30 * $months;
-            case 'weekly':
-                return $this->rental_amount * 4 * $months;
-            case 'monthly':
-                return $this->rental_amount * $months;
-            case 'quarterly':
-                return $this->rental_amount * ($months / 3);
-            case 'biannual':
-                return $this->rental_amount * ($months / 6);
-            case 'annual':
-                return $this->rental_amount * ($months / 12);
-            default:
-                return $this->rental_amount * $months;
-        }
+        // Calculate yearly proportions
+        $totalMonths = $months;
+        $year1Months = min(12, $totalMonths);
+        $year2Months = ($totalMonths > 12) ? min(12, $totalMonths - 12) : 0;
+        $year3Months = ($totalMonths > 24) ? min(12, $totalMonths - 24) : 0;
+        
+        // Calculate total value for each year period
+        $year1Value = ($this->base_rate_year_1 + $this->monthly_gsto_year_1) * $year1Months;
+        $year2Value = ($this->base_rate_year_2 + $this->monthly_gsto_year_2) * $year2Months;
+        $year3Value = ($this->base_rate_year_3 + $this->monthly_gsto_year_3) * $year3Months;
+        
+        return $year1Value + $year2Value + $year3Value;
     }
 }
