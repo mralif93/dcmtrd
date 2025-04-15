@@ -1817,6 +1817,8 @@ class MakerController extends Controller
     {
         // Validate financial data
         $validated = $this->FinancialValidate($request);
+
+        dd($request->toArray());
     
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
@@ -1880,7 +1882,7 @@ class MakerController extends Controller
         $validated = $this->FinancialValidate($request);
         
         // Remove the dd() statement that's stopping execution
-        // dd($request->toArray());
+        dd($request->toArray());
         
         try {
             // Update the financial record
@@ -2101,7 +2103,6 @@ class MakerController extends Controller
             'ownership' => 'nullable|string|max:255',
             'share_amount' => 'nullable|numeric|min:0',
             'market_value' => 'nullable|numeric|min:0',
-            'status' => 'nullable|string|in:Draft,Active,Pending,Inactive'
         ]);
     }
 
