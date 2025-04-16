@@ -138,7 +138,7 @@
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Monthly GSTO Year 1</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">RM {{ number_format($lease->monthly_gsto_year_1, 2) }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ number_format($lease->monthly_gsto_year_1, 2) }} %</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Base Rate Year 2</dt>
@@ -146,7 +146,7 @@
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Monthly GSTO Year 2</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">RM {{ number_format($lease->monthly_gsto_year_2, 2) }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ number_format($lease->monthly_gsto_year_2, 2) }} %</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Base Rate Year 3</dt>
@@ -154,19 +154,7 @@
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Monthly GSTO Year 3</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">RM {{ number_format($lease->monthly_gsto_year_3, 2) }}</dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Total Contract Value</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                @php
-                                    $year1Total = ($lease->base_rate_year_1 + ($lease->monthly_gsto_year_1 * 12));
-                                    $year2Total = ($lease->base_rate_year_2 + ($lease->monthly_gsto_year_2 * 12));
-                                    $year3Total = ($lease->base_rate_year_3 + ($lease->monthly_gsto_year_3 * 12));
-                                    $contractTotal = $year1Total + $year2Total + $year3Total;
-                                @endphp
-                                RM {{ number_format($contractTotal, 2) }}
-                            </dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ number_format($lease->monthly_gsto_year_3, 2) }} %</dd>
                         </div>
                     </dl>
                 </div>

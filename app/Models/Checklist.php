@@ -11,10 +11,6 @@ class Checklist extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        // General property info
-        'property_title',
-        'property_location',
-        
         // 1.0 Legal Documentation
         'title_ref',
         'title_location',

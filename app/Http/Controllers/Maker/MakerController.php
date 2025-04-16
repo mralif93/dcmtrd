@@ -1914,6 +1914,7 @@ class MakerController extends Controller
             'portfolio_id' => 'required|exists:portfolios,id',
             'bank_id' => 'required|exists:banks,id',
             'financial_type_id' => 'required|exists:financial_types,id',
+            'batch_no' => 'nullable|string|max:255',
             'purpose' => 'required|string|max:255',
             'tenure' => 'required|string|max:255',
             'installment_date' => 'required|string|max:255',
@@ -2259,7 +2260,7 @@ class MakerController extends Controller
 
         try {
             $lease->update($validated);
-            return redirect()->route('lease-m.show', $lease->tenant->property)->with('success', 'Lease updated successfully.');
+            return redirect()->route('lease-m.show', $lease)->with('success', 'Lease updated successfully.');
         } catch(\Exception $e) {
             return back()->with('error', 'Error updating lease: ' . $e->getMessage());
         }
@@ -2439,7 +2440,6 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->ChecklistValidate($request);
-        $tenantData = $this->ValidateChecklistTenants($request);
         
         // Add the authenticated user's ID as prepared_by
         $validated['prepared_by'] = Auth::id();
@@ -2451,13 +2451,17 @@ class MakerController extends Controller
             // Create the checklist with validated data
             $checklist = Checklist::create($validated);
             
-            // Attach tenants if any were selected and validated
-            if (!empty($tenantData) && isset($tenantData['tenants']) && !empty($tenantData['tenants'])) {
+            // Process tenant associations using tenant_ids array
+            if ($request->has('tenant_ids') && is_array($request->tenant_ids)) {
                 $pivotData = [];
                 
-                foreach ($tenantData['tenants'] as $tenantId) {
+                // Filter out empty values
+                $tenantIds = array_filter($request->tenant_ids, function($value) {
+                    return !empty($value);
+                });
+                
+                foreach ($tenantIds as $tenantId) {
                     $pivotData[$tenantId] = [
-                        'notes' => $request->input('tenant_notes.' . $tenantId),
                         'status' => 'pending',
                         'prepared_by' => Auth::id(),
                         'created_at' => now(),
@@ -2465,7 +2469,9 @@ class MakerController extends Controller
                     ];
                 }
                 
-                $checklist->tenants()->attach($pivotData);
+                if (!empty($pivotData)) {
+                    $checklist->tenants()->attach($pivotData);
+                }
             }
             
             // Get property_id from site_visit for redirection
@@ -2499,8 +2505,6 @@ class MakerController extends Controller
         $property->load(['tenants' => function($query) {
             $query->where('status', 'active');
         }]);
-
-        dd($property->load('tenants')->toArray());
         
         // Eager load the tenants associated with this checklist along with pivot data
         $checklist->load(['tenants' => function($query) {
@@ -2520,7 +2524,6 @@ class MakerController extends Controller
         
         // Get the validated data from the separate validation methods
         $validated = $this->ChecklistValidate($request, $checklist);
-        $tenantData = $this->ValidateChecklistTenants($request, $checklist);
         
         // Update prepared_by only if it's not already set
         if (empty($checklist->prepared_by)) {
@@ -2529,24 +2532,27 @@ class MakerController extends Controller
         
         // Record the last update
         $validated['updated_at'] = now();
-    
+
         try {
             // Update the checklist with validated data
             $checklist->update($validated);
             
-            // Only update tenants if we're allowed to (not verified) and have tenant data
-            if (!empty($tenantData) && isset($tenantData['tenants'])) {
-                // Sync tenants (this will detach any removed tenants and attach any new ones)
+            // Process tenant associations using tenant_ids array
+            if ($request->has('tenant_ids') && is_array($request->tenant_ids)) {
                 $syncData = [];
                 
-                foreach ($tenantData['tenants'] as $tenantId) {
+                // Filter out empty values
+                $tenantIds = array_filter($request->tenant_ids, function($value) {
+                    return !empty($value);
+                });
+                
+                foreach ($tenantIds as $tenantId) {
                     // Get existing pivot data if any
                     $existingPivot = $checklist->tenants()
                         ->where('tenant_id', $tenantId)
                         ->first()?->pivot;
                     
                     $syncData[$tenantId] = [
-                        'notes' => $request->input('tenant_notes.' . $tenantId),
                         'status' => 'pending',
                         'prepared_by' => $existingPivot?->prepared_by ?? Auth::id(),
                         'updated_at' => now(),
@@ -2554,6 +2560,9 @@ class MakerController extends Controller
                 }
                 
                 $checklist->tenants()->sync($syncData);
+            } else {
+                // If no tenant IDs were provided, detach all tenants
+                $checklist->tenants()->detach();
             }
             
             return redirect()->route('checklist-m.show', $checklist->id)
@@ -2576,8 +2585,6 @@ class MakerController extends Controller
     {
         $rules = [
             // General Property Info
-            'property_title' => 'nullable|string|max:255',
-            'property_location' => 'nullable|string|max:255',
             'site_visit_id' => 'required|exists:site_visits,id',
             
             // 1.0 Legal Documentation
@@ -2704,16 +2711,11 @@ class MakerController extends Controller
         return $request->validate($rules);
     }
 
-    /**
-     * Validate tenant data for checklist
-     */
     public function ValidateChecklistTenants(Request $request, Checklist $checklist = null)
     {
         $rules = [
-            'tenants' => 'nullable|array',
-            'tenants.*' => 'exists:tenants,id',
-            'tenant_notes' => 'nullable|array',
-            'tenant_notes.*' => 'nullable|string|max:1000',
+            'tenant_ids' => 'nullable|array',
+            'tenant_ids.*' => 'nullable|exists:tenants,id',
         ];
         
         // If the checklist is already verified, don't allow tenant changes

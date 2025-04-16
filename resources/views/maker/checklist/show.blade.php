@@ -159,34 +159,36 @@
                     <div class="px-4 py-5 sm:px-6">
                         <h3 class="text-lg leading-6 font-medium text-gray-900">2.0 Tenancy Agreement</h3>
                     </div>
-                    <dl>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Tenant Name</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->tenant_name ?? 'N/A' }}</dd>
-                        </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Tenant Property</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->tenant_property ?? 'N/A' }}</dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Tenancy Approval Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $checklist->tenancy_approval_date ? date('d/m/Y', strtotime($checklist->tenancy_approval_date)) : 'N/A' }}
-                            </dd>
-                        </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Tenancy Commencement Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $checklist->tenancy_commencement_date ? date('d/m/Y', strtotime($checklist->tenancy_commencement_date)) : 'N/A' }}
-                            </dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Tenancy Expiry Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $checklist->tenancy_expiry_date ? date('d/m/Y', strtotime($checklist->tenancy_expiry_date)) : 'N/A' }}
-                            </dd>
-                        </div>
-                    </dl>
+                    <div class="overflow-x-auto p-6">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenant Name</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenant Property</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenancy Approval Date</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenancy Commencement Date</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenancy Expiry Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @if($checklist->tenants && count($checklist->tenants) > 0)
+                                    @foreach($checklist->tenants as $tenant)
+                                        <tr>
+                                            <td class="px-4 py-3 text-sm text-gray-900">{{ $tenant->name ?? 'N/A' }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900">{{ $tenant->property->name ?? 'N/A' }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900">{{ $tenant->approval_date ? date('d/m/Y', strtotime($tenant->approval_date)) : 'N/A' }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900">{{ $tenant->commencement_date ? date('d/m/Y', strtotime($tenant->commencement_date)) : 'N/A' }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900">{{ $tenant->expiry_date ? date('d/m/Y', strtotime($tenant->expiry_date)) : 'N/A' }}</td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="5" class="px-4 py-3 text-sm text-gray-900 text-center">No tenants associated with this checklist.</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- External Area Conditions Section -->

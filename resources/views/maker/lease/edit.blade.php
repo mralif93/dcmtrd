@@ -1,4 +1,3 @@
-```blade
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
@@ -119,7 +118,7 @@
                             </div>
                             
                             <div class="mb-4">
-                                <label for="tenancy_type" class="block text-sm font-medium text-gray-700">Tenancy Type</label>
+                                <label for="tenancy_type" class="block text-sm font-medium text-gray-700">Tenancy Type (New/Renewal)</label>
                                 <input id="tenancy_type" type="text" name="tenancy_type" value="{{ old('tenancy_type', $lease->tenancy_type) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('tenancy_type')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -226,4 +225,3 @@
         </div>
     </div>
 </x-app-layout>
-```
