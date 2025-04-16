@@ -1805,8 +1805,6 @@ class MakerController extends Controller
     {
         // Validate financial data
         $validated = $this->FinancialValidate($request);
-
-        dd($request->toArray());
     
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
@@ -2213,13 +2211,13 @@ class MakerController extends Controller
         return view('maker.lease.create', compact('tenants', 'property'));
     }
 
-    public function LeaseStore(Request $request, Property $property)
+    public function LeaseStore(Request $request)
     {
         $validated = $this->LeaseValidate($request);
 
         // Set default values
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending'; // Setting initial status to pending
+        $validated['status'] = 'pending';
         
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
@@ -2228,7 +2226,7 @@ class MakerController extends Controller
 
         try {
             $lease = Lease::create($validated);
-            return redirect()->route('lease-m.index', $property)->with('success', 'Lease created successfully.');
+            return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease created successfully.');
         } catch(\Exception $e) {
             return back()->with('error', 'Error creating lease: ' . $e->getMessage());
         }
@@ -2294,7 +2292,7 @@ class MakerController extends Controller
             'monthly_gsto_year_3' => 'required|numeric|min:0',
             'space' => 'required|numeric|min:0',
             'tenancy_type' => 'nullable|string|max:255',
-            'attachment' => $lease ? 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240' : 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
             'status' => 'nullable|string|max:255',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
@@ -2443,8 +2441,8 @@ class MakerController extends Controller
     public function ChecklistStore(Request $request)
     {
         // Get the validated data from the separate validation methods
-        $validated = $this->checklistValidate($request);
-        $tenantData = $this->validateChecklistTenants($request);
+        $validated = $this->ChecklistValidate($request);
+        $tenantData = $this->ValidateChecklistTenants($request);
         
         // Add the authenticated user's ID as prepared_by
         $validated['prepared_by'] = Auth::id();
@@ -2522,8 +2520,8 @@ class MakerController extends Controller
         }
         
         // Get the validated data from the separate validation methods
-        $validated = $this->checklistValidate($request, $checklist);
-        $tenantData = $this->validateChecklistTenants($request, $checklist);
+        $validated = $this->ChecklistValidate($request, $checklist);
+        $tenantData = $this->ValidateChecklistTenants($request, $checklist);
         
         // Update prepared_by only if it's not already set
         if (empty($checklist->prepared_by)) {
@@ -2575,7 +2573,7 @@ class MakerController extends Controller
     /**
      * Validate the main checklist data
      */
-    public function checklistValidate(Request $request, Checklist $checklist = null)
+    public function ChecklistValidate(Request $request, Checklist $checklist = null)
     {
         $rules = [
             // General Property Info
@@ -2710,7 +2708,7 @@ class MakerController extends Controller
     /**
      * Validate tenant data for checklist
      */
-    public function validateChecklistTenants(Request $request, Checklist $checklist = null)
+    public function ValidateChecklistTenants(Request $request, Checklist $checklist = null)
     {
         $rules = [
             'tenants' => 'nullable|array',

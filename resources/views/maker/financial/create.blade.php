@@ -35,6 +35,13 @@
                 </div>
             @endif
 
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <form action="{{ route('financial-m.store') }}" method="POST">
@@ -316,9 +323,23 @@
         </div>
     </div>
 
-    @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Function to add remove button event listener
+            function addRemoveButtonListener(button) {
+                button.addEventListener('click', function() {
+                    const container = document.getElementById('properties-container');
+                    if (container.querySelectorAll('.property-item').length > 1) {
+                        this.closest('.property-item').remove();
+                    }
+                });
+            }
+
+            // Initialize remove buttons for existing items
+            document.querySelectorAll('.remove-property').forEach(button => {
+                addRemoveButtonListener(button);
+            });
+
             // Add Property
             document.getElementById('add-property').addEventListener('click', function() {
                 const container = document.getElementById('properties-container');
@@ -333,56 +354,19 @@
                 // Reset select
                 newItem.querySelector('select').selectedIndex = 0;
                 
-                // Add remove event listener
-                newItem.querySelector('.remove-property').addEventListener('click', function() {
-                    if (container.querySelectorAll('.property-item').length > 1) {
-                        this.closest('.property-item').remove();
-                    }
-                });
+                // Add remove event listener to the new item's remove button
+                const removeButton = newItem.querySelector('.remove-property');
+                addRemoveButtonListener(removeButton);
                 
                 container.appendChild(newItem);
-            });
-            
-            // Initialize remove buttons
-            document.querySelectorAll('.remove-property').forEach(button => {
-                button.addEventListener('click', function() {
-                    const container = document.getElementById('properties-container');
-                    if (container.querySelectorAll('.property-item').length > 1) {
-                        this.closest('.property-item').remove();
-                    }
-                });
+
+                // No need to update properties dropdown as we're showing all properties
             });
 
-            // Filter properties by selected portfolio
-            document.getElementById('portfolio_id').addEventListener('change', function() {
-                const portfolioId = this.value;
-                
-                if (portfolioId) {
-                    fetch(`/api/portfolios/${portfolioId}/properties`)
-                        .then(response => response.json())
-                        .then(data => {
-                            document.querySelectorAll('select[name="property_ids[]"]').forEach(select => {
-                                // Clear existing options except the first one
-                                while (select.options.length > 1) {
-                                    select.remove(1);
-                                }
-                                
-                                // Add new options
-                                data.forEach(property => {
-                                    const option = new Option(
-                                        `${property.name} (${property.address})`, 
-                                        property.id
-                                    );
-                                    select.add(option);
-                                });
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching properties:', error);
-                        });
-                }
-            });
+            // We're not using API calls to filter properties by portfolio
+            // All available properties will be shown regardless of portfolio selection
+
+            // Removed portfolio-property filtering functionality as requested
         });
     </script>
-    @endpush
 </x-app-layout>
