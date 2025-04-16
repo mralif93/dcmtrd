@@ -2031,17 +2031,36 @@ class MakerController extends Controller
 
     public function PropertyStore(Request $request)
     {
+        // Validate all form inputs
         $validated = $this->PropertyValidate($request);
-
-        // Add prepared_by from authenticated user and set status
-        $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'active';
-
+        
+        // Check if a master lease agreement file was uploaded
+        if ($request->hasFile('master_lease_agreement')) {
+            // Store the file and get its path
+            $filePath = $request->file('master_lease_agreement')->store('property-documents');
+            
+            // Save the file path to the database
+            $validated['master_lease_agreement'] = $filePath;
+        }
+        
+        // Check if a valuation report file was uploaded
+        if ($request->hasFile('valuation_report')) {
+            // Store the file and get its path
+            $filePath = $request->file('valuation_report')->store('property-documents');
+            
+            // Save the file path to the database
+            $validated['valuation_report'] = $filePath;
+        }
+        
+        // Create the property with all data
+        
         try {
             $property = Property::create($validated);
-            return redirect()->route('property-m.index', $property->portfolio)->with('success', 'Property created successfully.');
+            return redirect()->route('property-m.index', $property->portfolio)
+                ->with('success', 'Property created successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error creating property: ' . $e->getMessage());
+            return back()->withInput()
+                ->with('error', 'Error creating property: ' . $e->getMessage());
         }
     }
 
@@ -2053,13 +2072,39 @@ class MakerController extends Controller
 
     public function PropertyUpdate(Request $request, Property $property)
     {
+        // Validate all form inputs
         $validated = $this->PropertyValidate($request);
-
+        
+         // Check if a new master lease agreement file was uploaded
+         if ($request->hasFile('master_lease_agreement')) {
+            // Remove old file if it exists
+            if ($property->master_lease_agreement) {
+                Storage::delete($property->master_lease_agreement);
+            }
+            
+            // Store the new file and get its path
+            $validated['master_lease_agreement'] = $request->file('master_lease_agreement')
+                ->store('property-documents');
+        }
+        
+        // Check if a new valuation report file was uploaded
+        if ($request->hasFile('valuation_report')) {
+            // Remove old file if it exists
+            if ($property->valuation_report) {
+                Storage::delete($property->valuation_report);
+            }
+            
+            // Store the new file and get its path
+            $validated['valuation_report'] = $request->file('valuation_report')
+                ->store('property-documents');
+        }
         try {
             $property->update($validated);
-            return redirect()->route('property-m.index', $property->portfolio)->with('success', 'Property created successfully.');
+            return redirect()->route('property-m.index', $property->portfolio)
+                ->with('success', 'Property updated successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error updating property: ' . $e->getMessage());
+            return back()->withInput()
+                ->with('error', 'Error updating property: ' . $e->getMessage());
         }
     }
 
@@ -2087,6 +2132,8 @@ class MakerController extends Controller
             'ownership' => 'nullable|string|max:255',
             'share_amount' => 'nullable|numeric|min:0',
             'market_value' => 'nullable|numeric|min:0',
+            'master_lease_agreement' => 'nullable|file|mimes:pdf|max:10240',
+            'valuation_report' => 'nullable|file|mimes:pdf|max:10240',
         ]);
     }
 
@@ -2240,11 +2287,6 @@ class MakerController extends Controller
     public function LeaseUpdate(Request $request, Lease $lease)
     {
         $validated = $this->LeaseValidate($request);
-
-        // Update prepared_by field only if not already set
-        if (empty($lease->prepared_by)) {
-            $validated['prepared_by'] = Auth::user()->name;
-        }
         
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
@@ -2254,9 +2296,6 @@ class MakerController extends Controller
             }
             
             $validated['attachment'] = $request->file('attachment')->store('lease-attachments', 'public');
-        } else {
-            // If no new file is uploaded, keep the existing one
-            unset($validated['attachment']);
         }
 
         try {

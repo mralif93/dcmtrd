@@ -32,6 +32,8 @@ class Property extends Model
         'ownership',
         'share_amount',
         'market_value',
+        'master_lease_agreement',
+        'valuation_report',
         'status',
     ];
 

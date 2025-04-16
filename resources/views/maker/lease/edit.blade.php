@@ -110,7 +110,7 @@
                                 <!-- Start Date -->
                                 <div>
                                     <label for="start_date" class="block text-sm font-medium text-gray-500">Start Date</label>
-                                    <input id="start_date" type="date" name="start_date" value="{{ old('start_date', $lease->start_date) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input id="start_date" type="date" name="start_date" value="{{ old('start_date', $lease->start_date->format('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('start_date')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -119,7 +119,7 @@
                                 <!-- End Date -->
                                 <div>
                                     <label for="end_date" class="block text-sm font-medium text-gray-500">End Date</label>
-                                    <input id="end_date" type="date" name="end_date" value="{{ old('end_date', $lease->end_date) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input id="end_date" type="date" name="end_date" value="{{ old('end_date', $lease->end_date->format('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('end_date')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
