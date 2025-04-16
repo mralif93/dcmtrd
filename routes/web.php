@@ -194,7 +194,10 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
 
     // Additional
     Route::prefix('/admin/site-visits')->name('site-visits.')->group(function () {
-        Route::get('{site_visit}/download', [SiteVisitController::class, 'downloadAttachment'])->name('download');
+        Route::get('upcoming', [SiteVisitController::class, 'upcoming'])->name('upcoming');
+        Route::get('{siteVisit}/download-attachment', [SiteVisitController::class, 'downloadAttachment'])->name('download-attachment');
+        Route::patch('{siteVisit}/mark-as-completed', [SiteVisitController::class, 'markAsCompleted'])->name('mark-as-completed');
+        Route::patch('{siteVisit}/mark-as-cancelled', [SiteVisitController::class, 'markAsCancelled'])->name('mark-as-cancelled');
     });
 
     // Additional

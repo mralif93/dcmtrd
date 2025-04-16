@@ -45,16 +45,6 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Property Information</h3>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- <div>
-                                    <label for="property_title" class="block text-sm font-medium text-gray-700">Property Title</label>
-                                    <input id="property_title" type="text" name="property_title" value="{{ old('property_title') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                                </div>
-
-                                <div>
-                                    <label for="property_location" class="block text-sm font-medium text-gray-700">Property Location</label>
-                                    <input id="property_location" type="text" name="property_location" value="{{ old('property_location') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                                </div> -->
-
                                 <div class="md:col-span-2">
                                     <label for="site_visit_id" class="block text-sm font-medium text-gray-700">Site Visit</label>
                                     <select id="site_visit_id" name="site_visit_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -150,51 +140,40 @@
 
                         <!-- 2.0 Tenancy Agreement -->
                         <div class="p-4 mb-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Tenants</h3>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Associated Tenants</h3>
                             
-                            <div class="mb-4">
-                                <p class="text-sm text-gray-600 mb-2">Select tenants associated with this checklist (optional)</p>
-                                
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full divide-y divide-gray-200">
-                                        <thead class="border-b">
-                                            <tr>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Select</th>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenant Name</th>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person</th>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Commencement Date</th>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry Date</th>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-gray-200">
-                                            @forelse($property->tenants as $tenant)
-                                                <tr>
-                                                    <td class="px-4 py-3 text-center">
-                                                        <input type="checkbox" name="tenants[]" value="{{ $tenant->id }}" 
-                                                            {{ (is_array(old('tenants')) && in_array($tenant->id, old('tenants'))) ? 'checked' : '' }}
-                                                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                                    </td>
-                                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $tenant->name }}</td>
-                                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $tenant->contact_person }}</td>
-                                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $tenant->commencement_date->format('d/m/Y') }}</td>
-                                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $tenant->expiry_date->format('d/m/Y') }}</td>
-                                                    <td class="px-4 py-3">
-                                                        <input type="text" name="tenant_notes[{{ $tenant->id }}]" value="{{ old('tenant_notes.' . $tenant->id) }}" 
-                                                            placeholder="Add notes for this tenant" 
-                                                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="6" class="px-4 py-3 text-center text-sm text-gray-500">
-                                                        No tenants available for this property.
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
+                            <div class="mb-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tenant</label>
+                            </div>
+                            
+                            <div id="tenants-container">
+                                <div class="tenant-item mb-2 border-b border-gray-200 pb-2">
+                                    <div class="flex items-center">
+                                        <div class="flex-grow mr-2">
+                                            <select name="tenant_ids[]" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                                                <option value="">Select Tenant</option>
+                                                @foreach($property->tenants as $tenant)
+                                                    <option value="{{ $tenant->id }}">
+                                                        {{ $tenant->name }} ({{ $tenant->contact_person }})
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <button type="button" class="remove-tenant inline-flex items-center justify-center w-8 h-8 bg-red-500 border border-transparent rounded-md hover:bg-red-400 focus:outline-none focus:border-red-600 focus:ring focus:ring-red-200 focus:ring-opacity-50 disabled:opacity-25 transition ease-in-out duration-150">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
+
+                            <div class="mt-2">
+                                <button type="button" id="add-tenant" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring-indigo-200 disabled:opacity-25 transition ease-in-out duration-150">
+                                    Add Another Tenant
+                                </button>
                             </div>
                         </div>
 
@@ -649,4 +628,39 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to add remove button event listener
+            function addRemoveButtonListener(button) {
+                button.addEventListener('click', function() {
+                    const container = document.getElementById('tenants-container');
+                    if (container.querySelectorAll('.tenant-item').length > 1) {
+                        this.closest('.tenant-item').remove();
+                    }
+                });
+            }
+
+            // Initialize remove buttons for existing items
+            document.querySelectorAll('.remove-tenant').forEach(button => {
+                addRemoveButtonListener(button);
+            });
+
+            // Add Tenant
+            document.getElementById('add-tenant').addEventListener('click', function() {
+                const container = document.getElementById('tenants-container');
+                const tenantItems = container.querySelectorAll('.tenant-item');
+                const newItem = tenantItems[0].cloneNode(true);
+                
+                // Reset select
+                newItem.querySelector('select').selectedIndex = 0;
+                
+                // Add remove event listener to the new item's remove button
+                const removeButton = newItem.querySelector('.remove-tenant');
+                addRemoveButtonListener(removeButton);
+                
+                container.appendChild(newItem);
+            });
+        });
+    </script>
 </x-app-layout>

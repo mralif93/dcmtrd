@@ -19,6 +19,17 @@ class SiteVisitController extends Controller
     public function index(Request $request)
     {
         $query = SiteVisit::with('property');
+        
+        // Filter by status if provided
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter by date range if provided
+        if ($request->has('date_from') && $request->has('date_to')) {
+            $query->whereBetween('date_visit', [$request->date_from, $request->date_to]);
+        }
+        
         $siteVisits = $query->latest()->paginate(10);
         
         return view('admin.site-visits.index', compact('siteVisits'));
@@ -32,7 +43,7 @@ class SiteVisitController extends Controller
     public function create()
     {
         $properties = Property::where('status', 'active')->get();
-        $statuses = ['scheduled', 'completed', 'cancelled', 'postponed'];
+        $statuses = ['active', 'pending', 'rejected', 'scheduled', 'completed', 'cancelled'];
         
         return view('admin.site-visits.create', compact('properties', 'statuses'));
     }
@@ -48,11 +59,16 @@ class SiteVisitController extends Controller
         $validator = Validator::make($request->all(), [
             'property_id' => 'required|exists:properties,id',
             'date_visit' => 'required|date',
-            'time_visit' => 'required|time',
-            'inspector_name' => 'nullable|string|max:255',
+            'time_visit' => 'required',
+            'trustee' => 'nullable|string|max:255',
+            'manager' => 'nullable|string|max:255',
+            'maintenance_manager' => 'nullable|string|max:255',
+            'building_manager' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
-            'status' => 'required|string|in:scheduled,completed,cancelled,postponed',
+            'status' => 'required|string|in:active,rejected,scheduled,completed,cancelled,pending',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
         ]);
         
         if ($validator->fails()) {
@@ -71,6 +87,11 @@ class SiteVisitController extends Controller
             $data['attachment'] = $filePath;
         }
         
+        // Set approval datetime if status is completed
+        if ($request->status === 'completed' && !empty($request->verified_by)) {
+            $data['approval_datetime'] = now();
+        }
+        
         SiteVisit::create($data);
         
         return redirect()->route('site-visits.index')
@@ -85,7 +106,7 @@ class SiteVisitController extends Controller
      */
     public function show(SiteVisit $siteVisit)
     {
-        $siteVisit->load('property');
+        $siteVisit->load('property', 'checklist');
         
         return view('admin.site-visits.show', compact('siteVisit'));
     }
@@ -99,7 +120,7 @@ class SiteVisitController extends Controller
     public function edit(SiteVisit $siteVisit)
     {
         $properties = Property::where('status', 'active')->get();
-        $statuses = ['scheduled', 'completed', 'cancelled', 'postponed'];
+        $statuses = ['active', 'pending', 'rejected', 'scheduled', 'completed', 'cancelled'];
         
         return view('admin.site-visits.edit', compact('siteVisit', 'properties', 'statuses'));
     }
@@ -116,11 +137,16 @@ class SiteVisitController extends Controller
         $validator = Validator::make($request->all(), [
             'property_id' => 'required|exists:properties,id',
             'date_visit' => 'required|date',
-            'time_visit' => 'required|time',
-            'inspector_name' => 'nullable|string|max:255',
+            'time_visit' => 'required',
+            'trustee' => 'nullable|string|max:255',
+            'manager' => 'nullable|string|max:255',
+            'maintenance_manager' => 'nullable|string|max:255',
+            'building_manager' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
-            'status' => 'required|string|in:scheduled,completed,cancelled,postponed',
+            'status' => 'required|string|in:active,rejected,scheduled,completed,cancelled,pending',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
         ]);
         
         if ($validator->fails()) {
@@ -142,6 +168,12 @@ class SiteVisitController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $filePath = $file->storeAs('site-visits', $filename, 'public');
             $data['attachment'] = $filePath;
+        }
+        
+        // Update approval datetime if status changed to completed and verified_by is set
+        if ($request->status === 'completed' && !empty($request->verified_by) && 
+            ($siteVisit->status !== 'completed' || empty($siteVisit->approval_datetime))) {
+            $data['approval_datetime'] = now();
         }
         
         $siteVisit->update($data);
@@ -177,10 +209,97 @@ class SiteVisitController extends Controller
      */
     public function downloadAttachment(SiteVisit $siteVisit)
     {
-        if (!$siteVisit->attachment) {
+        if (!$siteVisit->hasAttachment()) {
             return redirect()->back()->with('error', 'No attachment found');
         }
         
         return Storage::disk('public')->download($siteVisit->attachment);
+    }
+    
+    /**
+     * Display upcoming site visits.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function upcoming()
+    {
+        $siteVisits = SiteVisit::upcoming()->with('property')->paginate(10);
+        
+        return view('admin.site-visits.upcoming', compact('siteVisits'));
+    }
+    
+    /**
+     * Mark site visit as completed.
+     *
+     * @param  \App\Models\SiteVisit  $siteVisit
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function markAsCompleted(SiteVisit $siteVisit, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'notes' => 'nullable|string',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'verified_by' => 'required|string|max:255',
+        ]);
+        
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        
+        $data = [
+            'status' => 'completed',
+            'notes' => $request->notes,
+            'verified_by' => $request->verified_by,
+            'approval_datetime' => now(),
+        ];
+        
+        // Handle file upload
+        if ($request->hasFile('attachment')) {
+            // Delete old file if exists
+            if ($siteVisit->attachment) {
+                Storage::disk('public')->delete($siteVisit->attachment);
+            }
+            
+            $file = $request->file('attachment');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('site-visits', $filename, 'public');
+            $data['attachment'] = $filePath;
+        }
+        
+        $siteVisit->update($data);
+        
+        return redirect()->route('site-visits.show', $siteVisit)
+            ->with('success', 'Site visit marked as completed');
+    }
+    
+    /**
+     * Mark site visit as cancelled.
+     *
+     * @param  \App\Models\SiteVisit  $siteVisit
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function markAsCancelled(SiteVisit $siteVisit, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'notes' => 'required|string',
+        ]);
+        
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        
+        $siteVisit->update([
+            'status' => 'cancelled',
+            'notes' => $request->notes,
+        ]);
+        
+        return redirect()->route('site-visits.index')
+            ->with('success', 'Site visit cancelled successfully');
     }
 }

@@ -109,7 +109,7 @@
                             </div>
 
                             <div class="mb-4">
-                                <label for="option_to_renew" class="block text-sm font-medium text-gray-700">Option to Renew</label>
+                                <label for="option_to_renew" class="block text-sm font-medium text-gray-700">Option to Renew (Year)</label>
                                 <input id="option_to_renew" type="text" name="option_to_renew" value="{{ old('option_to_renew') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('option_to_renew')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -117,7 +117,7 @@
                             </div>
                             
                             <div class="mb-4">
-                                <label for="tenancy_type" class="block text-sm font-medium text-gray-700">Tenancy Type</label>
+                                <label for="tenancy_type" class="block text-sm font-medium text-gray-700">Tenancy Type (New/Renewal)</label>
                                 <input id="tenancy_type" type="text" name="tenancy_type" value="{{ old('tenancy_type') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('tenancy_type')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -138,7 +138,7 @@
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Rental Information</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="mb-4">
-                                <label for="base_rate_year_1" class="block text-sm font-medium text-gray-700">Base Rate Year 1</label>
+                                <label for="base_rate_year_1" class="block text-sm font-medium text-gray-700">Base Rate Year 1 (RM)</label>
                                 <input id="base_rate_year_1" type="number" step="0.01" min="0" name="base_rate_year_1" value="{{ old('base_rate_year_1') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 @error('base_rate_year_1')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -146,7 +146,7 @@
                             </div>
                             
                             <div class="mb-4">
-                                <label for="monthly_gsto_year_1" class="block text-sm font-medium text-gray-700">Monthly GSTO Year 1</label>
+                                <label for="monthly_gsto_year_1" class="block text-sm font-medium text-gray-700">Monthly GSTO Year 1 (%)</label>
                                 <input id="monthly_gsto_year_1" type="number" step="0.01" min="0" name="monthly_gsto_year_1" value="{{ old('monthly_gsto_year_1') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 @error('monthly_gsto_year_1')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -154,7 +154,7 @@
                             </div>
                             
                             <div class="mb-4">
-                                <label for="base_rate_year_2" class="block text-sm font-medium text-gray-700">Base Rate Year 2</label>
+                                <label for="base_rate_year_2" class="block text-sm font-medium text-gray-700">Base Rate Year 2 (RM)</label>
                                 <input id="base_rate_year_2" type="number" step="0.01" min="0" name="base_rate_year_2" value="{{ old('base_rate_year_2') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 @error('base_rate_year_2')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -162,7 +162,7 @@
                             </div>
                             
                             <div class="mb-4">
-                                <label for="monthly_gsto_year_2" class="block text-sm font-medium text-gray-700">Monthly GSTO Year 2</label>
+                                <label for="monthly_gsto_year_2" class="block text-sm font-medium text-gray-700">Monthly GSTO Year 2 (%)</label>
                                 <input id="monthly_gsto_year_2" type="number" step="0.01" min="0" name="monthly_gsto_year_2" value="{{ old('monthly_gsto_year_2') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 @error('monthly_gsto_year_2')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -170,7 +170,7 @@
                             </div>
                             
                             <div class="mb-4">
-                                <label for="base_rate_year_3" class="block text-sm font-medium text-gray-700">Base Rate Year 3</label>
+                                <label for="base_rate_year_3" class="block text-sm font-medium text-gray-700">Base Rate Year 3 (RM)</label>
                                 <input id="base_rate_year_3" type="number" step="0.01" min="0" name="base_rate_year_3" value="{{ old('base_rate_year_3') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 @error('base_rate_year_3')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -178,7 +178,7 @@
                             </div>
                             
                             <div class="mb-4">
-                                <label for="monthly_gsto_year_3" class="block text-sm font-medium text-gray-700">Monthly GSTO Year 3</label>
+                                <label for="monthly_gsto_year_3" class="block text-sm font-medium text-gray-700">Monthly GSTO Year 3 (%)</label>
                                 <input id="monthly_gsto_year_3" type="number" step="0.01" min="0" name="monthly_gsto_year_3" value="{{ old('monthly_gsto_year_3') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 @error('monthly_gsto_year_3')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>

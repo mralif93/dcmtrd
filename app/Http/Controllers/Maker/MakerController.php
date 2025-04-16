@@ -1867,9 +1867,6 @@ class MakerController extends Controller
         // Validate financial data
         $validated = $this->FinancialValidate($request);
         
-        // Remove the dd() statement that's stopping execution
-        dd($request->toArray());
-        
         try {
             // Update the financial record
             $financial->update($validated);
@@ -2494,7 +2491,7 @@ class MakerController extends Controller
         // Get site visits related to the property
         $property = $checklist->siteVisit->property;
         $siteVisits = SiteVisit::where('property_id', $property->id)
-                            ->whereIn('status', ['completed', 'scheduled'])
+                            ->where('status', 'active')
                             ->orderBy('date_visit', 'desc')
                             ->get();
         

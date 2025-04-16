@@ -81,6 +81,14 @@ class Property extends Model
     }
 
     /**
+     * Get the approval properties for this property.
+     */
+    public function approvalProperties()
+    {
+        return $this->hasMany(ApprovalProperty::class);
+    }
+
+    /**
      * Get active tenants for this property.
      */
     public function activeTenantsWithLeases()
@@ -119,6 +127,14 @@ class Property extends Model
     public function hasActiveTenants()
     {
         return $this->tenants()->where('status', 'active')->exists();
+    }
+
+    /**
+     * Get pending property approvals.
+     */
+    public function pendingApprovals()
+    {
+        return $this->approvalProperties()->where('status', 'pending');
     }
 
     /**
