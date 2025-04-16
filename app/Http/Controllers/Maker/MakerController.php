@@ -2033,7 +2033,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
+        $validated['status'] = 'active';
 
         try {
             $property = Property::create($validated);
@@ -2118,7 +2118,7 @@ class MakerController extends Controller
         $validated = $this->TenantValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
+        $validated['status'] = 'active';
 
         try {
             $tenant = Tenant::create($validated);
@@ -2320,7 +2320,7 @@ class MakerController extends Controller
         $validated = $this->SiteVisitValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
+        $validated['status'] = 'active';
 
         try {
             $siteVisit = SiteVisit::create($validated);
@@ -2499,6 +2499,8 @@ class MakerController extends Controller
         $property->load(['tenants' => function($query) {
             $query->where('status', 'active');
         }]);
+
+        dd($property->load('tenants')->toArray());
         
         // Eager load the tenants associated with this checklist along with pivot data
         $checklist->load(['tenants' => function($query) {
