@@ -2328,10 +2328,6 @@ class ReitsSeeder extends Seeder
         // Seed Checklists
         $checklists = [
             [
-                // General property info
-                'property_title' => 'Skyline Tower A',
-                'property_location' => 'Singapore',
-                
                 // 1.0 Legal Documentation
                 'title_ref' => 'SKA-TITLE-001',
                 'title_location' => 'Legal Department Safe',
@@ -2345,13 +2341,6 @@ class ReitsSeeder extends Seeder
                 'maintenance_agreement_location' => 'Operations Office',
                 'development_agreement' => 'Not Applicable',
                 'other_legal_docs' => 'Insurance certificates, property tax records',
-                
-                // 2.0 Tenancy Agreement
-                'tenant_name' => 'Global Finance Corp',
-                'tenant_property' => 'Skyline Tower A, Floors 20-25',
-                'tenancy_approval_date' => '2023-05-15',
-                'tenancy_commencement_date' => '2023-06-01',
-                'tenancy_expiry_date' => '2028-05-31',
                 
                 // 3.0 External Area Conditions
                 'is_general_cleanliness_satisfied' => true,
@@ -2435,10 +2424,6 @@ class ReitsSeeder extends Seeder
 
         foreach ($checklists as $checklist) {
             DB::table('checklists')->insert([
-                // General property info
-                'property_title' => $checklist['property_title'],
-                'property_location' => $checklist['property_location'],
-                
                 // 1.0 Legal Documentation
                 'title_ref' => $checklist['title_ref'],
                 'title_location' => $checklist['title_location'],
@@ -2452,13 +2437,6 @@ class ReitsSeeder extends Seeder
                 'maintenance_agreement_location' => $checklist['maintenance_agreement_location'],
                 'development_agreement' => $checklist['development_agreement'],
                 'other_legal_docs' => $checklist['other_legal_docs'],
-                
-                // 2.0 Tenancy Agreement
-                'tenant_name' => $checklist['tenant_name'],
-                'tenant_property' => $checklist['tenant_property'],
-                'tenancy_approval_date' => $checklist['tenancy_approval_date'],
-                'tenancy_commencement_date' => $checklist['tenancy_commencement_date'],
-                'tenancy_expiry_date' => $checklist['tenancy_expiry_date'],
                 
                 // 3.0 External Area Conditions
                 'is_general_cleanliness_satisfied' => $checklist['is_general_cleanliness_satisfied'],
@@ -2548,8 +2526,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 1, // Skyline Residences
                 'party_name' => 'Master Alliance Innovations Sdn Bhd',
                 'date_of_approval' => '2024-03-18',
-                'appointment_title' => 'CONSULTANT FOR PUBLICATION OF ANNUAL REPORT',
-                'appointment_description' => 'APPOINTMENT OF MASTER ALLIANCE INNOVATIONS SDN BHD AS CONSULTANT FOR PUBLICATION OF AL-SALAM REIT 2023 ANNUAL REPORT',
+                'description' => 'APPOINTMENT OF MASTER ALLIANCE INNOVATIONS SDN BHD AS CONSULTANT FOR PUBLICATION OF AL-SALAM REIT 2023 ANNUAL REPORT',
                 'estimated_amount' => 64200.00,
                 'remarks' => 'Annual appointment for report preparation',
                 'year' => 2024,
@@ -2559,8 +2536,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 1, // Skyline Residences
                 'party_name' => 'CONSULTANT',
                 'date_of_approval' => '2024-03-29',
-                'appointment_title' => 'CONSULTANT FOR AGM',
-                'appointment_description' => 'PROPOSED APPOINTMENT OF CONSULTANT FOR AGM FOR AL-SALAM REIT',
+                'description' => 'PROPOSED APPOINTMENT OF CONSULTANT FOR AGM FOR AL-SALAM REIT',
                 'estimated_amount' => 32681.20,
                 'remarks' => 'For AGM coordination and execution',
                 'year' => 2024,
@@ -2570,8 +2546,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 2, // Downtown Business Center
                 'party_name' => 'KAF INVESTMENT BANK BERHAD ABDUL RAMAN SAAD & ASSOCIATES',
                 'date_of_approval' => '2024-04-08',
-                'appointment_title' => 'MANDATE FOR RECURRENT RELATED PARTY TRANSACTION',
-                'appointment_description' => 'PROPOSED UNITHOLDERS MANDATE FOR RECURRENT RELATED PARTY TRANSACTION OF A REVENUE OR TRADING NATURE FOR AL-SALAM REIT REAL ESTATE INVESTMENT TRUST ("AL-SALAM")',
+                'description' => 'PROPOSED UNITHOLDERS MANDATE FOR RECURRENT RELATED PARTY TRANSACTION OF A REVENUE OR TRADING NATURE FOR AL-SALAM REIT REAL ESTATE INVESTMENT TRUST ("AL-SALAM")',
                 'estimated_amount' => 53000.00,
                 'remarks' => 'Required for regulatory compliance',
                 'year' => 2024,
@@ -2581,8 +2556,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 3, // Urban Complex
                 'party_name' => 'KOMTAR JBCC, JOHOR',
                 'date_of_approval' => '2024-04-24',
-                'appointment_title' => 'TRADEMARK RENEWAL',
-                'appointment_description' => 'RENEWAL, RECORDAL AND REGISTRATION OF TRADEMARK FOR KOMTAR JBCC, JOHOR ("JBCC") ("Proposed Exercise")',
+                'description' => 'RENEWAL, RECORDAL AND REGISTRATION OF TRADEMARK FOR KOMTAR JBCC, JOHOR ("JBCC") ("Proposed Exercise")',
                 'estimated_amount' => 15000.00,
                 'remarks' => 'Intellectual property protection',
                 'year' => 2024,
@@ -2592,8 +2566,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 1, // Skyline Residences
                 'party_name' => 'AL-SALAM REIT',
                 'date_of_approval' => '2024-05-10',
-                'appointment_title' => 'AGM COST',
-                'appointment_description' => 'PROPOSED COST FOR ANNUAL GENERAL MEETING OF AL-AQAR AND AL-SALAM REIT 2024 ("Proposed Cost")',
+                'description' => 'PROPOSED COST FOR ANNUAL GENERAL MEETING OF AL-AQAR AND AL-SALAM REIT 2024 ("Proposed Cost")',
                 'estimated_amount' => 50000.00,
                 'remarks' => 'Annual general meeting expenses',
                 'year' => 2024,
@@ -2603,8 +2576,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 2, // Downtown Business Center
                 'party_name' => 'DELOITTE TAX SERVICES SDN BHD',
                 'date_of_approval' => '2024-05-23',
-                'appointment_title' => 'TAX SERVICES APPOINTMENT',
-                'appointment_description' => 'PROPOSED APPOINTMENT OF DELOITTE TAX SERVICES SDN BHD',
+                'description' => 'PROPOSED APPOINTMENT OF DELOITTE TAX SERVICES SDN BHD',
                 'estimated_amount' => 27500.00,
                 'remarks' => 'Tax advisory and compliance services',
                 'year' => 2024,
@@ -2617,8 +2589,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => $appointment['portfolio_id'],
                 'party_name' => $appointment['party_name'],
                 'date_of_approval' => $appointment['date_of_approval'],
-                'appointment_title' => $appointment['appointment_title'],
-                'appointment_description' => $appointment['appointment_description'],
+                'description' => $appointment['description'],
                 'estimated_amount' => $appointment['estimated_amount'],
                 'remarks' => $appointment['remarks'],
                 'attachment' => null,
