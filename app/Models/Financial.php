@@ -19,6 +19,7 @@ class Financial extends Model
         'portfolio_id',
         'bank_id',
         'financial_type_id',
+        'batch_no',
         'purpose',
         'tenure',
         'installment_date',
