@@ -37,15 +37,7 @@
                         </div>
                     @endif
 
-                    {{-- Global Error Message --}}
-                    @if (session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-
-
-                    <form method="POST" action="{{ route('checklist-m.update', $checklist) }}">
+                    <form method="POST" action="{{ route('checklist-m.update', $checklist) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 

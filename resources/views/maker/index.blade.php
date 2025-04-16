@@ -378,6 +378,15 @@
                     color="bg-blue-100"
                 />
 
+                <!-- Approval Property -->
+                <x-dashboard-card
+                    title="Approval Property"
+                    icon="users"
+                    :count="$approvalPropertiesCount ?? 0"
+                    :href="route('approval-property-m.index')"
+                    color="bg-blue-100"
+                />
+
                 <!-- Site Visit Logs Form -->
                 <x-dashboard-card
                     title="Activity Diary"

@@ -49,6 +49,7 @@ use App\Models\SiteVisit;
 use App\Models\SiteVisitLog;
 use App\Models\Appointment;
 use App\Models\ApprovalForm;
+use App\Models\ApprovalProperty;
 
 use App\Http\Requests\User\BondFormRequest;
 
@@ -2521,6 +2522,8 @@ class MakerController extends Controller
             return redirect()->route('checklist-m.show', $checklist->id)
                 ->with('error', 'Cannot update a checklist that has already been processed.');
         }
+
+       
         
         // Get the validated data from the separate validation methods
         $validated = $this->ChecklistValidate($request, $checklist);
@@ -2583,7 +2586,7 @@ class MakerController extends Controller
      */
     public function ChecklistValidate(Request $request, Checklist $checklist = null)
     {
-        $rules = [
+        return $request->validate([
             // General Property Info
             'site_visit_id' => 'required|exists:site_visits,id',
             
@@ -2674,41 +2677,7 @@ class MakerController extends Controller
             // System Information
             'status' => 'nullable|string|in:pending,active,completed,verified',
             'remarks' => 'nullable|string',
-        ];
-        
-        // Different rules for create vs. update
-        if ($checklist) {
-            // Update operation
-            
-            // If the checklist is already verified, restrict certain fields
-            if ($checklist->verified_by) {
-                // Only allow updating remarks if already verified
-                return $request->validate([
-                    'remarks' => 'nullable|string'
-                ]);
-            }
-            
-            // If the checklist has a prepared_by but no verified_by, it's in review
-            if ($checklist->prepared_by && !$checklist->verified_by) {
-                // Allow verification-related fields
-                $rules['verified_by'] = 'nullable|exists:users,id';
-                $rules['approval_datetime'] = 'nullable|date';
-                
-                // Status can only be changed to specific values during verification
-                $rules['status'] = 'nullable|string|in:pending,active,completed';
-            }
-        } else {
-            // Create operation
-            // For create, prepared_by is handled in the controller, not via validation
-            // Don't allow setting verification fields on create
-            unset($rules['verified_by']);
-            unset($rules['approval_datetime']);
-            
-            // For create, status is limited to 'pending'
-            $rules['status'] = 'nullable|string|in:pending';
-        }
-        
-        return $request->validate($rules);
+        ]);
     }
 
     public function ValidateChecklistTenants(Request $request, Checklist $checklist = null)
@@ -3144,6 +3113,97 @@ class MakerController extends Controller
             'report_attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
             'follow_up_required' => 'boolean',
             'remarks' => 'nullable|string',
+        ]);
+    }
+
+    public function SiteVisitLogFollowUp(SiteVisitLog $siteVisitLog)
+    {
+        return view('maker.site-visit-log.follow-up', compact('siteVisitLog'));
+    }
+
+    public function SiteVisitLogFollowUpStore(Request $request, SiteVisitLog $siteVisitLog)
+    {
+        $validated = $request->validate([
+            'follow_up_date' => 'required|date',
+            'follow_up_remarks' => 'nullable|string',
+        ]);
+
+        try {
+            $siteVisitLog->update($validated);
+            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log updated successfully.');
+        } catch(\Exception $e) {
+            return back()->with('Error updating site visit log : ' . $e->getMessage());
+        }
+    }
+
+    public function SiteVisitLogDestroy(SiteVisitLog $siteVisitLog)
+    {
+        try {
+            $siteVisitLog->delete();
+            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log deleted successfully.');
+        } catch(\Exception $e) {
+            return back()->with('Error deleting site visit log : ' . $e->getMessage());
+        }
+    }
+
+    // Module Approval Property
+    public function ApprovalPropertyIndex(Request $request)
+    {
+        $properties = ApprovalProperty::where('status', 'pending')->paginate(10);
+        return view('maker.approval-property.index', compact('properties'));
+    }
+
+    public function ApprovalPropertyCreate()
+    {
+        $properties = Property::where('status', 'active')->paginate(10);
+        return view('maker.approval-property.create', compact('properties'));
+    }
+
+    public function ApprovalPropertyStore(Request $request)
+    {
+        $validated = $this->ApprovalPropertyValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+        try {
+            Property::create($request->all());
+            return redirect()->route('approval-property-m.index')
+                            ->with('success', 'Property created successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error creating property: ' . $e->getMessage());
+        }
+    }
+
+    public function ApprovalPropertyEdit(ApprovalProperty $approvalProperty)
+    {
+        return view('maker.approval-property.edit', compact('approvalProperty'));
+    }
+
+    public function ApprovalPropertyUpdate(Request $request, ApprovalProperty $approvalProperty)
+    {
+        $validated = $this->ApprovalPropertyValidate($request);
+        
+        try {
+            $property->update($validated);
+            return redirect()->route('approval-property-m.index')
+                            ->with('success', 'Property updated successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error updating property: ' . $e->getMessage());
+        }
+    }
+
+    public function ApprovalPropertyShow(ApprovalProperty $approvalProperty)
+    {
+        return view('maker.approval-property.show', compact('approvalProperty'));
+    }
+
+    public function ApprovalPropertyValidate(Request $request)
+    {
+        return $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'approval_status' => 'required|in:' . implode(',', array_keys(ApprovalProperty::APPROVAL_STATUSES)),
+            'approval_remarks' => 'nullable|string',
         ]);
     }
 }

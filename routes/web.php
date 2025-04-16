@@ -580,6 +580,15 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/approval-form/{approvalForm}/show', [MakerController::class, 'ApprovalFormShow'])->name('approval-form-m.show')->middleware('permission:REITS');
     Route::get('maker/approval-form/{approvalForm}/submit-for-approval', [MakerController::class, 'SubmitApprovalForm'])->name('approval-form-m.approval')->middleware('permission:REITS');
 
+    // Approval Form Module
+    Route::get('maker/approval-property/', [MakerController::class, 'ApprovalPropertyIndex'])->name('approval-property-m.index')->middleware('permission:REITS');
+    Route::get('maker/approval-property/create', [MakerController::class, 'ApprovalPropertyCreate'])->name('approval-property-m.create')->middleware('permission:REITS');
+    Route::post('maker/approval-property/create', [MakerController::class, 'ApprovalPropertyStore'])->name('approval-property-m.store')->middleware('permission:REITS');
+    Route::get('maker/approval-property/{approvalProperty}/edit', [MakerController::class, 'ApprovalPropertyEdit'])->name('approval-property-m.edit')->middleware('permission:REITS');
+    Route::put('maker/approval-property/{approvalProperty}/update', [MakerController::class, 'ApprovalPropertyUpdate'])->name('approval-property-m.update')->middleware('permission:REITS');
+    Route::get('maker/approval-property/{approvalProperty}/show', [MakerController::class, 'ApprovalPropertyShow'])->name('approval-property-m.show')->middleware('permission:REITS');
+    Route::get('maker/approval-property/{approvalProperty}/submit-for-approval', [MakerController::class, 'SubmitApprovalProperty'])->name('approval-property-m.approval')->middleware('permission:REITS');
+
     // Site Visit Log Module
     Route::get('maker/site-visit-log/', [MakerController::class, 'SiteVisitLogIndex'])->name('site-visit-log-m.index')->middleware('permission:REITS');
     Route::get('maker/site-visit-log/create', [MakerController::class, 'SiteVisitLogCreate'])->name('site-visit-log-m.create')->middleware('permission:REITS');

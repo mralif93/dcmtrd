@@ -51,7 +51,7 @@
                                         <option value="">-- Choose Site Visit --</option>
                                         @foreach($siteVisits ?? [] as $siteVisit)
                                             <option value="{{ $siteVisit->id }}" {{ old('site_visit_id') == $siteVisit->id ? 'selected' : '' }}>
-                                                {{ $siteVisit->property->name }} - {{ $siteVisit->date_visit->format('d/m/Y') }} by {{ $siteVisit->inspector_name }}
+                                                {{ $siteVisit->property->name }} - {{ $siteVisit->date_visit->format('d/m/Y') }} by {{ $siteVisit->trustee }}
                                             </option>
                                         @endforeach
                                     </select>
