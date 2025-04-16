@@ -177,7 +177,7 @@ class MakerController extends Controller
     /**
      * Validate issuer data based on schema
      */
-    protected function validateIssuer(Request $request, Issuer $issuer = null)
+    protected function validateIssuer(Request $request)
     {
         return $request->validate([
             'issuer_short_name' => 'nullable|string|max:50',
@@ -341,7 +341,7 @@ class MakerController extends Controller
             ->with('success', 'Bond data uploaded successfully');
     }
 
-    protected function validateBond(Request $request, Bond $bond = null)
+    protected function validateBond(Request $request)
     {
         return $request->validate([
             'bond_sukuk_name' => 'required|string|max:255',
@@ -615,7 +615,7 @@ class MakerController extends Controller
         ]);
     }
 
-    protected function validateFacilityInfo(Request $request, FacilityInformation $facility = null)
+    protected function validateFacilityInfo(Request $request)
     {
         return $request->validate([
             'issuer_id' => 'required|exists:issuers,id',
@@ -1254,7 +1254,7 @@ class MakerController extends Controller
         }
     }
 
-    protected function validateTrusteeFee(Request $request, TrusteeFee $trusteeFee = null)
+    protected function validateTrusteeFee(Request $request)
     {
         return $request->validate([
             'facility_information_id' => 'required|exists:facility_informations,id',
@@ -1776,8 +1776,8 @@ class MakerController extends Controller
             return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
     }
-
-    protected function validatePortfolio(Request $request, Portfolio $portfolio = null)
+    
+    protected function validatePortfolio(Request $request)
     {
         return $request->validate([
             'portfolio_types_id' => 'required|exists:portfolio_types,id',
@@ -1817,8 +1817,6 @@ class MakerController extends Controller
     {
         // Validate financial data
         $validated = $this->FinancialValidate($request);
-
-        dd($request->toArray());
     
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
@@ -1926,8 +1924,7 @@ class MakerController extends Controller
         return view('maker.financial.show', compact('financial'));
     }
 
-    public function FinancialValidate(Request $request, Financial $financial = null)
-    {
+    public function FinancialValidate(Request $request) {
         return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
             'bank_id' => 'required|exists:banks,id',
@@ -2084,7 +2081,7 @@ class MakerController extends Controller
         return view('maker.property.show', compact('property'));
     }
 
-    public function PropertyValidate(Request $request, Property $property = null)
+    public function PropertyValidate(Request $request)
     {
         return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
@@ -2169,7 +2166,7 @@ class MakerController extends Controller
         return view('maker.tenant.show', compact('tenant'));
     }
 
-    public function TenantValidate(Request $request, Tenant $tenant = null)
+    public function TenantValidate(Request $request)
     {
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
@@ -2226,13 +2223,13 @@ class MakerController extends Controller
         return view('maker.lease.create', compact('tenants', 'property'));
     }
 
-    public function LeaseStore(Request $request, Property $property)
+    public function LeaseStore(Request $request)
     {
         $validated = $this->LeaseValidate($request);
 
         // Set default values
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending'; // Setting initial status to pending
+        $validated['status'] = 'pending';
         
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
@@ -2241,7 +2238,7 @@ class MakerController extends Controller
 
         try {
             $lease = Lease::create($validated);
-            return redirect()->route('lease-m.index', $property)->with('success', 'Lease created successfully.');
+            return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease created successfully.');
         } catch(\Exception $e) {
             return back()->with('error', 'Error creating lease: ' . $e->getMessage());
         }
@@ -2288,7 +2285,7 @@ class MakerController extends Controller
         return view('maker.lease.show', compact('lease'));
     }
 
-    public function LeaseValidate(Request $request, Lease $lease = null)
+    public function LeaseValidate(Request $request)
     {
         return $request->validate([
             'tenant_id' => 'required|exists:tenants,id',
@@ -2307,7 +2304,7 @@ class MakerController extends Controller
             'monthly_gsto_year_3' => 'required|numeric|min:0',
             'space' => 'required|numeric|min:0',
             'tenancy_type' => 'nullable|string|max:255',
-            'attachment' => $lease ? 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240' : 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
             'status' => 'nullable|string|max:255',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
@@ -2371,7 +2368,7 @@ class MakerController extends Controller
         return view('maker.site-visit.show', compact('siteVisit'));
     }
 
-    public function SiteVisitValidate(Request $request, SiteVisit $siteVisit = null)
+    public function SiteVisitValidate(Request $request)
     {
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
@@ -2440,7 +2437,7 @@ class MakerController extends Controller
     {
         // Get only active site visits related to the current property
         $siteVisits = SiteVisit::where('property_id', $property->id)
-                            ->where('status', 'completed')
+                            ->where('status', 'active')
                             ->orderBy('date_visit', 'desc')
                             ->get();
         
@@ -2456,8 +2453,8 @@ class MakerController extends Controller
     public function ChecklistStore(Request $request)
     {
         // Get the validated data from the separate validation methods
-        $validated = $this->checklistValidate($request);
-        $tenantData = $this->validateChecklistTenants($request);
+        $validated = $this->ChecklistValidate($request);
+        $tenantData = $this->ValidateChecklistTenants($request);
         
         // Add the authenticated user's ID as prepared_by
         $validated['prepared_by'] = Auth::id();
@@ -2535,8 +2532,8 @@ class MakerController extends Controller
         }
         
         // Get the validated data from the separate validation methods
-        $validated = $this->checklistValidate($request, $checklist);
-        $tenantData = $this->validateChecklistTenants($request, $checklist);
+        $validated = $this->ChecklistValidate($request, $checklist);
+        $tenantData = $this->ValidateChecklistTenants($request, $checklist);
         
         // Update prepared_by only if it's not already set
         if (empty($checklist->prepared_by)) {
@@ -2588,7 +2585,7 @@ class MakerController extends Controller
     /**
      * Validate the main checklist data
      */
-    public function checklistValidate(Request $request, Checklist $checklist = null)
+    public function ChecklistValidate(Request $request, Checklist $checklist = null)
     {
         $rules = [
             // General Property Info
@@ -2723,7 +2720,7 @@ class MakerController extends Controller
     /**
      * Validate tenant data for checklist
      */
-    public function validateChecklistTenants(Request $request, Checklist $checklist = null)
+    public function ValidateChecklistTenants(Request $request, Checklist $checklist = null)
     {
         $rules = [
             'tenants' => 'nullable|array',

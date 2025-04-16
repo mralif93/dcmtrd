@@ -16,8 +16,7 @@ return new class extends Migration
             $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
             $table->string('party_name');
             $table->date('date_of_approval');
-            $table->string('appointment_title');
-            $table->text('appointment_description');
+            $table->text('description');
             $table->decimal('estimated_amount', 15, 2)->unsigned()->nullable();
             $table->text('remarks')->nullable();
             $table->string('attachment')->nullable();

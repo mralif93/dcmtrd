@@ -43,7 +43,6 @@ class Financial extends Model implements Auditable
      * @var array<string, string>
      */
     protected $casts = [
-        'installment_date' => 'date',
         'profit_rate' => 'decimal:4',
         'process_fee' => 'decimal:2',
         'total_facility_amount' => 'decimal:2',
