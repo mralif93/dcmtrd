@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Site Visit Log Details') }}
+            {{ __('Activity Diary Details') }}
         </h2>
     </x-slot>
 
@@ -25,16 +25,7 @@
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <!-- Header Section -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg font-medium text-gray-900">Site Visit Log Information</h3>
-                    <div class="flex space-x-2">
-                        <a href="{{ route('site-visit-log-m.edit', $siteVisitLog) }}" 
-                           class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                            </svg>
-                            Edit
-                        </a>
-                    </div>
+                    <h3 class="text-lg font-medium text-gray-900">Activity Diary Information</h3>
                 </div>
 
                 <!-- Status & Verification Section -->
@@ -111,12 +102,8 @@
                                 {{ $siteVisitLog->siteVisit->property->name }} ({{ $siteVisitLog->siteVisit->property->city }})
                             </dd>
                         </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Log Number</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisitLog->no }}</dd>
-                        </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Visitation Date</dt>
+                            <dt class="text-sm font-medium text-gray-500">Visit Date</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisitLog->visitation_date->format('d/m/Y') }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -187,7 +174,7 @@
                 <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
                     <div class="flex justify-end gap-x-4">
                         @if(!$siteVisitLog->follow_up_required)
-                        <form action="#" method="POST" class="inline">
+                        <form action="#" method="POST" class="hidden inline">
                             @csrf
                             @method('PATCH')
                             <button type="submit" 
@@ -200,13 +187,22 @@
                         </form>
                         @endif
 
-                        <a href="{{ route('site-visit-log-m.index') }}" 
-                        class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
-                            </svg>
-                            Back to List
-                        </a>
+                        <div class="flex space-x-2">
+                            <a href="{{ route('site-visit-log-m.index') }}" 
+                                class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
+                                </svg>
+                                Back to List
+                            </a>
+                            <a href="{{ route('site-visit-log-m.edit', $siteVisitLog) }}" 
+                                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                Edit Activity Diary
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

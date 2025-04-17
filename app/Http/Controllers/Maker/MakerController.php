@@ -3208,13 +3208,29 @@ class MakerController extends Controller
         $validated = $this->SiteVisitLogValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'status';
+        $validated['status'] = 'pending';
+
+        // Handle file upload if present
+        if ($request->hasFile('report_attachment')) {
+            $path = $request->file('report_attachment')->store('site-visit-logs', 'public');
+            $validated['report_attachment'] = $path;
+        }
+
+        // Handle follow-up required
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = true;
+        } else {
+            $validated['follow_up_required'] = false;
+        }
 
         try {
             SiteVisitLog::create($validated);
-            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log created successfully.');
+            return redirect()
+                ->route('site-visit-log-m.index')
+                ->with('success', 'Activity Diary created successfully.');
         } catch(\Exception $e) {
-            return back()->with('Error creating site visit log : ' . $e->getMessage());
+            return back()
+                ->with('Error creating activity diary : ' . $e->getMessage());
         }
     }
 
@@ -3228,11 +3244,27 @@ class MakerController extends Controller
     {
         $validated = $this->SiteVisitLogValidate($request);
 
+        // Handle file upload if present
+        if ($request->hasFile('report_attachment')) {
+            $path = $request->file('report_attachment')->store('site-visit-logs', 'public');
+            $validated['report_attachment'] = $path;
+        }
+
+        // Handle follow-up required
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = true;
+        } else {
+            $validated['follow_up_required'] = false;
+        }
+
         try {
             $siteVisitLog->update($validated);
-            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log updated successfully.');
+            return redirect()
+                ->route('site-visit-log-m.index')
+                ->with('success', 'Activity Diary updated successfully.');
         } catch(\Exception $e) {
-            return back()->with('Error updating site visit log : ' . $e->getMessage());
+            return back()
+                ->with('Error updating activity diary : ' . $e->getMessage());
         }
     }
 
@@ -3245,44 +3277,16 @@ class MakerController extends Controller
     {
         return $request->validate([
             'site_visit_id' => 'required|exists:site_visits,id',
-            'no' => 'required|integer',
             'visitation_date' => 'required|date',
-            'purpose' => 'required|string',
+            'purpose' => 'nullable|string',
             'report_submission_date' => 'nullable|date',
-            'report_attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'report_attachment' => 'nullable|file|mimes:pdf|max:10240',
             'follow_up_required' => 'boolean',
             'remarks' => 'nullable|string',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'approval_datetime' => 'nullable|date',
         ]);
-    }
-
-    public function SiteVisitLogFollowUp(SiteVisitLog $siteVisitLog)
-    {
-        return view('maker.site-visit-log.follow-up', compact('siteVisitLog'));
-    }
-
-    public function SiteVisitLogFollowUpStore(Request $request, SiteVisitLog $siteVisitLog)
-    {
-        $validated = $request->validate([
-            'follow_up_date' => 'required|date',
-            'follow_up_remarks' => 'nullable|string',
-        ]);
-
-        try {
-            $siteVisitLog->update($validated);
-            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log updated successfully.');
-        } catch(\Exception $e) {
-            return back()->with('Error updating site visit log : ' . $e->getMessage());
-        }
-    }
-
-    public function SiteVisitLogDestroy(SiteVisitLog $siteVisitLog)
-    {
-        try {
-            $siteVisitLog->delete();
-            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log deleted successfully.');
-        } catch(\Exception $e) {
-            return back()->with('Error deleting site visit log : ' . $e->getMessage());
-        }
     }
 
     // Module Approval Property

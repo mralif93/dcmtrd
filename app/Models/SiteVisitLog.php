@@ -12,14 +12,16 @@ class SiteVisitLog extends Model
 
     protected $fillable = [
         'site_visit_id',
-        'no',
         'visitation_date',
         'purpose',
-        'status',
         'report_submission_date',
         'report_attachment',
         'follow_up_required',
         'remarks',
+        'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
     ];
 
     protected $casts = [
@@ -27,9 +29,6 @@ class SiteVisitLog extends Model
         'report_submission_date' => 'date',
         'follow_up_required' => 'boolean',
         'approval_datetime' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
     ];
 
     /**

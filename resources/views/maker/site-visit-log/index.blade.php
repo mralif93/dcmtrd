@@ -2,20 +2,16 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Site Visit Logs Management') }}
+                {{ __('Activity Diary Management') }}
             </h2>
+            <a href="{{ route('maker.dashboard', ['section' => 'reits']) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Dashboard
+            </a>
         </div>
     </x-slot>
-
-    <script>
-        function confirmFollowUp(event, value) {
-            event.preventDefault();
-            if (confirm(`Are you sure you want to mark "${value}" for follow-up?`)) {
-                // If confirmed, proceed to the follow-up page
-                window.location.href = event.currentTarget.href;
-            }
-        }
-    </script>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -36,20 +32,20 @@
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg font-medium text-gray-900">Site Visit Logs</h3>
+                    <h3 class="text-lg font-medium text-gray-900">Activity Diary (Site Visit Log)</h3>
                     <div class="flex gap-2">
                         <a href="{{ route('site-visit-log-m.create') }}" 
                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            Add New Log
+                            Add New Activity Diary
                         </a>
                     </div>
                 </div>
 
                 <!-- Search and Filter Bar -->
-                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                <div class="hidden bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET" action="{{ route('site-visit-logs.index') }}">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <!-- Site Visit Filter -->
@@ -127,7 +123,6 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Site / Log No</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visitation Date</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -138,17 +133,6 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($siteVisitLogs as $log)
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('site-visit-logs.show', $log) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $log->siteVisit->site_name }}
-                                            <p class="text-xs text-gray-500">Log #{{ $log->no }}</p>
-                                            @if($log->remarks)
-                                            <p class="text-xs text-gray-700 mt-1">{{ Str::limit($log->remarks, 40) }}</p>
-                                            @endif
-                                        </a>
-                                    </div>
-                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">{{ $log->visitation_date->format('d/m/Y') }}</div>
                                 </td>
@@ -166,7 +150,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $log->follow_up_required ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
-                                        {{ $log->follow_up_required ? 'Required' : 'Not Required' }}
+                                        {{ $log->follow_up_required ? 'Yes' : 'No' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -182,16 +166,6 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                             </svg>
                                         </a>
-                                        @if (!$log->follow_up_required)
-                                        <!-- <a href="#" 
-                                           class="text-indigo-600 hover:text-indigo-900" 
-                                           title="Mark for Follow-up"
-                                           onclick="confirmFollowUp(event, '{{ $log->siteVisit->site_name }} - Log #{{ $log->no }}')">
-                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                            </svg>
-                                        </a> -->
-                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -214,11 +188,4 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add any JavaScript functionality here if needed
-            // For example, dynamic filters based on selections
-        });
-    </script>
 </x-app-layout>

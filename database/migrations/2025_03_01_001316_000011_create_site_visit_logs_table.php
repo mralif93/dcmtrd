@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('site_visit_id')->constrained()->onDelete('cascade');
             $table->date('visitation_date');
-            $table->text('purpose');
+            $table->text('purpose')->nullable();
             $table->date('report_submission_date')->nullable();
             $table->string('report_attachment')->nullable();
             $table->boolean('follow_up_required')->default(false);
