@@ -36,6 +36,10 @@ class Property extends Model implements Auditable
         'master_lease_agreement',
         'valuation_report',
         'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
+        'remarks',
     ];
 
     /**

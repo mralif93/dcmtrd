@@ -83,14 +83,14 @@
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            Add New Checklist
+                            Create New Checklist
                         </a>
                     </div>
                 </div>
 
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
-                    <form method="GET" action="{{ route('checklists.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <form method="GET" action="{{ route('checklist-m.index', $property) }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Search Field -->
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
@@ -114,8 +114,11 @@
                                 <option value="">All Status</option>
                                 <option value="draft" @selected(request('status') === 'draft')>Draft</option>
                                 <option value="pending" @selected(request('status') === 'pending')>Pending</option>
+                                <option value="active" @selected(request('status') === 'active')>Active</option>
+                                <option value="rejected" @selected(request('status') === 'rejected')>Rejected</option>
                                 <option value="completed" @selected(request('status') === 'completed')>Completed</option>
                                 <option value="verified" @selected(request('status') === 'verified')>Verified</option>
+                                <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
                             </select>
                         </div>
 
@@ -130,7 +133,7 @@
                             </button>
 
                             @if(request('search') || request('status'))
-                                <a href="{{ route('checklists.index') }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300">
+                                <a href="{{ route('checklist-m.index', $property) }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-sm text-gray-700 uppercase tracking-widest hover:bg-gray-300">
                                     Clear
                                 </a>
                             @endif
@@ -144,7 +147,6 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenant Info</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Legal Documents</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -156,14 +158,6 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">{{ $checklist->siteVisit->property->name }}</div>
                                         <div class="text-xs text-gray-500">{{ $checklist->siteVisit->property->city ?? 'No location' }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $checklist->tenant_name ?? 'N/A' }}</div>
-                                        @if($checklist->tenancy_commencement_date && $checklist->tenancy_expiry_date)
-                                        <div class="text-xs text-gray-500">
-                                            {{ date('d/m/Y', strtotime($checklist->tenancy_commencement_date)) }} to {{ date('d/m/Y', strtotime($checklist->tenancy_expiry_date)) }}
-                                        </div>
-                                        @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-500">

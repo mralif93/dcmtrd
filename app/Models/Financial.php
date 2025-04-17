@@ -36,6 +36,9 @@ class Financial extends Model implements Auditable
         'agent_contact',
         'valuer',
         'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
     ];
 
     /**

@@ -72,12 +72,35 @@ class ApproverController extends Controller
         $portfolioQuery = Portfolio::query()->whereIn('status', ['pending', 'active', 'rejected']);
         $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
 
-        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
+        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(1), function () {
             $result = DB::select("
                 SELECT 
                     (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
                     (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
-                    (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count
+                    (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
+                    (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
+                    (SELECT COUNT(*) FROM properties) AS properties_count,
+                    (SELECT COUNT(*) FROM financials) AS financials_count,
+                    (SELECT COUNT(*) FROM tenants) AS tenants_count,
+                    (SELECT COUNT(*) FROM leases) AS leases_count,
+                    (SELECT COUNT(*) FROM site_visits) AS siteVisits_count,
+                    (SELECT COUNT(*) FROM checklists) AS checklists_count,
+                    (SELECT COUNT(*) FROM appointments) AS appointments_count,
+                    (SELECT COUNT(*) FROM approval_forms) AS approvalForms_count,
+                    (SELECT COUNT(*) FROM approval_properties) AS approvalProperties_count,
+                    (SELECT COUNT(*) FROM site_visit_logs) AS siteVisitLogs_count,
+                    
+                    -- Add pending counts
+                    (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
+                    (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
+                    (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
+                    (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
+                    (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_siteVisits_count,
+                    (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
+                    (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
+                    (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approvalForms_count,
+                    (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approvalProperties_count,
+                    (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_siteVisitLogs_count
             ");
             return (array) $result[0];
         });
@@ -88,6 +111,29 @@ class ApproverController extends Controller
             'trusteeFeesCount' => $counts['trustee_fees_count'],
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
             'activityDairyCount' => $counts['activity_diaries_count'],
+            'portfoliosCount' => $counts['portfolios_count'],
+            'propertiesCount' => $counts['properties_count'],
+            'financialsCount' => $counts['financials_count'],
+            'tenantsCount' => $counts['tenants_count'],
+            'leasesCount' => $counts['leases_count'],
+            'siteVisitsCount' => $counts['siteVisits_count'],
+            'checklistsCount' => $counts['checklists_count'],
+            'appointmentsCount' => $counts['appointments_count'],
+            'approvalFormsCount' => $counts['approvalForms_count'],
+            'approvalPropertiesCount' => $counts['approvalProperties_count'],
+            'siteVisitLogsCount' => $counts['siteVisitLogs_count'],
+            
+            // Add pending counts to view data
+            'pendingPropertiesCount' => $counts['pending_properties_count'],
+            'pendingFinancialsCount' => $counts['pending_financials_count'],
+            'pendingTenantsCount' => $counts['pending_tenants_count'],
+            'pendingLeaseCount' => $counts['pending_leases_count'],
+            'pendingSiteVisitCount' => $counts['pending_siteVisits_count'],
+            'pendingChecklistCount' => $counts['pending_checklists_count'],
+            'pendingAppointmentsCount' => $counts['pending_appointments_count'],
+            'pendingApprovalFormsCount' => $counts['pending_approvalForms_count'],
+            'pendingApprovalPropertiesCount' => $counts['pending_approvalProperties_count'],
+            'pendingSiteVisitLogsCount' => $counts['pending_siteVisitLogs_count'],
         ]);
     }
 
@@ -659,6 +705,88 @@ class ApproverController extends Controller
     }
 
     // Property
+    public function PropertyMain(Request $request)
+    {
+        // Get the active tab (default to 'pending' if not specified)
+        $activeTab = $request->tab ?? 'all';
+        
+        // Base query with portfolio relationship
+        $query = Property::with('portfolio');
+        
+        // Apply tab filtering
+        if ($activeTab !== 'all') {
+            $query->where('status', $activeTab);
+        }
+        
+        // Apply additional filters
+        $query->when($request->filled('search'), function($query) use ($request) {
+            return $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('address', 'like', '%' . $request->search . '%')
+                  ->orWhere('city', 'like', '%' . $request->search . '%');
+            });
+        })
+        ->when($request->filled('category'), function($query) use ($request) {
+            return $query->where('category', $request->category);
+        });
+        
+        // Get paginated results
+        $properties = $query->orderBy('name')->paginate(15)->withQueryString();
+        
+        // Get counts for each status tab
+        $tabCounts = [
+            'all' => Property::count(),
+            'pending' => Property::where('status', 'pending')->count(),
+            'active' => Property::where('status', 'active')->count(),
+            'rejected' => Property::where('status', 'rejected')->count(),
+        ];
+        
+        // Return view with data
+        return view('approver.property.main', compact('properties', 'activeTab', 'tabCounts'));
+    }
+
+    public function PropertyDetails(Property $property) {
+        return view('approver.property.details', compact('property'));
+    }
+
+    public function PropertyApprove(Property $property) {
+        try {
+            $property->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('property-a.main', ['tab' => 'pending'])
+                ->with('success', 'Property approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving activity diary: ' . $e->getMessage());
+        }
+    }
+
+    public function PropertyReject(Request $request, Property $property) {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $property->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('property-a.main', ['tab' => 'pending'])
+                ->with('success', 'Property rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
+        }
+    }
+
     public function PropertyIndex(Request $request, Portfolio $portfolio)
     {
         // Start with a base query, including relevant relationships
@@ -739,6 +867,102 @@ class ApproverController extends Controller
     public function PropertyShow(Property $property)
     {
         return view('approver.property.show', compact('property'));
+    }
+
+    // Financial Module
+    public function FinancialMain(Request $request)
+    {
+        // Get current tab or default to 'all'
+        $activeTab = $request->query('tab', 'all');
+        
+        // Base query for financials
+        $query = Financial::with(['portfolio', 'bank', 'financialType']);
+        
+        // Apply status filter based on tab
+        if ($activeTab !== 'all') {
+            $query->where('status', $activeTab);
+        }
+        
+        // Apply search filter if provided
+        if ($search = $request->query('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('purpose', 'like', "%{$search}%")
+                ->orWhere('batch_no', 'like', "%{$search}%")
+                ->orWhereHas('portfolio', function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('bank', function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+        
+        // Apply financial type filter if provided
+        if ($financialType = $request->query('financial_type')) {
+            $query->where('financial_type_id', $financialType);
+        }
+        
+        // Get paginated results
+        $financials = $query->latest()->paginate(10)->withQueryString();
+        
+        // Count records for each tab
+        $tabCounts = [
+            'all' => Financial::count(),
+            'pending' => Financial::where('status', 'pending')->count(),
+            'rejected' => Financial::where('status', 'rejected')->count(),
+            'active' => Financial::where('status', 'active')->count(),
+        ];
+        
+        // Get all financial types for the filter dropdown
+        $financialTypes = FinancialType::orderBy('name')->get();
+        
+        return view('approver.financial.main', compact(
+            'financials', 
+            'activeTab', 
+            'tabCounts', 
+            'financialTypes'
+        ));
+    }
+
+    public function FinancialDetails(Financial $financial)
+    {
+        return view('approver.financial.details', compact('financial'));
+    }
+
+    public function FinancialApprove(Financial $financial)
+    {
+        try {
+            $financial->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('financial-a.main', ['tab' => 'pending'])
+                ->with('success', 'Financial approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving activity diary: ' . $e->getMessage());
+        }
+    }
+
+    public function FinancialReject(Financial $financial)    
+    {
+        try {
+            $financial->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('financial-a.main', ['tab' => 'pending'])
+                ->with('success', 'Financial rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
+        }
     }
 
     // Tenant

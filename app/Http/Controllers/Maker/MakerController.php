@@ -58,6 +58,10 @@ class MakerController extends Controller
 {
     public function index(Request $request)
     {
+        // Validate that section parameter is present and valid
+        $validSection = $request->has('section') && in_array($request->section, ['reits', 'dcmtrd']);
+        
+        // Issuers Query
         $query = Issuer::query();
 
         // Apply search filter
@@ -76,33 +80,32 @@ class MakerController extends Controller
         }
 
         // Get filtered issuers with latest first and paginate
-        $issuers = $query->whereIn('status', ['Active', 'Pending', 'Inactive', 'Rejected', 'Draft'])
-            ->latest()
-            ->paginate(10)
-            ->withQueryString(); // This preserves the query parameters in pagination links
-
+        $issuers = $query->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])
+                        ->latest()
+                        ->paginate(10)
+                        ->withQueryString();
+    
         // Get count data from cache or database
-        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
+        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(1), function () {
             $result = DB::select("
                 SELECT 
-                    (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
-                    (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
-                    (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
-                    (SELECT COUNT(*) FROM properties) AS properties_count,
-                    (SELECT COUNT(*) FROM financials) AS financials_count,
-                    (SELECT COUNT(*) FROM tenants) AS tenants_count,
-                    (SELECT COUNT(*) FROM appointments) AS appointments_count,
-                    (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
-                    (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
-                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count
+                    (SELECT COUNT() FROM trustee_fees) AS trustee_fees_count,
+                    (SELECT COUNT() FROM compliance_covenants) AS compliance_covenants_count,
+                    (SELECT COUNT() FROM activity_diaries) AS activity_diaries_count,
+                    (SELECT COUNT() FROM properties) AS properties_count,
+                    (SELECT COUNT() FROM financials) AS financials_count,
+                    (SELECT COUNT() FROM tenants) AS tenants_count,
+                    (SELECT COUNT() FROM appointments) AS appointments_count,
+                    (SELECT COUNT() FROM approval_forms) AS approval_forms_count,
+                    (SELECT COUNT() FROM approval_properties) AS approval_properties_count,
+                    (SELECT COUNT() FROM site_visit_logs) AS site_visit_logs_count
             ");
             return (array) $result[0];
         });
-
-        // Query for portfolios
-        $portfolioQuery = Portfolio::query()->whereIn('status', ['draft', 'active', 'rejected']);
-        $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
-
+    
+        // Portfolios Query - also section-specific
+        $portfolioQuery = Portfolio::query()->whereIn('status', ['draft', 'active', 'pending', 'rejected', 'inactive']);
+        
         // Apply search filter to portfolios
         if ($request->has('search') && !empty($request->search)) {
             $portfolioQuery->where('portfolio_name', 'LIKE', '%' . $request->search . '%');
@@ -113,9 +116,13 @@ class MakerController extends Controller
             $portfolioQuery->where('status', $request->status);
         }
 
+        // Execute the query after all filters are applied
+        $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
+    
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
+            'currentSection' => $request->section, // Pass the current section to the view
             'trusteeFeesCount' => $counts['trustee_fees_count'],
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
             'activityDairyCount' => $counts['activity_diaries_count'],
@@ -2530,7 +2537,7 @@ class MakerController extends Controller
     }
 
     // Checklist Module
-    public function ChecklistIndex(Property $property, Request $request)
+    public function ChecklistIndex(Request $request, Property $property)
     {
         // Start with a base query that includes the relationship
         $query = Checklist::with('siteVisit');
@@ -2647,13 +2654,6 @@ class MakerController extends Controller
 
     public function ChecklistEdit(Checklist $checklist)
     {
-        // Check if the user has permission to edit this checklist
-        // Only allow editing if status is pending
-        if ($checklist->status !== 'pending') {
-            return redirect()->route('checklist-m.show', $checklist->id)
-                ->with('error', 'Cannot edit a checklist that has already been processed.');
-        }
-
         // Get site visits related to the property
         $property = $checklist->siteVisit->property;
         $siteVisits = SiteVisit::where('property_id', $property->id)
@@ -2676,22 +2676,9 @@ class MakerController extends Controller
 
     public function ChecklistUpdate(Request $request, Checklist $checklist)
     {
-        // Check if the user has permission to update this checklist
-        if ($checklist->status !== 'pending') {
-            return redirect()->route('checklist-m.show', $checklist->id)
-                ->with('error', 'Cannot update a checklist that has already been processed.');
-        }
-
-
-
         // Get the validated data from the separate validation methods
         $validated = $this->ChecklistValidate($request, $checklist);
-
-        // Update prepared_by only if it's not already set
-        if (empty($checklist->prepared_by)) {
-            $validated['prepared_by'] = Auth::id();
-        }
-
+        
         // Record the last update
         $validated['updated_at'] = now();
 
@@ -2726,11 +2713,13 @@ class MakerController extends Controller
                 // If no tenant IDs were provided, detach all tenants
                 $checklist->tenants()->detach();
             }
-
-            return redirect()->route('checklist-m.show', $checklist->id)
+            
+            return redirect()
+                ->route('checklist-m.show', $checklist)
                 ->with('success', 'Checklist updated successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()
+            return back()
+                ->withInput()
                 ->with('error', 'Error updating checklist: ' . $e->getMessage());
         }
     }
@@ -2926,8 +2915,12 @@ class MakerController extends Controller
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
 
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('appointments', 'public');
+        }
+
         try {
-            $appointment = Appointment::create($validatedData);
+            $appointment = Appointment::create($validated);
             
             return redirect()
                 ->route('appointment-m.show', $appointment)
@@ -2954,6 +2947,15 @@ class MakerController extends Controller
     {
         // Validate the request
         $validated = $this->AppointmentValidate($request, $appointment);
+
+        if ($request->hasFile('attachment')) {
+            // delete exist
+            if ($appointment->attachment && Storage::disk('public')->exists($appointment->attachment)) {
+                Storage::disk('public')->delete($appointment->attachment);
+            }
+            
+            $validated['attachment'] = $request->file('attachment')->store('appointments', 'public');
+        }
 
         try {
             $appointment->update($validated);

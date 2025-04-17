@@ -673,8 +673,20 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/portfolio/{portfolio}/reject', [ApproverController::class, 'PortfolioReject'])->name('portfolio-a.reject')->middleware('permission:REITS');
 
     // Property Module
+    Route::get('approver/property/', [ApproverController::class, 'PropertyMain'])->name('property-a.main')->middleware('permission:REITS');
+    Route::get('approver/property/{property}/details', [ApproverController::class, 'PropertyDetails'])->name('property-a.details')->middleware('permission:REITS');
+    Route::post('approver/property/{property}/approve', [ApproverController::class, 'PropertyApprove'])->name('property-a.approve')->middleware('permission:REITS');
+    Route::post('approver/property/{property}/reject', [ApproverController::class, 'PropertyReject'])->name('property-a.reject')->middleware('permission:REITS');
     Route::get('approver/property/{portfolio}', [ApproverController::class, 'PropertyIndex'])->name('property-a.index')->middleware('permission:REITS');
     Route::get('approver/property/{property}/show', [ApproverController::class, 'PropertyShow'])->name('property-a.show')->middleware('permission:REITS');
+
+    // Financial Module
+    Route::get('approver/financial/', [ApproverController::class, 'FinancialMain'])->name('financial-a.main')->middleware('permission:REITS');
+    Route::get('approver/financial/{financial}/details', [ApproverController::class, 'FinancialDetails'])->name('financial-a.details')->middleware('permission:REITS');
+    Route::post('approver/financial/{financial}/approve', [ApproverController::class, 'FinancialApprove'])->name('financial-a.approve')->middleware('permission:REITS');
+    Route::post('approver/financial/{financial}/reject', [ApproverController::class, 'FinancialReject'])->name('financial-a.reject')->middleware('permission:REITS');
+    Route::get('approver/financial/{financial}', [ApproverController::class, 'FinancialIndex'])->name('financial-a.index')->middleware('permission:REITS');
+    Route::get('approver/financial/{financial}/show', [ApproverController::class, 'FinancialShow'])->name('financial-a.show')->middleware('permission:REITS');
 
     // Tenant Module
     Route::get('approver/tenant/{property}', [ApproverController::class, 'TenantIndex'])->name('tenant-a.index')->middleware('permission:REITS');
