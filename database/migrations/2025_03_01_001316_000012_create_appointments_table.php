@@ -14,14 +14,12 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
-            $table->string('party_name');
             $table->date('date_of_approval');
-            $table->text('description');
+            $table->string('party_name');
+            $table->text('description')->nullable();
             $table->decimal('estimated_amount', 15, 2)->unsigned()->nullable();
             $table->text('remarks')->nullable();
             $table->string('attachment')->nullable();
-            $table->integer('year')->nullable();
-            $table->string('reference_no')->nullable();
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();

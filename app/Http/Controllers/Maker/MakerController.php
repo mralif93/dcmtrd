@@ -1723,13 +1723,34 @@ class MakerController extends Controller
     {
         $validated = $this->validatePortfolio($request);
         
-        // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
-        
-        $portfolio = Portfolio::create($validated);
-        
-        return redirect()->route('maker.dashboard', ['section' => 'reits'])->with('success', 'Portfolio created successfully');
+
+        // Handle file uploads
+        if ($request->hasFile('annual_report')) {
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+        }
+
+        if ($request->hasFile('trust_deed_document')) {
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+        }
+
+        if ($request->hasFile('insurance_document')) {
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+        }
+
+        if ($request->hasFile('valuation_report')) {
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+        }
+
+        try {
+            $portfolio = Portfolio::create($validated);
+            return redirect()
+                ->route('maker.dashboard', ['section' => 'reits'])->with('success', 'Portfolio created successfully');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error creating portfolio: ' . $e->getMessage());
+        }
     }
 
     public function PortfolioEdit(Portfolio $portfolio)
@@ -1741,10 +1762,57 @@ class MakerController extends Controller
     public function PortfolioUpdate(Request $request, Portfolio $portfolio)
     {
         $validated = $this->validatePortfolio($request, $portfolio);
-        
-        $portfolio->update($validated);
-        
-        return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio updated successfully');
+
+        // Handle file uploads
+        if ($request->hasFile('annual_report')) {
+            // Remove old file if it exists
+            if ($portfolio->annual_report) {
+                Storage::delete($portfolio->annual_report);
+            }
+
+            // Store the new file and get its path
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+        }
+
+        if ($request->hasFile('trust_deed_document')) {
+            // Remove old file if it exists
+            if ($portfolio->trust_deed_document) {
+                Storage::delete($portfolio->trust_deed_document);
+            }
+
+            // Store the new file and get its path
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+        }
+
+        if ($request->hasFile('insurance_document')) {
+            // Remove old file if it exists
+            if ($portfolio->insurance_document) {
+                Storage::delete($portfolio->insurance_document);
+            }
+
+            // Store the new file and get its path
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+        }
+
+        if ($request->hasFile('valuation_report')) {
+            // Remove old file if it exists
+            if ($portfolio->valuation_report) {
+                Storage::delete($portfolio->valuation_report);
+            }
+
+            // Store the new file and get its path
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+        }
+
+        try {
+            $portfolio->update($validated);
+            return redirect()
+                ->route('portfolio-m.show', $portfolio)
+                ->with('success', 'Portfolio updated successfully');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error updating portfolio: ' . $e->getMessage());
+        }
     }
 
     public function PortfolioShow(Portfolio $portfolio)
@@ -1764,7 +1832,8 @@ class MakerController extends Controller
                 ->route('maker.dashboard', ['section' => 'reits'])
                 ->with('success', 'Portfolio submitted for approval successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
     }
     
@@ -1842,9 +1911,12 @@ class MakerController extends Controller
                 $financial->properties()->attach($propertyData);
             }
             
-            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial created successfully.');
+            return redirect()
+                ->route('property-m.index', $financial->portfolio)
+                ->with('success', 'Financial created successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error creating financial: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error creating financial: ' . $e->getMessage());
         }
     }
 
@@ -1898,9 +1970,12 @@ class MakerController extends Controller
             // Sync will remove any properties that are not in the request
             $financial->properties()->sync($syncData);
             
-            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial updated successfully.');
+            return redirect()
+                ->route('property-m.index', $financial->portfolio)
+                ->with('success', 'Financial updated successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error updating financial: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error updating financial: ' . $e->getMessage());
         }
     }
 
@@ -2102,10 +2177,12 @@ class MakerController extends Controller
         }
         try {
             $property->update($validated);
-            return redirect()->route('property-m.index', $property->portfolio)
+            return redirect()
+                ->route('property-m.index', $property->portfolio)
                 ->with('success', 'Property updated successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()
+            return back()
+                ->withInput()
                 ->with('error', 'Error updating property: ' . $e->getMessage());
         }
     }
@@ -2173,9 +2250,13 @@ class MakerController extends Controller
 
         try {
             $tenant = Tenant::create($validated);
-            return redirect()->route('tenant-m.index', $tenant->property)->with('success', 'Tenant created successfully.');
+            return redirect()
+                ->route('tenant-m.index', $tenant->property)
+                ->with('success', 'Tenant created successfully.');
         } catch(\Exception $e) {
-            return back()->withInput()->with('error', 'Error creating tenant: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating tenant: ' . $e->getMessage());
         }
     }
 
@@ -2191,7 +2272,8 @@ class MakerController extends Controller
 
         try {
             $tenant->update($validated);
-            return redirect()->route('tenant-m.index', $tenant->property)->with('success', 'Tenant updated successfully.');
+            return redirect()
+                ->route('tenant-m.index', $tenant->property)->with('success', 'Tenant updated successfully.');
         } catch(\Exception $e) {
             return back()->withInput()->with('error', 'Error updating tenant: ' . $e->getMessage());
         }
@@ -2857,7 +2939,7 @@ class MakerController extends Controller
     public function AppointmentShow(Appointment $appointment)
     {
         // Load related portfolio
-        $appointment->load('portfolio', 'preparedBy', 'verifiedBy');
+        $appointment->load('portfolio');
 
         return view('maker.appointment.show', [
             'appointment' => $appointment
@@ -2871,8 +2953,7 @@ class MakerController extends Controller
             'portfolio_id' => 'required|exists:portfolios,id',
             'party_name' => 'required|string|max:255',
             'date_of_approval' => 'required|date',
-            'appointment_title' => 'required|string|max:255',
-            'appointment_description' => 'required|string',
+            'description' => 'required|string',
             'estimated_amount' => 'nullable|numeric|min:0',
             'remarks' => 'nullable|string',
             'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',

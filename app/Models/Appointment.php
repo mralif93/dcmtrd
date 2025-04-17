@@ -17,14 +17,12 @@ class Appointment extends Model
      */
     protected $fillable = [
         'portfolio_id',
-        'party_name',
         'date_of_approval',
+        'party_name',
         'description',
         'estimated_amount',
         'remarks',
         'attachment',
-        'year',
-        'reference_no',
         'status',
         'prepared_by',
         'verified_by',
@@ -40,7 +38,6 @@ class Appointment extends Model
         'date_of_approval' => 'date',
         'estimated_amount' => 'decimal:2',
         'approval_datetime' => 'datetime',
-        'year' => 'integer',
     ];
 
     /**
@@ -50,44 +47,12 @@ class Appointment extends Model
     {
         return $this->belongsTo(Portfolio::class);
     }
-
-    /**
-     * Get the user who prepared the appointment.
-     */
-    public function preparedBy()
-    {
-        return $this->belongsTo(User::class, 'prepared_by', 'id');
-    }
-
-    /**
-     * Get the user who verified the appointment.
-     */
-    public function verifiedBy()
-    {
-        return $this->belongsTo(User::class, 'verified_by', 'id');
-    }
-
+    
     /**
      * Scope a query to only include appointments with a specific status.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $status
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeStatus($query, $status)
     {
         return $query->where('status', $status);
-    }
-
-    /**
-     * Scope a query to only include appointments for a specific year.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  int  $year
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeYear($query, $year)
-    {
-        return $query->where('year', $year);
     }
 }

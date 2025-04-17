@@ -67,9 +67,9 @@
                     </div>
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Appointment Title</dt>
+                            <dt class="text-sm font-medium text-gray-500">Date of Approval</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $appointment->appointment_title }}
+                                {{ $appointment->date_of_approval->format('d/m/Y') }}
                             </dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -79,45 +79,23 @@
                             </dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Date of Approval</dt>
+                            <dt class="text-sm font-medium text-gray-500">Description</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $appointment->date_of_approval->format('d/m/Y') }}
+                                {{ $appointment->description ?? 'No description provided' }}
                             </dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Appointment Description</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $appointment->appointment_description ?? 'No description provided' }}
-                            </dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Estimated Amount</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 @if($appointment->estimated_amount)
-                                    {{ number_format($appointment->estimated_amount, 2) }}
+                                    RM {{ number_format($appointment->estimated_amount, 2) }}
                                 @else
                                     N/A
                                 @endif
                             </dd>
                         </div>
-                        @if($appointment->reference_no)
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Reference Number</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $appointment->reference_no }}
-                            </dd>
-                        </div>
-                        @endif
-                        @if($appointment->year)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Year</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $appointment->year }}
-                            </dd>
-                        </div>
-                        @endif
                         @if($appointment->remarks)
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Remarks</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 {{ $appointment->remarks }}
@@ -125,7 +103,7 @@
                         </div>
                         @endif
                         @if($appointment->attachment)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Attachment</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 <a href="{{ asset('storage/' . $appointment->attachment) }}" target="_blank" 
@@ -160,30 +138,6 @@
                                 {{ $appointment->updated_at->format('d/m/Y h:i A') }}
                             </dd>
                         </div>
-                        @if($appointment->prepared_by)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $appointment->preparedBy->name ?? 'N/A' }}
-                            </dd>
-                        </div>
-                        @endif
-                        @if($appointment->verified_by)
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $appointment->verifiedBy->name ?? 'N/A' }}
-                            </dd>
-                        </div>
-                        @endif
-                        @if($appointment->approval_datetime)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Approval Date/Time</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $appointment->approval_datetime->format('d/m/Y h:i A') }}
-                            </dd>
-                        </div>
-                        @endif
                     </dl>
                 </div>
 
