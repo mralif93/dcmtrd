@@ -178,6 +178,7 @@
                     <table class="min-w-full divide-y divide-gray-200 border-t border-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batch No</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Info</th>
@@ -188,6 +189,11 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($properties as $property)
                                 <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="font-medium text-gray-900">
+                                            {{ $property->batch_no }}
+                                        </div>
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="font-medium text-gray-900">
                                             {{ $property->name }}
@@ -289,6 +295,7 @@
                     <table class="min-w-full divide-y divide-gray-200 border-t border-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batch No</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
@@ -300,6 +307,9 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($portfolio->financials as $financial)
                                 <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {{ $financial->batch_no ?? 'N/A' }}
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="font-medium text-gray-900">
                                             {{ $financial->bank->name }}

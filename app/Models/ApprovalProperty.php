@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class Appointment extends Model implements Auditable
+class ApprovalProperty extends Model
 {
-    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -17,15 +16,12 @@ class Appointment extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'portfolio_id',
-        'party_name',
+        'property_id',
         'date_of_approval',
         'description',
         'estimated_amount',
         'remarks',
         'attachment',
-        'year',
-        'reference_no',
         'status',
         'prepared_by',
         'verified_by',
@@ -41,19 +37,18 @@ class Appointment extends Model implements Auditable
         'date_of_approval' => 'date',
         'estimated_amount' => 'decimal:2',
         'approval_datetime' => 'datetime',
-        'year' => 'integer',
     ];
 
     /**
-     * Get the portfolio that owns the appointment.
+     * Get the property that owns the approval.
      */
-    public function portfolio()
+    public function property()
     {
-        return $this->belongsTo(Portfolio::class);
+        return $this->belongsTo(Property::class);
     }
 
     /**
-     * Get the user who prepared the appointment.
+     * Get the user who prepared the approval.
      */
     public function preparedBy()
     {
@@ -61,7 +56,7 @@ class Appointment extends Model implements Auditable
     }
 
     /**
-     * Get the user who verified the appointment.
+     * Get the user who verified the approval.
      */
     public function verifiedBy()
     {
@@ -69,7 +64,7 @@ class Appointment extends Model implements Auditable
     }
 
     /**
-     * Scope a query to only include appointments with a specific status.
+     * Scope a query to only include approvals with a specific status.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  string  $status
@@ -81,14 +76,32 @@ class Appointment extends Model implements Auditable
     }
 
     /**
-     * Scope a query to only include appointments for a specific year.
+     * Format the estimated amount as currency.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  int  $year
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return string
      */
-    public function scopeYear($query, $year)
+    public function getFormattedAmountAttribute()
     {
-        return $query->where('year', $year);
+        return number_format($this->estimated_amount, 2);
+    }
+
+    /**
+     * Determine if the approval has an attachment.
+     *
+     * @return bool
+     */
+    public function hasAttachment()
+    {
+        return !empty($this->attachment);
+    }
+
+    /**
+     * Get the attachment URL.
+     *
+     * @return string|null
+     */
+    public function getAttachmentUrlAttribute()
+    {
+        return $this->attachment ? asset('storage/' . $this->attachment) : null;
     }
 }

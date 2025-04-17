@@ -100,6 +100,15 @@
                                     @enderror
                                 </div>
 
+                                <!-- Batch No -->
+                                <div>
+                                    <label for="batch_no" class="block text-sm font-medium text-gray-500">Batch No</label>
+                                    <input type="text" name="batch_no" id="batch_no" value="{{ old('batch_no') }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('batch_no')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
                                 <!-- Purpose -->
                                 <div>
                                     <label for="purpose" class="block text-sm font-medium text-gray-700">Purpose</label>
@@ -158,7 +167,7 @@
 
                                 <!-- Process Fee -->
                                 <div>
-                                    <label for="process_fee" class="block text-sm font-medium text-gray-700">Process Fee</label>
+                                    <label for="process_fee" class="block text-sm font-medium text-gray-700">Process Fee (RM)</label>
                                     <input id="process_fee" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="process_fee" value="{{ old('process_fee') }}" step="0.01" min="0" required>
                                     @error('process_fee')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -167,7 +176,7 @@
 
                                 <!-- Total Facility Amount -->
                                 <div>
-                                    <label for="total_facility_amount" class="block text-sm font-medium text-gray-700">Total Facility Amount</label>
+                                    <label for="total_facility_amount" class="block text-sm font-medium text-gray-700">Total Facility Amount (RM)</label>
                                     <input id="total_facility_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="total_facility_amount" value="{{ old('total_facility_amount') }}" step="0.01" min="0" required>
                                     @error('total_facility_amount')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -176,7 +185,7 @@
 
                                 <!-- Utilization Amount -->
                                 <div>
-                                    <label for="utilization_amount" class="block text-sm font-medium text-gray-700">Utilization Amount</label>
+                                    <label for="utilization_amount" class="block text-sm font-medium text-gray-700">Utilization Amount (RM)</label>
                                     <input id="utilization_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="utilization_amount" value="{{ old('utilization_amount') }}" step="0.01" min="0" required>
                                     @error('utilization_amount')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -185,7 +194,7 @@
 
                                 <!-- Outstanding Amount -->
                                 <div>
-                                    <label for="outstanding_amount" class="block text-sm font-medium text-gray-700">Outstanding Amount</label>
+                                    <label for="outstanding_amount" class="block text-sm font-medium text-gray-700">Outstanding Amount (RM)</label>
                                     <input id="outstanding_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="outstanding_amount" value="{{ old('outstanding_amount') }}" step="0.01" min="0" required>
                                     @error('outstanding_amount')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -194,7 +203,7 @@
 
                                 <!-- Interest Monthly -->
                                 <div>
-                                    <label for="interest_monthly" class="block text-sm font-medium text-gray-700">Interest Monthly</label>
+                                    <label for="interest_monthly" class="block text-sm font-medium text-gray-700">Interest Monthly (%)</label>
                                     <input id="interest_monthly" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="interest_monthly" value="{{ old('interest_monthly') }}" step="0.01" min="0" required>
                                     @error('interest_monthly')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -203,7 +212,7 @@
 
                                 <!-- Security Value Monthly -->
                                 <div>
-                                    <label for="security_value_monthly" class="block text-sm font-medium text-gray-700">Security Value Monthly</label>
+                                    <label for="security_value_monthly" class="block text-sm font-medium text-gray-700">Security Value Monthly (RM)</label>
                                     <input id="security_value_monthly" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="security_value_monthly" value="{{ old('security_value_monthly') }}" step="0.01" min="0" required>
                                     @error('security_value_monthly')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

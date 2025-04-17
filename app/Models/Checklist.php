@@ -12,10 +12,6 @@ class Checklist extends Model implements Auditable
     use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
-        // General property info
-        'property_title',
-        'property_location',
-        
         // 1.0 Legal Documentation
         'title_ref',
         'title_location',

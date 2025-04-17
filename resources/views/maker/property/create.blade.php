@@ -1,5 +1,3 @@
-<!-- resources/views/properties/create.blade.php -->
-
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between">
@@ -189,7 +187,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Value -->
                                 <div>
-                                    <label for="value" class="block text-sm font-medium text-gray-500">Value</label>
+                                    <label for="value" class="block text-sm font-medium text-gray-500">Value (RM)</label>
                                     <input type="number" step="0.01" name="value" id="value" value="{{ old('value') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('value')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -198,7 +196,7 @@
 
                                 <!-- Market Value -->
                                 <div>
-                                    <label for="market_value" class="block text-sm font-medium text-gray-500">Market Value</label>
+                                    <label for="market_value" class="block text-sm font-medium text-gray-500">Market Value (RM)</label>
                                     <input type="number" step="0.01" name="market_value" id="market_value" value="{{ old('market_value') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('market_value')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -216,13 +214,51 @@
 
                                 <!-- Share Amount -->
                                 <div>
-                                    <label for="share_amount" class="block text-sm font-medium text-gray-500">Share Amount</label>
+                                    <label for="share_amount" class="block text-sm font-medium text-gray-500">Share Amount (RM)</label>
                                     <input type="number" step="0.01" name="share_amount" id="share_amount" value="{{ old('share_amount') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('share_amount')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
+
+                            <div class="col-span-1">
+                                <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4 mt-4">Documentation</h3>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Master Lease Agreement -->
+                                <div>
+                                    <label for="master_lease_agreement" class="block text-sm font-medium text-gray-500">Master Lease Agreement</label>
+                                    <input type="file" name="master_lease_agreement" id="master_lease_agreement" accept=".pdf" class="mt-1 block w-full text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-indigo-50 file:text-indigo-700
+                                    hover:file:bg-indigo-100">
+                                    <p class="text-xs text-gray-500 mt-1">Upload PDF files only</p>
+                                    @error('master_lease_agreement')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Valuation Report -->
+                                <div>
+                                    <label for="valuation_report" class="block text-sm font-medium text-gray-500">Valuation Report</label>
+                                    <input type="file" name="valuation_report" id="valuation_report" accept=".pdf" class="mt-1 block w-full text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-indigo-50 file:text-indigo-700
+                                    hover:file:bg-indigo-100">
+                                    <p class="text-xs text-gray-500 mt-1">Upload PDF files only</p>
+                                    @error('valuation_report')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+
                         </div>
 
                         <div class="border-t border-gray-200 py-4 mt-6">
