@@ -178,7 +178,10 @@
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <!-- Fixed section parameter -->
+                        <input type="hidden" name="section" value="dcmtrd">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <!-- Issuer Name Search Field -->
                             <div>
                                 <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
@@ -211,7 +214,7 @@
                                 </button>
                                 
                                 @if(request('search') || request('status'))
-                                    <a href="{{ route('dashboard') }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">
+                                    <a href="{{ route('maker.dashboard', ['section' => 'dcmtrd']) }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
                                         Clear
                                     </a>
                                 @endif
@@ -415,6 +418,9 @@
                 <!-- Search and Filter Bar -->
                 <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET">
+                        <!-- Fixed section parameter -->
+                        <input type="hidden" name="section" value="reits">
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <!-- Issuer Name Search Field -->
                             <div>
@@ -449,7 +455,7 @@
                                 </button>
                                 
                                 @if(request('search') || request('status'))
-                                    <a href="{{ route('maker.dashboard', ['section' => 'reits']) }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">
+                                    <a href="{{ route('maker.dashboard', ['section' => 'reits']) }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
                                         Clear
                                     </a>
                                 @endif

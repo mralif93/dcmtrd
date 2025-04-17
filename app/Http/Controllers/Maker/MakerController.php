@@ -58,6 +58,10 @@ class MakerController extends Controller
 {
     public function index(Request $request)
     {
+        // Validate that section parameter is present and valid
+        $validSection = $request->has('section') && in_array($request->section, ['reits', 'dcmtrd']);
+        
+        // Issuers Query
         $query = Issuer::query();
         
         // Apply search filter
@@ -79,29 +83,28 @@ class MakerController extends Controller
         $issuers = $query->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])
                         ->latest()
                         ->paginate(10)
-                        ->withQueryString(); // This preserves the query parameters in pagination links
+                        ->withQueryString();
     
         // Get count data from cache or database
-        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
+        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(1), function () {
             $result = DB::select("
                 SELECT 
-                    (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
-                    (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
-                    (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
-                    (SELECT COUNT(*) FROM properties) AS properties_count,
-                    (SELECT COUNT(*) FROM financials) AS financials_count,
-                    (SELECT COUNT(*) FROM tenants) AS tenants_count,
-                    (SELECT COUNT(*) FROM appointments) AS appointments_count,
-                    (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
-                    (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
-                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count
+                    (SELECT COUNT() FROM trustee_fees) AS trustee_fees_count,
+                    (SELECT COUNT() FROM compliance_covenants) AS compliance_covenants_count,
+                    (SELECT COUNT() FROM activity_diaries) AS activity_diaries_count,
+                    (SELECT COUNT() FROM properties) AS properties_count,
+                    (SELECT COUNT() FROM financials) AS financials_count,
+                    (SELECT COUNT() FROM tenants) AS tenants_count,
+                    (SELECT COUNT() FROM appointments) AS appointments_count,
+                    (SELECT COUNT() FROM approval_forms) AS approval_forms_count,
+                    (SELECT COUNT() FROM approval_properties) AS approval_properties_count,
+                    (SELECT COUNT() FROM site_visit_logs) AS site_visit_logs_count
             ");
             return (array) $result[0];
         });
     
-        // Query for portfolios
-        $portfolioQuery = Portfolio::query()->whereIn('status', ['draft', 'active', 'rejected']);
-        $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
+        // Portfolios Query - also section-specific
+        $portfolioQuery = Portfolio::query()->whereIn('status', ['draft', 'active', 'pending', 'rejected', 'inactive']);
         
         // Apply search filter to portfolios
         if ($request->has('search') && !empty($request->search)) {
@@ -112,10 +115,14 @@ class MakerController extends Controller
         if ($request->has('status') && !empty($request->status)) {
             $portfolioQuery->where('status', $request->status);
         }
+
+        // Execute the query after all filters are applied
+        $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
     
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
+            'currentSection' => $request->section, // Pass the current section to the view
             'trusteeFeesCount' => $counts['trustee_fees_count'],
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
             'activityDairyCount' => $counts['activity_diaries_count'],
