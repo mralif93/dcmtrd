@@ -2160,7 +2160,7 @@ class MakerController extends Controller
     public function TenantCreate(Property $property)
     {
         $propertyInfo = $property;
-        $properties = Property::orderBy('property_name')->get();
+        $properties = Property::orderBy('name')->get();
         return view('maker.tenant.create', compact('properties', 'propertyInfo'));
     }
 
@@ -2181,7 +2181,7 @@ class MakerController extends Controller
 
     public function TenantEdit(Tenant $tenant)
     {
-        $properties = Property::orderBy('property_name')->get();
+        $properties = Property::orderBy('name')->get();
         return view('maker.tenant.edit', compact('tenant', 'properties'));
     }
 
@@ -2324,13 +2324,13 @@ class MakerController extends Controller
             'term_years' => 'nullable|string|max:255',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'base_rate_year_1' => 'required|numeric|min:0',
-            'monthly_gsto_year_1' => 'required|numeric|min:0',
-            'base_rate_year_2' => 'required|numeric|min:0',
-            'monthly_gsto_year_2' => 'required|numeric|min:0',
-            'base_rate_year_3' => 'required|numeric|min:0',
-            'monthly_gsto_year_3' => 'required|numeric|min:0',
-            'space' => 'required|numeric|min:0',
+            'base_rate_year_1' => 'nullable|numeric|min:0',
+            'monthly_gsto_year_1' => 'nullable|numeric|min:0',
+            'base_rate_year_2' => 'nullable|numeric|min:0',
+            'monthly_gsto_year_2' => 'nullable|numeric|min:0',
+            'base_rate_year_3' => 'nullable|numeric|min:0',
+            'monthly_gsto_year_3' => 'nullable|numeric|min:0',
+            'space' => 'nullable|numeric|min:0',
             'tenancy_type' => 'nullable|string|max:255',
             'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
             'status' => 'nullable|string|max:255',
@@ -2365,6 +2365,10 @@ class MakerController extends Controller
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'active';
 
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
+        }
+
         try {
             $siteVisit = SiteVisit::create($validated);
             return redirect()->route('tenant-m.index', $siteVisit->property)->with('success', 'Site visit created successfully.');
@@ -2382,6 +2386,15 @@ class MakerController extends Controller
     public function SiteVisitUpdate(Request $request, SiteVisit $siteVisit)
     {
         $validated = $this->SiteVisitValidate($request);
+
+        if ($request->hasFile('attachment')) {
+            // Delete old file if exists
+            if ($siteVisit->attachment && Storage::disk('public')->exists($siteVisit->attachment)) {
+                Storage::disk('public')->delete($siteVisit->attachment);
+            }
+            
+            $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
+        }
 
         try {
             $siteVisit->update($validated);

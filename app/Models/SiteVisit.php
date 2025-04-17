@@ -25,7 +25,10 @@ class SiteVisit extends Model
         'building_manager',
         'notes',
         'attachment',
-        'status'
+        'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
     ];
 
     /**
