@@ -277,6 +277,99 @@
                 </h2>
             </div>
 
+            <!-- Cards -->
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <!-- Properties -->
+                <x-dashboard-card
+                    title="Properties"
+                    icon="office-building"
+                    :count="$propertiesCount ?? 0"
+                    href="#"
+                    color="bg-green-100"
+                />
+
+                <!-- Financials -->
+                <x-dashboard-card
+                    title="Financials"
+                    icon="document-text"
+                    :count="$financialsCount ?? 0"
+                    href="#"
+                    color="bg-green-100"
+                />
+
+                <!-- Tenants -->
+                <x-dashboard-card
+                    title="Tenants"
+                    icon="users"
+                    :count="$tenantsCount ?? 0"
+                    href="#"
+                    color="bg-green-100"
+                />
+
+                <!-- Lease -->
+                <x-dashboard-card
+                    title="Lease"
+                    icon="users"
+                    :count="$tenantsCount ?? 0"
+                    href="#"
+                    color="bg-green-100"
+                />
+
+                <!-- Site Visit -->
+                <x-dashboard-card
+                    title="Site Visit"
+                    icon="users"
+                    :count="$tenantsCount ?? 0"
+                    href="#"
+                    color="bg-green-100"
+                />
+
+                <!-- Checklist -->
+                <x-dashboard-card
+                    title="Checklist"
+                    icon="users"
+                    :count="$tenantsCount ?? 0"
+                    href="#"
+                    color="bg-green-100"
+                />
+
+                <!-- Appointment -->
+                <x-dashboard-card
+                    title="Appointment"
+                    icon="users"
+                    :count="$appointmentsCount ?? 0"
+                    :href="route('appointment-m.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Approval Form -->
+                <x-dashboard-card
+                    title="Approval Form"
+                    icon="users"
+                    :count="$approvalFormsCount ?? 0"
+                    :href="route('approval-form-m.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Approval Property -->
+                <x-dashboard-card
+                    title="Approval Property"
+                    icon="users"
+                    :count="$approvalPropertiesCount ?? 0"
+                    :href="route('approval-property-m.index')"
+                    color="bg-green-100"
+                />
+
+                <!-- Site Visit Logs Form -->
+                <x-dashboard-card
+                    title="Activity Diary"
+                    icon="users"
+                    :count="$siteVisitLogsCount ?? 0"
+                    :href="route('site-visit-log-m.index')"
+                    color="bg-green-100"
+                />
+            </div>
+
             <!-- Table Portfolio -->
             <div class="bg-white shadow overflow-hidden rounded-lg mt-6">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
