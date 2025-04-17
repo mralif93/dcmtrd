@@ -278,22 +278,24 @@
             </div>
 
             <!-- Cards -->
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <!-- Properties -->
                 <x-dashboard-card
                     title="Properties"
                     icon="office-building"
                     :count="$propertiesCount ?? 0"
-                    href="#"
+                    :pendingCount="$pendingPropertiesCount ?? 0"
+                    :href="route('property-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 
                 <!-- Financials -->
                 <x-dashboard-card
                     title="Financials"
-                    icon="document-text"
+                    icon="document-chart-bar"
                     :count="$financialsCount ?? 0"
-                    href="#"
+                    :pendingCount="$pendingFinancialsCount ?? 0"
+                    :href="route('financial-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 
@@ -302,6 +304,7 @@
                     title="Tenants"
                     icon="users"
                     :count="$tenantsCount ?? 0"
+                    :pendingCount="$pendingTenantsCount ?? 0"
                     href="#"
                     color="bg-green-100"
                 />
@@ -309,8 +312,9 @@
                 <!-- Lease -->
                 <x-dashboard-card
                     title="Lease"
-                    icon="users"
-                    :count="$tenantsCount ?? 0"
+                    icon="document-duplicate"
+                    :count="$leaseCount ?? 0"
+                    :pendingCount="$pendingLeaseCount ?? 0"
                     href="#"
                     color="bg-green-100"
                 />
@@ -318,8 +322,9 @@
                 <!-- Site Visit -->
                 <x-dashboard-card
                     title="Site Visit"
-                    icon="users"
-                    :count="$tenantsCount ?? 0"
+                    icon="location-marker"
+                    :count="$siteVisitCount ?? 0"
+                    :pendingCount="$pendingSiteVisitCount ?? 0"
                     href="#"
                     color="bg-green-100"
                 />
@@ -327,8 +332,9 @@
                 <!-- Checklist -->
                 <x-dashboard-card
                     title="Checklist"
-                    icon="users"
-                    :count="$tenantsCount ?? 0"
+                    icon="clipboard-check"
+                    :count="$checklistCount ?? 0"
+                    :pendingCount="$pendingChecklistCount ?? 0"
                     href="#"
                     color="bg-green-100"
                 />
@@ -336,8 +342,9 @@
                 <!-- Appointment -->
                 <x-dashboard-card
                     title="Appointment"
-                    icon="users"
+                    icon="calendar"
                     :count="$appointmentsCount ?? 0"
+                    :pendingCount="$pendingAppointmentsCount ?? 0"
                     :href="route('appointment-m.index')"
                     color="bg-green-100"
                 />
@@ -345,8 +352,9 @@
                 <!-- Approval Form -->
                 <x-dashboard-card
                     title="Approval Form"
-                    icon="users"
+                    icon="document-check"
                     :count="$approvalFormsCount ?? 0"
+                    :pendingCount="$pendingApprovalFormsCount ?? 0"
                     :href="route('approval-form-m.index')"
                     color="bg-green-100"
                 />
@@ -354,17 +362,19 @@
                 <!-- Approval Property -->
                 <x-dashboard-card
                     title="Approval Property"
-                    icon="users"
+                    icon="check-circle"
                     :count="$approvalPropertiesCount ?? 0"
+                    :pendingCount="$pendingApprovalPropertiesCount ?? 0"
                     :href="route('approval-property-m.index')"
                     color="bg-green-100"
                 />
 
-                <!-- Site Visit Logs Form -->
+                <!-- Activity Diary -->
                 <x-dashboard-card
                     title="Activity Diary"
-                    icon="users"
+                    icon="clipboard-list"
                     :count="$siteVisitLogsCount ?? 0"
+                    :pendingCount="$pendingSiteVisitLogsCount ?? 0"
                     :href="route('site-visit-log-m.index')"
                     color="bg-green-100"
                 />

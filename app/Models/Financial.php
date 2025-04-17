@@ -35,6 +35,9 @@ class Financial extends Model
         'agent_contact',
         'valuer',
         'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
     ];
 
     /**

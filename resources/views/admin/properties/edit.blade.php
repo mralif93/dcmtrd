@@ -40,7 +40,7 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $property->name }}</h3>
 
-                    <form action="{{ route('properties.update', $property->id) }}" method="POST">
+                    <form action="{{ route('properties.update', $property) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -188,6 +188,8 @@
                                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
                                 <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                     <option value="active" {{ old('status', $property->status) === 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="pending" {{ old('status', $property->status) === 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="rejected" {{ old('status', $property->status) === 'rejected' ? 'selected' : '' }}>Rejected</option>
                                     <option value="inactive" {{ old('status', $property->status) === 'inactive' ? 'selected' : '' }}>Inactive</option>
                                     <option value="under_maintenance" {{ old('status', $property->status) === 'under_maintenance' ? 'selected' : '' }}>Under Maintenance</option>
                                     <option value="for_sale" {{ old('status', $property->status) === 'for_sale' ? 'selected' : '' }}>For Sale</option>

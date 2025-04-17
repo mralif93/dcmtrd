@@ -35,6 +35,10 @@ class Property extends Model
         'master_lease_agreement',
         'valuation_report',
         'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
+        'remarks',
     ];
 
     /**
