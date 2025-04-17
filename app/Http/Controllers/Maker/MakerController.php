@@ -1886,7 +1886,7 @@ class MakerController extends Controller
     {
         // Validate financial data
         $validated = $this->FinancialValidate($request);
-        
+
         try {
             // Update the financial record
             $financial->update($validated);
@@ -2054,27 +2054,27 @@ class MakerController extends Controller
     {
         // Validate all form inputs
         $validated = $this->PropertyValidate($request);
-        
+
         // Check if a master lease agreement file was uploaded
         if ($request->hasFile('master_lease_agreement')) {
             // Store the file and get its path
             $filePath = $request->file('master_lease_agreement')->store('property-documents');
-            
+
             // Save the file path to the database
             $validated['master_lease_agreement'] = $filePath;
         }
-        
+
         // Check if a valuation report file was uploaded
         if ($request->hasFile('valuation_report')) {
             // Store the file and get its path
             $filePath = $request->file('valuation_report')->store('property-documents');
-            
+
             // Save the file path to the database
             $validated['valuation_report'] = $filePath;
         }
-        
+
         // Create the property with all data
-        
+
         try {
             $property = Property::create($validated);
             return redirect()->route('property-m.index', $property->portfolio)
@@ -2095,26 +2095,26 @@ class MakerController extends Controller
     {
         // Validate all form inputs
         $validated = $this->PropertyValidate($request);
-        
-         // Check if a new master lease agreement file was uploaded
-         if ($request->hasFile('master_lease_agreement')) {
+
+        // Check if a new master lease agreement file was uploaded
+        if ($request->hasFile('master_lease_agreement')) {
             // Remove old file if it exists
             if ($property->master_lease_agreement) {
                 Storage::delete($property->master_lease_agreement);
             }
-            
+
             // Store the new file and get its path
             $validated['master_lease_agreement'] = $request->file('master_lease_agreement')
                 ->store('property-documents');
         }
-        
+
         // Check if a new valuation report file was uploaded
         if ($request->hasFile('valuation_report')) {
             // Remove old file if it exists
             if ($property->valuation_report) {
                 Storage::delete($property->valuation_report);
             }
-            
+
             // Store the new file and get its path
             $validated['valuation_report'] = $request->file('valuation_report')
                 ->store('property-documents');
@@ -2260,7 +2260,7 @@ class MakerController extends Controller
         // Calculate total rental for active leases using base rate year 1
         $totalActiveRental = Lease::whereIn('tenant_id', $tenantIds)
             ->where('status', 'active')
-            ->sum('rental_amount');
+            ->sum('base_rate_year_1');
 
         // Pass calculated metrics to view
         return view('maker.lease.index', compact(
@@ -2308,7 +2308,7 @@ class MakerController extends Controller
     public function LeaseUpdate(Request $request, Lease $lease)
     {
         $validated = $this->LeaseValidate($request);
-        
+
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
             // Delete old file if exists
@@ -2322,7 +2322,7 @@ class MakerController extends Controller
         try {
             $lease->update($validated);
             return redirect()->route('lease-m.show', $lease)->with('success', 'Lease updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error updating lease: ' . $e->getMessage());
         }
     }
@@ -2411,7 +2411,7 @@ class MakerController extends Controller
             if ($siteVisit->attachment && Storage::disk('public')->exists($siteVisit->attachment)) {
                 Storage::disk('public')->delete($siteVisit->attachment);
             }
-            
+
             $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
         }
 
@@ -2518,26 +2518,26 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->ChecklistValidate($request);
-        
+
         // Add the authenticated user's ID as prepared_by
         $validated['prepared_by'] = Auth::user()->name;
-        
+
         // Set default status to 'pending' to match schema default
         $validated['status'] = 'pending';
 
         try {
             // Create the checklist with validated data
             $checklist = Checklist::create($validated);
-            
+
             // Process tenant associations using tenant_ids array
             if ($request->has('tenant_ids') && is_array($request->tenant_ids)) {
                 $pivotData = [];
-                
+
                 // Filter out empty values
-                $tenantIds = array_filter($request->tenant_ids, function($value) {
+                $tenantIds = array_filter($request->tenant_ids, function ($value) {
                     return !empty($value);
                 });
-                
+
                 foreach ($tenantIds as $tenantId) {
                     $pivotData[$tenantId] = [
                         'status' => 'pending',
@@ -2546,7 +2546,7 @@ class MakerController extends Controller
                         'updated_at' => now()
                     ];
                 }
-                
+
                 if (!empty($pivotData)) {
                     $checklist->tenants()->attach($pivotData);
                 }
@@ -2575,10 +2575,10 @@ class MakerController extends Controller
         // Get site visits related to the property
         $property = $checklist->siteVisit->property;
         $siteVisits = SiteVisit::where('property_id', $property->id)
-                            ->where('status', 'active')
-                            ->orderBy('date_visit', 'desc')
-                            ->get();
-        
+            ->where('status', 'active')
+            ->orderBy('date_visit', 'desc')
+            ->get();
+
         // Eager load the property's tenants
         $property->load(['tenants' => function ($query) {
             $query->where('status', 'active');
@@ -2600,11 +2600,11 @@ class MakerController extends Controller
                 ->with('error', 'Cannot update a checklist that has already been processed.');
         }
 
-       
-        
+
+
         // Get the validated data from the separate validation methods
         $validated = $this->ChecklistValidate($request, $checklist);
-        
+
         // Update prepared_by only if it's not already set
         if (empty($checklist->prepared_by)) {
             $validated['prepared_by'] = Auth::id();
@@ -2616,16 +2616,16 @@ class MakerController extends Controller
         try {
             // Update the checklist with validated data
             $checklist->update($validated);
-            
+
             // Process tenant associations using tenant_ids array
             if ($request->has('tenant_ids') && is_array($request->tenant_ids)) {
                 $syncData = [];
-                
+
                 // Filter out empty values
-                $tenantIds = array_filter($request->tenant_ids, function($value) {
+                $tenantIds = array_filter($request->tenant_ids, function ($value) {
                     return !empty($value);
                 });
-                
+
                 foreach ($tenantIds as $tenantId) {
                     // Get existing pivot data if any
                     $existingPivot = $checklist->tenants()
@@ -3208,7 +3208,7 @@ class MakerController extends Controller
         try {
             $siteVisitLog->update($validated);
             return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('Error updating site visit log : ' . $e->getMessage());
         }
     }
@@ -3218,7 +3218,7 @@ class MakerController extends Controller
         try {
             $siteVisitLog->delete();
             return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log deleted successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('Error deleting site visit log : ' . $e->getMessage());
         }
     }
@@ -3269,19 +3269,19 @@ class MakerController extends Controller
     public function ApprovalPropertyUpdate(Request $request, ApprovalProperty $approvalProperty)
     {
         $validated = $this->ApprovalPropertyValidate($request);
-        
+
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
             // Delete old attachment if exists
             if ($approvalProperty->attachment) {
                 Storage::disk('public')->delete($approvalProperty->attachment);
             }
-            
+
             // Store new attachment
             $path = $request->file('attachment')->store('approval-properties', 'public');
             $validated['attachment'] = $path;
         }
-        
+
         try {
             $approvalProperty->update($validated);
             return redirect()
