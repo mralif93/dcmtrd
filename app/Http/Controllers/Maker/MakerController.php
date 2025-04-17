@@ -2518,7 +2518,7 @@ class MakerController extends Controller
     }
 
     // Checklist Module
-    public function ChecklistIndex(Property $property, Request $request)
+    public function ChecklistIndex(Request $request, Property $property)
     {
         // Start with a base query that includes the relationship
         $query = Checklist::with('siteVisit');
@@ -2635,13 +2635,6 @@ class MakerController extends Controller
 
     public function ChecklistEdit(Checklist $checklist)
     {
-        // Check if the user has permission to edit this checklist
-        // Only allow editing if status is pending
-        if ($checklist->status !== 'pending') {
-            return redirect()->route('checklist-m.show', $checklist->id)
-                ->with('error', 'Cannot edit a checklist that has already been processed.');
-        }
-        
         // Get site visits related to the property
         $property = $checklist->siteVisit->property;
         $siteVisits = SiteVisit::where('property_id', $property->id)
@@ -2664,21 +2657,8 @@ class MakerController extends Controller
 
     public function ChecklistUpdate(Request $request, Checklist $checklist)
     {
-        // Check if the user has permission to update this checklist
-        if ($checklist->status !== 'pending') {
-            return redirect()->route('checklist-m.show', $checklist->id)
-                ->with('error', 'Cannot update a checklist that has already been processed.');
-        }
-
-       
-        
         // Get the validated data from the separate validation methods
         $validated = $this->ChecklistValidate($request, $checklist);
-        
-        // Update prepared_by only if it's not already set
-        if (empty($checklist->prepared_by)) {
-            $validated['prepared_by'] = Auth::id();
-        }
         
         // Record the last update
         $validated['updated_at'] = now();
@@ -2715,10 +2695,12 @@ class MakerController extends Controller
                 $checklist->tenants()->detach();
             }
             
-            return redirect()->route('checklist-m.show', $checklist->id)
+            return redirect()
+                ->route('checklist-m.show', $checklist)
                 ->with('success', 'Checklist updated successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()
+            return back()
+                ->withInput()
                 ->with('error', 'Error updating checklist: ' . $e->getMessage());
         }
     }

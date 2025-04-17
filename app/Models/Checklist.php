@@ -25,13 +25,6 @@ class Checklist extends Model
         'development_agreement',
         'other_legal_docs',
         
-        // 2.0 Tenancy Agreement
-        'tenant_name',
-        'tenant_property',
-        'tenancy_approval_date',
-        'tenancy_commencement_date',
-        'tenancy_expiry_date',
-        
         // 3.0 External Area Conditions
         'is_general_cleanliness_satisfied',
         'general_cleanliness_remarks',

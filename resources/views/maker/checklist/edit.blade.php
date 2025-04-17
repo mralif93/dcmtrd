@@ -153,7 +153,7 @@
                                         <div class="tenant-item mb-2 border-b border-gray-200 pb-2">
                                             <div class="flex items-center">
                                                 <div class="flex-grow mr-2">
-                                                    <select name="tenant_ids[]" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                                                    <select name="tenant_ids[]" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                                         <option value="">Select Tenant</option>
                                                         @foreach($property->tenants as $tenant)
                                                             <option value="{{ $tenant->id }}" {{ $checklistTenant->id == $tenant->id ? 'selected' : '' }}>
@@ -176,7 +176,7 @@
                                     <div class="tenant-item mb-2 border-b border-gray-200 pb-2">
                                         <div class="flex items-center">
                                             <div class="flex-grow mr-2">
-                                                <select name="tenant_ids[]" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                                                <select name="tenant_ids[]" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                                     <option value="">Select Tenant</option>
                                                     @foreach($property->tenants as $tenant)
                                                         <option value="{{ $tenant->id }}">
