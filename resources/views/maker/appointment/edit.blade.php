@@ -100,6 +100,15 @@
                                     @enderror
                                 </div>
 
+                                <!-- Remarks -->
+                                <div class="col-span-2">
+                                    <label for="remarks" class="block text-sm font-medium text-gray-500">Remarks</label>
+                                    <textarea id="remarks" name="remarks" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks', $appointment->remarks) }}</textarea>
+                                    @error('remarks')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
                                 <!-- Current Attachment -->
                                 @if($appointment->attachment)
                                     <div class="col-span-2">
@@ -114,15 +123,6 @@
                                         </div>
                                     </div>
                                 @endif
-
-                                <!-- Remarks -->
-                                <div class="col-span-2">
-                                    <label for="remarks" class="block text-sm font-medium text-gray-500">Remarks</label>
-                                    <textarea id="remarks" name="remarks" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks', $appointment->remarks) }}</textarea>
-                                    @error('remarks')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
 
                                 <!-- New Attachment -->
                                 <div class="col-span-2">

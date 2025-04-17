@@ -2907,6 +2907,10 @@ class MakerController extends Controller
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
 
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('appointments', 'public');
+        }
+
         try {
             $appointment = Appointment::create($validated);
             
@@ -2935,6 +2939,15 @@ class MakerController extends Controller
     {
         // Validate the request
         $validated = $this->AppointmentValidate($request, $appointment);
+
+        if ($request->hasFile('attachment')) {
+            // delete exist
+            if ($appointment->attachment && Storage::disk('public')->exists($appointment->attachment)) {
+                Storage::disk('public')->delete($appointment->attachment);
+            }
+            
+            $validated['attachment'] = $request->file('attachment')->store('appointments', 'public');
+        }
 
         try {
             $appointment->update($validated);
