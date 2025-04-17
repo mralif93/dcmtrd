@@ -48,8 +48,17 @@
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Date of Approval -->
+                                <div>
+                                    <label for="date_of_approval" class="block text-sm font-medium text-gray-500">Date of Approval</label>
+                                    <input id="date_of_approval" type="date" name="date_of_approval" value="{{ old('date_of_approval', $appointment->date_of_approval->format('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    @error('date_of_approval')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
                                 <!-- Portfolio Selection -->
-                                <div class="col-span-2">
+                                <div>
                                     <label for="portfolio_id" class="block text-sm font-medium text-gray-500">Portfolio</label>
                                     <select id="portfolio_id" name="portfolio_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                         <option value="">Select a Portfolio</option>
@@ -65,7 +74,7 @@
                                 </div>
 
                                 <!-- Party Name -->
-                                <div>
+                                <div class="col-span-2">
                                     <label for="party_name" class="block text-sm font-medium text-gray-500">Party Name</label>
                                     <input id="party_name" type="text" name="party_name" value="{{ old('party_name', $appointment->party_name) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     @error('party_name')
@@ -73,56 +82,20 @@
                                     @enderror
                                 </div>
 
-                                <!-- Date of Approval -->
-                                <div>
-                                    <label for="date_of_approval" class="block text-sm font-medium text-gray-500">Date of Approval</label>
-                                    <input id="date_of_approval" type="date" name="date_of_approval" value="{{ old('date_of_approval', $appointment->date_of_approval->format('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                                    @error('date_of_approval')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Appointment Title -->
+                                <!-- Description -->
                                 <div class="col-span-2">
-                                    <label for="appointment_title" class="block text-sm font-medium text-gray-500">Appointment Title</label>
-                                    <input id="appointment_title" type="text" name="appointment_title" value="{{ old('appointment_title', $appointment->appointment_title) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                                    @error('appointment_title')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Appointment Description -->
-                                <div class="col-span-2">
-                                    <label for="appointment_description" class="block text-sm font-medium text-gray-500">Appointment Description</label>
-                                    <textarea id="appointment_description" name="appointment_description" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>{{ old('appointment_description', $appointment->appointment_description) }}</textarea>
-                                    @error('appointment_description')
+                                    <label for="description" class="block text-sm font-medium text-gray-500">Description</label>
+                                    <textarea id="description" name="description" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description', $appointment->description) }}</textarea>
+                                    @error('description')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <!-- Estimated Amount -->
-                                <div>
+                                <div class="col-span-2">
                                     <label for="estimated_amount" class="block text-sm font-medium text-gray-500">Estimated Amount</label>
                                     <input id="estimated_amount" type="number" step="0.01" name="estimated_amount" value="{{ old('estimated_amount', $appointment->estimated_amount) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('estimated_amount')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Year -->
-                                <div>
-                                    <label for="year" class="block text-sm font-medium text-gray-500">Year</label>
-                                    <input id="year" type="number" name="year" value="{{ old('year', $appointment->year) }}" min="2000" max="{{ date('Y') + 5 }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('year')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Reference Number -->
-                                <div>
-                                    <label for="reference_no" class="block text-sm font-medium text-gray-500">Reference Number</label>
-                                    <input id="reference_no" type="text" name="reference_no" value="{{ old('reference_no', $appointment->reference_no) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('reference_no')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -142,21 +115,21 @@
                                     </div>
                                 @endif
 
+                                <!-- Remarks -->
+                                <div class="col-span-2">
+                                    <label for="remarks" class="block text-sm font-medium text-gray-500">Remarks</label>
+                                    <textarea id="remarks" name="remarks" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks', $appointment->remarks) }}</textarea>
+                                    @error('remarks')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
                                 <!-- New Attachment -->
                                 <div class="col-span-2">
                                     <label for="attachment" class="block text-sm font-medium text-gray-500">Update Attachment</label>
                                     <input id="attachment" type="file" name="attachment" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-6 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                                     <p class="mt-1 text-sm text-gray-500">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG (max 10MB)</p>
                                     @error('attachment')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Remarks -->
-                                <div class="col-span-2">
-                                    <label for="remarks" class="block text-sm font-medium text-gray-500">Remarks</label>
-                                    <textarea id="remarks" name="remarks" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks', $appointment->remarks) }}</textarea>
-                                    @error('remarks')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>

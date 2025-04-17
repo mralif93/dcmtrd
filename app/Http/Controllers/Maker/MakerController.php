@@ -1739,14 +1739,35 @@ class MakerController extends Controller
     public function PortfolioStore(Request $request)
     {
         $validated = $this->validatePortfolio($request);
-
-        // Add prepared_by from authenticated user and set status to pending
+        
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
 
-        $portfolio = Portfolio::create($validated);
+        // Handle file uploads
+        if ($request->hasFile('annual_report')) {
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+        }
 
-        return redirect()->route('maker.dashboard', ['section' => 'reits'])->with('success', 'Portfolio created successfully');
+        if ($request->hasFile('trust_deed_document')) {
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+        }
+
+        if ($request->hasFile('insurance_document')) {
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+        }
+
+        if ($request->hasFile('valuation_report')) {
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+        }
+
+        try {
+            $portfolio = Portfolio::create($validated);
+            return redirect()
+                ->route('maker.dashboard', ['section' => 'reits'])->with('success', 'Portfolio created successfully');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error creating portfolio: ' . $e->getMessage());
+        }
     }
 
     public function PortfolioEdit(Portfolio $portfolio)
@@ -1759,9 +1780,56 @@ class MakerController extends Controller
     {
         $validated = $this->validatePortfolio($request, $portfolio);
 
-        $portfolio->update($validated);
+        // Handle file uploads
+        if ($request->hasFile('annual_report')) {
+            // Remove old file if it exists
+            if ($portfolio->annual_report) {
+                Storage::delete($portfolio->annual_report);
+            }
 
-        return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio updated successfully');
+            // Store the new file and get its path
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+        }
+
+        if ($request->hasFile('trust_deed_document')) {
+            // Remove old file if it exists
+            if ($portfolio->trust_deed_document) {
+                Storage::delete($portfolio->trust_deed_document);
+            }
+
+            // Store the new file and get its path
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+        }
+
+        if ($request->hasFile('insurance_document')) {
+            // Remove old file if it exists
+            if ($portfolio->insurance_document) {
+                Storage::delete($portfolio->insurance_document);
+            }
+
+            // Store the new file and get its path
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+        }
+
+        if ($request->hasFile('valuation_report')) {
+            // Remove old file if it exists
+            if ($portfolio->valuation_report) {
+                Storage::delete($portfolio->valuation_report);
+            }
+
+            // Store the new file and get its path
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+        }
+
+        try {
+            $portfolio->update($validated);
+            return redirect()
+                ->route('portfolio-m.show', $portfolio)
+                ->with('success', 'Portfolio updated successfully');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error updating portfolio: ' . $e->getMessage());
+        }
     }
 
     public function PortfolioShow(Portfolio $portfolio)
@@ -1781,7 +1849,8 @@ class MakerController extends Controller
                 ->route('maker.dashboard', ['section' => 'reits'])
                 ->with('success', 'Portfolio submitted for approval successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
     }
 
@@ -1858,10 +1927,13 @@ class MakerController extends Controller
                 // Attach properties to the financial
                 $financial->properties()->attach($propertyData);
             }
-
-            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial created successfully.');
+            
+            return redirect()
+                ->route('property-m.index', $financial->portfolio)
+                ->with('success', 'Financial created successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error creating financial: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error creating financial: ' . $e->getMessage());
         }
     }
 
@@ -1914,10 +1986,13 @@ class MakerController extends Controller
 
             // Sync will remove any properties that are not in the request
             $financial->properties()->sync($syncData);
-
-            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial updated successfully.');
+            
+            return redirect()
+                ->route('property-m.index', $financial->portfolio)
+                ->with('success', 'Financial updated successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error updating financial: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error updating financial: ' . $e->getMessage());
         }
     }
 
@@ -2121,10 +2196,12 @@ class MakerController extends Controller
         }
         try {
             $property->update($validated);
-            return redirect()->route('property-m.index', $property->portfolio)
+            return redirect()
+                ->route('property-m.index', $property->portfolio)
                 ->with('success', 'Property updated successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()
+            return back()
+                ->withInput()
                 ->with('error', 'Error updating property: ' . $e->getMessage());
         }
     }
@@ -2192,9 +2269,13 @@ class MakerController extends Controller
 
         try {
             $tenant = Tenant::create($validated);
-            return redirect()->route('tenant-m.index', $tenant->property)->with('success', 'Tenant created successfully.');
-        } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error creating tenant: ' . $e->getMessage());
+            return redirect()
+                ->route('tenant-m.index', $tenant->property)
+                ->with('success', 'Tenant created successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating tenant: ' . $e->getMessage());
         }
     }
 
@@ -2210,8 +2291,9 @@ class MakerController extends Controller
 
         try {
             $tenant->update($validated);
-            return redirect()->route('tenant-m.index', $tenant->property)->with('success', 'Tenant updated successfully.');
-        } catch (\Exception $e) {
+            return redirect()
+                ->route('tenant-m.index', $tenant->property)->with('success', 'Tenant updated successfully.');
+        } catch(\Exception $e) {
             return back()->withInput()->with('error', 'Error updating tenant: ' . $e->getMessage());
         }
     }
@@ -2839,14 +2921,22 @@ class MakerController extends Controller
     public function AppointmentStore(Request $request)
     {
         // Validate the request
-        $validatedData = $this->AppointmentValidate($request);
+        $validated = $this->AppointmentValidate($request);
 
-        // Create the appointment
-        $appointment = Appointment::create($validatedData);
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
 
-        // Redirect with success message
-        return redirect()->route('appointment-m.show', $appointment)
-            ->with('success', 'Appointment created successfully.');
+        try {
+            $appointment = Appointment::create($validatedData);
+            
+            return redirect()
+                ->route('appointment-m.show', $appointment)
+                ->with('success', 'Appointment created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error checking existing appointment: ' . $e->getMessage());
+        }
     }
 
     public function AppointmentEdit(Appointment $appointment)
@@ -2863,20 +2953,25 @@ class MakerController extends Controller
     public function AppointmentUpdate(Request $request, Appointment $appointment)
     {
         // Validate the request
-        $validatedData = $this->AppointmentValidate($request, $appointment);
+        $validated = $this->AppointmentValidate($request, $appointment);
 
-        // Update the appointment
-        $appointment->update($validatedData);
-
-        // Redirect with success message
-        return redirect()->route('appointment-m.show', $appointment)
-            ->with('success', 'Appointment updated successfully.');
+        try {
+            $appointment->update($validated);
+            
+            return redirect()
+                ->route('appointment-m.show', $appointment)
+                ->with('success', 'Appointment updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error checking existing appointment: ' . $e->getMessage());
+        }
     }
 
     public function AppointmentShow(Appointment $appointment)
     {
         // Load related portfolio
-        $appointment->load('portfolio', 'preparedBy', 'verifiedBy');
+        $appointment->load('portfolio');
 
         return view('maker.appointment.show', [
             'appointment' => $appointment
@@ -2890,8 +2985,7 @@ class MakerController extends Controller
             'portfolio_id' => 'required|exists:portfolios,id',
             'party_name' => 'required|string|max:255',
             'date_of_approval' => 'required|date',
-            'appointment_title' => 'required|string|max:255',
-            'appointment_description' => 'required|string',
+            'description' => 'required|string',
             'estimated_amount' => 'nullable|numeric|min:0',
             'remarks' => 'nullable|string',
             'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
@@ -2988,14 +3082,26 @@ class MakerController extends Controller
     public function ApprovalFormStore(Request $request)
     {
         // Validate the request
-        $validatedData = $this->ApprovalFormValidate($request);
+        $validated = $this->ApprovalFormValidate($request);
 
-        // Create the approval form
-        $approvalForm = ApprovalForm::create($validatedData);
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
 
-        // Redirect with success message
-        return redirect()->route('approval-form-m.show', $approvalForm)
-            ->with('success', 'Approval Form created successfully.');
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+        }
+
+        try {
+            $approvalForm = ApprovalForm::create($validated);
+
+            return redirect()
+                ->route('approval-form-m.show', $approvalForm)
+                ->with('success', 'Approval Form created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error checking existing approval form: ' . $e->getMessage());
+        }
     }
 
     public function ApprovalFormEdit(ApprovalForm $approvalForm)
@@ -3015,15 +3121,28 @@ class MakerController extends Controller
 
     public function ApprovalFormUpdate(Request $request, ApprovalForm $approvalForm)
     {
-        // Validate the request
-        $validatedData = $this->ApprovalFormValidate($request, $approvalForm);
+        $validated = $this->ApprovalFormValidate($request, $approvalForm);
 
-        // Update the approval form
-        $approvalForm->update($validatedData);
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            // Delete old attachment if exists
+            if ($approvalForm->attachment) {
+                Storage::disk('public')->delete($approvalForm->attachment);
+            }
 
-        // Redirect with success message
-        return redirect()->route('approval-form-m.show', $approvalForm)
-            ->with('success', 'Approval Form updated successfully.');
+            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+        }
+
+        try {
+            $approvalForm->update($validated);
+
+            return redirect()
+                ->route('approval-form-m.show', $approvalForm)
+                ->with('success', 'Approval Form updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error checking existing approval form: ' . $e->getMessage());
+        }
     }
 
     public function ApprovalFormShow(ApprovalForm $approvalForm)
@@ -3079,22 +3198,6 @@ class MakerController extends Controller
         return $validatedData;
     }
 
-    // Optional: Method to verify/approve an approval form
-    public function ApprovalFormVerify(ApprovalForm $approvalForm)
-    {
-        // Check user permissions
-        $this->authorize('verify', $approvalForm);
-
-        $approvalForm->update([
-            'status' => 'approved',
-            'verified_by' => auth()->id(),
-            'approval_datetime' => now()
-        ]);
-
-        return redirect()->route('approval-form-m.show', $approvalForm)
-            ->with('success', 'Approval Form verified successfully.');
-    }
-
     // Optional: Method to download attachment
     public function ApprovalFormDownloadAttachment(ApprovalForm $approvalForm)
     {
@@ -3146,13 +3249,30 @@ class MakerController extends Controller
         $validated = $this->SiteVisitLogValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'status';
+        $validated['status'] = 'pending';
+
+        // Handle file upload if present
+        if ($request->hasFile('report_attachment')) {
+            $path = $request->file('report_attachment')->store('site-visit-logs', 'public');
+            $validated['report_attachment'] = $path;
+        }
+
+        // Handle follow-up required
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = true;
+        } else {
+            $validated['follow_up_required'] = false;
+        }
 
         try {
             SiteVisitLog::create($validated);
-            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log created successfully.');
-        } catch (\Exception $e) {
-            return back()->with('Error creating site visit log : ' . $e->getMessage());
+            
+            return redirect()
+                ->route('site-visit-log-m.index')
+                ->with('success', 'Activity Diary created successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->with('Error creating activity diary : ' . $e->getMessage());
         }
     }
 
@@ -3166,11 +3286,27 @@ class MakerController extends Controller
     {
         $validated = $this->SiteVisitLogValidate($request);
 
+        // Handle file upload if present
+        if ($request->hasFile('report_attachment')) {
+            $path = $request->file('report_attachment')->store('site-visit-logs', 'public');
+            $validated['report_attachment'] = $path;
+        }
+
+        // Handle follow-up required
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = true;
+        } else {
+            $validated['follow_up_required'] = false;
+        }
+
         try {
             $siteVisitLog->update($validated);
-            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log updated successfully.');
-        } catch (\Exception $e) {
-            return back()->with('Error updating site visit log : ' . $e->getMessage());
+            return redirect()
+                ->route('site-visit-log-m.index')
+                ->with('success', 'Activity Diary updated successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->with('Error updating activity diary : ' . $e->getMessage());
         }
     }
 
@@ -3183,44 +3319,16 @@ class MakerController extends Controller
     {
         return $request->validate([
             'site_visit_id' => 'required|exists:site_visits,id',
-            'no' => 'required|integer',
             'visitation_date' => 'required|date',
-            'purpose' => 'required|string',
+            'purpose' => 'nullable|string',
             'report_submission_date' => 'nullable|date',
-            'report_attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'report_attachment' => 'nullable|file|mimes:pdf|max:10240',
             'follow_up_required' => 'boolean',
             'remarks' => 'nullable|string',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'approval_datetime' => 'nullable|date',
         ]);
-    }
-
-    public function SiteVisitLogFollowUp(SiteVisitLog $siteVisitLog)
-    {
-        return view('maker.site-visit-log.follow-up', compact('siteVisitLog'));
-    }
-
-    public function SiteVisitLogFollowUpStore(Request $request, SiteVisitLog $siteVisitLog)
-    {
-        $validated = $request->validate([
-            'follow_up_date' => 'required|date',
-            'follow_up_remarks' => 'nullable|string',
-        ]);
-
-        try {
-            $siteVisitLog->update($validated);
-            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log updated successfully.');
-        } catch (\Exception $e) {
-            return back()->with('Error updating site visit log : ' . $e->getMessage());
-        }
-    }
-
-    public function SiteVisitLogDestroy(SiteVisitLog $siteVisitLog)
-    {
-        try {
-            $siteVisitLog->delete();
-            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log deleted successfully.');
-        } catch (\Exception $e) {
-            return back()->with('Error deleting site visit log : ' . $e->getMessage());
-        }
     }
 
     // Module Approval Property
@@ -3242,7 +3350,7 @@ class MakerController extends Controller
 
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
-        $validated['portfolio_id'] = $request->input('portfolio_id');
+        
 
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('approval-properties', 'public');
@@ -3251,6 +3359,7 @@ class MakerController extends Controller
 
         try {
             ApprovalProperty::create($validated);
+
             return redirect()
                 ->route('approval-property-m.index')
                 ->with('success', 'Property created successfully.');
@@ -3284,6 +3393,7 @@ class MakerController extends Controller
 
         try {
             $approvalProperty->update($validated);
+
             return redirect()
                 ->route('approval-property-m.index')
                 ->with('success', 'Property approval updated successfully.');

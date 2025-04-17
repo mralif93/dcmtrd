@@ -48,7 +48,7 @@
                         <div class="px-4 py-5 sm:px-6">
                             <h4 class="text-sm font-medium text-gray-500 uppercase mb-2">Property</h4>
                             <p class="text-xl font-bold text-gray-800">{{ $property->name ?? 'N/A' }}</p>
-                            <p class="text-sm text-gray-600 mt-1">{{ $property->address ?? 'N/A' }}</p>
+                            <p class="text-sm text-gray-600 mt-1">{{ $property->city ?? 'N/A' }}</p>
                         </div>
                         
                         <div class="px-4 py-5 sm:px-6">
@@ -155,7 +155,7 @@
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">{{ $checklist->siteVisit->property->name }}</div>
-                                        <div class="text-xs text-gray-500">{{ $checklist->siteVisit->property->address ?? 'No location' }}</div>
+                                        <div class="text-xs text-gray-500">{{ $checklist->siteVisit->property->city ?? 'No location' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $checklist->tenant_name ?? 'N/A' }}</div>
