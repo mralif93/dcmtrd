@@ -2902,14 +2902,19 @@ class MakerController extends Controller
     public function AppointmentStore(Request $request)
     {
         // Validate the request
-        $validatedData = $this->AppointmentValidate($request);
+        $validated = $this->AppointmentValidate($request);
 
-        // Create the appointment
-        $appointment = Appointment::create($validatedData);
-
-        // Redirect with success message
-        return redirect()->route('appointment-m.show', $appointment)
-            ->with('success', 'Appointment created successfully.');
+        try {
+            $appointment = Appointment::create($validatedData);
+            
+            return redirect()
+                ->route('appointment-m.show', $appointment)
+                ->with('success', 'Appointment created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error checking existing appointment: ' . $e->getMessage());
+        }
     }
 
     public function AppointmentEdit(Appointment $appointment)
@@ -2926,14 +2931,19 @@ class MakerController extends Controller
     public function AppointmentUpdate(Request $request, Appointment $appointment)
     {
         // Validate the request
-        $validatedData = $this->AppointmentValidate($request, $appointment);
+        $validated = $this->AppointmentValidate($request, $appointment);
 
-        // Update the appointment
-        $appointment->update($validatedData);
-
-        // Redirect with success message
-        return redirect()->route('appointment-m.show', $appointment)
-            ->with('success', 'Appointment updated successfully.');
+        try {
+            $appointment->update($validated);
+            
+            return redirect()
+                ->route('appointment-m.show', $appointment)
+                ->with('success', 'Appointment updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error checking existing appointment: ' . $e->getMessage());
+        }
     }
 
     public function AppointmentShow(Appointment $appointment)
