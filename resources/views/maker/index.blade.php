@@ -50,7 +50,7 @@
                         </a>
 
                         <!-- Reports -->
-                        <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <a href="{{ route('dcmt-reports.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Reports') }}
                         </a>
                     </div>
@@ -138,26 +138,15 @@
                     :href="route('activity-diary-m.index')"
                     color="bg-blue-100"
                 />
-
-                <div class="hidden">
-                <!-- Audit Log -->
-                <x-dashboard-card
-                    title="Audit Log"
-                    icon="clipboard-list"
-                    :count="$auditLogCount ?? 0"
-                    href="#"
-                    color="bg-blue-100"
-                />
                 
                 <!-- Reports -->
                 <x-dashboard-card
                     title="Reports"
                     icon="document"
                     :count="$reportsCount ?? 0"
-                    href="#"
+                    :href="route('dcmt-reports.index')"
                     color="bg-blue-100"
                 />
-                </div>
             </div>
 
             <!-- Issuers -->

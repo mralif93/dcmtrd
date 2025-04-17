@@ -393,6 +393,12 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     // Dashboard
     Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
 
+    Route::prefix('/maker/dcmt')->name('dcmt-reports.')->group(function () {
+        Route::get('/reports', [DcmtReportController::class, 'index'])->name('index');
+        Route::get('/cb-reports', [DcmtReportController::class, 'cbReports'])->name('cb-reports');
+        Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports');
+    });
+
     // Issuer Module
     Route::get('maker/issuer/create', [MakerController::class, 'IssuerCreate'])->name('issuer-m.create')->middleware('permission:DCMTRD');
     Route::post('maker/issuer/create', [MakerController::class, 'IssuerStore'])->name('issuer-m.store')->middleware('permission:DCMTRD');
