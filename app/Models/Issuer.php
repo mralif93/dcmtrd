@@ -32,6 +32,9 @@ class Issuer extends Model implements Auditable
         'prepared_by',
         'verified_by',
         'approval_datetime',
+        'pic_name', 
+        'phone_no', 
+        'address',  
         'remarks',
     ];
 

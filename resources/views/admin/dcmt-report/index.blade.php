@@ -41,7 +41,7 @@
                 </a>
 
                 <!-- Trust Master Report -->
-                <a  class="flex flex-col p-6 transition-all duration-300 transform shadow-xl bg-gradient-to-r from-green-200 to-green-300 rounded-xl hover:scale-105 hover:shadow-2xl">
+                <a href="{{ route('dcmt-reports.trustee-reports') }}" class="flex flex-col p-6 transition-all duration-300 transform shadow-xl bg-gradient-to-r from-green-200 to-green-300 rounded-xl hover:scale-105 hover:shadow-2xl">
                     <div class="flex items-center justify-between">
                         <div class="p-4 text-green-600 bg-white rounded-full shadow-md">
                             <svg class="w-14 h-14" fill="currentColor" viewBox="0 0 24 24">

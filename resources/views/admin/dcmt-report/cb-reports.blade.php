@@ -25,9 +25,9 @@
 
             <!-- Export Buttons -->
             <div class="flex justify-end mb-6 space-x-2">
-                <a class="px-6 py-2 text-sm font-medium text-white transition-all duration-200 ease-in-out bg-gray-700 rounded-lg hover:bg-gray-800">Export CSV</a>
-                <a class="px-6 py-2 text-sm font-medium text-white transition-all duration-200 ease-in-out bg-green-600 rounded-lg hover:bg-green-700">Export Excel</a>
-                <a class="px-6 py-2 text-sm font-medium text-white transition-all duration-200 ease-in-out bg-blue-600 rounded-lg hover:bg-blue-700">Export PDF</a>
+                <a
+                    class="px-6 py-2 text-sm font-medium text-white transition-all duration-200 ease-in-out bg-gray-700 rounded-lg hover:bg-gray-800">Export
+                    CSV</a>
             </div>
 
             <div class="overflow-hidden bg-white rounded-lg shadow-lg">
@@ -40,6 +40,7 @@
                                 <th class="px-6 py-3 text-left text-gray-500">Bond</th>
                                 <th class="px-6 py-3 text-left text-gray-500">Facility Code</th>
                                 <th class="px-6 py-3 text-left text-gray-500">Issuer Short Name</th>
+                                <th class="px-6 py-3 text-left text-gray-500">Name</th>
                                 <th class="px-6 py-3 text-left text-gray-500">Facility Name</th>
                                 <th class="px-6 py-3 text-left text-gray-500">Debenture/Loan</th>
                                 <th class="px-6 py-3 text-left text-gray-500">Trustee Role1</th>
@@ -60,59 +61,120 @@
                             @foreach ($reports as $bond)
                                 <tr class="transition-all duration-150 hover:bg-gray-100">
                                     <td class="px-6 py-4 text-sm text-gray-900">{{ $index++ }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-900">{{ $bond->bond_sukuk_name }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900">{{ $bond->issuer->issuer_short_name }}
+                                    </td>
                                     <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->facility_code }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->issuer->issuer_short_name ?? '-' }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->sub_name }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ $bond->bonk_sukuk_name ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ $bond->issuer->issuer_short_name  }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->facility?->facility_name }}
+                                    </td>
                                     <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->issuer->debenture }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->issuer->trustee_role_1 }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->issuer->trustee_role_2 }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ number_format($bond->amount_issued, 2) }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ number_format($bond->amount_outstanding, 2) }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->coupon_rate }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->coupon_type }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->issuer->trust_deed_date?->format('d/m/Y') }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->issue_date?->format('d/m/Y') }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->maturity_date?->format('d/m/Y') }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->created_at?->format('d/m/Y H:i') }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->updated_at?->format('d/m/Y H:i') }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $bond->issuer->trustee_role_2 }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ number_format($bond->facility?->facility_amount, 2) }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ number_format($bond->facility?->amount_outstanding, 2) }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ $bond->facility?->trusteeFees->first()?->trustee_fee_amount_1 }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ $bond->facility?->trusteeFees->first()?->trustee_fee_amount_2 }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ $bond->issuer->trust_deed_date?->format('d/m/Y') }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ $bond->issue_date?->format('d/m/Y') }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ $bond->facility?->maturity_date?->format('d/m/Y') }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ $bond->created_at?->format('d/m/Y H:i') }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ $bond->updated_at?->format('d/m/Y H:i') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-            
+
                 <!-- Summary Row (Sticky to Bottom) -->
                 <div class="sticky bottom-0 z-10 px-6 py-4 bg-gray-100 border-t shadow-inner">
-                    @php
-                        $totalNominalValue = $reports->sum(fn($bond) => (float) $bond->amount_issued);
-                        $totalOutstandingSize = $reports->sum(fn($bond) => (float) $bond->amount_outstanding);
-                        $totalTrusteeFeeAmount = $reports->sum(fn($bond) => (float) $bond->coupon_rate);
-                        $totalTrusteeFeeAmount2 = $reports->sum(fn($bond) => (float) $bond->coupon_type);
-                    @endphp
-                
                     <div class="grid grid-cols-1 gap-4 text-sm font-semibold text-center text-gray-700 md:grid-cols-4">
                         <div>
                             <span>Total Nominal Value</span><br>
-                            <span class="text-lg font-bold text-gray-900">{{ number_format($totalNominalValue, 2) }}</span>
+                            <span class="text-lg font-bold text-gray-900">RM
+                                {{ number_format($totalNominalValue, 2) }}</span>
                         </div>
                         <div>
                             <span>Total Outstanding Size</span><br>
-                            <span class="text-lg font-bold text-gray-900">{{ number_format($totalOutstandingSize, 2) }}</span>
+                            <span
+                                class="text-lg font-bold text-gray-900">{{ number_format($totalOutstandingSize, 2) }}</span>
                         </div>
                         <div>
-                            <span>Total Trustee Fee Amount</span><br>
-                            <span class="text-lg font-bold text-gray-900">{{ number_format($totalTrusteeFeeAmount, 2) }}</span>
+                            <span>Total Trustee Fee Amount 1</span><br>
+                            <span
+                                class="text-lg font-bold text-gray-900">{{ number_format($totalTrusteeFeeAmount1, 2) }}</span>
                         </div>
                         <div>
-                            <span>Total Trustee Fee Amount2</span><br>
-                            <span class="text-lg font-bold text-gray-900">{{ number_format($totalTrusteeFeeAmount2, 2) }}</span>
+                            <span>Total Trustee Fee Amount 2</span><br>
+                            <span
+                                class="text-lg font-bold text-gray-900">{{ number_format($totalTrusteeFeeAmount2, 2) }}</span>
                         </div>
                     </div>
                 </div>
-                
-                
-            
+
+                @php
+                    $bondTotals = $reports->filter(fn($b) => $b->issuer->debenture === 'Debenture');
+                    $loanTotals = $reports->filter(fn($b) => $b->issuer->debenture === 'Loan');
+
+                    $bondNominal = $bondTotals->sum(fn($b) => (float) $b->facility?->facility_amount);
+                    $bondOutstanding = $bondTotals->sum(fn($b) => (float) $b->amount_outstanding);
+                    $bondTrusteeFee = $bondTotals->sum(
+                        fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1,
+                    );
+
+                    $loanNominal = $loanTotals->sum(fn($b) => (float) $b->facility?->facility_amount);
+                    $loanOutstanding = $loanTotals->sum(fn($b) => (float) $b->amount_outstanding);
+                    $loanTrusteeFee = $loanTotals->sum(
+                        fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1,
+                    );
+                @endphp
+
+
+                <div class="px-6 py-4 bg-white border-t shadow-inner">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm text-gray-700 table-auto">
+                            <thead>
+                                <tr class="text-xs text-left text-gray-600 uppercase">
+                                    <th class="px-4 py-2">Type</th>
+                                    <th class="px-4 py-2">Nominal Value (RM)</th>
+                                    <th class="px-4 py-2">Outstanding Size (RM)</th>
+                                    <th class="px-4 py-2">Trustee Fee (RM)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-gray-50">
+                                    <td class="px-4 py-2 font-semibold">BOND TOTAL</td>
+                                    <td class="px-4 py-2">{{ number_format($bondNominal, 2) }}</td>
+                                    <td class="px-4 py-2">{{ number_format($bondOutstanding, 2) }}</td>
+                                    <td class="px-4 py-2">{{ number_format($bondTrusteeFee, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 font-semibold">LOAN TOTAL</td>
+                                    <td class="px-4 py-2">{{ number_format($loanNominal, 2) }}</td>
+                                    <td class="px-4 py-2">{{ number_format($loanOutstanding, 2) }}</td>
+                                    <td class="px-4 py-2">{{ number_format($loanTrusteeFee, 2) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+
                 <!-- Pagination Links -->
                 <div class="px-4 py-3 bg-white border-t border-gray-200">
                     {{ $reports->links() }}
