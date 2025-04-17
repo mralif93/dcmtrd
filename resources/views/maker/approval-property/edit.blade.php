@@ -37,13 +37,6 @@
                         </div>
                     @endif
 
-                    {{-- Global Error Message --}}
-                    @if (session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-
                     <form method="POST" action="{{ route('approval-property-m.update', $approvalProperty) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')

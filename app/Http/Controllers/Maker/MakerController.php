@@ -2908,7 +2908,7 @@ class MakerController extends Controller
         $validated['status'] = 'pending';
 
         try {
-            $appointment = Appointment::create($validatedData);
+            $appointment = Appointment::create($validated);
             
             return redirect()
                 ->route('appointment-m.show', $appointment)
