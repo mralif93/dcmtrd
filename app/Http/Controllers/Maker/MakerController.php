@@ -2904,6 +2904,9 @@ class MakerController extends Controller
         // Validate the request
         $validated = $this->AppointmentValidate($request);
 
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
         try {
             $appointment = Appointment::create($validatedData);
             
