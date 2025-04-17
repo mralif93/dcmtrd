@@ -3188,8 +3188,8 @@ class MakerController extends Controller
     // Module Approval Property
     public function ApprovalPropertyIndex(Request $request)
     {
-        $properties = ApprovalProperty::where('status', 'pending')->paginate(10);
-        return view('maker.approval-property.index', compact('properties'));
+        $approvalProperties = ApprovalProperty::where('status', 'pending')->paginate(10);
+        return view('maker.approval-property.index', compact('approvalProperties'));
     }
 
     public function ApprovalPropertyCreate()
@@ -3204,31 +3204,54 @@ class MakerController extends Controller
 
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
+        $validated['portfolio_id'] = $request->input('portfolio_id');
+
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('approval-properties', 'public');
+            $validated['attachment'] = $path;
+        }
 
         try {
-            Property::create($request->all());
-            return redirect()->route('approval-property-m.index')
-                            ->with('success', 'Property created successfully.');
+            ApprovalProperty::create($validated);
+            return redirect()
+                ->route('approval-property-m.index')
+                ->with('success', 'Property created successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error creating property: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error creating property: ' . $e->getMessage());
         }
     }
 
     public function ApprovalPropertyEdit(ApprovalProperty $approvalProperty)
     {
-        return view('maker.approval-property.edit', compact('approvalProperty'));
+        $properties = Property::where('status', 'active')->paginate(10);
+        return view('maker.approval-property.edit', compact('approvalProperty', 'properties'));
     }
 
     public function ApprovalPropertyUpdate(Request $request, ApprovalProperty $approvalProperty)
     {
         $validated = $this->ApprovalPropertyValidate($request);
         
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            // Delete old attachment if exists
+            if ($approvalProperty->attachment) {
+                Storage::disk('public')->delete($approvalProperty->attachment);
+            }
+            
+            // Store new attachment
+            $path = $request->file('attachment')->store('approval-properties', 'public');
+            $validated['attachment'] = $path;
+        }
+        
         try {
-            $property->update($validated);
-            return redirect()->route('approval-property-m.index')
-                            ->with('success', 'Property updated successfully.');
+            $approvalProperty->update($validated);
+            return redirect()
+                ->route('approval-property-m.index')
+                ->with('success', 'Property approval updated successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error updating property: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error updating property approval: ' . $e->getMessage());
         }
     }
 
@@ -3241,8 +3264,11 @@ class MakerController extends Controller
     {
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
-            'approval_status' => 'required|in:' . implode(',', array_keys(ApprovalProperty::APPROVAL_STATUSES)),
-            'approval_remarks' => 'nullable|string',
+            'date_of_approval' => 'required|date',
+            'description' => 'required|string',
+            'estimated_amount' => 'nullable|numeric|min:0',
+            'remarks' => 'nullable|string',
+            'attachment' => 'nullable|file|max:10240',
         ]);
     }
 }

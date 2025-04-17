@@ -37,14 +37,6 @@
                         </div>
                     @endif
 
-
-                    {{-- Global Error Message --}}
-                    @if (session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-
                     <form action="{{ route('property-m.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 

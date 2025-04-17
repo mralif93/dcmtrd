@@ -31,7 +31,7 @@
                 <!-- Header Section -->
                 <div class="px-4 py-5 sm:px-6">
                     <h3 class="text-lg font-medium text-gray-900">Property Approval for: 
-                        <a href="{{ route('property.show', $approvalProperty->property->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                        <a href="{{ route('property-m.show', $approvalProperty->property) }}" class="text-indigo-600 hover:text-indigo-900">
                             {{ $approvalProperty->property->name }}
                         </a>
                     </h3>
