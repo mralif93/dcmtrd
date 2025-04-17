@@ -2421,6 +2421,10 @@ class MakerController extends Controller
             'building_manager' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'status' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'approval_datetime' => 'nullable|date',
         ]);
     }
 
