@@ -3063,14 +3063,26 @@ class MakerController extends Controller
     public function ApprovalFormStore(Request $request)
     {
         // Validate the request
-        $validatedData = $this->ApprovalFormValidate($request);
+        $validated = $this->ApprovalFormValidate($request);
 
-        // Create the approval form
-        $approvalForm = ApprovalForm::create($validatedData);
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
 
-        // Redirect with success message
-        return redirect()->route('approval-form-m.show', $approvalForm)
-            ->with('success', 'Approval Form created successfully.');
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+        }
+
+        try {
+            $approvalForm = ApprovalForm::create($validated);
+
+            return redirect()
+                ->route('approval-form-m.show', $approvalForm)
+                ->with('success', 'Approval Form created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error checking existing approval form: ' . $e->getMessage());
+        }
     }
 
     public function ApprovalFormEdit(ApprovalForm $approvalForm)
@@ -3090,15 +3102,28 @@ class MakerController extends Controller
 
     public function ApprovalFormUpdate(Request $request, ApprovalForm $approvalForm)
     {
-        // Validate the request
-        $validatedData = $this->ApprovalFormValidate($request, $approvalForm);
+        $validated = $this->ApprovalFormValidate($request, $approvalForm);
 
-        // Update the approval form
-        $approvalForm->update($validatedData);
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            // Delete old attachment if exists
+            if ($approvalForm->attachment) {
+                Storage::disk('public')->delete($approvalForm->attachment);
+            }
 
-        // Redirect with success message
-        return redirect()->route('approval-form-m.show', $approvalForm)
-            ->with('success', 'Approval Form updated successfully.');
+            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+        }
+
+        try {
+            $approvalForm->update($validated);
+
+            return redirect()
+                ->route('approval-form-m.show', $approvalForm)
+                ->with('success', 'Approval Form updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error checking existing approval form: ' . $e->getMessage());
+        }
     }
 
     public function ApprovalFormShow(ApprovalForm $approvalForm)
@@ -3152,22 +3177,6 @@ class MakerController extends Controller
         }
 
         return $validatedData;
-    }
-
-    // Optional: Method to verify/approve an approval form
-    public function ApprovalFormVerify(ApprovalForm $approvalForm)
-    {
-        // Check user permissions
-        $this->authorize('verify', $approvalForm);
-
-        $approvalForm->update([
-            'status' => 'approved',
-            'verified_by' => auth()->id(),
-            'approval_datetime' => now()
-        ]);
-
-        return redirect()->route('approval-form-m.show', $approvalForm)
-            ->with('success', 'Approval Form verified successfully.');
     }
 
     // Optional: Method to download attachment
@@ -3238,6 +3247,7 @@ class MakerController extends Controller
 
         try {
             SiteVisitLog::create($validated);
+            
             return redirect()
                 ->route('site-visit-log-m.index')
                 ->with('success', 'Activity Diary created successfully.');
@@ -3321,7 +3331,7 @@ class MakerController extends Controller
 
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
-        $validated['portfolio_id'] = $request->input('portfolio_id');
+        
 
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('approval-properties', 'public');
@@ -3330,6 +3340,7 @@ class MakerController extends Controller
 
         try {
             ApprovalProperty::create($validated);
+
             return redirect()
                 ->route('approval-property-m.index')
                 ->with('success', 'Property created successfully.');
@@ -3363,6 +3374,7 @@ class MakerController extends Controller
         
         try {
             $approvalProperty->update($validated);
+
             return redirect()
                 ->route('approval-property-m.index')
                 ->with('success', 'Property approval updated successfully.');
