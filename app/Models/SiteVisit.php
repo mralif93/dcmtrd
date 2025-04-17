@@ -26,7 +26,10 @@ class SiteVisit extends Model implements Auditable
         'building_manager',
         'notes',
         'attachment',
-        'status'
+        'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
     ];
 
     /**

@@ -657,6 +657,9 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/activity-diary/{activity}/approve', [ApproverController::class, 'ActivityApprove'])->name('activity-diary-a.approve')->middleware('permission:DCMTRD');
     Route::post('approver/activity-diary/{activity}/reject', [ApproverController::class, 'ActivityReject'])->name('activity-diary-a.reject')->middleware('permission:DCMTRD');
 
+
+    // REITS Section
+
     // Portfolio Module
     Route::get('approver/portfolio', [ApproverController::class, 'PortfolioIndex'])->name('portfolio-a.index')->middleware('permission:REITS');
     Route::get('approver/portfolio/{portfolio}/show', [ApproverController::class, 'PortfolioShow'])->name('portfolio-a.show')->middleware('permission:REITS');
@@ -682,4 +685,30 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     // Checklist Module
     Route::get('approver/checklist/{property}', [ApproverController::class, 'ChecklistIndex'])->name('checklist-a.index')->middleware('permission:REITS');
     Route::get('approver/checklist/{checklist}/show', [ApproverController::class, 'ChecklistShow'])->name('checklist-a.show')->middleware('permission:REITS');
+
+    // Appointment Module
+    Route::get('approver/appointment/', [ApproverController::class, 'AppointmentIndex'])->name('appointment-a.index')->middleware('permission:REITS');
+    Route::get('approver/appointment/{appointment}/show', [ApproverController::class, 'AppointmentShow'])->name('appointment-a.show')->middleware('permission:REITS');
+    Route::post('approver/appointment/{appointment}/approve', [ApproverController::class, 'AppointmentApprove'])->name('appointment-a.approve')->middleware('permission:REITS');
+    Route::post('approver/appointment/{appointment}/reject', [ApproverController::class, 'AppointmentReject'])->name('appointment-a.reject')->middleware('permission:REITS');
+
+    // Approval Form Module
+    Route::get('approver/approval-form/', [ApproverController::class, 'ApprovalFormIndex'])->name('approval-form-a.index')->middleware('permission:REITS');
+    Route::get('approver/approval-form/{approvalForm}/show', [ApproverController::class, 'ApprovalFormShow'])->name('approval-form-a.show')->middleware('permission:REITS');
+    Route::post('approver/approval-form/{approvalForm}/approve', [ApproverController::class, 'ApprovalFormApprove'])->name('approval-form-a.approve')->middleware('permission:REITS');
+    Route::post('approver/approval-form/{approvalForm}/reject', [ApproverController::class, 'ApprovalFormReject'])->name('approval-form-a.reject')->middleware('permission:REITS');
+
+    // Site Visit Log Module
+    Route::get('approver/site-visit-log/', [ApproverController::class, 'SiteVisitLogIndex'])->name('site-visit-log-a.index')->middleware('permission:REITS');
+    Route::get('approver/site-visit-log/{siteVisitLog}/show', [ApproverController::class, 'SiteVisitLogShow'])->name('site-visit-log-a.show')->middleware('permission:REITS');
+    Route::post('approver/site-visit-log/{siteVisitLog}/approve', [ApproverController::class, 'SiteVisitLogApprove'])->name('site-visit-log-a.approve')->middleware('permission:REITS');
+    Route::post('approver/site-visit-log/{siteVisitLog}/reject', [ApproverController::class, 'SiteVisitLogReject'])->name('site-visit-log-a.reject')->middleware('permission:REITS');
+
+    // Approval Property Module
+    Route::get('approver/approval-property/', [ApproverController::class, 'ApprovalPropertyIndex'])->name('approval-property-a.index')->middleware('permission:REITS');
+    Route::get('approver/approval-property/{approvalProperty}/show', [ApproverController::class, 'ApprovalPropertyShow'])->name('approval-property-a.show')->middleware('permission:REITS');
+    Route::post('approver/approval-property/{approvalProperty}/approve', [ApproverController::class, 'ApprovalPropertyApprove'])->name('approval-property-a.approve')->middleware('permission:REITS');
+    Route::post('approver/approval-property/{approvalProperty}/reject', [ApproverController::class, 'ApprovalPropertyReject'])->name('approval-property-a.reject')->middleware('permission:REITS');
+
+
 });
