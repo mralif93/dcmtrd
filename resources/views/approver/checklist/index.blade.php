@@ -146,10 +146,10 @@
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">{{ $checklist->property_title }}</div>
-                                        <div class="text-xs text-gray-500">{{ $checklist->property_location ?? 'No location' }}</div>
+                                        <div class="text-xs text-gray-500">{{ $checklist->siteVisit->property->name ?? 'N/A' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $checklist->tenant_name ?? 'N/A' }}</div>
+                                        <div class="text-sm text-gray-900">{{ $checklist->siteVisit ?? 'N/A' }}</div>
                                         @if($checklist->tenancy_commencement_date && $checklist->tenancy_expiry_date)
                                         <div class="text-xs text-gray-500">
                                             {{ date('d/m/Y', strtotime($checklist->tenancy_commencement_date)) }} to {{ date('d/m/Y', strtotime($checklist->tenancy_expiry_date)) }}

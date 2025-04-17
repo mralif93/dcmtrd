@@ -2382,7 +2382,7 @@ class MakerController extends Controller
         $validated = $this->SiteVisitValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'active';
+        $validated['status'] = 'pending';
 
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
@@ -2520,8 +2520,8 @@ class MakerController extends Controller
         $validated = $this->ChecklistValidate($request);
         
         // Add the authenticated user's ID as prepared_by
-        $validated['prepared_by'] = Auth::id();
-
+        $validated['prepared_by'] = Auth::user()->name;
+        
         // Set default status to 'pending' to match schema default
         $validated['status'] = 'pending';
 
