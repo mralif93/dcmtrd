@@ -100,7 +100,6 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenant Info</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Legal Documents</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -110,16 +109,8 @@
                             @forelse ($checklists as $checklist)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">{{ $checklist->property_title }}</div>
-                                        <div class="text-xs text-gray-500">{{ $checklist->property_location ?? 'No location' }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $checklist->tenant_name ?? 'N/A' }}</div>
-                                        @if($checklist->tenancy_commencement_date && $checklist->tenancy_expiry_date)
-                                        <div class="text-xs text-gray-500">
-                                            {{ date('d/m/Y', strtotime($checklist->tenancy_commencement_date)) }} to {{ date('d/m/Y', strtotime($checklist->tenancy_expiry_date)) }}
-                                        </div>
-                                        @endif
+                                        <div class="text-sm font-medium text-gray-900">{{ $checklist->siteVisit->property->name ?? 'N/A' }}</div>
+                                        <div class="text-xs text-gray-500">{{ $checklist->siteVisit->property->address ?? 'N/A' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-500">
