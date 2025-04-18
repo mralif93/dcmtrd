@@ -2859,14 +2859,11 @@ class MakerController extends Controller
             ->when($request->input('status'), function ($query, $status) {
                 return $query->where('status', $status);
             })
-            ->when($request->input('year'), function ($query, $year) {
-                return $query->where('year', $year);
-            })
             ->latest()
             ->paginate(15);
 
         // Get distinct years for filter
-        $years = Appointment::select('year')->distinct()->orderBy('year', 'desc')->get();
+        $years = Appointment::distinct()->pluck('date_of_approval')->orderBy('date_of_approval', 'desc')->get();
 
         // Get status options
         $statuses = ['pending', 'approved', 'completed', 'cancelled'];
@@ -2963,45 +2960,18 @@ class MakerController extends Controller
 
     public function AppointmentValidate(Request $request, Appointment $appointment = null)
     {
-        // Validation rules
-        $rules = [
+        return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
-            'party_name' => 'required|string|max:255',
             'date_of_approval' => 'required|date',
+            'party_name' => 'required|string|max:255',
             'description' => 'required|string',
             'estimated_amount' => 'nullable|numeric|min:0',
             'remarks' => 'nullable|string',
             'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
-            'year' => 'nullable|integer|min:2000|max:' . (date('Y') + 5),
-            'reference_no' => 'nullable|string|max:100',
-        ];
-
-        // Unique reference number validation (optional)
-        if (!$appointment) {
-            $rules['reference_no'] .= '|unique:appointments';
-        } else {
-            $rules['reference_no'] .= '|unique:appointments,reference_no,' . $appointment->id;
-        }
-
-        // Validate the request
-        $validatedData = $request->validate($rules);
-
-        // Handle file upload
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $path = $file->store('appointments', 'public');
-            $validatedData['attachment'] = $path;
-        }
-
-        // Add current user as prepared_by if creating new
-        if (!$appointment) {
-            $validatedData['prepared_by'] = auth()->id();
-        }
-
-        // Set the year if not provided
-        $validatedData['year'] = $validatedData['year'] ?? date('Y');
-
-        return $validatedData;
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'approval_datetime' => 'nullable|date',
+        ]);
     }
 
     // Approval Form Module
