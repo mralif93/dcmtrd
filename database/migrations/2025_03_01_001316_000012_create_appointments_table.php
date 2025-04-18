@@ -28,7 +28,7 @@ return new class extends Migration
             $table->softDeletes();
             
             // Add indexes for better performance
-            $table->index(['party_name', 'date_of_approval', 'year']);
+            $table->index(['party_name', 'date_of_approval']);
         });
     }
 
