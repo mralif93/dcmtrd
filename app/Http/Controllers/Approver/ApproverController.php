@@ -89,6 +89,10 @@ class ApproverController extends Controller
                     (SELECT COUNT(*) FROM site_visit_logs) AS siteVisitLogs_count,
                     
                     -- Add pending counts
+                    (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS pending_trusteeFees_count,
+                    (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS pending_complianceCovenants_count,
+                    (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS pending_activityDiaries_count,
+                    (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
                     (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
                     (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
                     (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,

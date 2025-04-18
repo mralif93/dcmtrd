@@ -92,13 +92,34 @@ class MakerController extends Controller
                     (SELECT COUNT() FROM trustee_fees) AS trustee_fees_count,
                     (SELECT COUNT() FROM compliance_covenants) AS compliance_covenants_count,
                     (SELECT COUNT() FROM activity_diaries) AS activity_diaries_count,
+
+                    (SELECT COUNT() FROM trustee_fees WHERE status = 'pending') AS trustee_fees_pending_count,
+                    (SELECT COUNT() FROM compliance_covenants WHERE status = 'pending') AS compliance_covenants_pending_count,
+                    (SELECT COUNT() FROM activity_diaries WHERE status = 'pending') AS activity_diaries_pending_count,
+                
+                    (SELECT COUNT() FROM portfolios) AS portfolios_count,
                     (SELECT COUNT() FROM properties) AS properties_count,
                     (SELECT COUNT() FROM financials) AS financials_count,
+                    (SELECT COUNT() FROM leases) AS leases_count,
                     (SELECT COUNT() FROM tenants) AS tenants_count,
+                    (SELECT COUNT() FROM site_visits) AS site_visists_count,
+                    (SELECT COUNT() FROM checklists) AS checklists_count,
+                    (SELECT COUNT() FROM site_visit_logs) AS site_visit_logs_count,
                     (SELECT COUNT() FROM appointments) AS appointments_count,
                     (SELECT COUNT() FROM approval_forms) AS approval_forms_count,
                     (SELECT COUNT() FROM approval_properties) AS approval_properties_count,
-                    (SELECT COUNT() FROM site_visit_logs) AS site_visit_logs_count
+
+                    (SELECT COUNT() FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
+                    (SELECT COUNT() FROM properties WHERE status = 'pending') AS pending_properties_count,
+                    (SELECT COUNT() FROM financials WHERE status = 'pending') AS pending_financials_count,
+                    (SELECT COUNT() FROM leases WHERE status = 'pending') AS pending_leases_count,
+                    (SELECT COUNT() FROM tenants WHERE status = 'pending') AS pending_tenants_count,
+                    (SELECT COUNT() FROM site_visits WHERE status = 'pending') AS pending_site_visits_count,
+                    (SELECT COUNT() FROM checklists WHERE status = 'pending') AS pending_checklists_count,
+                    (SELECT COUNT() FROM site_visit_logs WHERE status = 'pending') AS pending_site_visit_logs_count,
+                    (SELECT COUNT() FROM appointments WHERE status = 'pending') AS pending_appointments_count,
+                    (SELECT COUNT() FROM approval_forms WHERE status = 'pending') AS pending_approval_forms_count,
+                    (SELECT COUNT() FROM approval_properties WHERE status = 'pending') AS pending_approval_properties_count
             ");
             return (array) $result[0];
         });
@@ -122,7 +143,7 @@ class MakerController extends Controller
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
-            'currentSection' => $request->section, // Pass the current section to the view
+            'currentSection' => $request->section,
             'trusteeFeesCount' => $counts['trustee_fees_count'],
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
             'activityDairyCount' => $counts['activity_diaries_count'],
@@ -133,6 +154,18 @@ class MakerController extends Controller
             'approvalFormsCount' => $counts['approval_forms_count'],
             'approvalPropertiesCount' => $counts['approval_properties_count'],
             'siteVisitLogsCount' => $counts['site_visit_logs_count'],
+            
+            // Adding pending counts
+            'trusteeFeePendingCount' => $counts['trustee_fees_pending_count'],
+            'complianceCovenantPendingCount' => $counts['compliance_covenants_pending_count'],
+            'activityDiaryPendingCount' => $counts['activity_diaries_pending_count'],
+            'propertiesPendingCount' => $counts['pending_properties_count'],
+            'financialsPendingCount' => $counts['pending_financials_count'],
+            'tenantsPendingCount' => $counts['pending_tenants_count'],
+            'appointmentsPendingCount' => $counts['pending_appointments_count'],
+            'approvalFormsPendingCount' => $counts['pending_approval_forms_count'],
+            'approvalPropertiesPendingCount' => $counts['pending_approval_properties_count'],
+            'siteVisitLogsPendingCount' => $counts['pending_site_visit_logs_count'],
         ]);
     }
 
