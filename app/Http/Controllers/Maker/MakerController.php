@@ -2896,7 +2896,7 @@ class MakerController extends Controller
             ->paginate(15);
 
         // Get distinct years for filter
-        $years = Appointment::distinct()->pluck('date_of_approval')->orderBy('date_of_approval', 'desc')->get();
+        $years = Appointment::orderBy('date_of_approval', 'desc')->get();
 
         // Get status options
         $statuses = ['pending', 'approved', 'completed', 'cancelled'];
