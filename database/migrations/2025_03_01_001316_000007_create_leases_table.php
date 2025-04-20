@@ -23,10 +23,13 @@ return new class extends Migration
             $table->date('end_date')->nullable();
             $table->decimal('base_rate_year_1', 15, 2)->unsigned();
             $table->decimal('monthly_gsto_year_1', 15, 2)->unsigned();
+            $table->string('remarks_year_1')->nullable();
             $table->decimal('base_rate_year_2', 15, 2)->unsigned();
             $table->decimal('monthly_gsto_year_2', 15, 2)->unsigned();
+            $table->string('remarks_year_2')->nullable();
             $table->decimal('base_rate_year_3', 15, 2)->unsigned();
             $table->decimal('monthly_gsto_year_3', 15, 2)->unsigned();
+            $table->string('remarks_year_3')->nullable();
             $table->decimal('space', 15, 2)->unsigned();
             $table->string('tenancy_type')->nullable();
             $table->string('attachment')->nullable();

@@ -1,5 +1,3 @@
-<!-- resources/views/leases/create.blade.php -->
-
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between">
@@ -157,7 +155,7 @@
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Base Rate Year 1 -->
+                                <!-- Year 1 -->
                                 <div>
                                     <label for="base_rate_year_1" class="block text-sm font-medium text-gray-500">Base Rate Year 1 (RM)</label>
                                     <input id="base_rate_year_1" type="number" step="0.01" min="0" name="base_rate_year_1" value="{{ old('base_rate_year_1') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
@@ -166,7 +164,6 @@
                                     @enderror
                                 </div>
                                 
-                                <!-- Monthly GSTO Year 1 -->
                                 <div>
                                     <label for="monthly_gsto_year_1" class="block text-sm font-medium text-gray-500">Monthly GSTO Year 1 (%)</label>
                                     <input id="monthly_gsto_year_1" type="number" step="0.01" min="0" name="monthly_gsto_year_1" value="{{ old('monthly_gsto_year_1') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
@@ -175,7 +172,15 @@
                                     @enderror
                                 </div>
                                 
-                                <!-- Base Rate Year 2 -->
+                                <div class="col-span-2">
+                                    <label for="remarks_year_1" class="block text-sm font-medium text-gray-500">Remarks Year 1</label>
+                                    <textarea id="remarks_year_1" name="remarks_year_1" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks_year_1') }}</textarea>
+                                    @error('remarks_year_1')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                
+                                <!-- Year 2 -->
                                 <div>
                                     <label for="base_rate_year_2" class="block text-sm font-medium text-gray-500">Base Rate Year 2 (RM)</label>
                                     <input id="base_rate_year_2" type="number" step="0.01" min="0" name="base_rate_year_2" value="{{ old('base_rate_year_2') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
@@ -184,7 +189,6 @@
                                     @enderror
                                 </div>
                                 
-                                <!-- Monthly GSTO Year 2 -->
                                 <div>
                                     <label for="monthly_gsto_year_2" class="block text-sm font-medium text-gray-500">Monthly GSTO Year 2 (%)</label>
                                     <input id="monthly_gsto_year_2" type="number" step="0.01" min="0" name="monthly_gsto_year_2" value="{{ old('monthly_gsto_year_2') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
@@ -193,7 +197,15 @@
                                     @enderror
                                 </div>
                                 
-                                <!-- Base Rate Year 3 -->
+                                <div class="col-span-2">
+                                    <label for="remarks_year_2" class="block text-sm font-medium text-gray-500">Remarks Year 2</label>
+                                    <textarea id="remarks_year_2" name="remarks_year_2" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks_year_2') }}</textarea>
+                                    @error('remarks_year_2')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                
+                                <!-- Year 3 -->
                                 <div>
                                     <label for="base_rate_year_3" class="block text-sm font-medium text-gray-500">Base Rate Year 3 (RM)</label>
                                     <input id="base_rate_year_3" type="number" step="0.01" min="0" name="base_rate_year_3" value="{{ old('base_rate_year_3') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
@@ -202,11 +214,18 @@
                                     @enderror
                                 </div>
                                 
-                                <!-- Monthly GSTO Year 3 -->
                                 <div>
                                     <label for="monthly_gsto_year_3" class="block text-sm font-medium text-gray-500">Monthly GSTO Year 3 (%)</label>
                                     <input id="monthly_gsto_year_3" type="number" step="0.01" min="0" name="monthly_gsto_year_3" value="{{ old('monthly_gsto_year_3') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     @error('monthly_gsto_year_3')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                
+                                <div class="col-span-2">
+                                    <label for="remarks_year_3" class="block text-sm font-medium text-gray-500">Remarks Year 3</label>
+                                    <textarea id="remarks_year_3" name="remarks_year_3" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks_year_3') }}</textarea>
+                                    @error('remarks_year_3')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -220,7 +239,7 @@
                                 <!-- Attachment -->
                                 <div>
                                     <label for="attachment" class="block text-sm font-medium text-gray-500">Upload Lease Document</label>
-                                    <input id="attachment" type="file" name="attachment" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input id="attachment" type="file" name="attachment" class="mt-1 block w-full text-indigo-600 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <p class="mt-1 text-sm text-gray-500">Accepts PDF, Word documents, and images (maximum 10MB)</p>
                                     @error('attachment')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
