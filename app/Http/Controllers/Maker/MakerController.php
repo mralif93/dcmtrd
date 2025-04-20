@@ -3067,10 +3067,8 @@ class MakerController extends Controller
         // Retrieve portfolios and properties for selection
         $portfolios = Portfolio::select('id', 'portfolio_name')->get();
         $properties = Property::select('id', 'name')->get();
-        $users = User::select('id', 'name')->get();
 
         return view('maker.approval-form.create', [
-            'users' => $users,
             'portfolios' => $portfolios,
             'properties' => $properties
         ]);
@@ -3081,8 +3079,9 @@ class MakerController extends Controller
         // Validate the request
         $validated = $this->ApprovalFormValidate($request);
 
-        $validated['prepared_by'] = Auth::user()->name;
+        // Set default status and prepared_by
         $validated['status'] = 'pending';
+        $validated['prepared_by'] = Auth::user()->name;
 
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
@@ -3097,7 +3096,7 @@ class MakerController extends Controller
         } catch (\Exception $e) {
             return back()
                 ->withInput()
-                ->with('error', 'Error checking existing approval form: ' . $e->getMessage());
+                ->with('error', 'Error creating approval form: ' . $e->getMessage());
         }
     }
 
@@ -3106,10 +3105,8 @@ class MakerController extends Controller
         // Retrieve portfolios and properties for selection
         $portfolios = Portfolio::select('id', 'portfolio_name')->get();
         $properties = Property::select('id', 'name', 'portfolio_id')->get();
-        $users = User::select('id', 'name')->get();
 
         return view('maker.approval-form.edit', [
-            'users' => $users,
             'approvalForm' => $approvalForm,
             'portfolios' => $portfolios,
             'properties' => $properties
@@ -3129,6 +3126,17 @@ class MakerController extends Controller
 
             $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
         }
+        
+        // Check if send_date is being added or updated
+        $sendDateAdded = !$approvalForm->send_date && !empty($validated['send_date']);
+        $sendDateUpdated = $approvalForm->send_date && 
+                        !empty($validated['send_date']) && 
+                        $approvalForm->send_date->format('Y-m-d') !== $validated['send_date'];
+                        
+        // If send_date is added or updated, change status to "completed"
+        if ($sendDateAdded || $sendDateUpdated) {
+            $validated['status'] = 'completed';
+        }
 
         try {
             $approvalForm->update($validated);
@@ -3138,14 +3146,14 @@ class MakerController extends Controller
                 ->with('success', 'Approval Form updated successfully.');
         } catch (\Exception $e) {
             return back()
-                ->with('error', 'Error checking existing approval form: ' . $e->getMessage());
+                ->with('error', 'Error updating approval form: ' . $e->getMessage());
         }
     }
 
     public function ApprovalFormShow(ApprovalForm $approvalForm)
     {
         // Load related models
-        $approvalForm->load('portfolio', 'property', 'preparedBy', 'verifiedBy');
+        $approvalForm->load('portfolio', 'property');
 
         return view('maker.approval-form.show', [
             'approvalForm' => $approvalForm
@@ -3154,43 +3162,22 @@ class MakerController extends Controller
 
     public function ApprovalFormValidate(Request $request, ApprovalForm $approvalForm = null)
     {
-        // Validation rules
+        // Validation rules based on the actual database schema
         $rules = [
             'portfolio_id' => 'nullable|exists:portfolios,id',
             'property_id' => 'nullable|exists:properties,id',
-            'form_number' => 'nullable|string|max:50',
-            'form_title' => 'required|string|max:255',
-            'form_category' => 'nullable|string|max:100',
-            'reference_code' => 'nullable|string|max:100',
+            'category' => 'nullable|string|max:100',
+            'details' => 'nullable|string',
             'received_date' => 'required|date',
             'send_date' => 'nullable|date|after_or_equal:received_date',
             'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
-            'location' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
             'remarks' => 'nullable|string',
+            'status' => 'nullable|string',
+            'prepared_by' => 'nullable|string',
         ];
-
-        // Unique reference code validation (optional)
-        if (!$approvalForm) {
-            $rules['reference_code'] .= '|unique:approval_forms';
-        } else {
-            $rules['reference_code'] .= '|unique:approval_forms,reference_code,' . $approvalForm->id;
-        }
 
         // Validate the request
         $validatedData = $request->validate($rules);
-
-        // Handle file upload
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $path = $file->store('approval-forms', 'public');
-            $validatedData['attachment'] = $path;
-        }
-
-        // Add current user as prepared_by if creating new
-        if (!$approvalForm) {
-            $validatedData['prepared_by'] = auth()->id();
-        }
 
         return $validatedData;
     }
