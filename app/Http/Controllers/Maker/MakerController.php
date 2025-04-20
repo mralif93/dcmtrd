@@ -2486,8 +2486,13 @@ class MakerController extends Controller
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
 
+        // Handle file upload if present
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
+        }
+
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = $request->follow_up_required ? 1 : 0;
         }
 
         try {
@@ -2508,6 +2513,7 @@ class MakerController extends Controller
     {
         $validated = $this->SiteVisitValidate($request);
 
+        // Handle file upload if present
         if ($request->hasFile('attachment')) {
             // Delete old file if exists
             if ($siteVisit->attachment && Storage::disk('public')->exists($siteVisit->attachment)) {
@@ -2515,6 +2521,10 @@ class MakerController extends Controller
             }
             
             $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
+        }
+
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = $request->follow_up_required ? 1 : 0;
         }
 
         try {
@@ -2541,7 +2551,9 @@ class MakerController extends Controller
             'maintenance_manager' => 'nullable|string|max:255',
             'building_manager' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'submission_date' => 'nullable|date',
+            'follow_up_required' => 'nullable|boolean',
+            'attachment' => 'nullable|file|mimes:pdf|max:10240',
             'status' => 'nullable|string|max:255',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
@@ -3225,8 +3237,8 @@ class MakerController extends Controller
 
     public function SiteVisitLogCreate()
     {
-        $siteVisits = SiteVisit::where('status', 'active')->get();
-        return view('maker.site-visit-log.create', compact('siteVisits'));
+        $properties = Property::where('status', 'active')->get();
+        return view('maker.site-visit-log.create', compact('properties'));
     }
 
     public function SiteVisitLogStore(Request $request)
@@ -3263,10 +3275,10 @@ class MakerController extends Controller
 
     public function SiteVisitLogEdit(SiteVisitLog $siteVisitLog)
     {
-        $siteVisits = SiteVisit::where('status', 'active')->get();
-        return view('maker.site-visit-log.edit', compact('siteVisitLog', 'siteVisits'));
+        $properties = Property::where('status', 'active')->get();
+        return view('maker.site-visit-log.edit', compact('siteVisitLog', 'properties'));
     }
-
+    
     public function SiteVisitLogUpdate(Request $request, SiteVisitLog $siteVisitLog)
     {
         $validated = $this->SiteVisitLogValidate($request);

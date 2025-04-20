@@ -52,7 +52,7 @@
                             />
                         </div>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="relative">
                                 <select 
                                     name="status" 
@@ -73,6 +73,17 @@
                                     class="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out" 
                                 />
                             </div>
+                            
+                            <div class="relative">
+                                <select 
+                                    name="follow_up_required" 
+                                    class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md transition duration-150 ease-in-out"
+                                >
+                                    <option value="">All Follow-up Status</option>
+                                    <option value="1" {{ ($follow_up_required ?? '') === '1' ? 'selected' : '' }}>Follow-up Required</option>
+                                    <option value="0" {{ ($follow_up_required ?? '') === '0' ? 'selected' : '' }}>No Follow-up Required</option>
+                                </select>
+                            </div>
                         </div>
                         
                         <div class="flex justify-end items-center pt-2 space-x-3">
@@ -86,7 +97,7 @@
                                 Apply Filters
                             </button>
                             
-                            @if(isset($search) || isset($status) && $status != 'all' || isset($date) && $date != '')
+                            @if(isset($search) || isset($status) && $status != 'all' || isset($date) && $date != '' || isset($follow_up_required) && $follow_up_required != '')
                                 <a 
                                     href="{{ route('site-visits-info.index') }}" 
                                     class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
@@ -118,6 +129,7 @@
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Time</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Inspector</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Follow-up</th>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
                         </thead>
@@ -142,6 +154,17 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
+                                        @if($visit->follow_up_required)
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                Required
+                                            </span>
+                                        @else
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                No
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4">
                                         <div class="flex space-x-2">
                                             <a href="{{ route('site-visits-info.show', $visit) }}" class="text-indigo-600 hover:text-indigo-900">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -159,7 +182,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-4 text-sm text-gray-500 text-center">No site visits found {{ request('search') ? 'matching your search' : '' }}</td>
+                                    <td colspan="7" class="px-6 py-4 text-sm text-gray-500 text-center">No site visits found {{ request('search') ? 'matching your search' : '' }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

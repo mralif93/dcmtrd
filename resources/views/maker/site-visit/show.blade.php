@@ -54,6 +54,12 @@
                                     } }}">
                                     {{ ucfirst($siteVisit->status) }}
                                 </span>
+                                
+                                @if($siteVisit->follow_up_required)
+                                <span class="ml-2 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                    Follow-up Required
+                                </span>
+                                @endif
                             </dd>
                         </div>
                     </dl>
@@ -100,6 +106,26 @@
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ date('H:i', strtotime($siteVisit->time_visit)) }}</dd>
                         </div>
                         
+                        <!-- Submission Date -->
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Submission Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $siteVisit->submission_date ? date('d/m/Y', strtotime($siteVisit->submission_date)) : 'Not submitted yet' }}
+                            </dd>
+                        </div>
+                        
+                        <!-- Follow Up Required -->
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Follow Up Required</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                @if($siteVisit->follow_up_required)
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Yes</span>
+                                @else
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">No</span>
+                                @endif
+                            </dd>
+                        </div>
+                        
                         <!-- Personnel Information -->
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Trustee</dt>
@@ -139,10 +165,10 @@
                     </dl>
                 </div>
 
-                <!-- Verification Information Section -->
+                <!-- Verification & System Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Verification Information</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Verification & System Information</h3>
                     </div>
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -159,20 +185,11 @@
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ \Carbon\Carbon::parse($siteVisit->approval_datetime)->format('d/m/Y h:i A') }}</dd>
                         </div>
                         @endif
-                    </dl>
-                </div>
-
-                <!-- System Information Section -->
-                <div class="border-t border-gray-200">
-                    <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">System Information</h3>
-                    </div>
-                    <dl>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <div class="{{ $siteVisit->approval_datetime ? 'bg-white' : 'bg-gray-50' }} px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->created_at->format('d/m/Y h:i A') }}</dd>
                         </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <div class="{{ $siteVisit->approval_datetime ? 'bg-gray-50' : 'bg-white' }} px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->updated_at->format('d/m/Y h:i A') }}</dd>
                         </div>

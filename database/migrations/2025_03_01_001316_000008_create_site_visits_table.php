@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('maintenance_manager')->nullable();
             $table->string('building_manager')->nullable();
             $table->text('notes')->nullable();
+            $table->date('submission_date')->nullable();
+            $table->boolean('follow_up_required')->default(false);
             $table->string('attachment')->nullable();
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();

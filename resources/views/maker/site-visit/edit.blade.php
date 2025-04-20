@@ -1,4 +1,3 @@
-<!-- resources/views/site-visits/edit.blade.php -->
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between">
@@ -114,6 +113,27 @@
                                     <label for="building_manager" class="block text-sm font-medium text-gray-500">Building Manager</label>
                                     <input id="building_manager" type="text" name="building_manager" value="{{ old('building_manager', $siteVisit->building_manager) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('building_manager')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Submission Date -->
+                                <div>
+                                    <label for="submission_date" class="block text-sm font-medium text-gray-500">Submission Date</label>
+                                    <input id="submission_date" type="date" name="submission_date" value="{{ old('submission_date', $siteVisit->submission_date ? $siteVisit->submission_date->format('Y-m-d') : '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('submission_date')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Follow Up Required -->
+                                <div>
+                                    <label for="follow_up_required" class="block text-sm font-medium text-gray-500">Follow Up Required</label>
+                                    <select id="follow_up_required" name="follow_up_required" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="0" {{ old('follow_up_required', $siteVisit->follow_up_required) == 0 ? 'selected' : '' }}>No</option>
+                                        <option value="1" {{ old('follow_up_required', $siteVisit->follow_up_required) == 1 ? 'selected' : '' }}>Yes</option>
+                                    </select>
+                                    @error('follow_up_required')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
