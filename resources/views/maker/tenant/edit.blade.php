@@ -74,7 +74,7 @@
                                 <!-- Tenant Name -->
                                 <div>
                                     <label for="name" class="block text-sm font-medium text-gray-500">Tenant Name</label>
-                                    <input id="name" type="text" name="name" value="{{ old('name', $tenant->name) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="name" type="text" name="name" value="{{ old('name', $tenant->name) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('name')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -116,7 +116,7 @@
                                 <!-- Commencement Date -->
                                 <div>
                                     <label for="commencement_date" class="block text-sm font-medium text-gray-500">Commencement Date</label>
-                                    <input id="commencement_date" type="date" name="commencement_date" value="{{ old('commencement_date', $tenant->commencement_date->format('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="commencement_date" type="date" name="commencement_date" value="{{ old('commencement_date', $tenant->commencement_date->format('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('commencement_date')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -125,7 +125,7 @@
                                 <!-- Expiry Date -->
                                 <div>
                                     <label for="expiry_date" class="block text-sm font-medium text-gray-500">Expiry Date</label>
-                                    <input id="expiry_date" type="date" name="expiry_date" value="{{ old('expiry_date', $tenant->expiry_date->format('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="expiry_date" type="date" name="expiry_date" value="{{ old('expiry_date', $tenant->expiry_date->format('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('expiry_date')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror

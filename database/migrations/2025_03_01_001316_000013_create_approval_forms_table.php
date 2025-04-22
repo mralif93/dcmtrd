@@ -15,15 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('portfolio_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('property_id')->nullable()->constrained()->onDelete('set null');
-            $table->string('form_number')->nullable();
-            $table->string('form_title');
-            $table->string('form_category')->nullable();
-            $table->string('reference_code')->nullable();
+            $table->string('category')->nullable();
+            $table->text('details')->nullable();
             $table->date('received_date');
             $table->date('send_date')->nullable();
             $table->string('attachment')->nullable();
-            $table->string('location')->nullable();
-            $table->text('description')->nullable();
             $table->text('remarks')->nullable();
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();

@@ -2347,13 +2347,12 @@ class MakerController extends Controller
     {
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
             'contact_person' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'commencement_date' => 'nullable|date',
             'expiry_date' => 'nullable|date|after:commencement_date',
-            'status' => 'nullable|in:active,inactive',
         ]);
     }
 
@@ -2506,8 +2505,13 @@ class MakerController extends Controller
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
 
+        // Handle file upload if present
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
+        }
+
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = $request->follow_up_required ? 1 : 0;
         }
 
         try {
@@ -2528,6 +2532,7 @@ class MakerController extends Controller
     {
         $validated = $this->SiteVisitValidate($request);
 
+        // Handle file upload if present
         if ($request->hasFile('attachment')) {
             // Delete old file if exists
             if ($siteVisit->attachment && Storage::disk('public')->exists($siteVisit->attachment)) {
@@ -2535,6 +2540,10 @@ class MakerController extends Controller
             }
 
             $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
+        }
+
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = $request->follow_up_required ? 1 : 0;
         }
 
         try {
@@ -2561,7 +2570,9 @@ class MakerController extends Controller
             'maintenance_manager' => 'nullable|string|max:255',
             'building_manager' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'submission_date' => 'nullable|date',
+            'follow_up_required' => 'nullable|boolean',
+            'attachment' => 'nullable|file|mimes:pdf|max:10240',
             'status' => 'nullable|string|max:255',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
@@ -3075,10 +3086,8 @@ class MakerController extends Controller
         // Retrieve portfolios and properties for selection
         $portfolios = Portfolio::select('id', 'portfolio_name')->get();
         $properties = Property::select('id', 'name')->get();
-        $users = User::select('id', 'name')->get();
 
         return view('maker.approval-form.create', [
-            'users' => $users,
             'portfolios' => $portfolios,
             'properties' => $properties
         ]);
@@ -3089,8 +3098,9 @@ class MakerController extends Controller
         // Validate the request
         $validated = $this->ApprovalFormValidate($request);
 
-        $validated['prepared_by'] = Auth::user()->name;
+        // Set default status and prepared_by
         $validated['status'] = 'pending';
+        $validated['prepared_by'] = Auth::user()->name;
 
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
@@ -3105,7 +3115,7 @@ class MakerController extends Controller
         } catch (\Exception $e) {
             return back()
                 ->withInput()
-                ->with('error', 'Error checking existing approval form: ' . $e->getMessage());
+                ->with('error', 'Error creating approval form: ' . $e->getMessage());
         }
     }
 
@@ -3114,10 +3124,8 @@ class MakerController extends Controller
         // Retrieve portfolios and properties for selection
         $portfolios = Portfolio::select('id', 'portfolio_name')->get();
         $properties = Property::select('id', 'name', 'portfolio_id')->get();
-        $users = User::select('id', 'name')->get();
 
         return view('maker.approval-form.edit', [
-            'users' => $users,
             'approvalForm' => $approvalForm,
             'portfolios' => $portfolios,
             'properties' => $properties
@@ -3137,6 +3145,17 @@ class MakerController extends Controller
 
             $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
         }
+        
+        // Check if send_date is being added or updated
+        $sendDateAdded = !$approvalForm->send_date && !empty($validated['send_date']);
+        $sendDateUpdated = $approvalForm->send_date && 
+                        !empty($validated['send_date']) && 
+                        $approvalForm->send_date->format('Y-m-d') !== $validated['send_date'];
+                        
+        // If send_date is added or updated, change status to "completed"
+        if ($sendDateAdded || $sendDateUpdated) {
+            $validated['status'] = 'completed';
+        }
 
         try {
             $approvalForm->update($validated);
@@ -3146,14 +3165,14 @@ class MakerController extends Controller
                 ->with('success', 'Approval Form updated successfully.');
         } catch (\Exception $e) {
             return back()
-                ->with('error', 'Error checking existing approval form: ' . $e->getMessage());
+                ->with('error', 'Error updating approval form: ' . $e->getMessage());
         }
     }
 
     public function ApprovalFormShow(ApprovalForm $approvalForm)
     {
         // Load related models
-        $approvalForm->load('portfolio', 'property', 'preparedBy', 'verifiedBy');
+        $approvalForm->load('portfolio', 'property');
 
         return view('maker.approval-form.show', [
             'approvalForm' => $approvalForm
@@ -3162,43 +3181,22 @@ class MakerController extends Controller
 
     public function ApprovalFormValidate(Request $request, ApprovalForm $approvalForm = null)
     {
-        // Validation rules
+        // Validation rules based on the actual database schema
         $rules = [
             'portfolio_id' => 'nullable|exists:portfolios,id',
             'property_id' => 'nullable|exists:properties,id',
-            'form_number' => 'nullable|string|max:50',
-            'form_title' => 'required|string|max:255',
-            'form_category' => 'nullable|string|max:100',
-            'reference_code' => 'nullable|string|max:100',
+            'category' => 'nullable|string|max:100',
+            'details' => 'nullable|string',
             'received_date' => 'required|date',
             'send_date' => 'nullable|date|after_or_equal:received_date',
             'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
-            'location' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
             'remarks' => 'nullable|string',
+            'status' => 'nullable|string',
+            'prepared_by' => 'nullable|string',
         ];
-
-        // Unique reference code validation (optional)
-        if (!$approvalForm) {
-            $rules['reference_code'] .= '|unique:approval_forms';
-        } else {
-            $rules['reference_code'] .= '|unique:approval_forms,reference_code,' . $approvalForm->id;
-        }
 
         // Validate the request
         $validatedData = $request->validate($rules);
-
-        // Handle file upload
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $path = $file->store('approval-forms', 'public');
-            $validatedData['attachment'] = $path;
-        }
-
-        // Add current user as prepared_by if creating new
-        if (!$approvalForm) {
-            $validatedData['prepared_by'] = auth()->id();
-        }
 
         return $validatedData;
     }
@@ -3245,8 +3243,8 @@ class MakerController extends Controller
 
     public function SiteVisitLogCreate()
     {
-        $siteVisits = SiteVisit::where('status', 'active')->get();
-        return view('maker.site-visit-log.create', compact('siteVisits'));
+        $properties = Property::where('status', 'active')->get();
+        return view('maker.site-visit-log.create', compact('properties'));
     }
 
     public function SiteVisitLogStore(Request $request)
@@ -3283,10 +3281,10 @@ class MakerController extends Controller
 
     public function SiteVisitLogEdit(SiteVisitLog $siteVisitLog)
     {
-        $siteVisits = SiteVisit::where('status', 'active')->get();
-        return view('maker.site-visit-log.edit', compact('siteVisitLog', 'siteVisits'));
+        $properties = Property::where('status', 'active')->get();
+        return view('maker.site-visit-log.edit', compact('siteVisitLog', 'properties'));
     }
-
+    
     public function SiteVisitLogUpdate(Request $request, SiteVisitLog $siteVisitLog)
     {
         $validated = $this->SiteVisitLogValidate($request);
