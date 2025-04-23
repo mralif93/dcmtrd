@@ -24,10 +24,11 @@ class Tenant extends Model
         'commencement_date',
         'approval_date',
         'expiry_date',
+        'status',
         'prepared_by',
         'verified_by',
         'approval_datetime',
-        'status'
+        'remarks',
     ];
 
     /**

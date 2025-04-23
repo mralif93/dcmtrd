@@ -37,6 +37,7 @@ class Lease extends Model
         'prepared_by',
         'verified_by',
         'approval_datetime',
+        'remarks',
     ];
 
     /**

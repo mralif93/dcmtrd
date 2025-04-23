@@ -631,9 +631,13 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
             
-            return redirect()->route('activity-diary-a.index')->with('success', 'Activity Diary approved successfully.');
+            return redirect()
+                ->route('activity-diary-a.index')
+                ->with('success', 'Activity Diary approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving activity diary: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error approving activity diary: ' . $e->getMessage());
         }
     }
 
@@ -650,9 +654,13 @@ class ApproverController extends Controller
                 'remarks' => $request->input('rejection_reason'),
             ]);
             
-            return redirect()->route('activity-diary-a.index')->with('success', 'Activity Diary rejected successfully.');
+            return redirect()
+                ->route('activity-diary-a.index')
+                ->with('success', 'Activity Diary rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
         }
     }
 
@@ -703,88 +711,6 @@ class ApproverController extends Controller
     }
 
     // Property
-    public function PropertyMain(Request $request)
-    {
-        // Get the active tab (default to 'pending' if not specified)
-        $activeTab = $request->tab ?? 'all';
-        
-        // Base query with portfolio relationship
-        $query = Property::with('portfolio');
-        
-        // Apply tab filtering
-        if ($activeTab !== 'all') {
-            $query->where('status', $activeTab);
-        }
-        
-        // Apply additional filters
-        $query->when($request->filled('search'), function($query) use ($request) {
-            return $query->where(function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('address', 'like', '%' . $request->search . '%')
-                  ->orWhere('city', 'like', '%' . $request->search . '%');
-            });
-        })
-        ->when($request->filled('category'), function($query) use ($request) {
-            return $query->where('category', $request->category);
-        });
-        
-        // Get paginated results
-        $properties = $query->orderBy('name')->paginate(15)->withQueryString();
-        
-        // Get counts for each status tab
-        $tabCounts = [
-            'all' => Property::count(),
-            'pending' => Property::where('status', 'pending')->count(),
-            'active' => Property::where('status', 'active')->count(),
-            'rejected' => Property::where('status', 'rejected')->count(),
-        ];
-        
-        // Return view with data
-        return view('approver.property.main', compact('properties', 'activeTab', 'tabCounts'));
-    }
-
-    public function PropertyDetails(Property $property) {
-        return view('approver.property.details', compact('property'));
-    }
-
-    public function PropertyApprove(Property $property) {
-        try {
-            $property->update([
-                'status' => 'active',
-                'verified_by' => Auth::user()->name,
-                'approval_datetime' => now(),
-            ]);
-
-            return redirect()
-                ->route('property-a.main', ['tab' => 'pending'])
-                ->with('success', 'Property approved successfully.');
-        } catch (\Exception $e) {
-            return back()
-                ->with('error', 'Error approving activity diary: ' . $e->getMessage());
-        }
-    }
-
-    public function PropertyReject(Request $request, Property $property) {
-        $request->validate([
-            'rejection_reason' => 'required|string|max:255',
-        ]);
-
-        try {
-            $property->update([
-                'status' => 'rejected',
-                'verified_by' => Auth::user()->name,
-                'remarks' => $request->input('rejection_reason'),
-            ]);
-
-            return redirect()
-                ->route('property-a.main', ['tab' => 'pending'])
-                ->with('success', 'Property rejected successfully.');
-        } catch (\Exception $e) {
-            return back()
-                ->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
-        }
-    }
-
     public function PropertyIndex(Request $request, Portfolio $portfolio)
     {
         // Start with a base query, including relevant relationships
@@ -867,6 +793,89 @@ class ApproverController extends Controller
         return view('approver.property.show', compact('property'));
     }
 
+    public function PropertyMain(Request $request)
+    {
+        // Get the active tab (default to 'pending' if not specified)
+        $activeTab = $request->tab ?? 'all';
+        
+        // Base query with portfolio relationship
+        $query = Property::with('portfolio');
+        
+        // Apply tab filtering
+        if ($activeTab !== 'all') {
+            $query->where('status', $activeTab);
+        }
+        
+        // Apply additional filters
+        $query->when($request->filled('search'), function($query) use ($request) {
+            return $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('address', 'like', '%' . $request->search . '%')
+                  ->orWhere('city', 'like', '%' . $request->search . '%');
+            });
+        })
+        ->when($request->filled('category'), function($query) use ($request) {
+            return $query->where('category', $request->category);
+        });
+        
+        // Get paginated results
+        $properties = $query->orderBy('name')->paginate(15)->withQueryString();
+        
+        // Get counts for each status tab
+        $tabCounts = [
+            'all' => Property::count(),
+            'pending' => Property::where('status', 'pending')->count(),
+            'active' => Property::where('status', 'active')->count(),
+            'rejected' => Property::where('status', 'rejected')->count(),
+        ];
+        
+        // Return view with data
+        return view('approver.property.main', compact('properties', 'activeTab', 'tabCounts'));
+    }
+
+    public function PropertyDetails(Property $property) {
+        return view('approver.property.details', compact('property'));
+    }
+
+    public function PropertyApprove(Property $property) {
+        try {
+            $property->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('property-a.main', ['tab' => 'pending'])
+                ->with('success', 'Property approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving activity diary: ' . $e->getMessage());
+        }
+    }
+
+    public function PropertyReject(Request $request, Property $property)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $property->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('property-a.main', ['tab' => 'pending'])
+                ->with('success', 'Property rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
+        }
+    }
+
     // Financial Module
     public function FinancialMain(Request $request)
     {
@@ -945,13 +954,17 @@ class ApproverController extends Controller
         }
     }
 
-    public function FinancialReject(Financial $financial)    
+    public function FinancialReject(Request $request, Financial $financial)    
     {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+        
         try {
             $financial->update([
                 'status' => 'rejected',
                 'verified_by' => Auth::user()->name,
-                'approval_datetime' => now(),
+                'remarks' => $request->input('rejection_reason'),
             ]);
 
             return redirect()
@@ -1040,12 +1053,18 @@ class ApproverController extends Controller
         }
     }
 
-    public function TenantReject(Tenant $tenant)
+    public function TenantReject(Request $request, Tenant $tenant)
     {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+
         try {
             $tenant->update([
                 'status' => 'rejected',
                 'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
                 'approval_datetime' => now(),
             ]);
 
@@ -1096,6 +1115,79 @@ class ApproverController extends Controller
     public function LeaseShow(Lease $lease)
     {
         return view('approver.lease.show', compact('lease'));
+    }
+
+    public function LeaseMain(Request $request)
+    {
+        // Get current tab or default to 'all'
+        $activeTab = $request->query('tab', 'all');
+        
+        // search & filter
+        $query = Lease::with(['tenant', 'tenant.property', 'tenant.property.portfolio']);
+        
+        // Apply status filter based on tab
+        if ($activeTab !== 'all') {
+            $query->where('status', $activeTab);
+        }
+        
+        // fetch leases
+        $leases = $query->latest()->paginate(10)->withQueryString();
+        
+        // Count records for each tab
+        $tabCounts = [
+            'all' => Lease::count(),
+            'active' => Lease::where('status', 'active')->count(),
+            'pending' => Lease::where('status', 'pending')->count(),
+            'inactive' => Lease::where('status', 'inactive')->count(),
+            'rejected' => Lease::where('status', 'rejected')->count(),
+        ];
+
+        return view('approver.lease.main', compact('leases', 'activeTab', 'tabCounts'));
+    }
+
+    public function LeaseDetails(Lease $lease)
+    {
+        return view('approver.lease.details', compact('lease'));
+    }
+    public function LeaseApprove(Lease $lease)
+    {
+        try {
+            $lease->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('lease-a.main', ['tab' => 'pending'])
+                ->with('success', 'Lease approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving lease: ' . $e->getMessage());
+        }
+    }
+
+    public function LeaseReject(Request $request, Lease $lease)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+
+        try {
+            $lease->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('lease-a.main', ['tab' => 'pending'])
+                ->with('success', 'Lease rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting lease: ' . $e->getMessage());
+        }
     }
 
     // Site Visit

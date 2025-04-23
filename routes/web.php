@@ -735,6 +735,10 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     // Lease Module
     Route::get('approver/lease/{property}', [ApproverController::class, 'LeaseIndex'])->name('lease-a.index')->middleware('permission:REITS');
     Route::get('approver/lease/{lease}/show', [ApproverController::class, 'LeaseShow'])->name('lease-a.show')->middleware('permission:REITS');
+    Route::get('approver/lease/', [ApproverController::class, 'LeaseMain'])->name('lease-a.main')->middleware('permission:REITS');
+    Route::get('approver/lease/{lease}/details', [ApproverController::class, 'LeaseDetails'])->name('lease-a.details')->middleware('permission:REITS');
+    Route::post('approver/lease/{lease}/approve', [ApproverController::class, 'LeaseApprove'])->name('lease-a.approve')->middleware('permission:REITS');
+    Route::post('approver/lease/{lease}/reject', [ApproverController::class, 'LeaseReject'])->name('lease-a.reject')->middleware('permission:REITS');
 
     // SiteVisit Module
     Route::get('approver/site-visit/', [ApproverController::class, 'SiteVisitIndex'])->name('site-visit-a.index')->middleware('permission:REITS');

@@ -24,12 +24,12 @@ return new class extends Migration
             $table->decimal('financed_amount', 15, 2)->unsigned()->nullable();
             $table->decimal('security_value', 15, 2)->unsigned()->nullable();
             $table->date('valuation_date')->nullable();
-            $table->text('remarks')->nullable();
 
             // system information
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
+            $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
 
             // default value

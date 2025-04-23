@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('status')->default('active');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
+            $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
 
             // default information

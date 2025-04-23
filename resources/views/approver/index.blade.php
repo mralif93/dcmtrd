@@ -315,7 +315,7 @@
                     icon="document-duplicate"
                     :count="$leaseCount ?? 0"
                     :pendingCount="$pendingLeaseCount ?? 0"
-                    href="#"
+                    :href="route('lease-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 

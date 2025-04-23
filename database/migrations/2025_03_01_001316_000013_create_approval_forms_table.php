@@ -25,12 +25,12 @@ return new class extends Migration
             $table->date('received_date');
             $table->date('send_date')->nullable();
             $table->string('attachment')->nullable();
-            $table->text('remarks')->nullable();
 
             // system information
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
+            $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
 
             // default information

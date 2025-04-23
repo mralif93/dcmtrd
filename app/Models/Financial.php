@@ -38,6 +38,7 @@ class Financial extends Model
         'prepared_by',
         'verified_by',
         'approval_datetime',
+        'remarks',
     ];
 
     /**
