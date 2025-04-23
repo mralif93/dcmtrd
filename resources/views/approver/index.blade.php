@@ -325,7 +325,7 @@
                     icon="location-marker"
                     :count="$siteVisitCount ?? 0"
                     :pendingCount="$pendingSiteVisitCount ?? 0"
-                    href="#"
+                    :href="route('site-visit-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 

@@ -743,6 +743,10 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     // SiteVisit Module
     Route::get('approver/site-visit/', [ApproverController::class, 'SiteVisitIndex'])->name('site-visit-a.index')->middleware('permission:REITS');
     Route::get('approver/site-visit/{siteVisit}/show', [ApproverController::class, 'SiteVisitShow'])->name('site-visit-a.show')->middleware('permission:REITS');
+    Route::get('approver/site-visit/', [ApproverController::class, 'SiteVisitMain'])->name('site-visit-a.main')->middleware('permission:REITS');
+    Route::get('approver/site-visit/{siteVisit}/details', [ApproverController::class, 'SiteVisitDetails'])->name('site-visit-a.details')->middleware('permission:REITS');
+    Route::post('approver/site-visit/{siteVisit}/approve', [ApproverController::class, 'SiteVisitApprove'])->name('site-visit-a.approve')->middleware('permission:REITS');
+    Route::post('approver/site-visit/{siteVisit}/reject', [ApproverController::class, 'SiteVisitReject'])->name('site-visit-a.reject')->middleware('permission:REITS');
 
     // Checklist Module
     Route::get('approver/checklist/{property}', [ApproverController::class, 'ChecklistIndex'])->name('checklist-a.index')->middleware('permission:REITS');

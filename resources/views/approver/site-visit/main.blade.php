@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Lease Management') }}
+                {{ __('Site Visits Management') }}
             </h2>
             <a href="{{ route('approver.dashboard', ['section' => 'reits']) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -30,35 +30,42 @@
                 </div>
             @endif
 
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg font-medium text-gray-900">Leases</h3>
+                    <h3 class="text-lg font-medium text-gray-900">Site Visits</h3>
                 </div>
 
                 <!-- Status Tabs -->
                 <div class="border-b border-gray-200">
                     <nav class="-mb-px flex px-6 space-x-6">
-                        <a href="{{ route('lease-a.main', ['tab' => 'all'] + request()->except('page', 'tab')) }}" 
+                        <a href="{{ route('site-visit-a.main', ['tab' => 'all'] + request()->except('page', 'tab')) }}" 
                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm {{ $activeTab == 'all' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                            All Leases
+                            All Visits
                             <span class="ml-2 py-0.5 px-2.5 text-xs rounded-full bg-gray-100">{{ $tabCounts['all'] }}</span>
                         </a>
-                        <a href="{{ route('lease-a.main', ['tab' => 'active'] + request()->except('page', 'tab')) }}" 
+                        <a href="{{ route('site-visit-a.main', ['tab' => 'active'] + request()->except('page', 'tab')) }}" 
                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm {{ $activeTab == 'active' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                             Active
                             <span class="ml-2 py-0.5 px-2.5 text-xs rounded-full bg-gray-100">{{ $tabCounts['active'] }}</span>
                         </a>
-                        <a href="{{ route('lease-a.main', ['tab' => 'pending'] + request()->except('page', 'tab')) }}" 
+                        <a href="{{ route('site-visit-a.main', ['tab' => 'pending'] + request()->except('page', 'tab')) }}" 
                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm {{ $activeTab == 'pending' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                             Pending
                             <span class="ml-2 py-0.5 px-2.5 text-xs rounded-full bg-gray-100">{{ $tabCounts['pending'] }}</span>
                         </a>
-                        <a href="{{ route('lease-a.main', ['tab' => 'rejected'] + request()->except('page', 'tab')) }}" 
+                        <a href="{{ route('site-visit-a.main', ['tab' => 'rejected'] + request()->except('page', 'tab')) }}" 
                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm {{ $activeTab == 'rejected' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                             Rejected
                             <span class="ml-2 py-0.5 px-2.5 text-xs rounded-full bg-gray-100">{{ $tabCounts['rejected'] }}</span>
                         </a>
-                        <a href="{{ route('lease-a.main', ['tab' => 'inactive'] + request()->except('page', 'tab')) }}" 
+                        <a href="{{ route('site-visit-a.main', ['tab' => 'inactive'] + request()->except('page', 'tab')) }}" 
                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm {{ $activeTab == 'inactive' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                             Inactive
                             <span class="ml-2 py-0.5 px-2.5 text-xs rounded-full bg-gray-100">{{ $tabCounts['inactive'] }}</span>
@@ -68,14 +75,14 @@
 
                 <!-- Search and filter options -->
                 <div class="px-4 py-3 bg-gray-50 sm:px-6">
-                    <form action="{{ route('lease-a.main') }}" method="GET" class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <form action="{{ route('site-visit-a.main') }}" method="GET" class="grid grid-cols-1 gap-4 md:grid-cols-4">
                         <input type="hidden" name="tab" value="{{ $activeTab }}">
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <input type="text" name="search" id="search" value="{{ request('search') }}" 
                                        class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md" 
-                                       placeholder="Lease name, tenant...">
+                                       placeholder="Search properties, managers...">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                     <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -84,102 +91,127 @@
                             </div>
                         </div>
                         <div>
-                            <label for="tenancy_type" class="block text-sm font-medium text-gray-700">Tenancy Type</label>
-                            <select id="tenancy_type" name="tenancy_type" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="">All Types</option>
-                                @foreach(['New', 'Renewal'] as $type)
-                                    <option value="{{ $type }}" {{ request('tenancy_type') == $type ? 'selected' : '' }}>{{ $type }}</option>
+                            <label for="property" class="block text-sm font-medium text-gray-700">Property</label>
+                            <select id="property" name="property_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="">All Properties</option>
+                                @foreach($properties as $property)
+                                    <option value="{{ $property->id }}" {{ request('property_id') == $property->id ? 'selected' : '' }}>{{ $property->name }}</option>
                                 @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label for="date_range" class="block text-sm font-medium text-gray-700">Date Range</label>
+                            <select id="date_range" name="date_range" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="">Any Time</option>
+                                <option value="today" {{ request('date_range') == 'today' ? 'selected' : '' }}>Today</option>
+                                <option value="upcoming" {{ request('date_range') == 'upcoming' ? 'selected' : '' }}>Upcoming</option>
+                                <option value="past" {{ request('date_range') == 'past' ? 'selected' : '' }}>Past</option>
+                                <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week</option>
+                                <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month</option>
                             </select>
                         </div>
                         <div class="flex items-end space-x-3">
                             <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 Filter Results
                             </button>
-                            <a href="{{ route('lease-a.main', ['tab' => $activeTab]) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <a href="{{ route('site-visit-a.main', ['status' => $activeTab]) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 Reset
                             </a>
                         </div>
                     </form>
                 </div>
 
-                <!-- Leases Table -->
+                <!-- Site Visits Table -->
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenant & Lease Name</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Space & Type</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lease Term</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visit Details</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personnel</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($leases as $lease)
+                            @foreach($siteVisits as $siteVisit)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('lease-a.show', $lease) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $lease->tenant->name ?? 'N/A' }}
+                                        <a href="{{ route('site-visit-a.show', $siteVisit) }}" class="text-indigo-600 hover:text-indigo-900">
+                                            {{ $siteVisit->property->name ?? 'N/A' }}
                                         </a>
                                     </div>
                                     <div class="text-sm text-gray-500">
-                                        {{ $lease->lease_name }}
+                                        {{ $siteVisit->property->address ?? 'N/A' }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ number_format($lease->space, 2) }} sq ft</div>
-                                    <div class="text-sm text-gray-500">{{ $lease->tenancy_type ?? 'N/A' }}</div>
+                                    <div class="text-sm text-gray-900">{{ $siteVisit->date_visit->format('d/m/Y') }}</div>
+                                    <div class="text-sm text-gray-500">{{ $siteVisit->formatted_time }}</div>
+                                    @if($siteVisit->isToday())
+                                        <span class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            Today
+                                        </span>
+                                    @elseif($siteVisit->isPast())
+                                        <span class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            Past
+                                        </span>
+                                    @else
+                                        <span class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            Upcoming
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">
-                                        {{ $lease->start_date ? $lease->start_date->format('d M Y') : 'N/A' }} - 
-                                        {{ $lease->end_date ? $lease->end_date->format('d M Y') : 'N/A' }}
+                                        {{ $siteVisit->trustee ?? 'No trustee' }}
                                     </div>
                                     <div class="text-sm text-gray-500">
-                                        @if($lease->isExpired())
-                                            <span class="text-red-600">Expired</span>
-                                        @elseif($lease->isExpiringSoon())
-                                            <span class="text-yellow-600">Expiring soon ({{ $lease->getRemainingTerm() }} days left)</span>
-                                        @else
-                                            {{ $lease->term_years }} year(s)
-                                        @endif
+                                        {{ $siteVisit->manager ? 'Manager: '.$siteVisit->manager : '' }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ match(strtolower($lease->status)) {
-                                            'active' => 'bg-green-100 text-green-800',
+                                        {{ match(strtolower($siteVisit->status)) {
+                                            'completed' => 'bg-green-100 text-green-800',
+                                            'scheduled' => 'bg-blue-100 text-blue-800',
                                             'pending' => 'bg-yellow-100 text-yellow-800',
-                                            'rejected' => 'bg-red-100 text-red-800',
-                                            default => 'bg-blue-100 text-blue-800'
+                                            'cancelled' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
                                         } }}">
-                                        {{ ucfirst($lease->status) }}
+                                        {{ ucfirst($siteVisit->status) }}
                                     </span>
+                                    @if($siteVisit->follow_up_required)
+                                        <div class="mt-1">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                Follow-up Required
+                                            </span>
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        <a href="{{ route('lease-a.details', $lease) }}" class="text-indigo-600 hover:text-indigo-900" title="View Details">
+                                        <a href="{{ route('site-visit-a.show', $siteVisit) }}" class="text-indigo-600 hover:text-indigo-900" title="View Details">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                             </svg>
                                         </a>
                                         
-                                        @if($lease->status == 'pending')
+                                        @if($siteVisit->status == 'pending')
                                             <!-- Approve Button -->
-                                            <form method="POST" action="{{ route('lease-a.approve', $lease) }}" class="inline">
+                                            <form method="POST" action="{{ route('site-visit-a.approve', $siteVisit) }}" class="inline">
                                                 @csrf
-                                                <button type="submit" class="text-green-600 hover:text-green-900" title="Approve Lease">
+                                                <button type="submit" class="text-green-600 hover:text-green-900" title="Approve Visit">
                                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                                     </svg>
                                                 </button>
                                             </form>
                                             
-                                            <!-- Reject Button (opens modal) -->
-                                            <button onclick="openRejectModal('{{ $lease->id }}')" class="text-red-600 hover:text-red-900" title="Reject Lease">
+                                            <!-- Cancel Button (opens modal) -->
+                                            <button onclick="openCancelModal('{{ $siteVisit->id }}')" class="text-red-600 hover:text-red-900" title="Cancel Visit">
                                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                                 </svg>
@@ -189,10 +221,10 @@
                                 </td>
                             </tr>
                             @endforeach
-                            @if($leases->count() === 0)
+                            @if($siteVisits->count() === 0)
                             <tr>
                                 <td colspan="5" class="px-6 py-4 text-center">
-                                    <div class="text-sm text-gray-500">No lease records found.</div>
+                                    <div class="text-sm text-gray-500">No site visits found.</div>
                                 </td>
                             </tr>
                             @endif
@@ -202,14 +234,14 @@
                 
                 <!-- Pagination Links -->
                 <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
-                    {{ $leases->links() }}
+                    {{ $siteVisits->links() }}
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Rejection Modal -->
-    <div id="rejectModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden z-50">
+    <!-- Cancel Modal -->
+    <div id="cancelModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div class="sm:flex sm:items-start">
@@ -219,14 +251,14 @@
                         </svg>
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Reject Lease</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Reject Site Visit</h3>
                         <div class="mt-2">
-                            <p class="text-sm text-gray-500">Please provide a reason for rejecting this lease record.</p>
+                            <p class="text-sm text-gray-500">Please provide a reason for rejecting this site visit.</p>
                         </div>
                     </div>
                 </div>
                 
-                <form id="rejectForm" method="POST" action="">
+                <form id="cancelForm" method="POST" action="">
                     @csrf
                     <div class="mt-4">
                         <label for="rejection_reason" class="block text-sm font-medium text-gray-700">Rejection Reason</label>
@@ -236,8 +268,8 @@
                         <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
                             Reject
                         </button>
-                        <button type="button" onclick="closeRejectModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                            Cancel
+                        <button type="button" onclick="closeCancelModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Back
                         </button>
                     </div>
                 </form>
@@ -250,13 +282,13 @@
             // Add any JavaScript functionality needed for filtering or dynamic behavior
         });
         
-        function openRejectModal(leaseId) {
-            document.getElementById('rejectForm').action = `/approver/lease/${leaseId}/reject`;
-            document.getElementById('rejectModal').classList.remove('hidden');
+        function openCancelModal(siteVisitId) {
+            document.getElementById('cancelForm').action = `/approver/site-visit/${siteVisitId}/reject`;
+            document.getElementById('cancelModal').classList.remove('hidden');
         }
         
-        function closeRejectModal() {
-            document.getElementById('rejectModal').classList.add('hidden');
+        function closeCancelModal() {
+            document.getElementById('cancelModal').classList.add('hidden');
         }
     </script>
 </x-app-layout>

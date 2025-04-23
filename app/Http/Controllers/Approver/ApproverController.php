@@ -1206,6 +1206,87 @@ class ApproverController extends Controller
         return view('approver.site-visit.show', compact('siteVisit'));
     }
 
+    public function SiteVisitMain(Request $request)
+    {
+        // Get current tab or default to 'all'
+        $activeTab = $request->query('tab', 'all');
+        
+        // search & filter
+        $query = SiteVisit::with(['property', 'property.portfolio']);
+        
+        // Apply status filter based on tab
+        if ($activeTab !== 'all') {
+            $query->where('status', $activeTab);
+        }
+        
+        // fetch site visits
+        $siteVisits = $query->latest()->paginate(10)->withQueryString();
+
+        // Get all properties for the dropdown from site visits
+        $propertyIds = $siteVisits->pluck('property_id')->unique();
+        $properties = Property::whereIn('id', $propertyIds)->get();
+        
+        // Count records for each tab
+        $tabCounts = [
+            'all' => SiteVisit::count(),
+            'pending' => SiteVisit::where('status', 'pending')->count(),
+            'active' => SiteVisit::where('status', 'active')->count(),
+            'scheduled' => SiteVisit::where('status', 'scheduled')->count(),
+            'completed' => SiteVisit::where('status', 'completed')->count(),
+            'rejected' => SiteVisit::where('status', 'rejected')->count(),
+            'cancelled' => SiteVisit::where('status', 'cancelled')->count(),
+            'rescheduled' => SiteVisit::where('status', 'rescheduled')->count(),
+            'inactive' => SiteVisit::where('status', 'inactive')->count(),
+        ];
+
+        return view('approver.site-visit.main', compact('siteVisits', 'activeTab', 'tabCounts', 'properties'));
+    }
+
+    public function SiteVisitDetails(SiteVisit $siteVisit)
+    {
+        return view('approver.site-visit.details', compact('siteVisit'));
+    }
+
+    public function SiteVisitApprove(SiteVisit $siteVisit)
+    {
+        try {
+            $siteVisit->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('site-visit-a.main', ['tab' => 'pending'])
+                ->with('success', 'Site Visit approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving site visit: ' . $e->getMessage());
+        }
+    }
+
+    public function SiteVisitReject(Request $request, SiteVisit $siteVisit)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $siteVisit->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('site-visit-a.main', ['tab' => 'pending'])
+                ->with('success', 'Site Visit rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting site visit: ' . $e->getMessage());
+        }
+    }
+
     // Checklist
     public function ChecklistIndex(Request $request, Property $property)
     {
