@@ -985,6 +985,80 @@ class ApproverController extends Controller
         return view('approver.tenant.show', compact('tenant'));
     }
 
+    public function TenantMain(Request $request)
+    {
+        // Get current tab or default to 'all'
+        $activeTab = $request->query('tab', 'all');
+        
+        // search & filter
+        $query = Tenant::with(['leases', 'property', 'property.portfolio']);
+
+        // Apply status filter based on tab
+        if ($activeTab !== 'all') {
+            $query->where('status', $activeTab);
+        }
+
+        // fetch tenants
+        $tenants = $query->latest()->paginate(10)->withQueryString();
+
+        // fetch all property using list tenant
+        $properties = $query->distinct('property_id')->pluck('property_id');
+        $properties = Property::whereIn('id', $properties)->get();
+
+        // Count records for each tab
+        $tabCounts = [
+            'all' => Tenant::count(),
+            'pending' => Tenant::where('status', 'pending')->count(),
+            'active' => Tenant::where('status', 'active')->count(),
+            'inactive' => Tenant::where('status', 'inactive')->count(),
+            'rejected' => Tenant::where('status', 'rejected')->count(),
+        ];
+
+        return view('approver.tenant.main', compact('tenants', 'activeTab', 'tabCounts', 'properties'));
+    }
+
+    public function TenantDetails(Tenant $tenant)
+    {
+        return view('approver.tenant.details', compact('tenant'));
+    }
+
+    public function TenantApprove(Tenant $tenant)
+    {
+        try {
+            $tenant->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('tenant-a.main', ['tab' => 'pending'])
+                ->with('success', 'Tenant approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving tenant: ' . $e->getMessage());
+        }
+    }
+
+    public function TenantReject(Tenant $tenant)
+    {
+        try {
+            $tenant->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('tenant-a.main', ['tab' => 'pending'])
+                ->with('success', 'Tenant rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error rejecting tenant: ' . $e->getMessage());
+        }
+    }
+
     // Lease
     public function LeaseIndex(Property $property)
     {

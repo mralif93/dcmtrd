@@ -727,6 +727,10 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     // Tenant Module
     Route::get('approver/tenant/{property}', [ApproverController::class, 'TenantIndex'])->name('tenant-a.index')->middleware('permission:REITS');
     Route::get('approver/tenant/{tenant}/show', [ApproverController::class, 'TenantShow'])->name('tenant-a.show')->middleware('permission:REITS');
+    Route::get('approver/tenant/', [ApproverController::class, 'TenantMain'])->name('tenant-a.main')->middleware('permission:REITS');
+    Route::get('approver/tenant/{tenant}/details', [ApproverController::class, 'TenantDetails'])->name('tenant-a.details')->middleware('permission:REITS');
+    Route::post('approver/tenant/{tenant}/approve', [ApproverController::class, 'TenantApprove'])->name('tenant-a.approve')->middleware('permission:REITS');
+    Route::post('approver/tenant/{tenant}/reject', [ApproverController::class, 'TenantReject'])->name('tenant-a.reject')->middleware('permission:REITS');
 
     // Lease Module
     Route::get('approver/lease/{property}', [ApproverController::class, 'LeaseIndex'])->name('lease-a.index')->middleware('permission:REITS');

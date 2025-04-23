@@ -305,7 +305,7 @@
                     icon="users"
                     :count="$tenantsCount ?? 0"
                     :pendingCount="$pendingTenantsCount ?? 0"
-                    href="#"
+                    :href="route('tenant-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 
