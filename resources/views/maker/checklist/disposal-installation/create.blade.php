@@ -37,6 +37,13 @@
                         </div>
                     @endif
 
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
                     <form method="POST" action="{{ route('checklist-disposal-installation-m.store') }}">
                         @csrf
                         <input type="hidden" name="checklist_id" value="{{ $checklist->id }}">
@@ -73,6 +80,7 @@
                                         <option value="active" {{ old('component_status') == 'active' ? 'selected' : '' }}>Active</option>
                                         <option value="inactive" {{ old('component_status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                                         <option value="pending" {{ old('component_status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="completed" {{ old('component_status') == 'completed' ? 'selected' : '' }}>Completed</option>
                                     </select>
                                     @error('component_status')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -99,7 +107,7 @@
                                         Cancel
                                     </a>
                                     <button type="submit" 
-                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    class="inline-flex items-center px-4 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                         </svg>

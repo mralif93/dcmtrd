@@ -79,7 +79,7 @@ class Checklist extends Model
      */
     public function disposalInstallation()
     {
-        return $this->hasOne(ChecklistDisposalInstallation::class);
+        return $this->hasMany(ChecklistDisposalInstallation::class);
     }
 
     /**

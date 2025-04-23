@@ -144,10 +144,8 @@
                                 @endif
 
                                 @if($checklist->disposalInstallation)
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                        {{ $checklist->disposalInstallation->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                        ($checklist->disposalInstallation->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
-                                        Installations: {{ ucfirst($checklist->disposalInstallation->status ?? 'N/A') }}
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                        Installations: {{ ucfirst($checklist->disposalInstallation->count() ?? 'N/A') }}
                                     </span>
                                 @endif
                             </div>
@@ -1035,7 +1033,7 @@
             <div id="content-installations" class="tab-content hidden bg-white shadow overflow-hidden sm:rounded-lg">
                 <!-- Disposal/Installation Header -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Disposal/Installation Items</h3>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Disposal/Installation</h3>
                     <!-- Button Add -->
                     <a href="{{ route('checklist-disposal-installation-m.create', $checklist) }}"
                         class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -1049,63 +1047,48 @@
                 <!-- Disposal/Installation Details -->
                 <div class="border-t border-gray-200">
                     @if($checklist->disposalInstallation)
-                        @if($checklist->disposalInstallation->installationItems && $checklist->disposalInstallation->installationItems->count() > 0)
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($checklist->disposalInstallation as $disposalInstallation)
                                         <tr>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component Type</th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Scope</th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach($checklist->disposalInstallation->installationItems as $item)
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {{ $item->component_type }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {{ $item->date ? date('d/m/Y', strtotime($item->date)) : 'N/A' }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {{ $item->scope ?? 'N/A' }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $disposalInstallation->component_name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ $disposalInstallation->component_date ? $disposalInstallation->component_date->format('d/m/Y h:i A') : 'N/A' }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                @if($disposalInstallation->component_status)
                                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $item->status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                                        ($item->status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                                        ($item->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
-                                                        {{ ucfirst($item->status ?? 'N/A') }}
+                                                        {{ $disposalInstallation->component_status === 'completed' ? 'bg-green-100 text-green-800' : 
+                                                        ($disposalInstallation->component_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
+                                                        ($disposalInstallation->component_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
+                                                            {{ ucfirst(str_replace('_', ' ', $disposalInstallation->component_status)) }}
                                                     </span>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div class="px-4 py-5 sm:px-6 text-center">
-                                <p class="text-sm text-gray-500">No installation items added to this checklist yet.</p>
-                            </div>
-                        @endif
-                        
-                        <div>
-                            <dl>
-                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Remarks</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->disposalInstallation->remarks ?? 'No remarks' }}</dd>
-                                </div>
-                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                    <dt class="text-sm font-medium text-gray-500">Approval Information</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        <div>Prepared by: {{ $checklist->disposalInstallation->prepared_by ?? 'N/A' }}</div>
-                                        <div>Verified by: {{ $checklist->disposalInstallation->verified_by ?? 'N/A' }}</div>
-                                        <div>Approved on: {{ $checklist->disposalInstallation->approval_datetime ? date('d/m/Y h:i A', strtotime($checklist->disposalInstallation->approval_datetime)) : 'N/A' }}</div>
-                                    </dd>
-                                </div>
-                            </dl>
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <div class="flex justify-end space-x-2">
+                                                    <a href="{{ route('checklist-disposal-installation-m.edit', $disposalInstallation) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                        </svg>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     @else
                         <div class="bg-white px-4 py-5 sm:px-6">
@@ -1123,6 +1106,7 @@
                         </svg>
                         Back to List
                     </a>
+                    @if($checklist->disposalInstallation)
                     <a href="{{ route('checklist-disposal-installation-m.edit', $checklist->disposalInstallation) }}" 
                         class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1130,6 +1114,7 @@
                         </svg>
                         Edit Disposal/Installation
                     </a>
+                    @endif
                 </div>
             </div>
         </div>

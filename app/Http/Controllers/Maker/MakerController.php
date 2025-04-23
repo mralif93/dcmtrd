@@ -3111,7 +3111,7 @@ class MakerController extends Controller
         return view('maker.checklist.disposal-installation.create', compact('checklist'));
     }
 
-    public function ChecklistDisposalInstallationStore(Request $request, Checklist $checklist)
+    public function ChecklistDisposalInstallationStore(Request $request, ChecklistDisposalInstallation $checklistDisposalInstallation)
     {
         // Get the validated data from the separate validation methods
         $validated = $this->disposalInstallationValidate($request);
@@ -3121,10 +3121,10 @@ class MakerController extends Controller
         
         try {
             // create disposal installation
-            ChecklistDisposalInstallation::create($validated);
+            $checklistDisposalInstallation = ChecklistDisposalInstallation::create($validated);
             
             return redirect()
-                ->route('checklist-m.disposal-installation.index', $checklist)
+                ->route('checklist-m.show', $checklistDisposalInstallation->checklist->siteVisit->property)
                 ->with('success', 'Disposal installation created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3133,15 +3133,15 @@ class MakerController extends Controller
         }
     }
 
-    public function ChecklistDisposalInstallationEdit(ChecklistDisposalInstallation $disposalInst)
+    public function ChecklistDisposalInstallationEdit(ChecklistDisposalInstallation $checklistDisposalInstallation)
     {
-        return view('maker.checklist.disposal-installation.edit', compact('checklist', 'disposalInst'));
+        return view('maker.checklist.disposal-installation.edit', compact('checklistDisposalInstallation'));
     }
 
-    public function ChecklistDisposalInstallationUpdate(Request $request, Checklist $checklist, ChecklistDisposalInstallation $disposalInst)
+    public function ChecklistDisposalInstallationUpdate(Request $request, ChecklistDisposalInstallation $checklistDisposalInstallation)
     {
         // Get the validated data from the separate validation methods
-        $validated = $this->disposalInstallationValidate($request, $disposalInst);
+        $validated = $this->disposalInstallationValidate($request, $checklistDisposalInstallation);
         
         // Record the last update
         $validated['updated_at'] = now();
@@ -3154,10 +3154,10 @@ class MakerController extends Controller
 
         try {
             // Update the disposal installation with validated data
-            $disposalInst->update($validated);
+            $checklistDisposalInstallation->update($validated);
             
             return redirect()
-                ->route('checklist-m.disposal-installation.index', $checklist)
+                ->route('checklist-m.show', $checklistDisposalInstallation->checklist->siteVisit->property)
                 ->with('success', 'Disposal installation updated successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3347,6 +3347,7 @@ class MakerController extends Controller
             'component_date' => 'nullable|date',
             'component_scope_of_work' => 'nullable|string',
             'component_status' => 'nullable|string|max:255',
+            'status' => ['nullable', Rule::in(['active', 'inactive', 'pending', 'completed'])],
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
