@@ -14,7 +14,13 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DefaultUsersSeeder::class,
             BondsSeeder::class,
-            ReitsSeeder::class,
+            DefaultReitsSeeder::class,
+            PortfolioSeeder::class,
+            PropertySeeder::class,
+            TenantSeeder::class,
+            LeaseSeeder::class,
+            FinancialSeeder::class,
+            SiteVisitSeeder::class,
         ]);
     }
 }

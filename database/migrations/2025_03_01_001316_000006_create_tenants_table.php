@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('tenants', function (Blueprint $table) {
             $table->id();
+
+            // foreign key property
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
+
+            // tenant information
             $table->string('name');
             $table->string('contact_person')->nullable();
             $table->string('email')->nullable();
@@ -21,10 +25,14 @@ return new class extends Migration
             $table->date('commencement_date')->nullable();
             $table->date('approval_date')->nullable();
             $table->date('expiry_date');
+
+            // system information
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+
+            // default values
             $table->timestamps();
             $table->softDeletes();
             

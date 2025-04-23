@@ -50,6 +50,12 @@ use App\Models\SiteVisitLog;
 use App\Models\Appointment;
 use App\Models\ApprovalForm;
 use App\Models\ApprovalProperty;
+use App\Models\ChecklistLegalDocumentation;
+use App\Models\ChecklistTenant;
+use App\Models\ChecklistExternalAreaCondition;
+use App\Models\ChecklistInternalAreaCondition;
+use App\Models\ChecklistPropertyDevelopment;
+use App\Models\ChecklistDisposalInstallation;
 
 use App\Http\Requests\User\BondFormRequest;
 
@@ -2615,7 +2621,7 @@ class MakerController extends Controller
     {
         // Get only active site visits related to the current property
         $siteVisits = SiteVisit::where('property_id', $property->id)
-                            ->where('status', 'active')
+                            ->where('status', 'pending')
                             ->orderBy('date_visit', 'desc')
                             ->get();
         
@@ -2631,48 +2637,56 @@ class MakerController extends Controller
     public function ChecklistStore(Request $request)
     {
         // Get the validated data from the separate validation methods
-        $validated = $this->ChecklistValidate($request);
+        $validated = $this->checklistValidate($request);
         
-        // Add the authenticated user's ID as prepared_by
         $validated['prepared_by'] = Auth::user()->name;
-        
-        // Set default status to 'pending' to match schema default
         $validated['status'] = 'pending';
         
         try {
-            // Create the checklist with validated data
+            // create checklist
             $checklist = Checklist::create($validated);
-            
-            // Process tenant associations using tenant_ids array
-            if ($request->has('tenant_ids') && is_array($request->tenant_ids)) {
-                $pivotData = [];
-                
-                // Filter out empty values
-                $tenantIds = array_filter($request->tenant_ids, function($value) {
-                    return !empty($value);
-                });
-                
-                foreach ($tenantIds as $tenantId) {
-                    $pivotData[$tenantId] = [
-                        'status' => 'pending',
-                        'prepared_by' => Auth::id(),
-                        'created_at' => now(),
-                        'updated_at' => now()
-                    ];
-                }
-                
-                if (!empty($pivotData)) {
-                    $checklist->tenants()->attach($pivotData);
-                }
-            }
-            
-            // Get property_id from site_visit for redirection
-            $siteVisit = SiteVisit::findOrFail($request->site_visit_id);
-            
-            return redirect()->route('tenant-m.index', $siteVisit->property_id)
+
+            // create a legal documentation
+            ChecklistLegalDocumentation::create([
+                'checklist_id' => $checklist->id,
+                'prepared_by' => Auth::user()->name,
+                'status' => 'pending',
+            ]);
+
+            // create external area condition
+            ChecklistExternalAreaCondition::create([
+                'checklist_id' => $checklist->id,
+                'prepared_by' => Auth::user()->name,
+                'status' => 'pending',
+            ]);
+
+            // create internal area condition
+            ChecklistInternalAreaCondition::create([
+                'checklist_id' => $checklist->id,
+                'prepared_by' => Auth::user()->name,
+                'status' => 'pending',
+            ]);
+
+            // create property development
+            ChecklistPropertyDevelopment::create([
+                'checklist_id' => $checklist->id,
+                'prepared_by' => Auth::user()->name,
+                'status' => 'pending',
+            ]);
+
+            // create disposal installation
+            ChecklistDisposalInstallation::create([
+                'checklist_id' => $checklist->id,
+                'prepared_by' => Auth::user()->name,
+                'status' => 'pending',
+            ]);
+
+            return redirect()
+                ->route('tenant-m.index', $checklist->siteVisit->property)
                 ->with('success', 'Checklist created successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()
+            return back()
+                ->withInput()
                 ->with('error', 'Error creating checklist: ' . $e->getMessage());
         }
     }
@@ -2711,34 +2725,6 @@ class MakerController extends Controller
             // Update the checklist with validated data
             $checklist->update($validated);
             
-            // Process tenant associations using tenant_ids array
-            if ($request->has('tenant_ids') && is_array($request->tenant_ids)) {
-                $syncData = [];
-                
-                // Filter out empty values
-                $tenantIds = array_filter($request->tenant_ids, function($value) {
-                    return !empty($value);
-                });
-                
-                foreach ($tenantIds as $tenantId) {
-                    // Get existing pivot data if any
-                    $existingPivot = $checklist->tenants()
-                        ->where('tenant_id', $tenantId)
-                        ->first()?->pivot;
-                    
-                    $syncData[$tenantId] = [
-                        'status' => 'pending',
-                        'prepared_by' => $existingPivot?->prepared_by ?? Auth::id(),
-                        'updated_at' => now(),
-                    ];
-                }
-                
-                $checklist->tenants()->sync($syncData);
-            } else {
-                // If no tenant IDs were provided, detach all tenants
-                $checklist->tenants()->detach();
-            }
-            
             return redirect()
                 ->route('checklist-m.show', $checklist)
                 ->with('success', 'Checklist updated successfully.');
@@ -2754,16 +2740,461 @@ class MakerController extends Controller
         return view('maker.checklist.show', compact('checklist'));
     }
 
+    // Checklist Legal Documentation
+    public function ChecklistLegalDocumentationIndex(Checklist $checklist)
+    {
+        // Eager load the checklist with its relationships
+        $checklist->load(['siteVisit', 'property', 'legalDocumentation']);
+        
+        return view('maker.checklist.legal-documentation.index', compact('checklist'));
+    }
+
+    public function ChecklistLegalDocumentationCreate(Checklist $checklist)
+    {
+        return view('maker.checklist.legal-documentation.create', compact('checklist'));
+    }
+
+    public function ChecklistLegalDocumentationStore(Request $request, Checklist $checklist)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->legalDocumentationValidate($request);
+        
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+        
+        try {
+            // create legal documentation
+            ChecklistLegalDocumentation::create($validated);
+            
+            return redirect()
+                ->route('checklist-m.legal-documentation.index', $checklist)
+                ->with('success', 'Legal documentation created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating legal documentation: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistLegalDocumentationEdit(Checklist $checklist, ChecklistLegalDocumentation $legalDocumentation)
+    {
+        return view('maker.checklist.legal-documentation.edit', compact('checklist', 'legalDocumentation'));
+    }
+
+    public function ChecklistLegalDocumentationUpdate(Request $request, ChecklistLegalDocumentation $legalDocumentation)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->legalDocumentationValidate($request, $legalDocumentation);
+        
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        try {
+            // Update the legal documentation with validated data
+            $legalDocumentation->update($validated);
+            
+            return redirect()
+                ->route('checklist-m.show', $legalDocumentation->checklist->siteVisit->property)
+                ->with('success', 'Legal documentation updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating legal documentation: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistLegalDocumentationShow(Checklist $checklist, ChecklistLegalDocumentation $legalDocumentation)
+    {
+        return view('maker.checklist.legal-documentation.show', compact('checklist', 'legalDocumentation'));
+    }
+
+    // Checklist Tenant
+    public function ChecklistTenantIndex(Checklist $checklist)
+    {
+        $checklist->load(['siteVisit', 'property', 'tenants']);
+        return view('maker.checklist.tenant.index', compact('checklist'));
+    }
+
+    public function ChecklistTenantCreate(Checklist $checklist)
+    {
+        $checklist->load(['siteVisit', 'tenants']);
+        return view('maker.checklist.tenant.create', compact('checklist'));
+    }
+
+    public function ChecklistTenantStore(Request $request)
+    {
+        $validated = $this->tenantChecklistValidate($request);
+        
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+        try {
+            $checklistTenant = ChecklistTenant::create($validated);
+            
+            return redirect()
+                ->route('checklist-m.show', $checklistTenant->checklist->siteVisit->property)
+                ->with('success', 'Tenant association created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating tenant association: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistTenantEdit(ChecklistTenant $checklistTenant)
+    {
+        return view('maker.checklist.tenant.edit', compact('checklistTenant'));
+    }
+
+    public function ChecklistTenantUpdate(Request $request, ChecklistTenant $checklistTenant)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->tenantChecklistValidate($request, $checklistTenant);
+
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        try {
+            $checklistTenant->update($validated);
+            
+            return redirect()
+                ->route('checklist-m.show', $checklistTenant->checklist->siteVisit->property)
+                ->with('success', 'Tenant updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating tenant: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistTenantShow(ChecklistTenant $checklistTenant)
+    {
+        return view('maker.checklist.tenant.show', compact('checklistTenant'));
+    }
+
+    // Checklist External Area Condition
+    public function ChecklistExternalAreaConditionIndex(Checklist $checklist)
+    {
+        // Eager load the checklist with its relationships
+        $checklist->load(['siteVisit', 'property', 'externalAreaCondition']);
+        
+        return view('maker.checklist.external-area-condition.index', compact('checklist'));
+    }
+
+    public function ChecklistExternalAreaConditionCreate(Checklist $checklist)
+    {
+        return view('maker.checklist.external-area-condition.create', compact('checklist'));
+    }
+
+    public function ChecklistExternalAreaConditionStore(Request $request, Checklist $checklist)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->externalAreaConditionValidate($request);
+        
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+        
+        try {
+            // create external area condition
+            ChecklistExternalAreaCondition::create($validated);
+            
+            return redirect()
+                ->route('checklist-m.external-area-condition.index', $checklist)
+                ->with('success', 'External area condition created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating external area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistExternalAreaConditionEdit(ChecklistExternalAreaCondition $checklistExternalAreaCondition)
+    {
+        return view('maker.checklist.external-area-condition.edit', compact('checklistExternalAreaCondition'));
+    }
+
+    public function ChecklistExternalAreaConditionUpdate(Request $request, ChecklistExternalAreaCondition $checklistExternalAreaCondition)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->externalAreaConditionValidate($request, $checklistExternalAreaCondition);
+        
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        // Verified By
+        $validated['verified_by'] = Auth::user()->name;
+
+        // Status
+        $validated['status'] = 'completed';
+
+        try {
+            // Update the external area condition with validated data
+            $checklistExternalAreaCondition->update($validated);
+            
+            return redirect()
+                ->route('checklist-m.show', $checklistExternalAreaCondition->checklist->siteVisit->property)
+                ->with('success', 'External area condition updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating external area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistExternalAreaConditionShow(Checklist $checklist, ChecklistExternalAreaCondition $externalCond)
+    {
+        return view('maker.checklist.external-area-condition.show', compact('checklist', 'externalCond'));
+    }
+
+    // Checklist Internal Area Condition
+    public function ChecklistInternalAreaConditionIndex(Checklist $checklist)
+    {
+        // Eager load the checklist with its relationships
+        $checklist->load(['siteVisit', 'property', 'internalAreaCondition']);
+        
+        return view('maker.checklist.internal-area-condition.index', compact('checklist'));
+    }
+
+    public function ChecklistInternalAreaConditionCreate(Checklist $checklist)
+    {
+        return view('maker.checklist.internal-area-condition.create', compact('checklist'));
+    }
+
+    public function ChecklistInternalAreaConditionStore(Request $request, Checklist $checklist)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->internalAreaConditionValidate($request);
+        
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+        
+        try {
+            // create internal area condition
+            ChecklistInternalAreaCondition::create($validated);
+            
+            return redirect()
+                ->route('checklist-m.internal-area-condition.index', $checklist)
+                ->with('success', 'Internal area condition created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating internal area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistInternalAreaConditionEdit(ChecklistInternalAreaCondition $checklistInternalAreaCondition)
+    {
+        // Eager load the checklist with its relationships
+        $checklistInternalAreaCondition->load(['checklist']);
+        return view('maker.checklist.internal-area-condition.edit', compact('checklistInternalAreaCondition'));
+    }
+
+    public function ChecklistInternalAreaConditionUpdate(Request $request, ChecklistInternalAreaCondition $checklistInternalAreaCondition)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->internalAreaConditionValidate($request, $checklistInternalAreaCondition);
+        
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        // Verified By
+        $validated['verified_by'] = Auth::user()->name;
+
+        // Status
+        $validated['status'] = 'completed';
+
+        try {
+            // Update the internal area condition with validated data
+            $checklistInternalAreaCondition->update($validated);
+            
+            return redirect()
+                ->route('checklist-m.show', $checklistInternalAreaCondition->checklist->siteVisit->property)
+                ->with('success', 'Internal area condition updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating internal area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistInternalAreaConditionShow(ChecklistInternalAreaCondition $checklistInternalAreaCondition)
+    {
+        return view('maker.checklist.internal-area-condition.show', compact('checklistInternalAreaCondition'));
+    }
+
+    // Checklist Property Condition
+    public function ChecklistPropertyDevelopmentIndex(Checklist $checklist)
+    {
+        // Eager load the checklist with its relationships
+        $checklist->load(['siteVisit', 'property', 'propertyCondition']);
+        
+        return view('maker.checklist.property-development.index', compact('checklist'));
+    }
+
+    public function ChecklistPropertyDevelopmentCreate(Checklist $checklist)
+    {
+        return view('maker.checklist.property-development.create', compact('checklist'));
+    }
+
+    public function ChecklistPropertyDevelopmentStore(Request $request, Checklist $checklist)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->propertyConditionValidate($request);
+        
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+        
+        try {
+            // create property development
+            ChecklistPropertyDevelopment::create($validated);
+            
+            return redirect()
+                ->route('checklist-m.property-development.index', $checklist)
+                ->with('success', 'Property development created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating property development: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistPropertyDevelopmentEdit(ChecklistPropertyDevelopment $checklistPropertyDevelopment)
+    {
+        return view('maker.checklist.property-development.edit', compact('checklistPropertyDevelopment'));
+    }
+
+    public function ChecklistPropertyDevelopmentUpdate(Request $request, ChecklistPropertyDevelopment $checklistPropertyDevelopment)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->propertyDevelopmentValidate($request, $checklistPropertyDevelopment);
+        
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        // Verified By
+        $validated['verified_by'] = Auth::user()->name;
+
+        // Status
+        $validated['status'] = 'completed';
+
+        try {
+            // Update the property development with validated data
+            $checklistPropertyDevelopment->update($validated);
+            
+            return redirect()
+                ->route('checklist-m.show', $checklistPropertyDevelopment->checklist->siteVisit->property)
+                ->with('success', 'Property development updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating property development: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistPropertyDevelopmentShow(ChecklistPropertyDevelopment $checklistPropertyDevelopment)
+    {
+        return view('maker.checklist.property-development.show', compact('checklistPropertyDevelopment'));
+    }
+
+
+    // Checklist Disposal Installation
+    public function ChecklistDisposalInstallationIndex(Checklist $checklist)
+    {
+        // Eager load the checklist with its relationships
+        $checklist->load(['siteVisit', 'property', 'disposalInstallation']);
+        
+        return view('maker.checklist.disposal-installation.index', compact('checklist'));
+    }
+
+    public function ChecklistDisposalInstallationCreate(Checklist $checklist)
+    {
+        return view('maker.checklist.disposal-installation.create', compact('checklist'));
+    }
+
+    public function ChecklistDisposalInstallationStore(Request $request, Checklist $checklist)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->disposalInstallationValidate($request);
+        
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+        
+        try {
+            // create disposal installation
+            ChecklistDisposalInstallation::create($validated);
+            
+            return redirect()
+                ->route('checklist-m.disposal-installation.index', $checklist)
+                ->with('success', 'Disposal installation created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating disposal installation: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistDisposalInstallationEdit(ChecklistDisposalInstallation $disposalInst)
+    {
+        return view('maker.checklist.disposal-installation.edit', compact('checklist', 'disposalInst'));
+    }
+
+    public function ChecklistDisposalInstallationUpdate(Request $request, Checklist $checklist, ChecklistDisposalInstallation $disposalInst)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->disposalInstallationValidate($request, $disposalInst);
+        
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        // Verified By
+        $validated['verified_by'] = Auth::user()->name;
+
+        // Status
+        $validated['status'] = 'completed';
+
+        try {
+            // Update the disposal installation with validated data
+            $disposalInst->update($validated);
+            
+            return redirect()
+                ->route('checklist-m.disposal-installation.index', $checklist)
+                ->with('success', 'Disposal installation updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating disposal installation: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistDisposalInstallationShow(Checklist $checklist, ChecklistDisposalInstallation $disposalInst)
+    {
+        return view('maker.checklist.disposal-installation.show', compact('checklist', 'disposalInst'));
+    }
+
     /**
-     * Validate the main checklist data
+     * Validate main checklist data
+     *
+     * @param Request $request
+     * @param Checklist|null $checklist
+     * @return array
      */
-    public function ChecklistValidate(Request $request, Checklist $checklist = null)
+    public function checklistValidate(Request $request, Checklist $checklist = null)
     {
         return $request->validate([
-            // General Property Info
             'site_visit_id' => 'required|exists:site_visits,id',
-            
-            // 1.0 Legal Documentation
+        ]);
+    }
+
+    /**
+     * Validate legal documentation data
+     *
+     * @param Request $request
+     * @param ChecklistLegalDocumentation|null $legalDoc
+     * @return array
+     */
+    public function legalDocumentationValidate(Request $request, ChecklistLegalDocumentation $legalDocumentationValidate = null)
+    {
+        return $request->validate([
             'title_ref' => 'nullable|string|max:255',
             'title_location' => 'nullable|string|max:255',
             'trust_deed_ref' => 'nullable|string|max:255',
@@ -2776,8 +3207,39 @@ class MakerController extends Controller
             'maintenance_agreement_location' => 'nullable|string|max:255',
             'development_agreement' => 'nullable|string|max:255',
             'other_legal_docs' => 'nullable|string',
-            
-            // 3.0 External Area Conditions
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
+        ]);
+    }
+
+    /**
+     * Validate tenant checklist pivot data
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function tenantChecklistValidate(Request $request, ChecklistTenant $checklistTenant = null)
+    {
+        return $request->validate([
+            'checklist_id' => 'required|exists:checklists,id',
+            'tenant_id' => 'required|exists:tenants,id',
+            'notes' => 'nullable|string',
+        ]);
+    }
+
+    /**
+     * Validate external area condition data
+     *
+     * @param Request $request
+     * @param ChecklistExternalAreaCondition|null $externalCond
+     * @return array
+     */
+    public function externalAreaConditionValidate(Request $request, ChecklistExternalAreaCondition $externalCond = null)
+    {
+        return $request->validate([
+            'checklist_id' => 'required|exists:checklists,id',
             'is_general_cleanliness_satisfied' => 'nullable|boolean',
             'general_cleanliness_remarks' => 'nullable|string',
             'is_fencing_gate_satisfied' => 'nullable|boolean',
@@ -2793,8 +3255,25 @@ class MakerController extends Controller
             'is_drainage_satisfied' => 'nullable|boolean',
             'drainage_remarks' => 'nullable|string',
             'external_remarks' => 'nullable|string',
-            
-            // 4.0 Internal Area Conditions
+            'status' => ['nullable', Rule::in(['pending', 'in_progress', 'completed', 'rejected'])],
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
+        ]);
+    }
+
+    /**
+     * Validate internal area condition data
+     *
+     * @param Request $request
+     * @param ChecklistInternalAreaCondition|null $internalCond
+     * @return array
+     */
+    public function internalAreaConditionValidate(Request $request, ChecklistInternalAreaCondition $internalCond = null)
+    {
+        return $request->validate([
+            'checklist_id' => 'required|exists:checklists,id',
             'is_door_window_satisfied' => 'nullable|boolean',
             'door_window_remarks' => 'nullable|string',
             'is_staircase_satisfied' => 'nullable|boolean',
@@ -2812,61 +3291,67 @@ class MakerController extends Controller
             'is_basement_car_park_satisfied' => 'nullable|boolean',
             'basement_car_park_remarks' => 'nullable|string',
             'internal_remarks' => 'nullable|string',
-            
-            // 5.0 Property Development
-            'development_date' => 'nullable|date',
-            'development_expansion_status' => 'nullable|string|max:255',
-            'development_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'renovation_date' => 'nullable|date',
-            'renovation_status' => 'nullable|string|max:255',
-            'renovation_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'repainting_date' => 'nullable|date',
-            'external_repainting_status' => 'nullable|string|max:255',
-            'repainting_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            
-            // 5.4 Disposal/Installation/Replacement
-            'water_tank_date' => 'nullable|date',
-            'water_tank_status' => 'nullable|string|max:255',
-            'water_tank_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'air_conditioning_approval_date' => 'nullable|date',
-            'air_conditioning_scope' => 'nullable|string',
-            'air_conditioning_status' => 'nullable|string|max:255',
-            'air_conditioning_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'lift_date' => 'nullable|date',
-            'lift_escalator_scope' => 'nullable|string',
-            'lift_escalator_status' => 'nullable|string|max:255',
-            'lift_escalator_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'fire_system_date' => 'nullable|date',
-            'fire_system_scope' => 'nullable|string',
-            'fire_system_status' => 'nullable|string|max:255',
-            'fire_system_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'other_system_date' => 'nullable|date',
-            'other_property' => 'nullable|string',
-            'other_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            
-            // 5.5 Other Proposals/Approvals
-            'other_proposals_approvals' => 'nullable|string',
-            
-            // System Information
-            'status' => 'nullable|string|in:pending,active,completed,verified',
+            'status' => ['nullable', Rule::in(['pending', 'in_progress', 'completed', 'rejected'])],
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
         ]);
     }
 
-    public function ValidateChecklistTenants(Request $request, Checklist $checklist = null)
+    /**
+     * Validate property development data
+     *
+     * @param Request $request
+     * @param ChecklistPropertyDevelopment|null $propertyDev
+     * @return array
+     */
+    public function propertyDevelopmentValidate(Request $request, ChecklistPropertyDevelopment $propertyDev = null)
     {
-        $rules = [
-            'tenant_ids' => 'nullable|array',
-            'tenant_ids.*' => 'nullable|exists:tenants,id',
-        ];
-        
-        // If the checklist is already verified, don't allow tenant changes
-        if ($checklist && $checklist->verified_by) {
-            // Return an empty array since tenant updates aren't allowed for verified checklists
-            return [];
-        }
-        
-        return $request->validate($rules);
+        return $request->validate([
+            'checklist_id' => 'required|exists:checklists,id',
+            // Development fields
+            'development_date' => 'nullable|date',
+            'development_scope_of_work' => 'nullable|string',  // Changed from development_expansion_status
+            'development_status' => 'nullable|string|max:255',
+            
+            // Renovation fields
+            'renovation_date' => 'nullable|date',
+            'renovation_scope_of_work' => 'nullable|string',  // Added missing field
+            'renovation_status' => 'nullable|string|max:255',  // This replaces renovation_completion_status
+            
+            // External repainting fields
+            'external_repainting_date' => 'nullable|date',  // Changed from repainting_date
+            'external_repainting_scope_of_work' => 'nullable|string',  // Added missing field
+            'external_repainting_status' => 'nullable|string|max:255',  // This replaces repainting_completion_status
+            
+            // Others/Proposals/Approvals fields
+            'others_proposals_approvals_date' => 'nullable|date',  // Added missing field
+            'others_proposals_approvals_scope_of_work' => 'nullable|string',  // Added missing field
+            'others_proposals_approvals_status' => 'nullable|string|max:255',  // Added missing field
+        ]);
+    }
+
+    /**
+     * Validate disposal installation data
+     *
+     * @param Request $request
+     * @param ChecklistDisposalInstallation|null $disposalInst
+     * @return array
+     */
+    public function disposalInstallationValidate(Request $request, ChecklistDisposalInstallation $disposalInst = null)
+    {
+        return $request->validate([
+            'checklist_id' => 'required|exists:checklists,id',
+            'component_name' => 'nullable|string|max:255',
+            'component_date' => 'nullable|date',
+            'component_scope_of_work' => 'nullable|string',
+            'component_status' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
+        ]);
     }
     
     public function ChecklistSubmissionLegal(Checklist $checklist)

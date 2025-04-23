@@ -202,7 +202,7 @@
                                         @foreach($financial->properties as $property)
                                             <tr>
                                                 <td class="px-4 py-3 text-sm font-medium text-gray-900">
-                                                    <a href="{{ route('properties-info.show', $property->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                    <a href="{{ route('property-m.show', $property) }}" class="text-indigo-600 hover:text-indigo-900">
                                                         {{ $property->name }}
                                                     </a>
                                                 </td>

@@ -13,17 +13,25 @@ return new class extends Migration
     {
         Schema::create('portfolios', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to portfolio_types table
             $table->foreignId('portfolio_types_id')->constrained()->onDelete('cascade');
+
+            // foreign key to portfolios table
             $table->string('portfolio_name');
             $table->string('annual_report')->nullable();
             $table->string('trust_deed_document')->nullable();
             $table->string('insurance_document')->nullable();
             $table->string('valuation_report')->nullable();
-            $table->string('status')->default('pending');
+
+            // system information
+            $table->string('status')->default('active');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+
+            // default information
             $table->timestamps();
             $table->softDeletes();
             

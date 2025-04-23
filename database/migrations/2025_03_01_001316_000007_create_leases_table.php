@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('leases', function (Blueprint $table) {
             $table->id();
+
+            // foreign key tenant
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+
+            // lease information
             $table->string('lease_name');
             $table->string('demised_premises')->nullable();
             $table->string('permitted_use')->nullable();
@@ -33,10 +37,14 @@ return new class extends Migration
             $table->decimal('space', 15, 2)->unsigned();
             $table->string('tenancy_type')->nullable();
             $table->string('attachment')->nullable();
+
+            // system information
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+
+            // default values
             $table->timestamps();
             $table->softDeletes();
             

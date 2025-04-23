@@ -18,15 +18,11 @@ class ApprovalForm extends Model
     protected $fillable = [
         'portfolio_id',
         'property_id',
-        'form_number',
-        'form_title',
-        'form_category',
-        'reference_code',
+        'category',
+        'details',
         'received_date',
         'send_date',
         'attachment',
-        'location',
-        'description',
         'remarks',
         'status',
         'prepared_by',
@@ -98,7 +94,7 @@ class ApprovalForm extends Model
      */
     public function scopeCategory($query, $category)
     {
-        return $query->where('form_category', $category);
+        return $query->where('category', $category);
     }
 
     /**

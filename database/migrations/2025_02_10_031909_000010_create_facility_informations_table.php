@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('facility_informations', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to the issuer table
+            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+
+            // facility information fields
             $table->string('facility_code')->unique();
             $table->string('issuer_short_name')->nullable();
             $table->string('facility_number');
@@ -33,12 +38,15 @@ return new class extends Migration
             $table->string('lead_arranger')->nullable();
             $table->string('facility_agent')->nullable();
             $table->date('availability_date')->nullable();
+
+            // system information
             $table->string('status')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
-            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+            
+            // default information
             $table->timestamps();
             $table->softDeletes();
         });

@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('activity_diaries', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to the issuers table
+            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+
+            // activity diary details
             $table->text('purpose')->nullable();
             $table->date('letter_date')->nullable();
             $table->date('due_date')->nullable();
@@ -20,12 +25,15 @@ return new class extends Migration
             $table->string('extension_note_1')->nullable();
             $table->date('extension_date_2')->nullable();
             $table->string('extension_note_2')->nullable();
+
+            // system information
             $table->string('status')->nullable();
             $table->text('remarks')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->dateTime('approval_datetime')->nullable();
-            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+            
+            // default information
             $table->timestamps();
             $table->softDeletes();
         });

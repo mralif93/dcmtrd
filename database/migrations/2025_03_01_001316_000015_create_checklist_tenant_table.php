@@ -13,21 +13,29 @@ return new class extends Migration
     {
         Schema::create('checklist_tenant', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to the checklist table
             $table->foreignId('checklist_id')->constrained()->onDelete('cascade');
+
+            // foreign key to the tenant table
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+
+            // tenant fields
             $table->text('notes')->nullable();
+
+            // system information
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+
+            // default fields
             $table->timestamps();
             $table->softDeletes();
-            
-            // Prevent duplicate associations
-            $table->unique(['checklist_id', 'tenant_id']);
-            
+
             // Add indexes for better performance
             $table->index(['checklist_id', 'tenant_id']);
+            $table->index(['status', 'prepared_by', 'verified_by']);
         });
     }
 

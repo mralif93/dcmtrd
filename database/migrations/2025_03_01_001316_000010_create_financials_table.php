@@ -13,9 +13,15 @@ return new class extends Migration
     {
         Schema::create('financials', function (Blueprint $table) {
             $table->id();
+
+            // foreign key portfolio
             $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
+            // foreign key bank            
             $table->foreignId('bank_id')->constrained('banks')->onDelete('restrict');
+            // foreign key financial type
             $table->foreignId('financial_type_id')->constrained('financial_types')->onDelete('restrict');
+
+            // financial information
             $table->string('batch_no')->nullable();
             $table->string('purpose');
             $table->string('tenure');
@@ -31,10 +37,14 @@ return new class extends Migration
             $table->string('facilities_agent');
             $table->string('agent_contact')->nullable();
             $table->string('valuer');
+
+            // system information
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+
+            // default value
             $table->timestamps();
             $table->softDeletes();
             

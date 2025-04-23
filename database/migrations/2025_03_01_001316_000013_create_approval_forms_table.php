@@ -13,24 +13,33 @@ return new class extends Migration
     {
         Schema::create('approval_forms', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to portfolios table
             $table->foreignId('portfolio_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('property_id')->nullable()->constrained()->onDelete('set null');
+            // foreign key to properties table
+            $table->foreignId('property_id')->nullable()->constrained()->onDelete('cascade');
+
+            // form details
             $table->string('category')->nullable();
             $table->text('details')->nullable();
             $table->date('received_date');
             $table->date('send_date')->nullable();
             $table->string('attachment')->nullable();
             $table->text('remarks')->nullable();
+
+            // system information
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+
+            // default information
             $table->timestamps();
             $table->softDeletes();
             
             // Add indexes for better performance
-            $table->index(['form_title', 'received_date', 'send_date']);
-            $table->index('form_category');
+            $table->index(['category', 'received_date', 'send_date']);
+            $table->index(['portfolio_id', 'property_id']);
         });
     }
 
