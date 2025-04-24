@@ -562,8 +562,6 @@ class MakerController extends Controller
     {
         $validated = $this->validateDocument($request);
 
-        dd($request->hasFile('document_file'));
-
         if ($request->hasFile('document_file')) {
             // Delete old file
             if ($document->file_path) {
