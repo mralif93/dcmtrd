@@ -751,6 +751,10 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     // Checklist Module
     Route::get('approver/checklist/{property}', [ApproverController::class, 'ChecklistIndex'])->name('checklist-a.index')->middleware('permission:REITS');
     Route::get('approver/checklist/{checklist}/show', [ApproverController::class, 'ChecklistShow'])->name('checklist-a.show')->middleware('permission:REITS');
+    Route::get('approver/checklist/', [ApproverController::class, 'ChecklistMain'])->name('checklist-a.main')->middleware('permission:REITS');
+    Route::get('approver/checklist/{checklist}/details', [ApproverController::class, 'ChecklistDetails'])->name('checklist-a.details')->middleware('permission:REITS');
+    Route::post('approver/checklist/{checklist}/approve', [ApproverController::class, 'ChecklistApprove'])->name('checklist-a.approve')->middleware('permission:REITS');
+    Route::post('approver/checklist/{checklist}/reject', [ApproverController::class, 'ChecklistReject'])->name('checklist-a.reject')->middleware('permission:REITS');
 
     // Appointment Module
     Route::get('approver/appointment/', [ApproverController::class, 'AppointmentIndex'])->name('appointment-a.index')->middleware('permission:REITS');

@@ -335,7 +335,7 @@
                     icon="clipboard-check"
                     :count="$checklistCount ?? 0"
                     :pendingCount="$pendingChecklistCount ?? 0"
-                    href="#"
+                    :href="route('checklist-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 

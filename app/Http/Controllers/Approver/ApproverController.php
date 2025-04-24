@@ -1343,4 +1343,77 @@ class ApproverController extends Controller
     {
         return view('approver.checklist.show', compact('checklist'));
     }
+
+    public function ChecklistMain(Request $request)
+    {
+        // Get current tab or default to 'all'
+        $activeTab = $request->query('tab', 'all');
+        
+        // search & filter
+        $query = Checklist::with(['siteVisit', 'siteVisit.property', 'siteVisit.property.portfolio']);
+        
+        // Apply status filter based on tab
+        if ($activeTab !== 'all') {
+            $query->where('status', $activeTab);
+        }
+        
+        // fetch checklists
+        $checklists = $query->latest()->paginate(10)->withQueryString();
+        
+        // Count records for each tab
+        $tabCounts = [
+            'all' => Checklist::count(),
+            'active' => Checklist::where('status', 'active')->count(),
+            'pending' => Checklist::where('status', 'pending')->count(),
+            'rejected' => Checklist::where('status', 'rejected')->count(),
+            'inactive' => Checklist::where('status', 'inactive')->count(),
+        ];
+
+        return view('approver.checklist.main', compact('checklists', 'activeTab', 'tabCounts'));
+    }
+
+    public function ChecklistDetails(Checklist $checklist)
+    {
+        return view('approver.checklist.details', compact('checklist'));
+    }
+
+    public function ChecklistApprove(Checklist $checklist)
+    {
+        try {
+            $checklist->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.main', ['tab' => 'pending'])
+                ->with('success', 'Checklist approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving checklist: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistReject(Request $request, Checklist $checklist)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklist->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.main', ['tab' => 'pending'])
+                ->with('success', 'Checklist rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting checklist: ' . $e->getMessage());
+        }
+    }
 }
