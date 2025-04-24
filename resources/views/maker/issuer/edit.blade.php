@@ -155,6 +155,39 @@
                             </div>
                         </div>
 
+                        <!-- Contact Person Info Section -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Contact Person Info</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="pic_name" class="block text-sm font-medium text-gray-700">PIC Name</label>
+                                    <input type="text" name="pic_name" id="pic_name" 
+                                        value="{{ old('pic_name', $issuer->pic_name) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('pic_name')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="phone_no" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                    <input type="text" name="phone_no" id="phone_no" 
+                                        value="{{ old('phone_no', $issuer->phone_no) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('phone_no')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                                    <textarea name="address" id="address" rows="3"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('address', $issuer->address) }}</textarea>
+                                    @error('address')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- System Information -->
                         <div>
                             <h3 class="text-lg font-medium text-gray-900 mb-4">System Information</h3>
