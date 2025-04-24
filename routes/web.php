@@ -1,24 +1,26 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Exports\CorporateBondExport;
 
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\BondController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\ChartController;
 
 // User Main
-use App\Http\Controllers\Admin\LeaseController;
+use App\Http\Controllers\Admin\AdminController;
 
 // Permission
-use App\Http\Controllers\Legal\LegalController;
-use App\Http\Controllers\Maker\MakerController;
+use App\Http\Controllers\Admin\ChartController;
+use App\Http\Controllers\Admin\LeaseController;
 
 // Bonds
+use App\Http\Controllers\Legal\LegalController;
+use App\Http\Controllers\Maker\MakerController;
 use App\Http\Controllers\Admin\IssuerController;
 use App\Http\Controllers\Admin\TenantController;
 use App\Http\Controllers\User\UserBondController;
@@ -33,10 +35,10 @@ use App\Http\Controllers\Admin\SiteVisitController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\User\UserIssuerController;
 use App\Http\Controllers\User\UserTenantController;
-use App\Http\Controllers\User\UserUploadController;
-use App\Http\Controllers\Admin\DcmtReportController;
 
 // REITs
+use App\Http\Controllers\User\UserUploadController;
+use App\Http\Controllers\Admin\DcmtReportController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RedemptionController;
 use App\Http\Controllers\Admin\TrusteeFeeController;
@@ -46,9 +48,9 @@ use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\CallScheduleController;
 use App\Http\Controllers\Admin\SiteVisitLogController;
 use App\Http\Controllers\User\UserChecklistController;
+
 use App\Http\Controllers\User\UserFinancialController;
 use App\Http\Controllers\User\UserPortfolioController;
-
 use App\Http\Controllers\User\UserSiteVisitController;
 use App\Http\Controllers\Admin\ActivityDiaryController;
 use App\Http\Controllers\Admin\FinancialTypeController;
@@ -63,10 +65,10 @@ use App\Http\Controllers\Admin\RelatedDocumentController;
 use App\Http\Controllers\Admin\TradingActivityController;
 use App\Http\Controllers\Compliance\ComplianceController;
 use App\Http\Controllers\User\UserAnnouncementController;
-use App\Http\Controllers\User\UserCallScheduleController;
-use App\Http\Controllers\User\UserSiteVisitLogController;
 
 // REITs
+use App\Http\Controllers\User\UserCallScheduleController;
+use App\Http\Controllers\User\UserSiteVisitLogController;
 use App\Http\Controllers\User\UserActivityDiaryController;
 use App\Http\Controllers\User\UserLockoutPeriodController;
 use App\Http\Controllers\User\UserRatingMovementController;
@@ -396,6 +398,9 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::prefix('/maker/dcmt')->name('dcmt-reports.')->group(function () {
         Route::get('/reports', [DcmtReportController::class, 'index'])->name('index');
         Route::get('/cb-reports', [DcmtReportController::class, 'cbReports'])->name('cb-reports');
+        Route::get('/export-cb', function () {
+            return Excel::download(new CorporateBondExport, 'corporate_bonds.xlsx');
+        })->name('cb-export');
         Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports');
     });
 

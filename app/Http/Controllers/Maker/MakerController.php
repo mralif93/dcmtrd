@@ -60,7 +60,7 @@ class MakerController extends Controller
     {
         // Validate that section parameter is present and valid
         $validSection = $request->has('section') && in_array($request->section, ['reits', 'dcmtrd']);
-        
+
         // Issuers Query
         $query = Issuer::query();
 
@@ -81,10 +81,10 @@ class MakerController extends Controller
 
         // Get filtered issuers with latest first and paginate
         $issuers = $query->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])
-                        ->latest()
-                        ->paginate(10)
-                        ->withQueryString();
-    
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         // Get count data from cache or database
         $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(1), function () {
             $result = DB::select("
@@ -123,10 +123,10 @@ class MakerController extends Controller
             ");
             return (array) $result[0];
         });
-    
+
         // Portfolios Query - also section-specific
         $portfolioQuery = Portfolio::query()->whereIn('status', ['draft', 'active', 'pending', 'rejected', 'inactive']);
-        
+
         // Apply search filter to portfolios
         if ($request->has('search') && !empty($request->search)) {
             $portfolioQuery->where('portfolio_name', 'LIKE', '%' . $request->search . '%');
@@ -139,7 +139,7 @@ class MakerController extends Controller
 
         // Execute the query after all filters are applied
         $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
-    
+
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
@@ -154,7 +154,7 @@ class MakerController extends Controller
             'approvalFormsCount' => $counts['approval_forms_count'],
             'approvalPropertiesCount' => $counts['approval_properties_count'],
             'siteVisitLogsCount' => $counts['site_visit_logs_count'],
-            
+
             // Adding pending counts
             'trusteeFeePendingCount' => $counts['trustee_fees_pending_count'],
             'complianceCovenantPendingCount' => $counts['compliance_covenants_pending_count'],
@@ -185,7 +185,7 @@ class MakerController extends Controller
 
         try {
             $issuer = Issuer::create($validated);
-            return redirect()->route('dashboard')->with('success', 'Issuer created successfully.');
+            return redirect()->route('issuer-m.create')->with('success', 'Issuer created successfully.');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error creating issuer: ' . $e->getMessage());
         }
@@ -1304,6 +1304,8 @@ class MakerController extends Controller
 
     protected function validateTrusteeFee(Request $request)
     {
+        $trusteeFee = null;
+        
         return $request->validate([
             'facility_information_id' => 'required|exists:facility_informations,id',
             'description' => 'required|string',
@@ -1455,19 +1457,28 @@ class MakerController extends Controller
         return $request->validate([
             'issuer_id' => 'required|exists:issuers,id',
             'financial_year_end' => 'required|string|max:255',
-            'audited_financial_statements' => 'nullable|string|max:255',
-            'unaudited_financial_statements' => 'nullable|string|max:255',
-            'compliance_certificate' => 'nullable|string|max:255',
-            'finance_service_cover_ratio' => 'nullable|string|max:255',
-            'annual_budget' => 'nullable|string|max:255',
-            'computation_of_finance_to_ebitda' => 'nullable|string|max:255',
-            'ratio_information_on_use_of_proceeds' => 'nullable|string|max:255',
+
+            'letter_to_issuer' => 'nullable|date',
+
+            'audited_financial_statements' => 'nullable|date',
+            'audited_financial_statements_due' => 'nullable|date',
+
+            'compliance_certificate' => 'nullable|date',
+
+            'unaudited_financial_statements' => 'nullable|date',
+            'unaudited_financial_statements_due' => 'nullable|date',
+
+            'finance_service_cover_ratio' => 'nullable|date',
+            'annual_budget' => 'nullable|date',
+            'computation_of_finance_to_ebitda' => 'nullable|date',
+
             'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
         ]);
     }
+
 
     // Activity Diary
     /**
@@ -1779,7 +1790,7 @@ class MakerController extends Controller
     public function PortfolioStore(Request $request)
     {
         $validated = $this->validatePortfolio($request);
-        
+
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
 
@@ -1967,7 +1978,7 @@ class MakerController extends Controller
                 // Attach properties to the financial
                 $financial->properties()->attach($propertyData);
             }
-            
+
             return redirect()
                 ->route('property-m.index', $financial->portfolio)
                 ->with('success', 'Financial created successfully.');
@@ -2026,7 +2037,7 @@ class MakerController extends Controller
 
             // Sync will remove any properties that are not in the request
             $financial->properties()->sync($syncData);
-            
+
             return redirect()
                 ->route('property-m.index', $financial->portfolio)
                 ->with('success', 'Financial updated successfully.');
@@ -2312,7 +2323,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('tenant-m.index', $tenant->property)
                 ->with('success', 'Tenant created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error creating tenant: ' . $e->getMessage());
@@ -2333,7 +2344,7 @@ class MakerController extends Controller
             $tenant->update($validated);
             return redirect()
                 ->route('tenant-m.index', $tenant->property)->with('success', 'Tenant updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating tenant: ' . $e->getMessage());
         }
     }
@@ -2722,7 +2733,7 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->ChecklistValidate($request, $checklist);
-        
+
         // Record the last update
         $validated['updated_at'] = now();
 
@@ -2757,7 +2768,7 @@ class MakerController extends Controller
                 // If no tenant IDs were provided, detach all tenants
                 $checklist->tenants()->detach();
             }
-            
+
             return redirect()
                 ->route('checklist-m.show', $checklist)
                 ->with('success', 'Checklist updated successfully.');
@@ -2962,7 +2973,7 @@ class MakerController extends Controller
 
         try {
             $appointment = Appointment::create($validated);
-            
+
             return redirect()
                 ->route('appointment-m.show', $appointment)
                 ->with('success', 'Appointment created successfully.');
@@ -2994,13 +3005,13 @@ class MakerController extends Controller
             if ($appointment->attachment && Storage::disk('public')->exists($appointment->attachment)) {
                 Storage::disk('public')->delete($appointment->attachment);
             }
-            
+
             $validated['attachment'] = $request->file('attachment')->store('appointments', 'public');
         }
 
         try {
             $appointment->update($validated);
-            
+
             return redirect()
                 ->route('appointment-m.show', $appointment)
                 ->with('success', 'Appointment updated successfully.');
@@ -3145,13 +3156,13 @@ class MakerController extends Controller
 
             $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
         }
-        
+
         // Check if send_date is being added or updated
         $sendDateAdded = !$approvalForm->send_date && !empty($validated['send_date']);
-        $sendDateUpdated = $approvalForm->send_date && 
-                        !empty($validated['send_date']) && 
-                        $approvalForm->send_date->format('Y-m-d') !== $validated['send_date'];
-                        
+        $sendDateUpdated = $approvalForm->send_date &&
+            !empty($validated['send_date']) &&
+            $approvalForm->send_date->format('Y-m-d') !== $validated['send_date'];
+
         // If send_date is added or updated, change status to "completed"
         if ($sendDateAdded || $sendDateUpdated) {
             $validated['status'] = 'completed';
@@ -3269,11 +3280,11 @@ class MakerController extends Controller
 
         try {
             SiteVisitLog::create($validated);
-            
+
             return redirect()
                 ->route('site-visit-log-m.index')
                 ->with('success', 'Activity Diary created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->with('Error creating activity diary : ' . $e->getMessage());
         }
@@ -3284,7 +3295,7 @@ class MakerController extends Controller
         $properties = Property::where('status', 'active')->get();
         return view('maker.site-visit-log.edit', compact('siteVisitLog', 'properties'));
     }
-    
+
     public function SiteVisitLogUpdate(Request $request, SiteVisitLog $siteVisitLog)
     {
         $validated = $this->SiteVisitLogValidate($request);
@@ -3307,7 +3318,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('site-visit-log-m.index')
                 ->with('success', 'Activity Diary updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->with('Error updating activity diary : ' . $e->getMessage());
         }
@@ -3353,7 +3364,7 @@ class MakerController extends Controller
 
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
-        
+
 
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('approval-properties', 'public');
