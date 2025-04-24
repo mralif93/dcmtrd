@@ -48,7 +48,6 @@ use App\Http\Controllers\Approver\ApproverController;
 use App\Http\Controllers\User\UserPropertyController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\CallScheduleController;
-use App\Http\Controllers\Admin\SiteVisitLogController;
 use App\Http\Controllers\User\UserChecklistController;
 
 use App\Http\Controllers\User\UserFinancialController;
