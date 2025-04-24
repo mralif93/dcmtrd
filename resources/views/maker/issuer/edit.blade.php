@@ -136,7 +136,7 @@
                                 <div>
                                     <label for="no_of_share" class="block text-sm font-medium text-gray-700">Number of
                                         Shares</label>
-                                    <input type="text" name="no_of_share" id="no_of_share"
+                                    <input type="number" name="no_of_share" id="no_of_share"
                                         value="{{ old('no_of_share', $issuer->no_of_share) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('no_of_share')
@@ -146,7 +146,7 @@
                                 <div>
                                     <label for="outstanding_size"
                                         class="block text-sm font-medium text-gray-700">Outstanding Size</label>
-                                    <input type="text" name="outstanding_size" id="outstanding_size"
+                                    <input type="number" name="outstanding_size" id="outstanding_size"
                                         value="{{ old('outstanding_size', $issuer->outstanding_size) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('outstanding_size')
