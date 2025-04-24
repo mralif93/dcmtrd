@@ -671,6 +671,7 @@ class MakerController extends Controller
     {
         return $request->validate([
             'issuer_id' => 'required|exists:issuers,id',
+            'issuer_short_name' => 'required|max:50',
             'facility_code' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_code,' . $facility->id : 'unique:facility_informations'),
             'facility_number' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_number,' . $facility->id : 'unique:facility_informations'),
             'facility_name' => 'required|max:100',
