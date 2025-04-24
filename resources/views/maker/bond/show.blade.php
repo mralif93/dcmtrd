@@ -16,7 +16,7 @@
     </x-slot>
 
     <div class="py-8">
-        <div x-data="{ openSection: 'bonds' }">
+        <div x-data="{ openSection: 'null' }">
             <div class="pb-6 mx-auto space-y-4 max-w-7xl sm:px-6 lg:px-8">
 
                 @if(session('success'))
