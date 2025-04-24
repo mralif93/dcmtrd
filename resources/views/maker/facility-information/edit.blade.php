@@ -43,7 +43,7 @@
                             <div>
                                 <label for="issuer_short_name" class="block text-sm font-medium text-gray-700">Issuer Short Name</label>
                                 <input type="text" name="issuer_short_name" id="issuer_short_name" 
-                                    value="{{ old('issuer_short_name', $facility->issuer_short_name) }}"
+                                    value="{{ old('issuer_short_name', $facility->issuer->issuer_short_name) }}"
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('issuer_short_name')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
