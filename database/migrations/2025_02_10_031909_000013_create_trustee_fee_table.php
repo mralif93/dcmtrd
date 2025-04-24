@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('trustee_fees', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to the facility information table
+            $table->foreignId('facility_information_id')->constrained('facility_informations')->onDelete('cascade');
+
+            // trustee fee details
             $table->string('month')->nullable();
             $table->integer('date')->nullable();
             $table->string('description')->nullable();
@@ -33,12 +38,15 @@ return new class extends Migration
             $table->date('memo_receipt_to_fad')->nullable();
             $table->date('receipt_to_issuer')->nullable();
             $table->string('receipt_no')->nullable();
+
+            // system information
             $table->string('status')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
-            $table->foreignId('facility_information_id')->constrained('facility_informations')->onDelete('cascade');
+
+            // default information
             $table->timestamps();
             $table->softDeletes();
         });

@@ -13,13 +13,19 @@ return new class extends Migration
     {
         Schema::create('charts', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to the bonds table
+            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+
+            // chart details
             $table->date('availability_date');
             $table->dateTime('approval_date_time');
             $table->string('chart_type');
             $table->json('chart_data');
             $table->date('period_from');
             $table->date('period_to');
-            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+
+            // default information
             $table->timestamps();
             $table->softDeletes();
         });

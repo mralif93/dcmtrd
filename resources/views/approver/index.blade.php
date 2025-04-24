@@ -305,7 +305,7 @@
                     icon="users"
                     :count="$tenantsCount ?? 0"
                     :pendingCount="$pendingTenantsCount ?? 0"
-                    href="#"
+                    :href="route('tenant-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 
@@ -315,7 +315,7 @@
                     icon="document-duplicate"
                     :count="$leaseCount ?? 0"
                     :pendingCount="$pendingLeaseCount ?? 0"
-                    href="#"
+                    :href="route('lease-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 
@@ -325,7 +325,7 @@
                     icon="location-marker"
                     :count="$siteVisitCount ?? 0"
                     :pendingCount="$pendingSiteVisitCount ?? 0"
-                    href="#"
+                    :href="route('site-visit-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 
@@ -335,7 +335,7 @@
                     icon="clipboard-check"
                     :count="$checklistCount ?? 0"
                     :pendingCount="$pendingChecklistCount ?? 0"
-                    href="#"
+                    :href="route('checklist-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 

@@ -13,9 +13,15 @@ return new class extends Migration
     {
         Schema::create('lockout_periods', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to the redemptions table
+            $table->foreignId('redemption_id')->constrained('redemptions')->onDelete('cascade');
+
+            // lockout period details
             $table->date('start_date');
             $table->date('end_date');
-            $table->foreignId('redemption_id')->constrained('redemptions')->onDelete('cascade');
+
+            // default information
             $table->timestamps();
             $table->softDeletes();
         });

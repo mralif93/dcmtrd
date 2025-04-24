@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('bonds', function (Blueprint $table) {
             $table->id();
+
+            // foreign key
+            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+
+            // bond details
             $table->string('bond_sukuk_name');
             $table->string('sub_name')->nullable();
             $table->string('rating')->nullable();
@@ -45,12 +50,16 @@ return new class extends Migration
             $table->string('lead_arranger')->nullable();
             $table->string('facility_agent')->nullable();
             $table->string('facility_code')->nullable();
+
+            // system information
             $table->string('status')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
-            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+            
+
+            // default information
             $table->timestamps();
             $table->softDeletes();
         });

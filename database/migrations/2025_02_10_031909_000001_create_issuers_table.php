@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('issuers', function (Blueprint $table) {
             $table->id();
+
+            // issuer details
             $table->string('issuer_short_name');
             $table->string('issuer_name');
             $table->string('registration_number')->unique();
@@ -23,11 +25,15 @@ return new class extends Migration
             $table->string('trust_amount_escrow_sum')->nullable();
             $table->string('no_of_share')->nullable();
             $table->string('outstanding_size')->nullable();
+
+            // system information
             $table->string('status')->default('Draft')->nullable();
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+
+            // default information
             $table->timestamps();
             $table->softDeletes();
         });

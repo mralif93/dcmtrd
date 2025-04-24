@@ -38,6 +38,7 @@ class Lease extends Model implements Auditable
         'prepared_by',
         'verified_by',
         'approval_datetime',
+        'remarks',
     ];
 
     /**

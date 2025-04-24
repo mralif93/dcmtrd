@@ -10,6 +10,11 @@ return new class extends Migration
     {
         Schema::create('payment_schedules', function (Blueprint $table) {
             $table->id();
+
+            // foreign key
+            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+
+            // payment schedule details
             $table->date('start_date');
             $table->date('end_date');
             $table->string('reminder_total_date')->default(30); // additional for total days reminder before payment date
@@ -17,7 +22,8 @@ return new class extends Migration
             $table->date('ex_date')->nullable();
             $table->decimal('coupon_rate', 5, 2)->nullable();
             $table->date('adjustment_date')->nullable();
-            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+           
+            // system information
             $table->timestamps();
             $table->softDeletes();
         });

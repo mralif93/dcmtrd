@@ -13,16 +13,24 @@ return new class extends Migration
     {
         Schema::create('approval_properties', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to properties table
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
+
+            // approval details
             $table->date('date_of_approval');
             $table->text('description');
             $table->decimal('estimated_amount', 15, 2)->unsigned()->nullable();
-            $table->text('remarks')->nullable();
             $table->string('attachment')->nullable();
+
+            // system information
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
+            $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+
+            // default information
             $table->timestamps();
             $table->softDeletes();
             

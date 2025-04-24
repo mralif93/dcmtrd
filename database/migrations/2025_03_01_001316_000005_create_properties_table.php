@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to portfolios table
             $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
+
+            // property details
             $table->string('category');
             $table->string('batch_no');
             $table->string('name');
@@ -31,16 +35,21 @@ return new class extends Migration
             $table->decimal('market_value', 15, 2)->unsigned()->nullable();
             $table->string('master_lease_agreement')->nullable();
             $table->string('valuation_report')->nullable();
+
+            // system information
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+
+            // default information
             $table->timestamps();
             $table->softDeletes();
             
             // Add indexes for better performance
-            $table->index(['name', 'address', 'city']);
+            $table->index(['name', 'address', 'city', 'country', 'postal_code']);
+            $table->index(['category', 'batch_no']);
         });
     }
 
