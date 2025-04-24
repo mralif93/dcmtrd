@@ -789,6 +789,8 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     // Approval Form Module
     Route::get('approver/approval-form/', [ApproverController::class, 'ApprovalFormIndex'])->name('approval-form-a.index')->middleware('permission:REITS');
     Route::get('approver/approval-form/{approvalForm}/show', [ApproverController::class, 'ApprovalFormShow'])->name('approval-form-a.show')->middleware('permission:REITS');
+    Route::get('approver/approval-form/', [ApproverController::class, 'ApprovalFormMain'])->name('approval-form-a.main')->middleware('permission:REITS');
+    Route::get('approver/approval-form/{approvalForm}/details', [ApproverController::class, 'ApprovalFormDetails'])->name('approval-form-a.details')->middleware('permission:REITS');
     Route::post('approver/approval-form/{approvalForm}/approve', [ApproverController::class, 'ApprovalFormApprove'])->name('approval-form-a.approve')->middleware('permission:REITS');
     Route::post('approver/approval-form/{approvalForm}/reject', [ApproverController::class, 'ApprovalFormReject'])->name('approval-form-a.reject')->middleware('permission:REITS');
 

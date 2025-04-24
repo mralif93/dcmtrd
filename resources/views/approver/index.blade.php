@@ -345,7 +345,7 @@
                     icon="calendar"
                     :count="$appointmentsCount ?? 0"
                     :pendingCount="$pendingAppointmentsCount ?? 0"
-                    :href="route('appointment-m.index')"
+                    :href="route('appointment-a.index')"
                     color="bg-green-100"
                 />
 
@@ -355,7 +355,7 @@
                     icon="document-check"
                     :count="$approvalFormsCount ?? 0"
                     :pendingCount="$pendingApprovalFormsCount ?? 0"
-                    :href="route('approval-form-m.index')"
+                    :href="route('approval-form-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 
