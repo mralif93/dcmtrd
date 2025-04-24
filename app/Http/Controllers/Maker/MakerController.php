@@ -473,14 +473,22 @@ class MakerController extends Controller
     {
         $validated = $this->validateAnnouncement($request);
 
+        // Check if the request contains a file attachment
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('attachments');
+            // Store the attachment file in the 'attachments' directory
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('attachments', $fileName, 'public');
         }
 
         try {
+            // Create the announcement
             $announcement = Announcement::create($validated);
+
+            // Redirect to the details page of the created announcement with a success message
             return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement created successfully');
         } catch (\Exception $e) {
+            // If an error occurs, redirect back with the error message
             return back()->withErrors(['error' => 'Error creating: ' . $e->getMessage()])->withInput();
         }
     }
@@ -494,20 +502,30 @@ class MakerController extends Controller
 
     public function AnnouncementUpdate(Request $request, Announcement $announcement)
     {
+        // Validate the incoming data
         $validated = $this->validateAnnouncement($request);
 
+        // Check if a new attachment file is uploaded
         if ($request->hasFile('attachment')) {
-            // Delete old attachment
+            // Delete the old attachment if it exists
             if ($announcement->attachment) {
                 Storage::delete($announcement->attachment);
             }
-            $validated['attachment'] = $request->file('attachment')->store('attachments');
+
+            // Store the new attachment
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('attachments', $fileName, 'public');
         }
 
         try {
+            // Update the announcement with the validated data
             $announcement->update($validated);
+
+            // Redirect to the details page with a success message
             return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement updated successfully');
         } catch (\Exception $e) {
+            // If an error occurs, return to the previous page with the error message
             return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
         }
     }
