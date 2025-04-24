@@ -46,6 +46,7 @@ class FacilityInformation extends Model implements Auditable
         'verified_by',
         'approval_datetime',
         'remarks',
+        'is_redeemed',
         'issuer_id',
     ];
 
@@ -53,6 +54,7 @@ class FacilityInformation extends Model implements Auditable
         'maturity_date' => 'date',
         'availability_date' => 'date',
         'guaranteed' => 'boolean',
+        'is_redeemed' => 'boolean',
     ];
 
     // Relationships

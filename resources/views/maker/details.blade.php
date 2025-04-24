@@ -111,6 +111,10 @@
                                 <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Type</th>
                                 <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Maturity
                                     Date</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">
+                                    Redeem Status
+                                </th>
+
                                 <th
                                     class="flex justify-end px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">
                                     Action</th>
@@ -138,8 +142,18 @@
                                     <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         {{ $facility->maturity_date?->format('d M Y') }}
                                     </td>
+                                    <td class="px-6 py-4 text-sm whitespace-nowrap">
+                                        @if ($facility->is_redeemed)
+                                            <span
+                                                class="px-2 py-1 text-xs text-green-800 bg-green-100 rounded-full">Redeemed</span>
+                                        @else
+                                            <span class="px-2 py-1 text-xs text-red-800 bg-red-100 rounded-full">Not
+                                                Redeemed</span>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4">
                                         <div class="flex justify-end space-x-2">
+                                            <!-- View -->
                                             <a href="{{ route('facility-info-m.show', $facility) }}"
                                                 class="text-yellow-600 hover:text-yellow-900" title="View">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor"
@@ -151,8 +165,10 @@
                                                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                 </svg>
                                             </a>
+
+                                            <!-- Edit -->
                                             <a href="{{ route('facility-info-m.edit', $facility) }}"
-                                                class="text-yellow-600 hover:text-yellow-900">
+                                                class="text-yellow-600 hover:text-yellow-900" title="Edit">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
                                                     viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -160,6 +176,30 @@
                                                         d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 </svg>
                                             </a>
+
+                                            <!-- Toggle Redeem -->
+                                            <form method="POST" action="{{ route('facility.toggle-redeem', $facility->id) }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" title="Toggle Redeem"
+                                                    class="{{ $facility->is_redeemed ? 'text-green-600 hover:text-green-800' : 'text-red-600 hover:text-red-800' }}">
+                                                    @if ($facility->is_redeemed)
+                                                        <!-- Icon for Redeemed -->
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2" d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                    @else
+                                                        <!-- Icon for Not Redeemed -->
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    @endif
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -418,6 +458,7 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Facility Code</th>
                                 <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Document
                                     Type</th>
                                 <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Document
@@ -430,6 +471,10 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($documents as $document)
                                 <tr>
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+                                        <a href="{{ route('facility-info-m.show', $document->facility) }}">
+                                            {{ $document->facility->facility_code }}
+                                        </a>
                                     <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         <span class="px-2 py-1 text-xs bg-gray-100 rounded-full">
                                             {{ $document->document_type }}

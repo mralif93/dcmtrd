@@ -667,6 +667,14 @@ class MakerController extends Controller
         ]);
     }
 
+    public function toggleRedeem(FacilityInformation $facility)
+    {
+        $facility->is_redeemed = !$facility->is_redeemed;
+        $facility->save();
+
+        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Facility Information redeemed status updated successfully');
+    }
+
     protected function validateFacilityInfo(Request $request, $facility = null)
     {
         return $request->validate([
@@ -1312,7 +1320,7 @@ class MakerController extends Controller
     protected function validateTrusteeFee(Request $request)
     {
         $trusteeFee = null;
-        
+
         return $request->validate([
             'facility_information_id' => 'required|exists:facility_informations,id',
             'description' => 'required|string',
@@ -1346,50 +1354,41 @@ class MakerController extends Controller
         $query = ComplianceCovenant::query();
 
         // Filter by issuer_id
-        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
+        if ($request->filled('issuer_id')) {
             $query->where('issuer_id', $request->issuer_id);
         }
 
-        // Search by issuer short name
-        if ($request->has('issuer_short_name') && !empty($request->issuer_short_name)) {
-            $query->where('issuer_short_name', 'LIKE', '%' . $request->issuer_short_name . '%');
+        // Filter by issuer short name
+        if ($request->filled('issuer_short_name')) {
+            $query->whereHas('issuer', function ($q) use ($request) {
+                $q->where('issuer_short_name', 'LIKE', '%' . $request->issuer_short_name . '%');
+            });
         }
 
-        // Search by financial year end
-        if ($request->has('financial_year_end') && !empty($request->financial_year_end)) {
-            $query->where('financial_year_end', 'LIKE', '%' . $request->financial_year_end . '%');
+        // Filter by financial year (year and month)
+        if ($request->filled('financial_year')) {
+            $query->whereYear('financial_year_end', $request->financial_year);
+        }
+
+        if ($request->filled('financial_month')) {
+            $query->whereMonth('financial_year_end', $request->financial_month);
         }
 
         // Filter by status
-        if ($request->has('status')) {
-            switch ($request->status) {
-                case 'draft':
-                    $query->where('status', 'Draft');
-                    break;
-                case 'active':
-                    $query->where('status', 'Active');
-                    break;
-                case 'inactive':
-                    $query->where('status', 'Inactive');
-                    break;
-                case 'pending':
-                    $query->where('status', 'Pending');
-                    break;
-                case 'rejected':
-                    $query->where('status', 'Rejected');
-                    break;
-            }
+        if ($request->filled('status')) {
+            $query->where('status', ucfirst($request->status));
         }
 
-        // Get all issuers for the dropdown
+        // Get all issuers
         $issuers = Issuer::orderBy('issuer_name')->get();
 
-        // Get results with pagination
+        // Paginate results
         $covenants = $query->latest()->paginate(10);
         $covenants->appends($request->all());
 
         return view('maker.compliance-covenant.index', compact('covenants', 'issuers'));
     }
+
 
     public function ComplianceCreate()
     {
@@ -2652,10 +2651,10 @@ class MakerController extends Controller
     {
         // Get only active site visits related to the current property
         $siteVisits = SiteVisit::where('property_id', $property->id)
-                            ->where('status', 'pending')
-                            ->orderBy('date_visit', 'desc')
-                            ->get();
-        
+            ->where('status', 'pending')
+            ->orderBy('date_visit', 'desc')
+            ->get();
+
         // Eager load the tenants relationship to avoid N+1 query issues
         // Only get active tenants
         $property->load(['tenants' => function ($query) {
@@ -2669,7 +2668,7 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->checklistValidate($request);
-        
+
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
 
@@ -2755,7 +2754,7 @@ class MakerController extends Controller
         try {
             // Update the checklist with validated data
             $checklist->update($validated);
-            
+
             return redirect()
                 ->route('checklist-m.show', $checklist)
                 ->with('success', 'Checklist updated successfully.');
@@ -2776,7 +2775,7 @@ class MakerController extends Controller
     {
         // Eager load the checklist with its relationships
         $checklist->load(['siteVisit', 'property', 'legalDocumentation']);
-        
+
         return view('maker.checklist.legal-documentation.index', compact('checklist'));
     }
 
@@ -2789,14 +2788,14 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->legalDocumentationValidate($request);
-        
+
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
-        
+
         try {
             // create legal documentation
             ChecklistLegalDocumentation::create($validated);
-            
+
             return redirect()
                 ->route('checklist-m.legal-documentation.index', $checklist)
                 ->with('success', 'Legal documentation created successfully.');
@@ -2816,14 +2815,14 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->legalDocumentationValidate($request, $legalDocumentation);
-        
+
         // Record the last update
         $validated['updated_at'] = now();
 
         try {
             // Update the legal documentation with validated data
             $legalDocumentation->update($validated);
-            
+
             return redirect()
                 ->route('checklist-m.show', $legalDocumentation->checklist->siteVisit->property)
                 ->with('success', 'Legal documentation updated successfully.');
@@ -2855,13 +2854,13 @@ class MakerController extends Controller
     public function ChecklistTenantStore(Request $request)
     {
         $validated = $this->tenantChecklistValidate($request);
-        
+
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
 
         try {
             $checklistTenant = ChecklistTenant::create($validated);
-            
+
             return redirect()
                 ->route('checklist-m.show', $checklistTenant->checklist->siteVisit->property)
                 ->with('success', 'Tenant association created successfully.');
@@ -2887,7 +2886,7 @@ class MakerController extends Controller
 
         try {
             $checklistTenant->update($validated);
-            
+
             return redirect()
                 ->route('checklist-m.show', $checklistTenant->checklist->siteVisit->property)
                 ->with('success', 'Tenant updated successfully.');
@@ -2908,7 +2907,7 @@ class MakerController extends Controller
     {
         // Eager load the checklist with its relationships
         $checklist->load(['siteVisit', 'property', 'externalAreaCondition']);
-        
+
         return view('maker.checklist.external-area-condition.index', compact('checklist'));
     }
 
@@ -2921,14 +2920,14 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->externalAreaConditionValidate($request);
-        
+
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
-        
+
         try {
             // create external area condition
             ChecklistExternalAreaCondition::create($validated);
-            
+
             return redirect()
                 ->route('checklist-m.external-area-condition.index', $checklist)
                 ->with('success', 'External area condition created successfully.');
@@ -2948,7 +2947,7 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->externalAreaConditionValidate($request, $checklistExternalAreaCondition);
-        
+
         // Record the last update
         $validated['updated_at'] = now();
 
@@ -2961,7 +2960,7 @@ class MakerController extends Controller
         try {
             // Update the external area condition with validated data
             $checklistExternalAreaCondition->update($validated);
-            
+
             return redirect()
                 ->route('checklist-m.show', $checklistExternalAreaCondition->checklist->siteVisit->property)
                 ->with('success', 'External area condition updated successfully.');
@@ -2982,7 +2981,7 @@ class MakerController extends Controller
     {
         // Eager load the checklist with its relationships
         $checklist->load(['siteVisit', 'property', 'internalAreaCondition']);
-        
+
         return view('maker.checklist.internal-area-condition.index', compact('checklist'));
     }
 
@@ -2995,14 +2994,14 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->internalAreaConditionValidate($request);
-        
+
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
-        
+
         try {
             // create internal area condition
             ChecklistInternalAreaCondition::create($validated);
-            
+
             return redirect()
                 ->route('checklist-m.internal-area-condition.index', $checklist)
                 ->with('success', 'Internal area condition created successfully.');
@@ -3024,7 +3023,7 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->internalAreaConditionValidate($request, $checklistInternalAreaCondition);
-        
+
         // Record the last update
         $validated['updated_at'] = now();
 
@@ -3037,7 +3036,7 @@ class MakerController extends Controller
         try {
             // Update the internal area condition with validated data
             $checklistInternalAreaCondition->update($validated);
-            
+
             return redirect()
                 ->route('checklist-m.show', $checklistInternalAreaCondition->checklist->siteVisit->property)
                 ->with('success', 'Internal area condition updated successfully.');
@@ -3058,7 +3057,7 @@ class MakerController extends Controller
     {
         // Eager load the checklist with its relationships
         $checklist->load(['siteVisit', 'property', 'propertyCondition']);
-        
+
         return view('maker.checklist.property-development.index', compact('checklist'));
     }
 
@@ -3071,14 +3070,14 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->propertyConditionValidate($request);
-        
+
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
-        
+
         try {
             // create property development
             ChecklistPropertyDevelopment::create($validated);
-            
+
             return redirect()
                 ->route('checklist-m.property-development.index', $checklist)
                 ->with('success', 'Property development created successfully.');
@@ -3098,7 +3097,7 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->propertyDevelopmentValidate($request, $checklistPropertyDevelopment);
-        
+
         // Record the last update
         $validated['updated_at'] = now();
 
@@ -3111,7 +3110,7 @@ class MakerController extends Controller
         try {
             // Update the property development with validated data
             $checklistPropertyDevelopment->update($validated);
-            
+
             return redirect()
                 ->route('checklist-m.show', $checklistPropertyDevelopment->checklist->siteVisit->property)
                 ->with('success', 'Property development updated successfully.');
@@ -3133,7 +3132,7 @@ class MakerController extends Controller
     {
         // Eager load the checklist with its relationships
         $checklist->load(['siteVisit', 'property', 'disposalInstallation']);
-        
+
         return view('maker.checklist.disposal-installation.index', compact('checklist'));
     }
 
@@ -3146,14 +3145,14 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->disposalInstallationValidate($request);
-        
+
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
-        
+
         try {
             // create disposal installation
             $checklistDisposalInstallation = ChecklistDisposalInstallation::create($validated);
-            
+
             return redirect()
                 ->route('checklist-m.show', $checklistDisposalInstallation->checklist->siteVisit->property)
                 ->with('success', 'Disposal installation created successfully.');
@@ -3173,7 +3172,7 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->disposalInstallationValidate($request, $checklistDisposalInstallation);
-        
+
         // Record the last update
         $validated['updated_at'] = now();
 
@@ -3186,7 +3185,7 @@ class MakerController extends Controller
         try {
             // Update the disposal installation with validated data
             $checklistDisposalInstallation->update($validated);
-            
+
             return redirect()
                 ->route('checklist-m.show', $checklistDisposalInstallation->checklist->siteVisit->property)
                 ->with('success', 'Disposal installation updated successfully.');
@@ -3345,17 +3344,17 @@ class MakerController extends Controller
             'development_date' => 'nullable|date',
             'development_scope_of_work' => 'nullable|string',  // Changed from development_expansion_status
             'development_status' => 'nullable|string|max:255',
-            
+
             // Renovation fields
             'renovation_date' => 'nullable|date',
             'renovation_scope_of_work' => 'nullable|string',  // Added missing field
             'renovation_status' => 'nullable|string|max:255',  // This replaces renovation_completion_status
-            
+
             // External repainting fields
             'external_repainting_date' => 'nullable|date',  // Changed from repainting_date
             'external_repainting_scope_of_work' => 'nullable|string',  // Added missing field
             'external_repainting_status' => 'nullable|string|max:255',  // This replaces repainting_completion_status
-            
+
             // Others/Proposals/Approvals fields
             'others_proposals_approvals_date' => 'nullable|date',  // Added missing field
             'others_proposals_approvals_scope_of_work' => 'nullable|string',  // Added missing field
@@ -3920,4 +3919,5 @@ class MakerController extends Controller
             'attachment' => 'nullable|file|max:10240',
         ]);
     }
+
 }
