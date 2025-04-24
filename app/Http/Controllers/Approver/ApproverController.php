@@ -3,15 +3,12 @@
 namespace App\Http\Controllers\Approver;
 
 use App\Models\Bank;
-use App\Models\Bond;
-use App\Models\Lease;
+use App\Models\Bond;;
 use App\Models\Issuer;
 use App\Models\Tenant;
 use App\Models\Property;
 use App\Models\Checklist;
 use App\Models\Financial;
-
-// Bonds
 use App\Models\Portfolio;
 use App\Models\SiteVisit;
 use App\Models\Redemption;
@@ -23,13 +20,7 @@ use App\Models\ActivityDiary;
 use App\Models\FinancialType;
 use App\Models\LockoutPeriod;
 use App\Models\PortfolioType;
-use App\Models\Portfolio;
-use App\Models\Property;
-use App\Models\Tenant;
 use App\Models\Lease;
-use App\Models\Financial;
-use App\Models\Checklist;
-use App\Models\SiteVisit;
 use App\Models\SiteVisitLog;
 use App\Models\Appointment;
 use App\Models\ApprovalForm;
