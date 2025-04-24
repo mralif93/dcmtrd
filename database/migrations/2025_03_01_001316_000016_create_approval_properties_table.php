@@ -21,7 +21,6 @@ return new class extends Migration
             $table->date('date_of_approval');
             $table->text('description');
             $table->decimal('estimated_amount', 15, 2)->unsigned()->nullable();
-            $table->text('remarks')->nullable();
             $table->string('attachment')->nullable();
 
             // system information

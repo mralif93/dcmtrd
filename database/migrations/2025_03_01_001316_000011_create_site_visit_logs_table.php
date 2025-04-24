@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('visit_month')->nullable();
             $table->string('visit_year')->nullable();
             $table->text('purpose')->nullable();
-            $table->text('remarks')->nullable();
             $table->string('category')->nullable();
 
             // system information

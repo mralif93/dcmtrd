@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('party_name');
             $table->text('description')->nullable();
             $table->decimal('estimated_amount', 15, 2)->unsigned()->nullable();
-            $table->text('remarks')->nullable();
             $table->string('attachment')->nullable();
 
             // system information
