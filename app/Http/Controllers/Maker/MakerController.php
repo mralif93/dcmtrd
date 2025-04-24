@@ -542,15 +542,29 @@ class MakerController extends Controller
 
     public function DocumentStore(Request $request)
     {
+        // Validate the incoming request
         $validated = $this->validateDocument($request);
 
+        // Retrieve the file from the request
         $file = $request->file('document_file');
-        $validated['file_path'] = $file->store('documents');
 
+        // Generate a unique file name using the current timestamp and the original file name
+        $getFileName = time() . '_' . $file->getClientOriginalName();
+
+        // Store the file in the 'uploads/original' directory within the 'public' disk
+        $cftOriginalFile = $file->storeAs('related-documents', $getFileName, 'public');
+
+        // Store the file path in the validated data array
+        $validated['file_path'] = $cftOriginalFile;
+
+        // Create the related document record
         $relatedDocument = RelatedDocument::create($validated);
+
+        // Find the related facility and redirect back with a success message
         $facility = FacilityInformation::findOrFail($validated['facility_id']);
         return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document created successfully');
     }
+
 
     public function DocumentEdit(RelatedDocument $document)
     {
@@ -560,21 +574,34 @@ class MakerController extends Controller
 
     public function DocumentUpdate(Request $request, RelatedDocument $document)
     {
+        // Validate the incoming request
         $validated = $this->validateDocument($request);
 
+        // Check if a new file is uploaded
         if ($request->hasFile('document_file')) {
-            // Delete old file
+            // Delete the old file if it exists
             if ($document->file_path) {
                 Storage::delete($document->file_path);
             }
-            // Store new file
-            $validated['file_path'] = $request->file('document_file')->store('documents');
+
+            // Retrieve the new file from the request
+            $file = $request->file('document_file');
+
+            // Generate a unique file name using the current timestamp and the original file name
+            $getFileName = time() . '_' . $file->getClientOriginalName();
+
+            // Store the new file with the generated name
+            $validated['file_path'] = $file->storeAs('related-documents', $getFileName, 'public');
         }
 
+        // Update the document with the new data
         $document->update($validated);
+
+        // Find the related facility and redirect back with a success message
         $facility = FacilityInformation::findOrFail($validated['facility_id']);
         return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document updated successfully');
     }
+
 
     public function DocumentShow(RelatedDocument $document)
     {
@@ -3917,5 +3944,4 @@ class MakerController extends Controller
             'attachment' => 'nullable|file|max:10240',
         ]);
     }
-
 }

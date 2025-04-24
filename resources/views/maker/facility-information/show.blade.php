@@ -218,12 +218,17 @@
                                         </span>
                                     </td>
                                     <td class="max-w-xs px-6 py-4 text-sm text-gray-900">
-                                        <a href="{{ asset($document->file_path) }}"
-                                            class="text-indigo-600 hover:text-indigo-900"
-                                            target="_blank" download>
+                                        @if($document->file_path)
+                                            <a href="{{ asset('storage/' . $document->file_path) }}" 
+                                               class="text-indigo-600 hover:text-indigo-900" 
+                                               target="_blank">
+                                                {{ $document->document_name }}
+                                            </a>
+                                        @else
                                             {{ $document->document_name }}
-                                        </a>
+                                        @endif
                                     </td>
+                                    
                                 </tr>
                                 @empty
                                 <tr>

@@ -178,7 +178,8 @@
                                             </a>
 
                                             <!-- Toggle Redeem -->
-                                            <form method="POST" action="{{ route('facility.toggle-redeem', $facility->id) }}">
+                                            <form method="POST"
+                                                action="{{ route('facility.toggle-redeem', $facility->id) }}">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" title="Toggle Redeem"
@@ -458,7 +459,8 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Facility Code</th>
+                                <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Facility
+                                    Code</th>
                                 <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Document
                                     Type</th>
                                 <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Document
@@ -481,8 +483,8 @@
                                         </span>
                                     </td>
                                     <td class="max-w-xs px-6 py-4 text-sm text-gray-900">
-                                        <a href="{{ asset($document->file_path) }}"
-                                            class="text-indigo-600 hover:text-indigo-900" target="_blank" download>
+                                        <a href="{{ Storage::url($document->file_path) }}"
+                                            class="text-indigo-600 hover:text-indigo-900" target="_blank">
                                             {{ $document->document_name }}
                                         </a>
                                     </td>
