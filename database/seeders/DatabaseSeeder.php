@@ -22,14 +22,14 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             DefaultUsersSeeder::class,
+            IssuerSeeder::class,
+            // BondsSeeder::class,
+            // ReitsSeeder::class,
             PortfolioTypeSeeder::class,
             PortfolioSeeder::class,
             PropertySeeder::class,
             LeaseSeeder::class,
             TenantSeeder::class,
-            IssuerSeeder::class,
-            // BondsSeeder::class,
-            // ReitsSeeder::class,
             ChecklistSeeder::class,
             ChecklistLegalDocumentationSeeder::class,
             ChecklistTenantSeeder::class,
