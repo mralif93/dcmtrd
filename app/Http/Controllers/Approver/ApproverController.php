@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Approver;
 
 use App\Models\Bank;
 use App\Models\Bond;;
+use App\Models\Lease;
 use App\Models\Issuer;
 use App\Models\Tenant;
 use App\Models\Property;
@@ -13,18 +14,26 @@ use App\Models\Portfolio;
 use App\Models\SiteVisit;
 use App\Models\Redemption;
 use App\Models\TrusteeFee;
+use App\Models\Appointment;
 use App\Models\Announcement;
+use App\Models\ApprovalForm;
 use App\Models\CallSchedule;
+use App\Models\SiteVisitLog;
 use Illuminate\Http\Request;
 use App\Models\ActivityDiary;
 use App\Models\FinancialType;
 use App\Models\LockoutPeriod;
 use App\Models\PortfolioType;
-use App\Models\Lease;
-use App\Models\SiteVisitLog;
-use App\Models\Appointment;
-use App\Models\ApprovalForm;
 use App\Models\ApprovalProperty;
+use App\Models\ComplianceCovenant;
+use Illuminate\Support\Facades\DB;
+use App\Models\FacilityInformation;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Container\Attributes\Cache;
+use App\Jobs\Issuer\SendIssuerApprovedNotification;
+use App\Jobs\Issuer\SendIssuerRejectedNotification;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ApproverController extends Controller
 {
