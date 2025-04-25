@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class PaymentSchedule extends Model
+class PaymentSchedule extends Model implements Auditable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'start_date',
@@ -18,6 +19,7 @@ class PaymentSchedule extends Model
         'coupon_rate',
         'adjustment_date',
         'bond_id',
+        'reminder_total_date'
     ];
 
     protected $casts = [

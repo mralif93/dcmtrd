@@ -2,13 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Bond;
+use App\Models\User;
+use App\Models\Announcement;
+use App\Models\RelatedDocument;
+use App\Models\FacilityInformation;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Issuer extends Model
+class Issuer extends Model implements Auditable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'issuer_short_name',
@@ -25,6 +32,9 @@ class Issuer extends Model
         'prepared_by',
         'verified_by',
         'approval_datetime',
+        'pic_name', 
+        'phone_no', 
+        'address',  
         'remarks',
     ];
 
@@ -32,6 +42,11 @@ class Issuer extends Model
         'trust_deed_date' => 'date',
         'approval_datetime' => 'datetime',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'prepared_by');
+    }
 
     public function bonds()
     {

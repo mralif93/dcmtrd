@@ -2,17 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Issuer;
+use App\Models\TrusteeFee;
+use App\Models\RelatedDocument;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class FacilityInformation extends Model
+class FacilityInformation extends Model implements Auditable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
     protected $table = 'facility_informations';
 
@@ -42,6 +46,7 @@ class FacilityInformation extends Model
         'verified_by',
         'approval_datetime',
         'remarks',
+        'is_redeemed',
         'issuer_id',
     ];
 
@@ -49,6 +54,7 @@ class FacilityInformation extends Model
         'maturity_date' => 'date',
         'availability_date' => 'date',
         'guaranteed' => 'boolean',
+        'is_redeemed' => 'boolean',
     ];
 
     // Relationships
@@ -61,6 +67,12 @@ class FacilityInformation extends Model
     {
         return $this->hasMany(RelatedDocument::class, 'facility_id');
     }
+
+    public function trusteeFees()
+    {
+        return $this->hasMany(TrusteeFee::class);
+    }
+
 
     // Scopes
     public function scopeWithDocuments(Builder $query): void

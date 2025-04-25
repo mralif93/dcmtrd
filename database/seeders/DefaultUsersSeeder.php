@@ -188,7 +188,7 @@ class DefaultUsersSeeder extends Seeder
             [
                 'name' => 'NOR IZZAH BINTI MOHAMAD ARIFF',
                 'email' => 'izzahariff@artrustees.com.my',
-                'role' => 'user',
+                'role' => 'maker',
                 'job_title' => 'SENIOR EXECUTIVE',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
@@ -206,7 +206,7 @@ class DefaultUsersSeeder extends Seeder
             [
                 'name' => 'NUR SAKIENAH BINTI KHAIRUDDIN',
                 'email' => 'nursakienah@artrustees.com.my',
-                'role' => 'user',
+                'role' => 'maker',
                 'job_title' => 'EXECUTIVE',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
@@ -224,7 +224,7 @@ class DefaultUsersSeeder extends Seeder
             [
                 'name' => 'MUHAMMAD SAYYIDI BIN MOHD BASIL',
                 'email' => 'sayyidi@artrustees.com.my',
-                'role' => 'user',
+                'role' => 'maker',
                 'job_title' => 'EXECUTIVE',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
@@ -244,7 +244,7 @@ class DefaultUsersSeeder extends Seeder
             [
                 'name' => 'DANG FATHIHAH BINTI IBRAHIM',
                 'email' => 'fathihah@artrustees.com.my',
-                'role' => 'user',
+                'role' => 'approver',
                 'job_title' => 'ASSISTANT MANAGER',
                 'department' => 'REAL ESTATE INVESTMENT TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
@@ -262,7 +262,7 @@ class DefaultUsersSeeder extends Seeder
             [
                 'name' => 'NURUL SHAHIDAH BINTI RAS TAMAJIS',
                 'email' => 'nurul.shahidah@artrustees.com.my',
-                'role' => 'user',
+                'role' => 'maker',
                 'job_title' => 'SENIOR EXECUTIVE',
                 'department' => 'REAL ESTATE INVESTMENT TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
@@ -280,7 +280,7 @@ class DefaultUsersSeeder extends Seeder
             [
                 'name' => 'MUHAMMAD AFIS BIN AZMAN',
                 'email' => 'afis.azman@artrustees.com.my',
-                'role' => 'user',
+                'role' => 'maker',
                 'job_title' => 'EXECUTIVE',
                 'department' => 'REAL ESTATE INVESTMENT TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',

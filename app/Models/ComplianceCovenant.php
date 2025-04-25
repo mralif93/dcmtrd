@@ -2,36 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Issuer;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ComplianceCovenant extends Model
+class ComplianceCovenant extends Model implements Auditable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [
-        'financial_year_end',
-        'audited_financial_statements',
-        'unaudited_financial_statements',
-        'compliance_certificate',
-        'finance_service_cover_ratio',
-        'annual_budget',
-        'computation_of_finance_to_ebitda',
-        'ratio_information_on_use_of_proceeds',
-        'status',
-        'prepared_by',
-        'verified_by',
-        'remarks',
-        'approval_datetime',
-        'issuer_id'
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be cast.
@@ -65,8 +52,7 @@ class ComplianceCovenant extends Model
                !empty($this->compliance_certificate) &&
                !empty($this->finance_service_cover_ratio) &&
                !empty($this->annual_budget) &&
-               !empty($this->computation_of_finance_to_ebitda) &&
-               !empty($this->ratio_information_on_use_of_proceeds);
+               !empty($this->computation_of_finance_to_ebitda);
     }
 
     /**
@@ -100,10 +86,6 @@ class ComplianceCovenant extends Model
         
         if (empty($this->computation_of_finance_to_ebitda)) {
             $missingDocuments[] = 'Computation of Finance to EBITDA';
-        }
-        
-        if (empty($this->ratio_information_on_use_of_proceeds)) {
-            $missingDocuments[] = 'Ratio Information on use of proceeds';
         }
         
         return $missingDocuments;
@@ -146,8 +128,7 @@ class ComplianceCovenant extends Model
                     ->whereNotNull('compliance_certificate')
                     ->whereNotNull('finance_service_cover_ratio')
                     ->whereNotNull('annual_budget')
-                    ->whereNotNull('computation_of_finance_to_ebitda')
-                    ->whereNotNull('ratio_information_on_use_of_proceeds');
+                    ->whereNotNull('computation_of_finance_to_ebitda');
     }
 
     /**
@@ -164,8 +145,7 @@ class ComplianceCovenant extends Model
               ->orWhereNull('compliance_certificate')
               ->orWhereNull('finance_service_cover_ratio')
               ->orWhereNull('annual_budget')
-              ->orWhereNull('computation_of_finance_to_ebitda')
-              ->orWhereNull('ratio_information_on_use_of_proceeds');
+              ->orWhereNull('computation_of_finance_to_ebitda');
         });
     }
 }

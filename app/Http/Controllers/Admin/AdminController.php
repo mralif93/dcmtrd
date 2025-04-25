@@ -41,7 +41,8 @@ class AdminController extends Controller
                     (SELECT COUNT(*) FROM financials) AS financials_count,
                     (SELECT COUNT(*) FROM site_visits) AS site_visits_count,
                     (SELECT COUNT(*) FROM checklists) AS checklists_count,
-                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count
+                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
+                    (SELECT COUNT(*) FROM audits) AS audit_count
             ");
             return (array) $result[0];
         });
@@ -64,6 +65,7 @@ class AdminController extends Controller
             'trusteeFeesCount' => $counts['trustee_fees_count'],
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
             'activityDailyCount' => $counts['activity_diaries_count'],
+            'auditLogCount' => $counts['audit_count'],
             
             // REITs counts
             'banksCount' => $counts['banks_count'],

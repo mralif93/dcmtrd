@@ -44,7 +44,6 @@ class BondsSheetImport implements ToCollection
 
             if ($bond) {
                 $this->bondIds[$bondName] = $bond->id;
-                
             }
         }
     }
@@ -65,18 +64,18 @@ class PaymentScheduleSheetImport implements ToCollection
 
         foreach ($rows as $row) {
             if ($row->filter()->isEmpty()) continue;
-        
-            $startDate = Carbon::createFromFormat('d-M-Y', trim($row[1]))->toDateString();
-            // dd($startDate);
-            $endDate = Carbon::createFromFormat('d-M-Y', trim($row[2]))->toDateString();
-            $paymentDate = Carbon::createFromFormat('d-M-Y', trim($row[3]))->toDateString();
-            $exDate = Carbon::createFromFormat('d-M-Y', trim($row[4]))->toDateString();
+
+            // Safe date parsing
+            $startDate = $this->parseDate($row[1]);
+            $endDate = $this->parseDate($row[2]);
+            $paymentDate = $this->parseDate($row[3]);
+            $exDate = $this->parseDate($row[4]);
             $couponRate = trim($row[5]);
-            $adjustmentDate = Carbon::createFromFormat('d-M-Y', trim($row[6]))->toDateString();
-        
+            $adjustmentDate = $this->parseDate($row[6]);
+
             $bondId = reset($this->bondIds);
-        
-            if ($bondId) {
+
+            if ($bondId && $startDate && $endDate && $paymentDate && $exDate && $adjustmentDate) {
                 PaymentSchedule::create([
                     'start_date' => $startDate,
                     'end_date' => $endDate,
@@ -86,8 +85,23 @@ class PaymentScheduleSheetImport implements ToCollection
                     'adjustment_date' => $adjustmentDate,
                     'bond_id' => $bondId,
                 ]);
+            } else {
+                logger()->warning("Skipping row due to missing or invalid data: ", $row->toArray());
             }
         }
-        
+    }
+
+    protected function parseDate($date)
+    {
+        $date = trim($date);
+
+        if (!$date) return null;
+
+        try {
+            return Carbon::createFromFormat('d-M-Y', $date)->toDateString();
+        } catch (\Exception $e) {
+            logger()->warning("Invalid date format: {$date}");
+            return null;
+        }
     }
 }

@@ -1,20 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="text-xl font-semibold leading-tight text-gray-800">
             {{ __('Admin Dashboard') }}
         </h2>
     </x-slot>
 
     @if(Auth::user()->hasPermission('DCMTRD'))
     <div class="hidden py-12 dashboard-section" id="dcmtrd-section" data-section="dcmtrd">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="pb-6">
-                <h2 class="font-bold text-xl text-gray-800 leading-tight">
+                <h2 class="text-xl font-bold leading-tight text-gray-800">
                     {{ __('Debt Capital Market Trust Real Estate Department (DCMTRD)') }}
                 </h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <!-- Users -->
                 <x-dashboard-card
                     title="Users"
@@ -164,7 +164,7 @@
                     title="Audit Log"
                     icon="clipboard-list"
                     :count="$auditLogCount ?? 0"
-                    href="#"
+                    :href="route('audit-trail.index')"
                     color="bg-blue-100"
                 />
 
@@ -172,8 +172,8 @@
                 <x-dashboard-card
                     title="Reports"
                     icon="document"
-                    :count="$reportsCount ?? 0"
-                    href="#"
+                    :count="$reportsCount ?? 2"
+                    :href="route('dcmt-reports.index')"
                     color="bg-blue-100"
                 />
             </div>
@@ -183,14 +183,14 @@
 
     @if(Auth::user()->hasPermission('REITS'))
     <div class="hidden py-12 dashboard-section" id="reits-section" data-section="reits">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="pb-6">
-                <h2 class="font-bold text-xl text-gray-800 leading-tight">
+                <h2 class="text-xl font-bold leading-tight text-gray-800">
                     {{ __('Real Estate Investment Trusts (REITs)') }}
                 </h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <!-- Portfolio Types -->
                 <x-dashboard-card
                     title="Portfolio Types"

@@ -1,81 +1,86 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Exports\CorporateBondExport;
 
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MainController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\User\UserController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Legal\LegalController;
-use App\Http\Controllers\Compliance\ComplianceController;
-use App\Http\Controllers\Maker\MakerController;
-use App\Http\Controllers\Approver\ApproverController;
 use App\Http\Controllers\TwoFactorController;
+use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Admin\BankController;
+use App\Http\Controllers\Admin\BondController;
 
 // User Main
-use App\Http\Controllers\MainController;
+use App\Http\Controllers\Admin\AdminController;
 
 // Permission
-use App\Http\Controllers\Admin\PermissionController;
-use App\Http\Controllers\Admin\PermissionUserController;
+use App\Http\Controllers\Admin\ChartController;
+use App\Http\Controllers\Admin\LeaseController;
 
 // Bonds
-use App\Http\Controllers\Admin\UserAdminController;
+use App\Http\Controllers\Legal\LegalController;
+use App\Http\Controllers\Maker\MakerController;
 use App\Http\Controllers\Admin\IssuerController;
-use App\Http\Controllers\Admin\BondController;
-use App\Http\Controllers\Admin\RatingMovementController;
-use App\Http\Controllers\Admin\PaymentScheduleController;
-use App\Http\Controllers\Admin\RedemptionController;
-use App\Http\Controllers\Admin\CallScheduleController;
-use App\Http\Controllers\Admin\LockoutPeriodController;
-use App\Http\Controllers\Admin\TradingActivityController;
-use App\Http\Controllers\Admin\FacilityInformationController;
-use App\Http\Controllers\Admin\AnnouncementController;
-use App\Http\Controllers\Admin\RelatedDocumentController;
-use App\Http\Controllers\Admin\ChartController;
-use App\Http\Controllers\Admin\TrusteeFeeController;
-use App\Http\Controllers\Admin\ComplianceCovenantController;
-use App\Http\Controllers\Admin\ActivityDiaryController;
-
-// REITs
-use App\Http\Controllers\Admin\FinancialTypeController;
-use App\Http\Controllers\Admin\BankController;
-use App\Http\Controllers\Admin\PortfolioTypeController;
-use App\Http\Controllers\Admin\PortfolioController;
-use App\Http\Controllers\Admin\PropertyController;
-use App\Http\Controllers\Admin\ChecklistController;
 use App\Http\Controllers\Admin\TenantController;
-use App\Http\Controllers\Admin\LeaseController;
+use App\Http\Controllers\User\UserBondController;
+use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\PropertyController;
+use App\Http\Controllers\User\UserChartController;
+use App\Http\Controllers\User\UserLeaseController;
+use App\Http\Controllers\Admin\ChecklistController;
 use App\Http\Controllers\Admin\FinancialController;
+use App\Http\Controllers\Admin\PortfolioController;
 use App\Http\Controllers\Admin\SiteVisitController;
-use App\Http\Controllers\Admin\SiteVisitLogController;
+use App\Http\Controllers\Admin\UserAdminController;
 
 // Bonds
 use App\Http\Controllers\User\UserIssuerController;
-use App\Http\Controllers\User\UserBondController;
-use App\Http\Controllers\User\UserRatingMovementController;
-use App\Http\Controllers\User\UserPaymentScheduleController;
-use App\Http\Controllers\User\UserRedemptionController;
-use App\Http\Controllers\User\UserCallScheduleController;
-use App\Http\Controllers\User\UserLockoutPeriodController;
-use App\Http\Controllers\User\UserTradingActivityController;
-use App\Http\Controllers\User\UserFacilityInformationController;
-use App\Http\Controllers\User\UserAnnouncementController;
-use App\Http\Controllers\User\UserRelatedDocumentController;
-use App\Http\Controllers\User\UserChartController;
-use App\Http\Controllers\User\UserTrusteeFeeController;
-use App\Http\Controllers\User\UserComplianceCovenantController;
-use App\Http\Controllers\User\UserUploadController;
-use App\Http\Controllers\User\UserActivityDiaryController;
+use App\Http\Controllers\User\UserTenantController;
 
 // REITs
-use App\Http\Controllers\User\UserPortfolioController;
+use App\Http\Controllers\User\UserUploadController;
+use App\Http\Controllers\Admin\DcmtReportController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\RedemptionController;
+use App\Http\Controllers\Admin\TrusteeFeeController;
+use App\Http\Controllers\Approver\ApproverController;
 use App\Http\Controllers\User\UserPropertyController;
-use App\Http\Controllers\User\UserTenantController;
-use App\Http\Controllers\User\UserLeaseController;
+use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\CallScheduleController;
+use App\Http\Controllers\Admin\SiteVisitLogController;
+
 use App\Http\Controllers\User\UserChecklistController;
 use App\Http\Controllers\User\UserFinancialController;
+use App\Http\Controllers\User\UserPortfolioController;
 use App\Http\Controllers\User\UserSiteVisitController;
+use App\Http\Controllers\Admin\ActivityDiaryController;
+use App\Http\Controllers\Admin\FinancialTypeController;
+use App\Http\Controllers\Admin\LockoutPeriodController;
+use App\Http\Controllers\Admin\PortfolioTypeController;
+use App\Http\Controllers\User\UserRedemptionController;
+use App\Http\Controllers\User\UserTrusteeFeeController;
+use App\Http\Controllers\Admin\PermissionUserController;
+use App\Http\Controllers\Admin\RatingMovementController;
+use App\Http\Controllers\Admin\PaymentScheduleController;
+use App\Http\Controllers\Admin\RelatedDocumentController;
+use App\Http\Controllers\Admin\TradingActivityController;
+use App\Http\Controllers\Compliance\ComplianceController;
+
+// REITs
+use App\Http\Controllers\User\UserAnnouncementController;
+use App\Http\Controllers\User\UserCallScheduleController;
 use App\Http\Controllers\User\UserSiteVisitLogController;
+use App\Http\Controllers\User\UserActivityDiaryController;
+use App\Http\Controllers\User\UserLockoutPeriodController;
+use App\Http\Controllers\User\UserRatingMovementController;
+use App\Http\Controllers\Admin\ComplianceCovenantController;
+use App\Http\Controllers\User\UserPaymentScheduleController;
+use App\Http\Controllers\User\UserRelatedDocumentController;
+use App\Http\Controllers\User\UserTradingActivityController;
+use App\Http\Controllers\Admin\FacilityInformationController;
+use App\Http\Controllers\User\UserComplianceCovenantController;
+use App\Http\Controllers\User\UserFacilityInformationController;
 
 // Main: Login
 Route::get('/', function () {
@@ -204,6 +209,17 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     // Additional
     Route::prefix('/admin/site-visit-logs')->name('site-visit-logs.')->group(function () {
         Route::get('{siteVisitLog}/download-report', [SiteVisitLogController::class, 'downloadReport'])->name('download-report');
+    });
+
+    Route::prefix('/admin/audit-trail')->name('audit-trail.')->group(function () {
+        Route::get('/list', [AuditLogController::class, 'index'])->name('index');
+        Route::get('/export', [AuditLogController::class, 'export'])->name('export');
+    });
+
+    Route::prefix('/admin/dcmt')->name('dcmt-reports.')->group(function () {
+        Route::get('/reports', [DcmtReportController::class, 'index'])->name('index');
+        Route::get('/cb-reports', [DcmtReportController::class, 'cbReports'])->name('cb-reports');
+        Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports');
     });
 });
 
@@ -381,6 +397,15 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     // Dashboard
     Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
 
+    Route::prefix('/maker/dcmt')->name('dcmt-reports.')->group(function () {
+        Route::get('/reports', [DcmtReportController::class, 'index'])->name('index');
+        Route::get('/cb-reports', [DcmtReportController::class, 'cbReports'])->name('cb-reports');
+        Route::get('/export-cb', function () {
+            return Excel::download(new CorporateBondExport, 'corporate_bonds.xlsx');
+        })->name('cb-export');
+        Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports');
+    });
+
     // Issuer Module
     Route::get('maker/issuer/create', [MakerController::class, 'IssuerCreate'])->name('issuer-m.create')->middleware('permission:DCMTRD');
     Route::post('maker/issuer/create', [MakerController::class, 'IssuerStore'])->name('issuer-m.store')->middleware('permission:DCMTRD');
@@ -420,6 +445,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/facility-info/{facility}/update', [MakerController::class, 'FacilityInfoUpdate'])->name('facility-info-m.update')->middleware('permission:DCMTRD');
     Route::get('maker/facility-info/{facility}/show', [MakerController::class, 'FacilityInfoShow'])->name('facility-info-m.show')->middleware('permission:DCMTRD');
 
+    Route::patch('/maker/facility-info/{facility}/toggle-redeem', [MakerController::class, 'toggleRedeem']) ->name('facility.toggle-redeem');
     // Rating Movement Module
     Route::get('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementCreate'])->name('rating-m.create')->middleware('permission:DCMTRD');
     Route::post('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementStore'])->name('rating-m.store')->middleware('permission:DCMTRD');

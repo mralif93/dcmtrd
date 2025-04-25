@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 {{ __('Security Information') }}
             </h2>
             
             <!-- Back Button -->
-            <a href="{{ route('bond-m.details', $bond->issuer) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <a href="{{ route('bond-m.details', $bond->issuer) }}" class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-gray-700 uppercase transition bg-gray-200 border border-transparent rounded-md hover:bg-gray-300 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 active:bg-gray-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Back
@@ -16,14 +16,14 @@
     </x-slot>
 
     <div class="py-8">
-        <div x-data="{ openSection: 'bonds' }">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4 pb-6">
+        <div x-data="{ openSection: 'null' }">
+            <div class="pb-6 mx-auto space-y-4 max-w-7xl sm:px-6 lg:px-8">
 
                 @if(session('success'))
-                    <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-400">
+                    <div class="p-4 mb-6 border-l-4 border-green-400 bg-green-50">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
                             </div>
@@ -45,26 +45,26 @@
                         </x-slot>
                         
                         <x-slot name="content">
-                            <a href="{{ route('rating-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('rating-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
                                 Rating Movement
                             </a>
-                            <a href="{{ route('payment-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('payment-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
                                 Payment Schedule
                             </a>
                             @if(!$bond->redemption)
-                            <a href="{{ route('redemption-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('redemption-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
                                 Redemption
                             </a>
                             @endif
                             @if($bond->redemption)
-                            <a href="{{ route('call-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('call-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
                                 Call Schedule
                             </a>
-                            <a href="{{ route('lockout-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('lockout-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
                                 Lockout Period
                             </a>
                             @endif
-                            <a href="{{ route('trading-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('trading-m.create', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
                                 Trading Activity
                             </a>
                         </x-slot>
@@ -76,13 +76,13 @@
                         </x-slot>
                         
                         <x-slot name="content">
-                            <a href="{{ route('rating-m.upload-form', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('rating-m.upload-form', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
                                 Rating Movements
                             </a>
-                            <a href="{{ route('payment-m.upload-form', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('payment-m.upload-form', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
                                 Payment Schedules
                             </a>
-                            <a href="{{ route('trading-m.upload-form', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            <a href="{{ route('trading-m.upload-form', $bond) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
                                 Trading Activities
                             </a>
                         </x-slot>
@@ -93,20 +93,20 @@
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     <button @click="openSection = openSection === 'bonds' ? null : 'bonds'" 
                             class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                        <div class="flex justify-between items-center">
+                        <div class="flex items-center justify-between">
                             <h3 class="text-xl font-semibold">Bond + Sukuk Information</h3>
-                            <svg class="w-6 h-6 transform transition-transform" 
+                            <svg class="w-6 h-6 transition-transform transform" 
                                 :class="{ 'rotate-180': openSection === 'bonds' }" 
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'bonds'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
+                    <div x-show="openSection === 'bonds'" x-collapse class="p-6 overflow-x-auto border-t border-gray-200">
                         <!-- Security Information Section -->
                         <section class="mb-8">
-                            <h3 class="text-2xl font-semibold text-cyan-500 mb-4">Security Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <h3 class="mb-4 text-2xl font-semibold text-cyan-500">Security Information</h3>
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div class="space-y-4">
                                     <div class="grid grid-cols-2">
                                         <div class="font-medium">Principal</div>
@@ -176,7 +176,7 @@
 
                         <!-- Latest Trading Section -->
                         <section class="mb-8">
-                            <h3 class="text-2xl font-semibold text-cyan-500 mb-4">Latest Trading</h3>
+                            <h3 class="mb-4 text-2xl font-semibold text-cyan-500">Latest Trading</h3>
                             <div class="space-y-4">
                                 <div class="grid grid-cols-2">
                                     <div class="font-medium">Last Traded Yield (%)</div>
@@ -199,7 +199,7 @@
 
                         <!-- Ratings Section -->
                         <section class="mb-8">
-                            <h3 class="text-2xl font-semibold text-cyan-500 mb-4">Ratings</h3>
+                            <h3 class="mb-4 text-2xl font-semibold text-cyan-500">Ratings</h3>
                             <div class="space-y-4">
                                 <div class="grid grid-cols-2">
                                     <div class="font-medium">Ratings</div>
@@ -213,8 +213,8 @@
 
                         <!-- Coupon Payment Details Section -->
                         <section class="mb-8">
-                            <h3 class="text-2xl font-semibold text-cyan-500 mb-4">Coupon Payment Details</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <h3 class="mb-4 text-2xl font-semibold text-cyan-500">Coupon Payment Details</h3>
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div class="space-y-4">
                                     <div class="grid grid-cols-2">
                                         <div class="font-medium">Coupon Accrual</div>
@@ -244,7 +244,7 @@
 
                         <!-- Issuance Section -->
                         <section class="mb-8">
-                            <h3 class="text-2xl font-semibold text-cyan-500 mb-4">Issuance</h3>
+                            <h3 class="mb-4 text-2xl font-semibold text-cyan-500">Issuance</h3>
                             <div class="space-y-4">
                                 <div class="grid grid-cols-2">
                                     <div class="font-medium">Amount Issued (RM'mil)</div>
@@ -259,7 +259,7 @@
 
                         <!-- Additional Info Section -->
                         <section class="mb-8">
-                            <h3 class="text-2xl font-semibold text-cyan-500 mb-4">Additional Info</h3>
+                            <h3 class="mb-4 text-2xl font-semibold text-cyan-500">Additional Info</h3>
                             <div class="space-y-4">
                                 <div class="grid grid-cols-2">
                                     <div class="font-medium">Lead Arranger</div>
@@ -282,32 +282,32 @@
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     <button @click="openSection = openSection === 'document' ? null : 'document'" 
                             class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                        <div class="flex justify-between items-center">
+                        <div class="flex items-center justify-between">
                             <h3 class="text-xl font-semibold">Related Documents & Financials</h3>
-                            <svg class="w-6 h-6 transform transition-transform" 
+                            <svg class="w-6 h-6 transition-transform transform" 
                                 :class="{ 'rotate-180': openSection === 'document' }" 
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'document'" x-collapse class="border-t border-gray-200 overflow-x-auto">
+                    <div x-show="openSection === 'document'" x-collapse class="overflow-x-auto border-t border-gray-200">
                         <div class="overflow-x-auto">
                             <table class="min-w-full bg-white">
                                 <thead>
-                                    <tr class="bg-gray-200 text-gray-700 font-semibold">
-                                        <th class="py-3 px-4 text-left">Seq</th>
-                                        <th class="py-3 px-4 text-left">Document Type</th>
-                                        <th class="py-3 px-4 text-left">Document Name</th>
+                                    <tr class="font-semibold text-gray-700 bg-gray-200">
+                                        <th class="px-4 py-3 text-left">Seq</th>
+                                        <th class="px-4 py-3 text-left">Document Type</th>
+                                        <th class="px-4 py-3 text-left">Document Name</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if($relatedDocuments && $relatedDocuments->count() > 0)
                                         @foreach($relatedDocuments as $index => $document)
                                             <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray-100' }}">
-                                                <td class="py-3 px-4">{{ $loop->iteration }}</td>
-                                                <td class="py-3 px-4">{{ $document->document_type }}</td>
-                                                <td class="py-3 px-4">
+                                                <td class="px-4 py-3">{{ $loop->iteration }}</td>
+                                                <td class="px-4 py-3">{{ $document->document_type }}</td>
+                                                <td class="px-4 py-3">
                                                     @if($document->file_path)
                                                         <a href="{{ asset('storage/' . $document->file_path) }}" 
                                                         class="text-blue-600 hover:underline" 
@@ -322,7 +322,7 @@
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td colspan="3" class="py-3 px-4 text-center">No related documents found</td>
+                                            <td colspan="3" class="px-4 py-3 text-center">No related documents found</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -339,9 +339,9 @@
                                     <div class="flex space-x-1">
                                         @foreach($relatedDocuments->getUrlRange(1, $relatedDocuments->lastPage()) as $page => $url)
                                             @if($page == $relatedDocuments->currentPage())
-                                                <span class="px-3 py-1 bg-gray-400 text-white rounded">{{ $page }}</span>
+                                                <span class="px-3 py-1 text-white bg-gray-400 rounded">{{ $page }}</span>
                                             @else
-                                                <a href="{{ $url }}" class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded">{{ $page }}</a>
+                                                <a href="{{ $url }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">{{ $page }}</a>
                                             @endif
                                         @endforeach
                                     </div>
@@ -355,51 +355,51 @@
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     <button @click="openSection = openSection === 'rating' ? null : 'rating'" 
                             class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                        <div class="flex justify-between items-center">
+                        <div class="flex items-center justify-between">
                             <h3 class="text-xl font-semibold">Rating Movements</h3>
-                            <svg class="w-6 h-6 transform transition-transform" 
+                            <svg class="w-6 h-6 transition-transform transform" 
                                 :class="{ 'rotate-180': openSection === 'rating' }" 
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'rating'" x-collapse class="border-t border-gray-200 overflow-x-auto">
+                    <div x-show="openSection === 'rating'" x-collapse class="overflow-x-auto border-t border-gray-200">
                         <div class="overflow-x-auto">
                             <table class="min-w-full bg-white">
                                 <thead>
-                                    <tr class="bg-gray-200 text-gray-700 font-semibold">
-                                        <th class="py-3 px-4 text-left">Rating Agency</th>
-                                        <th class="py-3 px-4 text-left">Effective Date</th>
-                                        <th class="py-3 px-4 text-left">Rating Tenure</th>
-                                        <th class="py-3 px-4 text-left">Rating</th>
-                                        <th class="py-3 px-4 text-left">Rating Action</th>
-                                        <th class="py-3 px-4 text-left">Rating Outlook</th>
-                                        <th class="py-3 px-4 text-left">Rating Watch</th>
-                                        <th class="py-3 px-4 text-right">Action</th>
+                                    <tr class="font-semibold text-gray-700 bg-gray-200">
+                                        <th class="px-4 py-3 text-left">Rating Agency</th>
+                                        <th class="px-4 py-3 text-left">Effective Date</th>
+                                        <th class="px-4 py-3 text-left">Rating Tenure</th>
+                                        <th class="px-4 py-3 text-left">Rating</th>
+                                        <th class="px-4 py-3 text-left">Rating Action</th>
+                                        <th class="px-4 py-3 text-left">Rating Outlook</th>
+                                        <th class="px-4 py-3 text-left">Rating Watch</th>
+                                        <th class="px-4 py-3 text-right">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if($bond->ratingMovements && $bond->ratingMovements->count() > 0)
                                         @foreach($bond->ratingMovements->sortByDesc('effective_date') as $index => $ratingMovement)
                                             <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray-100' }}">
-                                                <td class="py-3 px-4">{{ $ratingMovement->rating_agency }}</td>
-                                                <td class="py-3 px-4">{{ $ratingMovement->effective_date ? $ratingMovement->effective_date->format('d-M-Y') : '-' }}</td>
-                                                <td class="py-3 px-4">{{ $ratingMovement->rating_tenure }}</td>
-                                                <td class="py-3 px-4">{{ $ratingMovement->rating ?? '-' }}</td>
-                                                <td class="py-3 px-4">{{ $ratingMovement->rating_action ?? '-' }}</td>
-                                                <td class="py-3 px-4">{{ $ratingMovement->rating_outlook ?? '-' }}</td>
-                                                <td class="py-3 px-4">{{ $ratingMovement->rating_watch ?? 'Not Applicable' }}</td>
-                                                <td class="py-3 px-4">
+                                                <td class="px-4 py-3">{{ $ratingMovement->rating_agency }}</td>
+                                                <td class="px-4 py-3">{{ $ratingMovement->effective_date ? $ratingMovement->effective_date->format('d-M-Y') : '-' }}</td>
+                                                <td class="px-4 py-3">{{ $ratingMovement->rating_tenure }}</td>
+                                                <td class="px-4 py-3">{{ $ratingMovement->rating ?? '-' }}</td>
+                                                <td class="px-4 py-3">{{ $ratingMovement->rating_action ?? '-' }}</td>
+                                                <td class="px-4 py-3">{{ $ratingMovement->rating_outlook ?? '-' }}</td>
+                                                <td class="px-4 py-3">{{ $ratingMovement->rating_watch ?? 'Not Applicable' }}</td>
+                                                <td class="px-4 py-3">
                                                     <div class="flex justify-end space-x-2">
                                                         <a href="{{ route('rating-m.show', $ratingMovement) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
-                                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                                             </svg>
                                                         </a>
                                                         <a href="{{ route('rating-m.edit', $ratingMovement) }}" class="text-yellow-600 hover:text-yellow-900">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                             </svg>
                                                         </a>
@@ -409,7 +409,7 @@
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td colspan="8" class="py-3 px-4 text-center">No rating movements found</td>
+                                            <td colspan="8" class="px-4 py-3 text-center">No rating movements found</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -422,51 +422,53 @@
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     <button @click="openSection = openSection === 'payment' ? null : 'payment'" 
                             class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                        <div class="flex justify-between items-center">
+                        <div class="flex items-center justify-between">
                             <h3 class="text-xl font-semibold">Payment Schedules</h3>
-                            <svg class="w-6 h-6 transform transition-transform" 
+                            <svg class="w-6 h-6 transition-transform transform" 
                                 :class="{ 'rotate-180': openSection === 'payment' }" 
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'payment'" x-collapse class="border-t border-gray-200 overflow-x-auto">
+                    <div x-show="openSection === 'payment'" x-collapse class="overflow-x-auto border-t border-gray-200">
                         <div class="overflow-x-auto">
                             <table class="min-w-full bg-white">
                                 <thead>
-                                    <tr class="bg-gray-200 text-gray-700 font-semibold">
-                                        <th class="py-3 px-4 text-left">Seq</th>
-                                        <th class="py-3 px-4 text-left">Start Date</th>
-                                        <th class="py-3 px-4 text-left">End Date</th>
-                                        <th class="py-3 px-4 text-left">Payment Date</th>
-                                        <th class="py-3 px-4 text-left">Ex-Date</th>
-                                        <th class="py-3 px-4 text-left">Coupon Rate</th>
-                                        <th class="py-3 px-4 text-left">Adjustment Date</th>
-                                        <th class="py-3 px-4 text-right">Action</th>
+                                    <tr class="font-semibold text-gray-700 bg-gray-200">
+                                        <th class="px-4 py-3 text-left">Seq</th>
+                                        <th class="px-4 py-3 text-left">Start Date</th>
+                                        <th class="px-4 py-3 text-left">End Date</th>
+                                        <th class="px-4 py-3 text-left">Payment Date</th>
+                                        <th class="px-4 py-3 text-left">Ex-Date</th>
+                                        <th class="px-4 py-3 text-left">Coupon Rate</th>
+                                        <th class="px-4 py-3 text-left">Adjustment Date</th>
+                                        <th class="px-4 py-3 text-center">Reminder Days</th>
+                                        <th class="px-4 py-3 text-right">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if($bond->paymentSchedules && $bond->paymentSchedules->count() > 0)
                                         @foreach($bond->paymentSchedules->sortBy('start_date') as $index => $schedule)
                                             <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray-100' }}">
-                                                <td class="py-3 px-4">{{ $loop->iteration }}</td>
-                                                <td class="py-3 px-4">{{ $schedule->start_date ? $schedule->start_date->format('d-M-Y') : '-' }}</td>
-                                                <td class="py-3 px-4">{{ $schedule->end_date ? $schedule->end_date->format('d-M-Y') : '-' }}</td>
-                                                <td class="py-3 px-4">{{ $schedule->payment_date ? $schedule->payment_date->format('d-M-Y') : '-' }}</td>
-                                                <td class="py-3 px-4">{{ $schedule->ex_date ? $schedule->ex_date->format('d-M-Y') : '-' }}</td>
-                                                <td class="py-3 px-4">{{ $schedule->coupon_rate ? number_format($schedule->coupon_rate, 2) : '-' }}</td>
-                                                <td class="py-3 px-4">{{ $schedule->adjustment_date ? $schedule->adjustment_date->format('d-M-Y') : '-' }}</td>
-                                                <td class="py-3 px-4">
+                                                <td class="px-4 py-3">{{ $loop->iteration }}</td>
+                                                <td class="px-4 py-3">{{ $schedule->start_date ? $schedule->start_date->format('d-M-Y') : '-' }}</td>
+                                                <td class="px-4 py-3">{{ $schedule->end_date ? $schedule->end_date->format('d-M-Y') : '-' }}</td>
+                                                <td class="px-4 py-3">{{ $schedule->payment_date ? $schedule->payment_date->format('d-M-Y') : '-' }}</td>
+                                                <td class="px-4 py-3">{{ $schedule->ex_date ? $schedule->ex_date->format('d-M-Y') : '-' }}</td>
+                                                <td class="px-4 py-3">{{ $schedule->coupon_rate ? number_format($schedule->coupon_rate, 2) : '-' }}</td>
+                                                <td class="px-4 py-3">{{ $schedule->adjustment_date ? $schedule->adjustment_date->format('d-M-Y') : '-' }}</td>
+                                                <td class="px-4 py-3 text-center">{{ $schedule->reminder_total_date ? $schedule->reminder_total_date : 0 }} Days</td>
+                                                <td class="px-4 py-3">
                                                     <div class="flex justify-end space-x-2">
                                                         <a href="{{ route('payment-m.show', $schedule) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
-                                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                                             </svg>
                                                         </a>
                                                         <a href="{{ route('payment-m.edit', $schedule) }}" class="text-yellow-600 hover:text-yellow-900">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                             </svg>
                                                         </a>
@@ -476,7 +478,7 @@
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td colspan="7" class="py-3 px-4 text-center">No payment schedules found</td>
+                                            <td colspan="7" class="px-4 py-3 text-center">No payment schedules found</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -496,30 +498,30 @@
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     <button @click="openSection = openSection === 'redemption' ? null : 'redemption'" 
                             class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                        <div class="flex justify-between items-center">
+                        <div class="flex items-center justify-between">
                             <h3 class="text-xl font-semibold">Redemptions</h3>
-                            <svg class="w-6 h-6 transform transition-transform" 
+                            <svg class="w-6 h-6 transition-transform transform" 
                                 :class="{ 'rotate-180': openSection === 'redemption' }" 
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'redemption'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
+                    <div x-show="openSection === 'redemption'" x-collapse class="p-6 overflow-x-auto border-t border-gray-200">
                         <!-- Main Redemption Info -->
                         <div class="mb-8">
-                            <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-2xl font-semibold text-gray-700">Redemption</h3>
                                 @if($bond->redemption)
                                 <div class="flex justify-end space-x-2">
                                     <a href="{{ route('redemption-m.show', $bond->redemption) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
-                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                         </svg>
                                     </a>
                                     <a href="{{ route('redemption-m.edit', $bond->redemption) }}" class="text-yellow-600 hover:text-yellow-900">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                         </svg>
                                     </a>
@@ -527,7 +529,7 @@
                                 @endif
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div class="space-y-4">
                                     <div class="grid grid-cols-2">
                                         <div class="font-medium">Allow Partial Call</div>
@@ -547,35 +549,35 @@
 
                         <!-- Call Schedule Section -->
                         <div class="mb-8">
-                            <h3 class="text-2xl font-semibold text-gray-700 mb-4">Call Schedule</h3>
+                            <h3 class="mb-4 text-2xl font-semibold text-gray-700">Call Schedule</h3>
                             
                             <div class="overflow-x-auto">
                                 <table class="min-w-full bg-white">
                                     <thead>
-                                        <tr class="bg-gray-200 text-gray-700 font-semibold">
-                                            <th class="py-3 px-4 text-left">Start Date</th>
-                                            <th class="py-3 px-4 text-left">End Date</th>
-                                            <th class="py-3 px-4 text-left">Call Price</th>
-                                            <th class="py-3 px-4 text-right">Action</th>
+                                        <tr class="font-semibold text-gray-700 bg-gray-200">
+                                            <th class="px-4 py-3 text-left">Start Date</th>
+                                            <th class="px-4 py-3 text-left">End Date</th>
+                                            <th class="px-4 py-3 text-left">Call Price</th>
+                                            <th class="px-4 py-3 text-right">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @if($bond->redemption && $bond->redemption->callSchedules && $bond->redemption->callSchedules->count() > 0)
                                             @foreach($bond->redemption->callSchedules->sortBy('start_date') as $index => $callSchedule)
                                                 <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray-100' }}">
-                                                    <td class="py-3 px-4">{{ $callSchedule->start_date ? $callSchedule->start_date->format('d-M-Y') : '-' }}</td>
-                                                    <td class="py-3 px-4">{{ $callSchedule->end_date ? $callSchedule->end_date->format('d-M-Y') : '-' }}</td>
-                                                    <td class="py-3 px-4">{{ $callSchedule->call_price ? number_format($callSchedule->call_price, 2) : '-' }}</td>
-                                                    <td class="py-3 px-4">
+                                                    <td class="px-4 py-3">{{ $callSchedule->start_date ? $callSchedule->start_date->format('d-M-Y') : '-' }}</td>
+                                                    <td class="px-4 py-3">{{ $callSchedule->end_date ? $callSchedule->end_date->format('d-M-Y') : '-' }}</td>
+                                                    <td class="px-4 py-3">{{ $callSchedule->call_price ? number_format($callSchedule->call_price, 2) : '-' }}</td>
+                                                    <td class="px-4 py-3">
                                                         <div class="flex justify-end space-x-2">
                                                             <a href="{{ route('call-m.show', $callSchedule) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
-                                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                                                 </svg>
                                                             </a>
                                                             <a href="{{ route('call-m.edit', $callSchedule) }}" class="text-yellow-600 hover:text-yellow-900">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                                 </svg>
                                                             </a>
@@ -585,7 +587,7 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="4" class="py-3 px-4 text-center">No data available in table</td>
+                                                <td colspan="4" class="px-4 py-3 text-center">No data available in table</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -595,33 +597,33 @@
 
                         <!-- Lockout Period Section -->
                         <div class="mb-8">
-                            <h3 class="text-2xl font-semibold text-gray-700 mb-4">Lockout Period</h3>
+                            <h3 class="mb-4 text-2xl font-semibold text-gray-700">Lockout Period</h3>
                             
                             <div class="overflow-x-auto">
                                 <table class="min-w-full bg-white">
                                     <thead>
-                                        <tr class="bg-gray-200 text-gray-700 font-semibold">
-                                            <th class="py-3 px-4 text-left">Start Date</th>
-                                            <th class="py-3 px-4 text-left">End Date</th>
-                                            <th class="py-3 px-4 text-right">Action</th>
+                                        <tr class="font-semibold text-gray-700 bg-gray-200">
+                                            <th class="px-4 py-3 text-left">Start Date</th>
+                                            <th class="px-4 py-3 text-left">End Date</th>
+                                            <th class="px-4 py-3 text-right">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @if($bond->redemption && $bond->redemption->lockoutPeriods && $bond->redemption->lockoutPeriods->count() > 0)
                                             @foreach($bond->redemption->lockoutPeriods->sortBy('start_date') as $index => $lockoutPeriod)
                                                 <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray-100' }}">
-                                                    <td class="py-3 px-4">{{ $lockoutPeriod->start_date ? $lockoutPeriod->start_date->format('d-M-Y') : '-' }}</td>
-                                                    <td class="py-3 px-4">{{ $lockoutPeriod->end_date ? $lockoutPeriod->end_date->format('d-M-Y') : '-' }}</td>
-                                                    <td class="py-3 px-4">
+                                                    <td class="px-4 py-3">{{ $lockoutPeriod->start_date ? $lockoutPeriod->start_date->format('d-M-Y') : '-' }}</td>
+                                                    <td class="px-4 py-3">{{ $lockoutPeriod->end_date ? $lockoutPeriod->end_date->format('d-M-Y') : '-' }}</td>
+                                                    <td class="px-4 py-3">
                                                         <div class="flex justify-end space-x-2">
                                                             <a href="{{ route('lockout-m.show', $lockoutPeriod) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
-                                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                                                 </svg>
                                                             </a>
                                                             <a href="{{ route('lockout-m.edit', $lockoutPeriod) }}" class="text-yellow-600 hover:text-yellow-900">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                                 </svg>
                                                             </a>
@@ -631,7 +633,7 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="3" class="py-3 px-4 text-center">No data available in table</td>
+                                                <td colspan="3" class="px-4 py-3 text-center">No data available in table</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -645,49 +647,49 @@
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     <button @click="openSection = openSection === 'trading' ? null : 'trading'" 
                             class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                        <div class="flex justify-between items-center">
+                        <div class="flex items-center justify-between">
                             <h3 class="text-xl font-semibold">Trading Activities</h3>
-                            <svg class="w-6 h-6 transform transition-transform" 
+                            <svg class="w-6 h-6 transition-transform transform" 
                                 :class="{ 'rotate-180': openSection === 'trading' }" 
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'trading'" x-collapse class="border-t border-gray-200 overflow-x-auto">
+                    <div x-show="openSection === 'trading'" x-collapse class="overflow-x-auto border-t border-gray-200">
                         <div class="overflow-x-auto">
                             <table class="min-w-full bg-white">
                                 <thead>
-                                    <tr class="bg-gray-200 text-gray-700 font-semibold">
-                                        <th class="py-3 px-4 text-left">Trade Date</th>
-                                        <th class="py-3 px-4 text-left">Input Time</th>
-                                        <th class="py-3 px-4 text-left">Amount (RM'mil)</th>
-                                        <th class="py-3 px-4 text-left">Price</th>
-                                        <th class="py-3 px-4 text-left">Yield (%)</th>
-                                        <th class="py-3 px-4 text-left">Value Date</th>
-                                        <th class="py-3 px-4 text-right">Action</th>
+                                    <tr class="font-semibold text-gray-700 bg-gray-200">
+                                        <th class="px-4 py-3 text-left">Trade Date</th>
+                                        <th class="px-4 py-3 text-left">Input Time</th>
+                                        <th class="px-4 py-3 text-left">Amount (RM'mil)</th>
+                                        <th class="px-4 py-3 text-left">Price</th>
+                                        <th class="px-4 py-3 text-left">Yield (%)</th>
+                                        <th class="px-4 py-3 text-left">Value Date</th>
+                                        <th class="px-4 py-3 text-right">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if($bond->tradingActivities && $bond->tradingActivities->count() > 0)
                                         @foreach($bond->tradingActivities as $index => $activity)
                                             <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray-100' }}">
-                                                <td class="py-3 px-4">{{ $activity->trade_date ? $activity->trade_date->format('d-M-Y') : '-' }}</td>
-                                                <td class="py-3 px-4">{{ $activity->input_time ? $activity->input_time->format('H:i:s A') : '-' }}</td>
-                                                <td class="py-3 px-4">{{ $activity->amount ?? '-' }}</td>
-                                                <td class="py-3 px-4">{{ $activity->price ? number_format($activity->price, 2) : '-' }}</td>
-                                                <td class="py-3 px-4">{{ $activity->yield ? number_format($activity->yield, 2) : '-' }}</td>
-                                                <td class="py-3 px-4">{{ $activity->value_date ? $activity->value_date->format('d-M-Y') : '-' }}</td>
-                                                <td class="py-3 px-4">
+                                                <td class="px-4 py-3">{{ $activity->trade_date ? $activity->trade_date->format('d-M-Y') : '-' }}</td>
+                                                <td class="px-4 py-3">{{ $activity->input_time ? $activity->input_time->format('H:i:s A') : '-' }}</td>
+                                                <td class="px-4 py-3">{{ $activity->amount ?? '-' }}</td>
+                                                <td class="px-4 py-3">{{ $activity->price ? number_format($activity->price, 2) : '-' }}</td>
+                                                <td class="px-4 py-3">{{ $activity->yield ? number_format($activity->yield, 2) : '-' }}</td>
+                                                <td class="px-4 py-3">{{ $activity->value_date ? $activity->value_date->format('d-M-Y') : '-' }}</td>
+                                                <td class="px-4 py-3">
                                                     <div class="flex justify-end space-x-2">
                                                         <a href="{{ route('trading-m.show', $activity) }}" class="text-yellow-600 hover:text-yellow-900" title="View">
-                                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                                             </svg>
                                                         </a>
                                                         <a href="{{ route('trading-m.edit', $activity) }}" class="text-yellow-600 hover:text-yellow-900">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                             </svg>
                                                         </a>
@@ -697,7 +699,7 @@
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td colspan="6" class="py-3 px-4 text-center">No trading activities found</td>
+                                            <td colspan="6" class="px-4 py-3 text-center">No trading activities found</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -717,16 +719,16 @@
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     <button @click="openSection = openSection === 'chart' ? null : 'chart'" 
                             class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                        <div class="flex justify-between items-center">
+                        <div class="flex items-center justify-between">
                             <h3 class="text-xl font-semibold">Charts</h3>
-                            <svg class="w-6 h-6 transform transition-transform" 
+                            <svg class="w-6 h-6 transition-transform transform" 
                                 :class="{ 'rotate-180': openSection === 'chart' }" 
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'chart'" x-collapse class="border-t border-gray-200 p-6 overflow-x-auto">
+                    <div x-show="openSection === 'chart'" x-collapse class="p-6 overflow-x-auto border-t border-gray-200">
                         <p>Content</p>
                     </div>
                 </div>
