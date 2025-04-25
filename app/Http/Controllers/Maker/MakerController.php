@@ -49,6 +49,13 @@ use App\Models\SiteVisit;
 use App\Models\SiteVisitLog;
 use App\Models\Appointment;
 use App\Models\ApprovalForm;
+use App\Models\ApprovalProperty;
+use App\Models\ChecklistLegalDocumentation;
+use App\Models\ChecklistTenant;
+use App\Models\ChecklistExternalAreaCondition;
+use App\Models\ChecklistInternalAreaCondition;
+use App\Models\ChecklistPropertyDevelopment;
+use App\Models\ChecklistDisposalInstallation;
 
 use App\Http\Requests\User\BondFormRequest;
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
@@ -57,6 +64,10 @@ class MakerController extends Controller
 {
     public function index(Request $request)
     {
+        // Validate that section parameter is present and valid
+        $validSection = $request->has('section') && in_array($request->section, ['reits', 'dcmtrd']);
+
+        // Issuers Query
         $query = Issuer::query();
 
         // Apply search filter
@@ -75,32 +86,53 @@ class MakerController extends Controller
         }
 
         // Get filtered issuers with latest first and paginate
-        $issuers = $query->whereIn('status', ['Active', 'Pending', 'Inactive', 'Rejected', 'Draft'])
+        $issuers = $query
             ->latest()
             ->paginate(10)
-            ->withQueryString(); // This preserves the query parameters in pagination links
+            ->withQueryString();
 
         // Get count data from cache or database
-        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(5), function () {
+        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(1), function () {
             $result = DB::select("
                 SELECT 
                     (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
                     (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
                     (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
+
+                    (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS trustee_fees_pending_count,
+                    (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS compliance_covenants_pending_count,
+                    (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS activity_diaries_pending_count,
+                
+                    (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
                     (SELECT COUNT(*) FROM properties) AS properties_count,
                     (SELECT COUNT(*) FROM financials) AS financials_count,
+                    (SELECT COUNT(*) FROM leases) AS leases_count,
                     (SELECT COUNT(*) FROM tenants) AS tenants_count,
+                    (SELECT COUNT(*) FROM site_visits) AS site_visists_count,
+                    (SELECT COUNT(*) FROM checklists) AS checklists_count,
+                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
                     (SELECT COUNT(*) FROM appointments) AS appointments_count,
                     (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
-                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count
+                    (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
+
+                    (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
+                    (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
+                    (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
+                    (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
+                    (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
+                    (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_site_visits_count,
+                    (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
+                    (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_site_visit_logs_count,
+                    (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
+                    (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approval_forms_count,
+                    (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approval_properties_count
             ");
             return (array) $result[0];
         });
 
-        // Query for portfolios
-        $portfolioQuery = Portfolio::query()->whereIn('status', ['draft', 'active', 'rejected']);
-        $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
-        
+        // Portfolios Query - also section-specific
+        $portfolioQuery = Portfolio::query()->whereIn('status', ['draft', 'active', 'pending', 'rejected', 'inactive']);
+
         // Apply search filter to portfolios
         if ($request->has('search') && !empty($request->search)) {
             $portfolioQuery->where('portfolio_name', 'LIKE', '%' . $request->search . '%');
@@ -110,12 +142,14 @@ class MakerController extends Controller
         if ($request->has('status') && !empty($request->status)) {
             $portfolioQuery->where('status', $request->status);
         }
-        
+
+        // Execute the query after all filters are applied
         $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
-    
+
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
+            'currentSection' => $request->section,
             'trusteeFeesCount' => $counts['trustee_fees_count'],
             'complianceCovenantCount' => $counts['compliance_covenants_count'],
             'activityDairyCount' => $counts['activity_diaries_count'],
@@ -124,7 +158,20 @@ class MakerController extends Controller
             'tenantsCount' => $counts['tenants_count'],
             'appointmentsCount' => $counts['appointments_count'],
             'approvalFormsCount' => $counts['approval_forms_count'],
+            'approvalPropertiesCount' => $counts['approval_properties_count'],
             'siteVisitLogsCount' => $counts['site_visit_logs_count'],
+
+            // Adding pending counts
+            'trusteeFeePendingCount' => $counts['trustee_fees_pending_count'],
+            'complianceCovenantPendingCount' => $counts['compliance_covenants_pending_count'],
+            'activityDiaryPendingCount' => $counts['activity_diaries_pending_count'],
+            'propertiesPendingCount' => $counts['pending_properties_count'],
+            'financialsPendingCount' => $counts['pending_financials_count'],
+            'tenantsPendingCount' => $counts['pending_tenants_count'],
+            'appointmentsPendingCount' => $counts['pending_appointments_count'],
+            'approvalFormsPendingCount' => $counts['pending_approval_forms_count'],
+            'approvalPropertiesPendingCount' => $counts['pending_approval_properties_count'],
+            'siteVisitLogsPendingCount' => $counts['pending_site_visit_logs_count'],
         ]);
     }
 
@@ -140,11 +187,11 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'draft';
+        $validated['status'] = 'Draft';
 
         try {
             $issuer = Issuer::create($validated);
-            return redirect()->route('dashboard')->with('success', 'Issuer created successfully.');
+            return redirect()->route('issuer-m.create')->with('success', 'Issuer created successfully.');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error creating issuer: ' . $e->getMessage());
         }
@@ -196,6 +243,9 @@ class MakerController extends Controller
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'approval_datetime' => 'nullable|date',
+            'pic_name' => 'nullable|string|max:255',
+            'phone_no' => 'nullable|string|max:255',
+            'address' => 'nullable|string',
             'remarks' => 'nullable|string',
         ]);
     }
@@ -213,7 +263,7 @@ class MakerController extends Controller
 
             SendCreatedIssuerToApproval::dispatch($issuer);
 
-            return redirect()->route('maker.dashboard', $issuer)->with('success', 'Issuer submitted for approval successfully.');
+            return redirect()->route('maker.dashboard', ['section' => 'issuers'])->with('success', 'Issuer submitted for approval successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
@@ -343,7 +393,7 @@ class MakerController extends Controller
             ->with('success', 'Bond data uploaded successfully');
     }
 
-    protected function validateBond(Request $request, Bond $bond = null)
+    protected function validateBond(Request $request)
     {
         return $request->validate([
             'bond_sukuk_name' => 'required|string|max:255',
@@ -423,14 +473,22 @@ class MakerController extends Controller
     {
         $validated = $this->validateAnnouncement($request);
 
+        // Check if the request contains a file attachment
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('attachments');
+            // Store the attachment file in the 'attachments' directory
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('attachments', $fileName, 'public');
         }
 
         try {
+            // Create the announcement
             $announcement = Announcement::create($validated);
+
+            // Redirect to the details page of the created announcement with a success message
             return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement created successfully');
         } catch (\Exception $e) {
+            // If an error occurs, redirect back with the error message
             return back()->withErrors(['error' => 'Error creating: ' . $e->getMessage()])->withInput();
         }
     }
@@ -444,20 +502,30 @@ class MakerController extends Controller
 
     public function AnnouncementUpdate(Request $request, Announcement $announcement)
     {
+        // Validate the incoming data
         $validated = $this->validateAnnouncement($request);
 
+        // Check if a new attachment file is uploaded
         if ($request->hasFile('attachment')) {
-            // Delete old attachment
+            // Delete the old attachment if it exists
             if ($announcement->attachment) {
                 Storage::delete($announcement->attachment);
             }
-            $validated['attachment'] = $request->file('attachment')->store('attachments');
+
+            // Store the new attachment
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('attachments', $fileName, 'public');
         }
 
         try {
+            // Update the announcement with the validated data
             $announcement->update($validated);
+
+            // Redirect to the details page with a success message
             return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement updated successfully');
         } catch (\Exception $e) {
+            // If an error occurs, return to the previous page with the error message
             return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
         }
     }
@@ -492,15 +560,29 @@ class MakerController extends Controller
 
     public function DocumentStore(Request $request)
     {
+        // Validate the incoming request
         $validated = $this->validateDocument($request);
 
+        // Retrieve the file from the request
         $file = $request->file('document_file');
-        $validated['file_path'] = $file->store('documents');
 
+        // Generate a unique file name using the current timestamp and the original file name
+        $getFileName = time() . '_' . $file->getClientOriginalName();
+
+        // Store the file in the 'uploads/original' directory within the 'public' disk
+        $cftOriginalFile = $file->storeAs('related-documents', $getFileName, 'public');
+
+        // Store the file path in the validated data array
+        $validated['file_path'] = $cftOriginalFile;
+
+        // Create the related document record
         $relatedDocument = RelatedDocument::create($validated);
+
+        // Find the related facility and redirect back with a success message
         $facility = FacilityInformation::findOrFail($validated['facility_id']);
         return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document created successfully');
     }
+
 
     public function DocumentEdit(RelatedDocument $document)
     {
@@ -510,23 +592,34 @@ class MakerController extends Controller
 
     public function DocumentUpdate(Request $request, RelatedDocument $document)
     {
+        // Validate the incoming request
         $validated = $this->validateDocument($request);
 
-        dd($request->hasFile('document_file'));
-
+        // Check if a new file is uploaded
         if ($request->hasFile('document_file')) {
-            // Delete old file
+            // Delete the old file if it exists
             if ($document->file_path) {
                 Storage::delete($document->file_path);
             }
-            // Store new file
-            $validated['file_path'] = $request->file('document_file')->store('documents');
+
+            // Retrieve the new file from the request
+            $file = $request->file('document_file');
+
+            // Generate a unique file name using the current timestamp and the original file name
+            $getFileName = time() . '_' . $file->getClientOriginalName();
+
+            // Store the new file with the generated name
+            $validated['file_path'] = $file->storeAs('related-documents', $getFileName, 'public');
         }
 
+        // Update the document with the new data
         $document->update($validated);
+
+        // Find the related facility and redirect back with a success message
         $facility = FacilityInformation::findOrFail($validated['facility_id']);
         return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document updated successfully');
     }
+
 
     public function DocumentShow(RelatedDocument $document)
     {
@@ -617,10 +710,19 @@ class MakerController extends Controller
         ]);
     }
 
-    protected function validateFacilityInfo(Request $request, FacilityInformation $facility = null)
+    public function toggleRedeem(FacilityInformation $facility)
+    {
+        $facility->is_redeemed = !$facility->is_redeemed;
+        $facility->save();
+
+        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Facility Information redeemed status updated successfully');
+    }
+
+    protected function validateFacilityInfo(Request $request, $facility = null)
     {
         return $request->validate([
             'issuer_id' => 'required|exists:issuers,id',
+            'issuer_short_name' => 'required|max:50',
             'facility_code' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_code,' . $facility->id : 'unique:facility_informations'),
             'facility_number' => 'required|max:50|' . ($facility ? 'unique:facility_informations,facility_number,' . $facility->id : 'unique:facility_informations'),
             'facility_name' => 'required|max:100',
@@ -752,6 +854,7 @@ class MakerController extends Controller
             'ex_date' => 'nullable|date',
             'coupon_rate' => 'nullable|decimal:2|between:0,99.99',
             'adjustment_date' => 'nullable|date',
+            'reminder_total_date' => 'nullable|integer|min:0',
         ]);
 
         try {
@@ -783,8 +886,9 @@ class MakerController extends Controller
             'end_date' => 'required|date|after:start_date',
             'payment_date' => 'required|date',
             'ex_date' => 'required|date',
-            'coupon_rate' => 'required|decimal:2|between:0,99.99',
+            'coupon_rate' => 'required|numeric|between:0,99.99',
             'adjustment_date' => 'nullable|date',
+            'reminder_total_date' => 'nullable|integer|min:0',
         ]);
 
         try {
@@ -1256,8 +1360,10 @@ class MakerController extends Controller
         }
     }
 
-    protected function validateTrusteeFee(Request $request, TrusteeFee $trusteeFee = null)
+    protected function validateTrusteeFee(Request $request)
     {
+        $trusteeFee = null;
+
         return $request->validate([
             'facility_information_id' => 'required|exists:facility_informations,id',
             'description' => 'required|string',
@@ -1291,50 +1397,41 @@ class MakerController extends Controller
         $query = ComplianceCovenant::query();
 
         // Filter by issuer_id
-        if ($request->has('issuer_id') && !empty($request->issuer_id)) {
+        if ($request->filled('issuer_id')) {
             $query->where('issuer_id', $request->issuer_id);
         }
 
-        // Search by issuer short name
-        if ($request->has('issuer_short_name') && !empty($request->issuer_short_name)) {
-            $query->where('issuer_short_name', 'LIKE', '%' . $request->issuer_short_name . '%');
+        // Filter by issuer short name
+        if ($request->filled('issuer_short_name')) {
+            $query->whereHas('issuer', function ($q) use ($request) {
+                $q->where('issuer_short_name', 'LIKE', '%' . $request->issuer_short_name . '%');
+            });
         }
 
-        // Search by financial year end
-        if ($request->has('financial_year_end') && !empty($request->financial_year_end)) {
-            $query->where('financial_year_end', 'LIKE', '%' . $request->financial_year_end . '%');
+        // Filter by financial year (year and month)
+        if ($request->filled('financial_year')) {
+            $query->whereYear('financial_year_end', $request->financial_year);
+        }
+
+        if ($request->filled('financial_month')) {
+            $query->whereMonth('financial_year_end', $request->financial_month);
         }
 
         // Filter by status
-        if ($request->has('status')) {
-            switch ($request->status) {
-                case 'draft':
-                    $query->where('status', 'Draft');
-                    break;
-                case 'active':
-                    $query->where('status', 'Active');
-                    break;
-                case 'inactive':
-                    $query->where('status', 'Inactive');
-                    break;
-                case 'pending':
-                    $query->where('status', 'Pending');
-                    break;
-                case 'rejected':
-                    $query->where('status', 'Rejected');
-                    break;
-            }
+        if ($request->filled('status')) {
+            $query->where('status', ucfirst($request->status));
         }
 
-        // Get all issuers for the dropdown
+        // Get all issuers
         $issuers = Issuer::orderBy('issuer_name')->get();
 
-        // Get results with pagination
+        // Paginate results
         $covenants = $query->latest()->paginate(10);
         $covenants->appends($request->all());
 
         return view('maker.compliance-covenant.index', compact('covenants', 'issuers'));
     }
+
 
     public function ComplianceCreate()
     {
@@ -1409,19 +1506,28 @@ class MakerController extends Controller
         return $request->validate([
             'issuer_id' => 'required|exists:issuers,id',
             'financial_year_end' => 'required|string|max:255',
-            'audited_financial_statements' => 'nullable|string|max:255',
-            'unaudited_financial_statements' => 'nullable|string|max:255',
-            'compliance_certificate' => 'nullable|string|max:255',
-            'finance_service_cover_ratio' => 'nullable|string|max:255',
-            'annual_budget' => 'nullable|string|max:255',
-            'computation_of_finance_to_ebitda' => 'nullable|string|max:255',
-            'ratio_information_on_use_of_proceeds' => 'nullable|string|max:255',
+
+            'letter_to_issuer' => 'nullable|date',
+
+            'audited_financial_statements' => 'nullable|date',
+            'audited_financial_statements_due' => 'nullable|date',
+
+            'compliance_certificate' => 'nullable|date',
+
+            'unaudited_financial_statements' => 'nullable|date',
+            'unaudited_financial_statements_due' => 'nullable|date',
+
+            'finance_service_cover_ratio' => 'nullable|date',
+            'annual_budget' => 'nullable|date',
+            'computation_of_finance_to_ebitda' => 'nullable|date',
+
             'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
         ]);
     }
+
 
     // Activity Diary
     /**
@@ -1734,13 +1840,34 @@ class MakerController extends Controller
     {
         $validated = $this->validatePortfolio($request);
 
-        // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Draft';
-        
-        $portfolio = Portfolio::create($validated);
-        
-        return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio created successfully');
+        $validated['status'] = 'draft';
+
+        // Handle file uploads
+        if ($request->hasFile('annual_report')) {
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+        }
+
+        if ($request->hasFile('trust_deed_document')) {
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+        }
+
+        if ($request->hasFile('insurance_document')) {
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+        }
+
+        if ($request->hasFile('valuation_report')) {
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+        }
+
+        try {
+            $portfolio = Portfolio::create($validated);
+            return redirect()
+                ->route('maker.dashboard', ['section' => 'reits'])->with('success', 'Portfolio created successfully');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error creating portfolio: ' . $e->getMessage());
+        }
     }
 
     public function PortfolioEdit(Portfolio $portfolio)
@@ -1753,9 +1880,56 @@ class MakerController extends Controller
     {
         $validated = $this->validatePortfolio($request, $portfolio);
 
-        $portfolio->update($validated);
+        // Handle file uploads
+        if ($request->hasFile('annual_report')) {
+            // Remove old file if it exists
+            if ($portfolio->annual_report) {
+                Storage::delete($portfolio->annual_report);
+            }
 
-        return redirect()->route('portfolio-m.show', $portfolio)->with('success', 'Portfolio updated successfully');
+            // Store the new file and get its path
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+        }
+
+        if ($request->hasFile('trust_deed_document')) {
+            // Remove old file if it exists
+            if ($portfolio->trust_deed_document) {
+                Storage::delete($portfolio->trust_deed_document);
+            }
+
+            // Store the new file and get its path
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+        }
+
+        if ($request->hasFile('insurance_document')) {
+            // Remove old file if it exists
+            if ($portfolio->insurance_document) {
+                Storage::delete($portfolio->insurance_document);
+            }
+
+            // Store the new file and get its path
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+        }
+
+        if ($request->hasFile('valuation_report')) {
+            // Remove old file if it exists
+            if ($portfolio->valuation_report) {
+                Storage::delete($portfolio->valuation_report);
+            }
+
+            // Store the new file and get its path
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+        }
+
+        try {
+            $portfolio->update($validated);
+            return redirect()
+                ->route('portfolio-m.show', $portfolio)
+                ->with('success', 'Portfolio updated successfully');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error updating portfolio: ' . $e->getMessage());
+        }
     }
 
     public function PortfolioShow(Portfolio $portfolio)
@@ -1775,11 +1949,12 @@ class MakerController extends Controller
                 ->route('maker.dashboard', ['section' => 'reits'])
                 ->with('success', 'Portfolio submitted for approval successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
     }
 
-    protected function validatePortfolio(Request $request, Portfolio $portfolio = null)
+    protected function validatePortfolio(Request $request)
     {
         return $request->validate([
             'portfolio_types_id' => 'required|exists:portfolio_types,id',
@@ -1806,7 +1981,7 @@ class MakerController extends Controller
         $portfolios = Portfolio::orderBy('portfolio_name')->get();
         $banks = Bank::orderBy('name')->get();
         $financialTypes = FinancialType::orderBy('name')->get();
-        
+
         // Get all properties from the portfolio for selection
         $properties = Property::where('portfolio_id', $portfolio->id)
             ->orderBy('name')
@@ -1817,17 +1992,47 @@ class MakerController extends Controller
 
     public function FinancialStore(Request $request)
     {
+        // Validate financial data
         $validated = $this->FinancialValidate($request);
 
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
+        $validated['status'] = 'active';
 
         try {
             $financial = Financial::create($validated);
-            return redirect()->route()->with('success', 'Financial created successfully.');
+
+            // Process property data from flat arrays to nested format
+            if ($request->has('property_ids') && !empty($request->property_ids)) {
+                $count = count($request->property_ids);
+                $propertyData = [];
+
+                for ($i = 0; $i < $count; $i++) {
+                    if (empty($request->property_ids[$i])) continue;
+
+                    $propertyData[$request->property_ids[$i]] = [
+                        'property_value' => $request->property_values[$i] ?? 0,
+                        'financed_amount' => $request->financed_amounts[$i] ?? 0,
+                        'security_value' => $request->security_values[$i] ?? 0,
+                        'valuation_date' => $request->valuation_dates[$i] ?? null,
+                        'remarks' => $request->property_remarks[$i] ?? null,
+                        'status' => 'active',
+                        'prepared_by' => Auth::user()->name,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
+                }
+
+                // Attach properties to the financial
+                $financial->properties()->attach($propertyData);
+            }
+
+            return redirect()
+                ->route('property-m.index', $financial->portfolio)
+                ->with('success', 'Financial created successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error creating financial: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error creating financial: ' . $e->getMessage());
         }
     }
 
@@ -1836,12 +2041,12 @@ class MakerController extends Controller
         $portfolios = Portfolio::orderBy('portfolio_name')->get();
         $banks = Bank::orderBy('name')->get();
         $financialTypes = FinancialType::orderBy('name')->get();
-        
+
         // Get all properties from the portfolio
         $properties = Property::where('portfolio_id', $financial->portfolio_id)
             ->orderBy('name')
             ->get();
-        
+
         // Load existing properties attached to this financial
         $financial->load('properties');
 
@@ -1852,22 +2057,19 @@ class MakerController extends Controller
     {
         // Validate financial data
         $validated = $this->FinancialValidate($request);
-        
-        // Remove the dd() statement that's stopping execution
-        // dd($request->toArray());
-        
+
         try {
             // Update the financial record
             $financial->update($validated);
-            
+
             // Process property data from flat arrays to nested format
             $syncData = [];
             if ($request->has('property_ids') && !empty($request->property_ids)) {
                 $count = count($request->property_ids);
-                
+
                 for ($i = 0; $i < $count; $i++) {
                     if (empty($request->property_ids[$i])) continue;
-                    
+
                     $syncData[$request->property_ids[$i]] = [
                         'property_value' => $request->property_values[$i] ?? 0,
                         'financed_amount' => $request->financed_amounts[$i] ?? 0,
@@ -1880,13 +2082,16 @@ class MakerController extends Controller
                     ];
                 }
             }
-            
+
             // Sync will remove any properties that are not in the request
             $financial->properties()->sync($syncData);
-            
-            return redirect()->route('property-m.index', $financial->portfolio)->with('success', 'Financial updated successfully.');
+
+            return redirect()
+                ->route('property-m.index', $financial->portfolio)
+                ->with('success', 'Financial updated successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error updating financial: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error updating financial: ' . $e->getMessage());
         }
     }
 
@@ -1894,16 +2099,17 @@ class MakerController extends Controller
     {
         // Load the properties associated with this financial
         $financial->load(['properties', 'portfolio', 'bank', 'financialType']);
-        
+
         return view('maker.financial.show', compact('financial'));
     }
 
-    public function FinancialValidate(Request $request, Financial $financial = null)
+    public function FinancialValidate(Request $request)
     {
         return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
             'bank_id' => 'required|exists:banks,id',
             'financial_type_id' => 'required|exists:financial_types,id',
+            'batch_no' => 'nullable|string|max:255',
             'purpose' => 'required|string|max:255',
             'tenure' => 'required|string|max:255',
             'installment_date' => 'required|string|max:255',
@@ -1920,8 +2126,9 @@ class MakerController extends Controller
             'valuer' => 'nullable|string|max:255',
         ]);
     }
-    
-    public function FinancialPropertyValidate(Request $request) {
+
+    public function FinancialPropertyValidate(Request $request)
+    {
         return $request->validate([
             'property_ids' => 'required|array|min:1',
             'property_ids.*' => 'required|exists:properties,id',
@@ -2019,17 +2226,36 @@ class MakerController extends Controller
 
     public function PropertyStore(Request $request)
     {
+        // Validate all form inputs
         $validated = $this->PropertyValidate($request);
 
-        // Add prepared_by from authenticated user and set status
-        $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
+        // Check if a master lease agreement file was uploaded
+        if ($request->hasFile('master_lease_agreement')) {
+            // Store the file and get its path
+            $filePath = $request->file('master_lease_agreement')->store('property-documents');
+
+            // Save the file path to the database
+            $validated['master_lease_agreement'] = $filePath;
+        }
+
+        // Check if a valuation report file was uploaded
+        if ($request->hasFile('valuation_report')) {
+            // Store the file and get its path
+            $filePath = $request->file('valuation_report')->store('property-documents');
+
+            // Save the file path to the database
+            $validated['valuation_report'] = $filePath;
+        }
+
+        // Create the property with all data
 
         try {
             $property = Property::create($validated);
-            return redirect()->route('property-m.index', $property->portfolio)->with('success', 'Property created successfully.');
+            return redirect()->route('property-m.index', $property->portfolio)
+                ->with('success', 'Property created successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error creating property: ' . $e->getMessage());
+            return back()->withInput()
+                ->with('error', 'Error creating property: ' . $e->getMessage());
         }
     }
 
@@ -2041,13 +2267,41 @@ class MakerController extends Controller
 
     public function PropertyUpdate(Request $request, Property $property)
     {
+        // Validate all form inputs
         $validated = $this->PropertyValidate($request);
 
+        // Check if a new master lease agreement file was uploaded
+        if ($request->hasFile('master_lease_agreement')) {
+            // Remove old file if it exists
+            if ($property->master_lease_agreement) {
+                Storage::delete($property->master_lease_agreement);
+            }
+
+            // Store the new file and get its path
+            $validated['master_lease_agreement'] = $request->file('master_lease_agreement')
+                ->store('property-documents');
+        }
+
+        // Check if a new valuation report file was uploaded
+        if ($request->hasFile('valuation_report')) {
+            // Remove old file if it exists
+            if ($property->valuation_report) {
+                Storage::delete($property->valuation_report);
+            }
+
+            // Store the new file and get its path
+            $validated['valuation_report'] = $request->file('valuation_report')
+                ->store('property-documents');
+        }
         try {
             $property->update($validated);
-            return redirect()->route('property-m.index', $property->portfolio)->with('success', 'Property created successfully.');
+            return redirect()
+                ->route('property-m.index', $property->portfolio)
+                ->with('success', 'Property updated successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error updating property: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating property: ' . $e->getMessage());
         }
     }
 
@@ -2056,7 +2310,7 @@ class MakerController extends Controller
         return view('maker.property.show', compact('property'));
     }
 
-    public function PropertyValidate(Request $request, Property $property = null)
+    public function PropertyValidate(Request $request)
     {
         return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
@@ -2075,7 +2329,8 @@ class MakerController extends Controller
             'ownership' => 'nullable|string|max:255',
             'share_amount' => 'nullable|numeric|min:0',
             'market_value' => 'nullable|numeric|min:0',
-            'status' => 'nullable|string|in:Draft,Active,Pending,Inactive'
+            'master_lease_agreement' => 'nullable|file|mimes:pdf|max:10240',
+            'valuation_report' => 'nullable|file|mimes:pdf|max:10240',
         ]);
     }
 
@@ -2109,13 +2364,17 @@ class MakerController extends Controller
         $validated = $this->TenantValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
+        $validated['status'] = 'active';
 
         try {
             $tenant = Tenant::create($validated);
-            return redirect()->route('tenant-m.index', $tenant->property)->with('success', 'Tenant created successfully.');
+            return redirect()
+                ->route('tenant-m.index', $tenant->property)
+                ->with('success', 'Tenant created successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Error creating tenant: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating tenant: ' . $e->getMessage());
         }
     }
 
@@ -2131,7 +2390,8 @@ class MakerController extends Controller
 
         try {
             $tenant->update($validated);
-            return redirect()->route('tenant-m.index', $tenant->property)->with('success', 'Tenant updated successfully.');
+            return redirect()
+                ->route('tenant-m.index', $tenant->property)->with('success', 'Tenant updated successfully.');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error updating tenant: ' . $e->getMessage());
         }
@@ -2142,17 +2402,16 @@ class MakerController extends Controller
         return view('maker.tenant.show', compact('tenant'));
     }
 
-    public function TenantValidate(Request $request, Tenant $tenant = null)
+    public function TenantValidate(Request $request)
     {
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
             'contact_person' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'commencement_date' => 'nullable|date',
             'expiry_date' => 'nullable|date|after:commencement_date',
-            'status' => 'nullable|in:active,inactive',
         ]);
     }
 
@@ -2177,12 +2436,12 @@ class MakerController extends Controller
             ->count();
 
         $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)->count();
-        
+
         // Calculate total rental for active leases using base rate year 1
         $totalActiveRental = Lease::whereIn('tenant_id', $tenantIds)
             ->where('status', 'active')
-            ->sum('rental_amount');
-        
+            ->sum('base_rate_year_1');
+
         // Pass calculated metrics to view
         return view('maker.lease.index', compact(
             'property',
@@ -2199,14 +2458,14 @@ class MakerController extends Controller
         return view('maker.lease.create', compact('tenants', 'property'));
     }
 
-    public function LeaseStore(Request $request, Property $property)
+    public function LeaseStore(Request $request)
     {
         $validated = $this->LeaseValidate($request);
 
         // Set default values
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending'; // Setting initial status to pending
-        
+        $validated['status'] = 'pending';
+
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('lease-attachments', 'public');
@@ -2214,8 +2473,8 @@ class MakerController extends Controller
 
         try {
             $lease = Lease::create($validated);
-            return redirect()->route('lease-m.index', $property)->with('success', 'Lease created successfully.');
-        } catch(\Exception $e) {
+            return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease created successfully.');
+        } catch (\Exception $e) {
             return back()->with('error', 'Error creating lease: ' . $e->getMessage());
         }
     }
@@ -2230,28 +2489,20 @@ class MakerController extends Controller
     {
         $validated = $this->LeaseValidate($request);
 
-        // Update prepared_by field only if not already set
-        if (empty($lease->prepared_by)) {
-            $validated['prepared_by'] = Auth::user()->name;
-        }
-        
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
             // Delete old file if exists
             if ($lease->attachment && Storage::disk('public')->exists($lease->attachment)) {
                 Storage::disk('public')->delete($lease->attachment);
             }
-            
+
             $validated['attachment'] = $request->file('attachment')->store('lease-attachments', 'public');
-        } else {
-            // If no new file is uploaded, keep the existing one
-            unset($validated['attachment']);
         }
 
         try {
             $lease->update($validated);
-            return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease updated successfully.');
-        } catch(\Exception $e) {
+            return redirect()->route('lease-m.show', $lease)->with('success', 'Lease updated successfully.');
+        } catch (\Exception $e) {
             return back()->with('error', 'Error updating lease: ' . $e->getMessage());
         }
     }
@@ -2261,7 +2512,7 @@ class MakerController extends Controller
         return view('maker.lease.show', compact('lease'));
     }
 
-    public function LeaseValidate(Request $request, Lease $lease = null)
+    public function LeaseValidate(Request $request)
     {
         return $request->validate([
             'tenant_id' => 'required|exists:tenants,id',
@@ -2272,15 +2523,15 @@ class MakerController extends Controller
             'term_years' => 'nullable|string|max:255',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'base_rate_year_1' => 'required|numeric|min:0',
-            'monthly_gsto_year_1' => 'required|numeric|min:0',
-            'base_rate_year_2' => 'required|numeric|min:0',
-            'monthly_gsto_year_2' => 'required|numeric|min:0',
-            'base_rate_year_3' => 'required|numeric|min:0',
-            'monthly_gsto_year_3' => 'required|numeric|min:0',
-            'space' => 'required|numeric|min:0',
+            'base_rate_year_1' => 'nullable|numeric|min:0',
+            'monthly_gsto_year_1' => 'nullable|numeric|min:0',
+            'base_rate_year_2' => 'nullable|numeric|min:0',
+            'monthly_gsto_year_2' => 'nullable|numeric|min:0',
+            'base_rate_year_3' => 'nullable|numeric|min:0',
+            'monthly_gsto_year_3' => 'nullable|numeric|min:0',
+            'space' => 'nullable|numeric|min:0',
             'tenancy_type' => 'nullable|string|max:255',
-            'attachment' => $lease ? 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240' : 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
             'status' => 'nullable|string|max:255',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
@@ -2311,7 +2562,16 @@ class MakerController extends Controller
         $validated = $this->SiteVisitValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
+        $validated['status'] = 'pending';
+
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
+        }
+
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = $request->follow_up_required ? 1 : 0;
+        }
 
         try {
             $siteVisit = SiteVisit::create($validated);
@@ -2331,6 +2591,20 @@ class MakerController extends Controller
     {
         $validated = $this->SiteVisitValidate($request);
 
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            // Delete old file if exists
+            if ($siteVisit->attachment && Storage::disk('public')->exists($siteVisit->attachment)) {
+                Storage::disk('public')->delete($siteVisit->attachment);
+            }
+
+            $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
+        }
+
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = $request->follow_up_required ? 1 : 0;
+        }
+
         try {
             $siteVisit->update($validated);
             return redirect()->route('tenant-m.index', $siteVisit->property)->with('success', 'Site visit updated successfully.');
@@ -2344,7 +2618,7 @@ class MakerController extends Controller
         return view('maker.site-visit.show', compact('siteVisit'));
     }
 
-    public function SiteVisitValidate(Request $request, SiteVisit $siteVisit = null)
+    public function SiteVisitValidate(Request $request)
     {
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
@@ -2355,23 +2629,31 @@ class MakerController extends Controller
             'maintenance_manager' => 'nullable|string|max:255',
             'building_manager' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'submission_date' => 'nullable|date',
+            'follow_up_required' => 'nullable|boolean',
+            'attachment' => 'nullable|file|mimes:pdf|max:10240',
+            'status' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'approval_datetime' => 'nullable|date',
         ]);
     }
 
     // Checklist Module
-    public function ChecklistIndex(Property $property, Request $request)
+    public function ChecklistIndex(Request $request, Property $property)
     {
         // Start with a base query that includes the relationship
         $query = Checklist::with('siteVisit');
 
         // Filter by property if provided
         if ($property->exists) {
-            $query->where('site_visit_id', function ($subquery) use ($property) {
-                $subquery->select('id')
-                    ->from('site_visits')
-                    ->where('property_id', $property->id);
+            $query->whereHas('siteVisit', function ($query) use ($property) {
+                $query->where('property_id', $property->id);
             });
+
+            // For statistics, we need to get counts from the entire dataset
+            $pendingCount = (clone $query)->where('status', 'pending')->count();
+            $completedCount = (clone $query)->where('status', 'completed')->count();
         }
 
         // Handle search functionality
@@ -2393,13 +2675,9 @@ class MakerController extends Controller
 
         // Get paginated results
         $checklists = $query->latest()->paginate(10)->withQueryString();
-        
-        // Get related data for summary statistics if we're viewing a specific property
+
+        // If we're viewing a specific property, include the statistics
         if ($property->exists) {
-            // You might want to add additional statistics here if needed
-            $pendingCount = $checklists->where('status', 'pending')->count();
-            $completedCount = $checklists->where('status', 'completed')->count();
-            
             return view('maker.checklist.index', compact(
                 'property',
                 'checklists',
@@ -2413,40 +2691,119 @@ class MakerController extends Controller
 
     public function ChecklistCreate(Property $property)
     {
-        $siteVisits = SiteVisit::where('status', 'active')->get();
+        // Get only active site visits related to the current property
+        $siteVisits = SiteVisit::where('property_id', $property->id)
+            ->where('status', 'pending')
+            ->orderBy('date_visit', 'desc')
+            ->get();
+
+        // Eager load the tenants relationship to avoid N+1 query issues
+        // Only get active tenants
+        $property->load(['tenants' => function ($query) {
+            $query->where('status', 'active');
+        }]);
+
         return view('maker.checklist.create', compact('property', 'siteVisits'));
     }
 
     public function ChecklistStore(Request $request)
     {
-        $validated = $this->ChecklistValidate($request);
+        // Get the validated data from the separate validation methods
+        $validated = $this->checklistValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'draft';
+        $validated['status'] = 'pending';
 
         try {
+            // create checklist
             $checklist = Checklist::create($validated);
-            return redirect()->route('tenant-m.index', $checklist->property)->with('success', 'Checklist created successfully.');
+
+            // create a legal documentation
+            ChecklistLegalDocumentation::create([
+                'checklist_id' => $checklist->id,
+                'prepared_by' => Auth::user()->name,
+                'status' => 'pending',
+            ]);
+
+            // create external area condition
+            ChecklistExternalAreaCondition::create([
+                'checklist_id' => $checklist->id,
+                'prepared_by' => Auth::user()->name,
+                'status' => 'pending',
+            ]);
+
+            // create internal area condition
+            ChecklistInternalAreaCondition::create([
+                'checklist_id' => $checklist->id,
+                'prepared_by' => Auth::user()->name,
+                'status' => 'pending',
+            ]);
+
+            // create property development
+            ChecklistPropertyDevelopment::create([
+                'checklist_id' => $checklist->id,
+                'prepared_by' => Auth::user()->name,
+                'status' => 'pending',
+            ]);
+
+            // create disposal installation
+            ChecklistDisposalInstallation::create([
+                'checklist_id' => $checklist->id,
+                'prepared_by' => Auth::user()->name,
+                'status' => 'pending',
+            ]);
+
+            return redirect()
+                ->route('tenant-m.index', $checklist->siteVisit->property)
+                ->with('success', 'Checklist created successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error creating checklist: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating checklist: ' . $e->getMessage());
         }
     }
 
     public function ChecklistEdit(Checklist $checklist)
     {
-        $siteVisits = SiteVisit::where('status', 'active')->get();
-        return view('maker.checklist.edit', compact('checklist', 'siteVisits'));
+        // Get site visits related to the property
+        $property = $checklist->siteVisit->property;
+        $siteVisits = SiteVisit::where('property_id', $property->id)
+            ->where('status', 'active')
+            ->orderBy('date_visit', 'desc')
+            ->get();
+
+        // Eager load the property's tenants
+        $property->load(['tenants' => function ($query) {
+            $query->where('status', 'active');
+        }]);
+
+        // Eager load the tenants associated with this checklist along with pivot data
+        $checklist->load(['tenants' => function ($query) {
+            $query->withPivot('notes', 'status', 'prepared_by', 'verified_by');
+        }]);
+
+        return view('maker.checklist.edit', compact('checklist', 'siteVisits', 'property'));
     }
 
     public function ChecklistUpdate(Request $request, Checklist $checklist)
     {
-        $validated = $this->ChecklistValidate($request);
+        // Get the validated data from the separate validation methods
+        $validated = $this->ChecklistValidate($request, $checklist);
+
+        // Record the last update
+        $validated['updated_at'] = now();
 
         try {
+            // Update the checklist with validated data
             $checklist->update($validated);
-            return redirect()->route('checklist-m.index', $checklist->siteVisit)->with('success', 'Checklist created successfully.');
+
+            return redirect()
+                ->route('checklist-m.show', $checklist)
+                ->with('success', 'Checklist updated successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error updating checklist: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating checklist: ' . $e->getMessage());
         }
     }
 
@@ -2455,15 +2812,461 @@ class MakerController extends Controller
         return view('maker.checklist.show', compact('checklist'));
     }
 
-    public function ChecklistValidate(Request $request, Checklist $checklist = null)
+    // Checklist Legal Documentation
+    public function ChecklistLegalDocumentationIndex(Checklist $checklist)
+    {
+        // Eager load the checklist with its relationships
+        $checklist->load(['siteVisit', 'property', 'legalDocumentation']);
+
+        return view('maker.checklist.legal-documentation.index', compact('checklist'));
+    }
+
+    public function ChecklistLegalDocumentationCreate(Checklist $checklist)
+    {
+        return view('maker.checklist.legal-documentation.create', compact('checklist'));
+    }
+
+    public function ChecklistLegalDocumentationStore(Request $request, Checklist $checklist)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->legalDocumentationValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+        try {
+            // create legal documentation
+            ChecklistLegalDocumentation::create($validated);
+
+            return redirect()
+                ->route('checklist-m.legal-documentation.index', $checklist)
+                ->with('success', 'Legal documentation created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating legal documentation: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistLegalDocumentationEdit(Checklist $checklist, ChecklistLegalDocumentation $legalDocumentation)
+    {
+        return view('maker.checklist.legal-documentation.edit', compact('checklist', 'legalDocumentation'));
+    }
+
+    public function ChecklistLegalDocumentationUpdate(Request $request, ChecklistLegalDocumentation $legalDocumentation)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->legalDocumentationValidate($request, $legalDocumentation);
+
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        try {
+            // Update the legal documentation with validated data
+            $legalDocumentation->update($validated);
+
+            return redirect()
+                ->route('checklist-m.show', $legalDocumentation->checklist->siteVisit->property)
+                ->with('success', 'Legal documentation updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating legal documentation: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistLegalDocumentationShow(Checklist $checklist, ChecklistLegalDocumentation $legalDocumentation)
+    {
+        return view('maker.checklist.legal-documentation.show', compact('checklist', 'legalDocumentation'));
+    }
+
+    // Checklist Tenant
+    public function ChecklistTenantIndex(Checklist $checklist)
+    {
+        $checklist->load(['siteVisit', 'property', 'tenants']);
+        return view('maker.checklist.tenant.index', compact('checklist'));
+    }
+
+    public function ChecklistTenantCreate(Checklist $checklist)
+    {
+        $checklist->load(['siteVisit', 'tenants']);
+        return view('maker.checklist.tenant.create', compact('checklist'));
+    }
+
+    public function ChecklistTenantStore(Request $request)
+    {
+        $validated = $this->tenantChecklistValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+        try {
+            $checklistTenant = ChecklistTenant::create($validated);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistTenant->checklist->siteVisit->property)
+                ->with('success', 'Tenant association created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating tenant association: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistTenantEdit(ChecklistTenant $checklistTenant)
+    {
+        return view('maker.checklist.tenant.edit', compact('checklistTenant'));
+    }
+
+    public function ChecklistTenantUpdate(Request $request, ChecklistTenant $checklistTenant)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->tenantChecklistValidate($request, $checklistTenant);
+
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        try {
+            $checklistTenant->update($validated);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistTenant->checklist->siteVisit->property)
+                ->with('success', 'Tenant updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating tenant: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistTenantShow(ChecklistTenant $checklistTenant)
+    {
+        return view('maker.checklist.tenant.show', compact('checklistTenant'));
+    }
+
+    // Checklist External Area Condition
+    public function ChecklistExternalAreaConditionIndex(Checklist $checklist)
+    {
+        // Eager load the checklist with its relationships
+        $checklist->load(['siteVisit', 'property', 'externalAreaCondition']);
+
+        return view('maker.checklist.external-area-condition.index', compact('checklist'));
+    }
+
+    public function ChecklistExternalAreaConditionCreate(Checklist $checklist)
+    {
+        return view('maker.checklist.external-area-condition.create', compact('checklist'));
+    }
+
+    public function ChecklistExternalAreaConditionStore(Request $request, Checklist $checklist)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->externalAreaConditionValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+        try {
+            // create external area condition
+            ChecklistExternalAreaCondition::create($validated);
+
+            return redirect()
+                ->route('checklist-m.external-area-condition.index', $checklist)
+                ->with('success', 'External area condition created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating external area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistExternalAreaConditionEdit(ChecklistExternalAreaCondition $checklistExternalAreaCondition)
+    {
+        return view('maker.checklist.external-area-condition.edit', compact('checklistExternalAreaCondition'));
+    }
+
+    public function ChecklistExternalAreaConditionUpdate(Request $request, ChecklistExternalAreaCondition $checklistExternalAreaCondition)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->externalAreaConditionValidate($request, $checklistExternalAreaCondition);
+
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        // Verified By
+        $validated['verified_by'] = Auth::user()->name;
+
+        // Status
+        $validated['status'] = 'completed';
+
+        try {
+            // Update the external area condition with validated data
+            $checklistExternalAreaCondition->update($validated);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistExternalAreaCondition->checklist->siteVisit->property)
+                ->with('success', 'External area condition updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating external area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistExternalAreaConditionShow(Checklist $checklist, ChecklistExternalAreaCondition $externalCond)
+    {
+        return view('maker.checklist.external-area-condition.show', compact('checklist', 'externalCond'));
+    }
+
+    // Checklist Internal Area Condition
+    public function ChecklistInternalAreaConditionIndex(Checklist $checklist)
+    {
+        // Eager load the checklist with its relationships
+        $checklist->load(['siteVisit', 'property', 'internalAreaCondition']);
+
+        return view('maker.checklist.internal-area-condition.index', compact('checklist'));
+    }
+
+    public function ChecklistInternalAreaConditionCreate(Checklist $checklist)
+    {
+        return view('maker.checklist.internal-area-condition.create', compact('checklist'));
+    }
+
+    public function ChecklistInternalAreaConditionStore(Request $request, Checklist $checklist)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->internalAreaConditionValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+        try {
+            // create internal area condition
+            ChecklistInternalAreaCondition::create($validated);
+
+            return redirect()
+                ->route('checklist-m.internal-area-condition.index', $checklist)
+                ->with('success', 'Internal area condition created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating internal area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistInternalAreaConditionEdit(ChecklistInternalAreaCondition $checklistInternalAreaCondition)
+    {
+        // Eager load the checklist with its relationships
+        $checklistInternalAreaCondition->load(['checklist']);
+        return view('maker.checklist.internal-area-condition.edit', compact('checklistInternalAreaCondition'));
+    }
+
+    public function ChecklistInternalAreaConditionUpdate(Request $request, ChecklistInternalAreaCondition $checklistInternalAreaCondition)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->internalAreaConditionValidate($request, $checklistInternalAreaCondition);
+
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        // Verified By
+        $validated['verified_by'] = Auth::user()->name;
+
+        // Status
+        $validated['status'] = 'completed';
+
+        try {
+            // Update the internal area condition with validated data
+            $checklistInternalAreaCondition->update($validated);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistInternalAreaCondition->checklist->siteVisit->property)
+                ->with('success', 'Internal area condition updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating internal area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistInternalAreaConditionShow(ChecklistInternalAreaCondition $checklistInternalAreaCondition)
+    {
+        return view('maker.checklist.internal-area-condition.show', compact('checklistInternalAreaCondition'));
+    }
+
+    // Checklist Property Condition
+    public function ChecklistPropertyDevelopmentIndex(Checklist $checklist)
+    {
+        // Eager load the checklist with its relationships
+        $checklist->load(['siteVisit', 'property', 'propertyCondition']);
+
+        return view('maker.checklist.property-development.index', compact('checklist'));
+    }
+
+    public function ChecklistPropertyDevelopmentCreate(Checklist $checklist)
+    {
+        return view('maker.checklist.property-development.create', compact('checklist'));
+    }
+
+    public function ChecklistPropertyDevelopmentStore(Request $request, Checklist $checklist)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->propertyConditionValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+        try {
+            // create property development
+            ChecklistPropertyDevelopment::create($validated);
+
+            return redirect()
+                ->route('checklist-m.property-development.index', $checklist)
+                ->with('success', 'Property development created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating property development: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistPropertyDevelopmentEdit(ChecklistPropertyDevelopment $checklistPropertyDevelopment)
+    {
+        return view('maker.checklist.property-development.edit', compact('checklistPropertyDevelopment'));
+    }
+
+    public function ChecklistPropertyDevelopmentUpdate(Request $request, ChecklistPropertyDevelopment $checklistPropertyDevelopment)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->propertyDevelopmentValidate($request, $checklistPropertyDevelopment);
+
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        // Verified By
+        $validated['verified_by'] = Auth::user()->name;
+
+        // Status
+        $validated['status'] = 'completed';
+
+        try {
+            // Update the property development with validated data
+            $checklistPropertyDevelopment->update($validated);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistPropertyDevelopment->checklist->siteVisit->property)
+                ->with('success', 'Property development updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating property development: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistPropertyDevelopmentShow(ChecklistPropertyDevelopment $checklistPropertyDevelopment)
+    {
+        return view('maker.checklist.property-development.show', compact('checklistPropertyDevelopment'));
+    }
+
+
+    // Checklist Disposal Installation
+    public function ChecklistDisposalInstallationIndex(Checklist $checklist)
+    {
+        // Eager load the checklist with its relationships
+        $checklist->load(['siteVisit', 'property', 'disposalInstallation']);
+
+        return view('maker.checklist.disposal-installation.index', compact('checklist'));
+    }
+
+    public function ChecklistDisposalInstallationCreate(Checklist $checklist)
+    {
+        return view('maker.checklist.disposal-installation.create', compact('checklist'));
+    }
+
+    public function ChecklistDisposalInstallationStore(Request $request, ChecklistDisposalInstallation $checklistDisposalInstallation)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->disposalInstallationValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+        try {
+            // create disposal installation
+            $checklistDisposalInstallation = ChecklistDisposalInstallation::create($validated);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistDisposalInstallation->checklist->siteVisit->property)
+                ->with('success', 'Disposal installation created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating disposal installation: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistDisposalInstallationEdit(ChecklistDisposalInstallation $checklistDisposalInstallation)
+    {
+        return view('maker.checklist.disposal-installation.edit', compact('checklistDisposalInstallation'));
+    }
+
+    public function ChecklistDisposalInstallationUpdate(Request $request, ChecklistDisposalInstallation $checklistDisposalInstallation)
+    {
+        // Get the validated data from the separate validation methods
+        $validated = $this->disposalInstallationValidate($request, $checklistDisposalInstallation);
+
+        // Record the last update
+        $validated['updated_at'] = now();
+
+        // Verified By
+        $validated['verified_by'] = Auth::user()->name;
+
+        // Status
+        $validated['status'] = 'completed';
+
+        try {
+            // Update the disposal installation with validated data
+            $checklistDisposalInstallation->update($validated);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistDisposalInstallation->checklist->siteVisit->property)
+                ->with('success', 'Disposal installation updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating disposal installation: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistDisposalInstallationShow(Checklist $checklist, ChecklistDisposalInstallation $disposalInst)
+    {
+        return view('maker.checklist.disposal-installation.show', compact('checklist', 'disposalInst'));
+    }
+
+    /**
+     * Validate main checklist data
+     *
+     * @param Request $request
+     * @param Checklist|null $checklist
+     * @return array
+     */
+    public function checklistValidate(Request $request, Checklist $checklist = null)
     {
         return $request->validate([
-            // General Property Info
-            'property_title' => 'required|string|max:255',
-            'property_location' => 'required|string|max:255',
-            'site_visit_id' => 'nullable|exists:site_visits,id',
-            
-            // 1.0 Legal Documentation
+            'site_visit_id' => 'required|exists:site_visits,id',
+        ]);
+    }
+
+    /**
+     * Validate legal documentation data
+     *
+     * @param Request $request
+     * @param ChecklistLegalDocumentation|null $legalDoc
+     * @return array
+     */
+    public function legalDocumentationValidate(Request $request, ChecklistLegalDocumentation $legalDocumentationValidate = null)
+    {
+        return $request->validate([
             'title_ref' => 'nullable|string|max:255',
             'title_location' => 'nullable|string|max:255',
             'trust_deed_ref' => 'nullable|string|max:255',
@@ -2476,15 +3279,39 @@ class MakerController extends Controller
             'maintenance_agreement_location' => 'nullable|string|max:255',
             'development_agreement' => 'nullable|string|max:255',
             'other_legal_docs' => 'nullable|string',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
+        ]);
+    }
 
-            // 2.0 Tenancy Agreement
-            'tenant_name' => 'nullable|string|max:255',
-            'tenant_property' => 'nullable|string|max:255',
-            'tenancy_approval_date' => 'nullable|date',
-            'tenancy_commencement_date' => 'nullable|date',
-            'tenancy_expiry_date' => 'nullable|date',
+    /**
+     * Validate tenant checklist pivot data
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function tenantChecklistValidate(Request $request, ChecklistTenant $checklistTenant = null)
+    {
+        return $request->validate([
+            'checklist_id' => 'required|exists:checklists,id',
+            'tenant_id' => 'required|exists:tenants,id',
+            'notes' => 'nullable|string',
+        ]);
+    }
 
-            // 3.0 External Area Conditions
+    /**
+     * Validate external area condition data
+     *
+     * @param Request $request
+     * @param ChecklistExternalAreaCondition|null $externalCond
+     * @return array
+     */
+    public function externalAreaConditionValidate(Request $request, ChecklistExternalAreaCondition $externalCond = null)
+    {
+        return $request->validate([
+            'checklist_id' => 'required|exists:checklists,id',
             'is_general_cleanliness_satisfied' => 'nullable|boolean',
             'general_cleanliness_remarks' => 'nullable|string',
             'is_fencing_gate_satisfied' => 'nullable|boolean',
@@ -2500,8 +3327,25 @@ class MakerController extends Controller
             'is_drainage_satisfied' => 'nullable|boolean',
             'drainage_remarks' => 'nullable|string',
             'external_remarks' => 'nullable|string',
+            'status' => ['nullable', Rule::in(['pending', 'in_progress', 'completed', 'rejected'])],
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
+        ]);
+    }
 
-            // 4.0 Internal Area Conditions
+    /**
+     * Validate internal area condition data
+     *
+     * @param Request $request
+     * @param ChecklistInternalAreaCondition|null $internalCond
+     * @return array
+     */
+    public function internalAreaConditionValidate(Request $request, ChecklistInternalAreaCondition $internalCond = null)
+    {
+        return $request->validate([
+            'checklist_id' => 'required|exists:checklists,id',
             'is_door_window_satisfied' => 'nullable|boolean',
             'door_window_remarks' => 'nullable|string',
             'is_staircase_satisfied' => 'nullable|boolean',
@@ -2519,50 +3363,67 @@ class MakerController extends Controller
             'is_basement_car_park_satisfied' => 'nullable|boolean',
             'basement_car_park_remarks' => 'nullable|string',
             'internal_remarks' => 'nullable|string',
-
-            // 5.0 Property Development
-            'development_date' => 'nullable|date',
-            'development_expansion_status' => 'nullable|string',
-            'development_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'renovation_date' => 'nullable|date',
-            'renovation_status' => 'nullable|string',
-            'renovation_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'repainting_date' => 'nullable|date',
-            'external_repainting_status' => 'nullable|string',
-            'repainting_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-
-            // 5.4 Disposal/Installation/Replacement
-            'water_tank_date' => 'nullable|date',
-            'water_tank_status' => 'nullable|string',
-            'water_tank_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'air_conditioning_approval_date' => 'nullable|date',
-            'air_conditioning_scope' => 'nullable|string',
-            'air_conditioning_status' => 'nullable|string',
-            'air_conditioning_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'lift_date' => 'nullable|date',
-            'lift_escalator_scope' => 'nullable|string',
-            'lift_escalator_status' => 'nullable|string',
-            'lift_escalator_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'fire_system_date' => 'nullable|date',
-            'fire_system_scope' => 'nullable|string',
-            'fire_system_status' => 'nullable|string',
-            'fire_system_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-            'other_system_date' => 'nullable|date',
-            'other_property' => 'nullable|string',
-            'other_completion_status' => 'nullable|string|in:n/a,pending,in_progress,completed',
-
-            // 5.5 Other Proposals/Approvals
-            'other_proposals_approvals' => 'nullable|string',
-
-            // System Information
-            'status' => 'nullable|string|in:Scheduled,Pending Action,Approved',
+            'status' => ['nullable', Rule::in(['pending', 'in_progress', 'completed', 'rejected'])],
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
             'approval_datetime' => 'nullable|date',
+        ]);
+    }
 
-            // Attachments - if you plan to have file uploads
-            // 'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+    /**
+     * Validate property development data
+     *
+     * @param Request $request
+     * @param ChecklistPropertyDevelopment|null $propertyDev
+     * @return array
+     */
+    public function propertyDevelopmentValidate(Request $request, ChecklistPropertyDevelopment $propertyDev = null)
+    {
+        return $request->validate([
+            'checklist_id' => 'required|exists:checklists,id',
+            // Development fields
+            'development_date' => 'nullable|date',
+            'development_scope_of_work' => 'nullable|string',  // Changed from development_expansion_status
+            'development_status' => 'nullable|string|max:255',
+
+            // Renovation fields
+            'renovation_date' => 'nullable|date',
+            'renovation_scope_of_work' => 'nullable|string',  // Added missing field
+            'renovation_status' => 'nullable|string|max:255',  // This replaces renovation_completion_status
+
+            // External repainting fields
+            'external_repainting_date' => 'nullable|date',  // Changed from repainting_date
+            'external_repainting_scope_of_work' => 'nullable|string',  // Added missing field
+            'external_repainting_status' => 'nullable|string|max:255',  // This replaces repainting_completion_status
+
+            // Others/Proposals/Approvals fields
+            'others_proposals_approvals_date' => 'nullable|date',  // Added missing field
+            'others_proposals_approvals_scope_of_work' => 'nullable|string',  // Added missing field
+            'others_proposals_approvals_status' => 'nullable|string|max:255',  // Added missing field
+        ]);
+    }
+
+    /**
+     * Validate disposal installation data
+     *
+     * @param Request $request
+     * @param ChecklistDisposalInstallation|null $disposalInst
+     * @return array
+     */
+    public function disposalInstallationValidate(Request $request, ChecklistDisposalInstallation $disposalInst = null)
+    {
+        return $request->validate([
+            'checklist_id' => 'required|exists:checklists,id',
+            'component_name' => 'nullable|string|max:255',
+            'component_date' => 'nullable|date',
+            'component_scope_of_work' => 'nullable|string',
+            'component_status' => 'nullable|string|max:255',
+            'status' => ['nullable', Rule::in(['active', 'inactive', 'pending', 'completed'])],
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
         ]);
     }
 
@@ -2600,14 +3461,11 @@ class MakerController extends Controller
             ->when($request->input('status'), function ($query, $status) {
                 return $query->where('status', $status);
             })
-            ->when($request->input('year'), function ($query, $year) {
-                return $query->where('year', $year);
-            })
             ->latest()
             ->paginate(15);
 
         // Get distinct years for filter
-        $years = Appointment::select('year')->distinct()->orderBy('year', 'desc')->get();
+        $years = Appointment::orderBy('date_of_approval', 'desc')->get();
 
         // Get status options
         $statuses = ['pending', 'approved', 'completed', 'cancelled'];
@@ -2632,14 +3490,26 @@ class MakerController extends Controller
     public function AppointmentStore(Request $request)
     {
         // Validate the request
-        $validatedData = $this->AppointmentValidate($request);
+        $validated = $this->AppointmentValidate($request);
 
-        // Create the appointment
-        $appointment = Appointment::create($validatedData);
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
 
-        // Redirect with success message
-        return redirect()->route('appointment-m.show', $appointment)
-            ->with('success', 'Appointment created successfully.');
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('appointments', 'public');
+        }
+
+        try {
+            $appointment = Appointment::create($validated);
+
+            return redirect()
+                ->route('appointment-m.show', $appointment)
+                ->with('success', 'Appointment created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error checking existing appointment: ' . $e->getMessage());
+        }
     }
 
     public function AppointmentEdit(Appointment $appointment)
@@ -2656,20 +3526,34 @@ class MakerController extends Controller
     public function AppointmentUpdate(Request $request, Appointment $appointment)
     {
         // Validate the request
-        $validatedData = $this->AppointmentValidate($request, $appointment);
+        $validated = $this->AppointmentValidate($request, $appointment);
 
-        // Update the appointment
-        $appointment->update($validatedData);
+        if ($request->hasFile('attachment')) {
+            // delete exist
+            if ($appointment->attachment && Storage::disk('public')->exists($appointment->attachment)) {
+                Storage::disk('public')->delete($appointment->attachment);
+            }
 
-        // Redirect with success message
-        return redirect()->route('appointment-m.show', $appointment)
-            ->with('success', 'Appointment updated successfully.');
+            $validated['attachment'] = $request->file('attachment')->store('appointments', 'public');
+        }
+
+        try {
+            $appointment->update($validated);
+
+            return redirect()
+                ->route('appointment-m.show', $appointment)
+                ->with('success', 'Appointment updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error checking existing appointment: ' . $e->getMessage());
+        }
     }
 
     public function AppointmentShow(Appointment $appointment)
     {
         // Load related portfolio
-        $appointment->load('portfolio', 'preparedBy', 'verifiedBy');
+        $appointment->load('portfolio');
 
         return view('maker.appointment.show', [
             'appointment' => $appointment
@@ -2678,46 +3562,18 @@ class MakerController extends Controller
 
     public function AppointmentValidate(Request $request, Appointment $appointment = null)
     {
-        // Validation rules
-        $rules = [
+        return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
-            'party_name' => 'required|string|max:255',
             'date_of_approval' => 'required|date',
-            'appointment_title' => 'required|string|max:255',
-            'appointment_description' => 'required|string',
+            'party_name' => 'required|string|max:255',
+            'description' => 'required|string',
             'estimated_amount' => 'nullable|numeric|min:0',
             'remarks' => 'nullable|string',
             'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
-            'year' => 'nullable|integer|min:2000|max:' . (date('Y') + 5),
-            'reference_no' => 'nullable|string|max:100',
-        ];
-
-        // Unique reference number validation (optional)
-        if (!$appointment) {
-            $rules['reference_no'] .= '|unique:appointments';
-        } else {
-            $rules['reference_no'] .= '|unique:appointments,reference_no,' . $appointment->id;
-        }
-
-        // Validate the request
-        $validatedData = $request->validate($rules);
-
-        // Handle file upload
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $path = $file->store('appointments', 'public');
-            $validatedData['attachment'] = $path;
-        }
-
-        // Add current user as prepared_by if creating new
-        if (!$appointment) {
-            $validatedData['prepared_by'] = auth()->id();
-        }
-
-        // Set the year if not provided
-        $validatedData['year'] = $validatedData['year'] ?? date('Y');
-
-        return $validatedData;
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'approval_datetime' => 'nullable|date',
+        ]);
     }
 
     // Approval Form Module
@@ -2769,10 +3625,8 @@ class MakerController extends Controller
         // Retrieve portfolios and properties for selection
         $portfolios = Portfolio::select('id', 'portfolio_name')->get();
         $properties = Property::select('id', 'name')->get();
-        $users = User::select('id', 'name')->get();
 
         return view('maker.approval-form.create', [
-            'users' => $users,
             'portfolios' => $portfolios,
             'properties' => $properties
         ]);
@@ -2781,25 +3635,36 @@ class MakerController extends Controller
     public function ApprovalFormStore(Request $request)
     {
         // Validate the request
-        $validatedData = $this->ApprovalFormValidate($request);
+        $validated = $this->ApprovalFormValidate($request);
 
-        // Create the approval form
-        $approvalForm = ApprovalForm::create($validatedData);
+        // Set default status and prepared_by
+        $validated['status'] = 'pending';
+        $validated['prepared_by'] = Auth::user()->name;
 
-        // Redirect with success message
-        return redirect()->route('approval-form-m.show', $approvalForm)
-            ->with('success', 'Approval Form created successfully.');
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+        }
+
+        try {
+            $approvalForm = ApprovalForm::create($validated);
+
+            return redirect()
+                ->route('approval-form-m.show', $approvalForm)
+                ->with('success', 'Approval Form created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating approval form: ' . $e->getMessage());
+        }
     }
 
     public function ApprovalFormEdit(ApprovalForm $approvalForm)
     {
         // Retrieve portfolios and properties for selection
         $portfolios = Portfolio::select('id', 'portfolio_name')->get();
-        $properties = Property::select('id', 'name')->get();
-        $users = User::select('id', 'name')->get();
+        $properties = Property::select('id', 'name', 'portfolio_id')->get();
 
         return view('maker.approval-form.edit', [
-            'users' => $users,
             'approvalForm' => $approvalForm,
             'portfolios' => $portfolios,
             'properties' => $properties
@@ -2808,21 +3673,45 @@ class MakerController extends Controller
 
     public function ApprovalFormUpdate(Request $request, ApprovalForm $approvalForm)
     {
-        // Validate the request
-        $validatedData = $this->ApprovalFormValidate($request, $approvalForm);
+        $validated = $this->ApprovalFormValidate($request, $approvalForm);
 
-        // Update the approval form
-        $approvalForm->update($validatedData);
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            // Delete old attachment if exists
+            if ($approvalForm->attachment) {
+                Storage::disk('public')->delete($approvalForm->attachment);
+            }
 
-        // Redirect with success message
-        return redirect()->route('approval-form-m.show', $approvalForm)
-            ->with('success', 'Approval Form updated successfully.');
+            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+        }
+
+        // Check if send_date is being added or updated
+        $sendDateAdded = !$approvalForm->send_date && !empty($validated['send_date']);
+        $sendDateUpdated = $approvalForm->send_date &&
+            !empty($validated['send_date']) &&
+            $approvalForm->send_date->format('Y-m-d') !== $validated['send_date'];
+
+        // If send_date is added or updated, change status to "completed"
+        if ($sendDateAdded || $sendDateUpdated) {
+            $validated['status'] = 'completed';
+        }
+
+        try {
+            $approvalForm->update($validated);
+
+            return redirect()
+                ->route('approval-form-m.show', $approvalForm)
+                ->with('success', 'Approval Form updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error updating approval form: ' . $e->getMessage());
+        }
     }
 
     public function ApprovalFormShow(ApprovalForm $approvalForm)
     {
         // Load related models
-        $approvalForm->load('portfolio', 'property', 'preparedBy', 'verifiedBy');
+        $approvalForm->load('portfolio', 'property');
 
         return view('maker.approval-form.show', [
             'approvalForm' => $approvalForm
@@ -2831,62 +3720,24 @@ class MakerController extends Controller
 
     public function ApprovalFormValidate(Request $request, ApprovalForm $approvalForm = null)
     {
-        // Validation rules
+        // Validation rules based on the actual database schema
         $rules = [
             'portfolio_id' => 'nullable|exists:portfolios,id',
             'property_id' => 'nullable|exists:properties,id',
-            'form_number' => 'nullable|string|max:50',
-            'form_title' => 'required|string|max:255',
-            'form_category' => 'nullable|string|max:100',
-            'reference_code' => 'nullable|string|max:100',
+            'category' => 'nullable|string|max:100',
+            'details' => 'nullable|string',
             'received_date' => 'required|date',
             'send_date' => 'nullable|date|after_or_equal:received_date',
             'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
-            'location' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
             'remarks' => 'nullable|string',
-            'status' => 'required|in:pending,approved,rejected,in_review'
+            'status' => 'nullable|string',
+            'prepared_by' => 'nullable|string',
         ];
-
-        // Unique reference code validation (optional)
-        if (!$approvalForm) {
-            $rules['reference_code'] .= '|unique:approval_forms';
-        } else {
-            $rules['reference_code'] .= '|unique:approval_forms,reference_code,' . $approvalForm->id;
-        }
 
         // Validate the request
         $validatedData = $request->validate($rules);
 
-        // Handle file upload
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $path = $file->store('approval-forms', 'public');
-            $validatedData['attachment'] = $path;
-        }
-
-        // Add current user as prepared_by if creating new
-        if (!$approvalForm) {
-            $validatedData['prepared_by'] = auth()->id();
-        }
-
         return $validatedData;
-    }
-
-    // Optional: Method to verify/approve an approval form
-    public function ApprovalFormVerify(ApprovalForm $approvalForm)
-    {
-        // Check user permissions
-        $this->authorize('verify', $approvalForm);
-
-        $approvalForm->update([
-            'status' => 'approved',
-            'verified_by' => auth()->id(),
-            'approval_datetime' => now()
-        ]);
-
-        return redirect()->route('approval-form-m.show', $approvalForm)
-            ->with('success', 'Approval Form verified successfully.');
     }
 
     // Optional: Method to download attachment
@@ -2931,8 +3782,8 @@ class MakerController extends Controller
 
     public function SiteVisitLogCreate()
     {
-        $siteVisits = SiteVisit::where('status', 'active')->get();
-        return view('maker.site-visit-log.create', compact('siteVisits'));
+        $properties = Property::where('status', 'active')->get();
+        return view('maker.site-visit-log.create', compact('properties'));
     }
 
     public function SiteVisitLogStore(Request $request)
@@ -2940,31 +3791,64 @@ class MakerController extends Controller
         $validated = $this->SiteVisitLogValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'status';
+        $validated['status'] = 'pending';
+
+        // Handle file upload if present
+        if ($request->hasFile('report_attachment')) {
+            $path = $request->file('report_attachment')->store('site-visit-logs', 'public');
+            $validated['report_attachment'] = $path;
+        }
+
+        // Handle follow-up required
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = true;
+        } else {
+            $validated['follow_up_required'] = false;
+        }
 
         try {
             SiteVisitLog::create($validated);
-            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log created successfully.');
+
+            return redirect()
+                ->route('site-visit-log-m.index')
+                ->with('success', 'Activity Diary created successfully.');
         } catch (\Exception $e) {
-            return back()->with('Error creating site visit log : ' . $e->getMessage());
+            return back()
+                ->with('Error creating activity diary : ' . $e->getMessage());
         }
     }
 
     public function SiteVisitLogEdit(SiteVisitLog $siteVisitLog)
     {
-        $siteVisits = SiteVisit::where('status', 'active')->get();
-        return view('maker.site-visit-log.edit', compact('siteVisitLog', 'siteVisits'));
+        $properties = Property::where('status', 'active')->get();
+        return view('maker.site-visit-log.edit', compact('siteVisitLog', 'properties'));
     }
 
     public function SiteVisitLogUpdate(Request $request, SiteVisitLog $siteVisitLog)
     {
         $validated = $this->SiteVisitLogValidate($request);
 
+        // Handle file upload if present
+        if ($request->hasFile('report_attachment')) {
+            $path = $request->file('report_attachment')->store('site-visit-logs', 'public');
+            $validated['report_attachment'] = $path;
+        }
+
+        // Handle follow-up required
+        if ($request->has('follow_up_required')) {
+            $validated['follow_up_required'] = true;
+        } else {
+            $validated['follow_up_required'] = false;
+        }
+
         try {
             $siteVisitLog->update($validated);
-            return redirect()->route('site-visit-log-m.index')->with('success', 'Site visit log updated successfully.');
+            return redirect()
+                ->route('site-visit-log-m.index')
+                ->with('success', 'Activity Diary updated successfully.');
         } catch (\Exception $e) {
-            return back()->with('Error updating site visit log : ' . $e->getMessage());
+            return back()
+                ->with('Error updating activity diary : ' . $e->getMessage());
         }
     }
 
@@ -2977,13 +3861,104 @@ class MakerController extends Controller
     {
         return $request->validate([
             'site_visit_id' => 'required|exists:site_visits,id',
-            'no' => 'required|integer',
             'visitation_date' => 'required|date',
-            'purpose' => 'required|string',
+            'purpose' => 'nullable|string',
             'report_submission_date' => 'nullable|date',
-            'report_attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'report_attachment' => 'nullable|file|mimes:pdf|max:10240',
             'follow_up_required' => 'boolean',
             'remarks' => 'nullable|string',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'approval_datetime' => 'nullable|date',
+        ]);
+    }
+
+    // Module Approval Property
+    public function ApprovalPropertyIndex(Request $request)
+    {
+        $approvalProperties = ApprovalProperty::where('status', 'pending')->paginate(10);
+        return view('maker.approval-property.index', compact('approvalProperties'));
+    }
+
+    public function ApprovalPropertyCreate()
+    {
+        $properties = Property::where('status', 'active')->paginate(10);
+        return view('maker.approval-property.create', compact('properties'));
+    }
+
+    public function ApprovalPropertyStore(Request $request)
+    {
+        $validated = $this->ApprovalPropertyValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('approval-properties', 'public');
+            $validated['attachment'] = $path;
+        }
+
+        try {
+            ApprovalProperty::create($validated);
+
+            return redirect()
+                ->route('approval-property-m.index')
+                ->with('success', 'Property created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error creating property: ' . $e->getMessage());
+        }
+    }
+
+    public function ApprovalPropertyEdit(ApprovalProperty $approvalProperty)
+    {
+        $properties = Property::where('status', 'active')->paginate(10);
+        return view('maker.approval-property.edit', compact('approvalProperty', 'properties'));
+    }
+
+    public function ApprovalPropertyUpdate(Request $request, ApprovalProperty $approvalProperty)
+    {
+        $validated = $this->ApprovalPropertyValidate($request);
+
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            // Delete old attachment if exists
+            if ($approvalProperty->attachment) {
+                Storage::disk('public')->delete($approvalProperty->attachment);
+            }
+
+            // Store new attachment
+            $path = $request->file('attachment')->store('approval-properties', 'public');
+            $validated['attachment'] = $path;
+        }
+
+        try {
+            $approvalProperty->update($validated);
+
+            return redirect()
+                ->route('approval-property-m.index')
+                ->with('success', 'Property approval updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error updating property approval: ' . $e->getMessage());
+        }
+    }
+
+    public function ApprovalPropertyShow(ApprovalProperty $approvalProperty)
+    {
+        return view('maker.approval-property.show', compact('approvalProperty'));
+    }
+
+    public function ApprovalPropertyValidate(Request $request)
+    {
+        return $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'date_of_approval' => 'required|date',
+            'description' => 'required|string',
+            'estimated_amount' => 'nullable|numeric|min:0',
+            'remarks' => 'nullable|string',
+            'attachment' => 'nullable|file|max:10240',
         ]);
     }
 }

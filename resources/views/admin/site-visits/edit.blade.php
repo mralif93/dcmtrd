@@ -76,17 +76,9 @@
                             <!-- Visit Time -->
                             <div>
                                 <label for="time_visit" class="block text-sm font-medium text-gray-700 mb-2">Visit Time *</label>
-                                <input type="date" name="time_visit" id="time_visit" 
-                                    value="{{ old('time_visit', $siteVisit->time_visit->format('h:i A')) }}" required
+                                <input type="time" name="time_visit" id="time_visit" 
+                                    value="{{ old('time_visit', date('H:i', strtotime($siteVisit->time_visit))) }}" required
                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                            </div>
-
-                            <!-- Inspector Name -->
-                            <div>
-                                <label for="inspector_name" class="block text-sm font-medium text-gray-700 mb-2">Inspector Name</label>
-                                <input type="text" name="inspector_name" id="inspector_name" value="{{ old('inspector_name', $siteVisit->inspector_name) }}"
-                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                    placeholder="Enter inspector's name">
                             </div>
 
                             <!-- Status -->
@@ -100,6 +92,54 @@
                                         </option>
                                     @endforeach
                                 </select>
+                            </div>
+
+                            <!-- Trustee -->
+                            <div>
+                                <label for="trustee" class="block text-sm font-medium text-gray-700 mb-2">Trustee</label>
+                                <input type="text" name="trustee" id="trustee" value="{{ old('trustee', $siteVisit->trustee) }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    placeholder="Enter trustee name">
+                            </div>
+
+                            <!-- Manager -->
+                            <div>
+                                <label for="manager" class="block text-sm font-medium text-gray-700 mb-2">Manager</label>
+                                <input type="text" name="manager" id="manager" value="{{ old('manager', $siteVisit->manager) }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    placeholder="Enter manager name">
+                            </div>
+
+                            <!-- Maintenance Manager -->
+                            <div>
+                                <label for="maintenance_manager" class="block text-sm font-medium text-gray-700 mb-2">Maintenance Manager</label>
+                                <input type="text" name="maintenance_manager" id="maintenance_manager" value="{{ old('maintenance_manager', $siteVisit->maintenance_manager) }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    placeholder="Enter maintenance manager name">
+                            </div>
+
+                            <!-- Building Manager -->
+                            <div>
+                                <label for="building_manager" class="block text-sm font-medium text-gray-700 mb-2">Building Manager</label>
+                                <input type="text" name="building_manager" id="building_manager" value="{{ old('building_manager', $siteVisit->building_manager) }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    placeholder="Enter building manager name">
+                            </div>
+
+                            <!-- Prepared By -->
+                            <div>
+                                <label for="prepared_by" class="block text-sm font-medium text-gray-700 mb-2">Prepared By</label>
+                                <input type="text" name="prepared_by" id="prepared_by" value="{{ old('prepared_by', $siteVisit->prepared_by) }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    placeholder="Enter preparer's name">
+                            </div>
+
+                            <!-- Verified By -->
+                            <div>
+                                <label for="verified_by" class="block text-sm font-medium text-gray-700 mb-2">Verified By</label>
+                                <input type="text" name="verified_by" id="verified_by" value="{{ old('verified_by', $siteVisit->verified_by) }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    placeholder="Enter verifier's name">
                             </div>
                         </div>
 
@@ -115,13 +155,13 @@
                         <div>
                             <label for="attachment" class="block text-sm font-medium text-gray-700 mb-2">Attachment</label>
                             
-                            @if($siteVisit->attachment)
+                            @if($siteVisit->hasAttachment())
                                 <div class="mb-3 flex items-center p-2 bg-blue-50 rounded-md">
                                     <svg class="h-5 w-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
                                     <span class="text-sm text-gray-600 mr-2">Current file:</span>
-                                    <a href="{{ route('site-visits.download', $siteVisit) }}" class="text-blue-600 hover:underline text-sm font-medium">
+                                    <a href="{{ route('site-visits.download-attachment', $siteVisit) }}" class="text-blue-600 hover:underline text-sm font-medium">
                                         {{ basename($siteVisit->attachment) }}
                                     </a>
                                 </div>

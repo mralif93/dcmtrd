@@ -89,8 +89,6 @@ class PropertyController extends Controller
      */
     public function show(Property $property)
     {
-        $property->load(['portfolio', 'tenants', 'checklists', 'siteVisits']);
-        
         return view('admin.properties.show', compact('property'));
     }
 
@@ -116,7 +114,7 @@ class PropertyController extends Controller
      */
     public function update(Request $request, Property $property)
     {
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
             'category' => 'required|string|max:255',
             'batch_no' => 'required|string|max:255',
@@ -133,24 +131,21 @@ class PropertyController extends Controller
             'ownership' => 'required|string|max:255',
             'share_amount' => 'required|numeric|min:0',
             'market_value' => 'required|numeric|min:0',
-            'status' => 'nullable|string|in:active,inactive,under_maintenance,for_sale',
+            'master_lease_agreement' => 'nullable|file|mimes:pdf|max:10240',
+            'valuation_report' => 'nullable|file|mimes:pdf|max:10240',
+            'status' => 'nullable|string|in:active,pending,rejected,inactive,under_maintenance,for_sale',
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
         try {
-            $property->update($request->all());
+            $property->update($validated);
             
-            return redirect()->route('properties.index')
+            return redirect()
+                ->route('properties.index')
                 ->with('success', 'Property updated successfully.');
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Error updating property: ' . $e->getMessage())
-                ->withInput();
+                ->withInput()
+                ->with('error', 'Error updating property: ' . $e->getMessage());
         }
     }
 
@@ -194,7 +189,7 @@ class PropertyController extends Controller
      */
     public function checklists(Property $property)
     {
-        $checklists = $property->checklists;
+        $checklists = $property->siteVisits->checklists;
         
         return view('admin.properties.checklists', compact('property', 'checklists'));
     }

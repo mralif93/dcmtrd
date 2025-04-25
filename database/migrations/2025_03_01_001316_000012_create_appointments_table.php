@@ -13,25 +13,30 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to portfolios table
             $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
-            $table->string('party_name');
+
+
             $table->date('date_of_approval');
-            $table->string('appointment_title');
-            $table->text('appointment_description');
+            $table->string('party_name');
+            $table->text('description')->nullable();
             $table->decimal('estimated_amount', 15, 2)->unsigned()->nullable();
-            $table->text('remarks')->nullable();
             $table->string('attachment')->nullable();
-            $table->integer('year')->nullable();
-            $table->string('reference_no')->nullable();
+
+            // system information
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
+            $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+
+            // system information
             $table->timestamps();
             $table->softDeletes();
             
             // Add indexes for better performance
-            $table->index(['party_name', 'date_of_approval', 'year']);
+            $table->index(['party_name', 'date_of_approval']);
         });
     }
 

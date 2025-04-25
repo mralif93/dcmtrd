@@ -35,9 +35,16 @@
                 </div>
             @endif
 
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <form action="{{ route('financials.store') }}" method="POST">
+                    <form action="{{ route('financial-m.store') }}" method="POST">
                         @csrf
 
                         <!-- Primary Information Section -->
@@ -90,6 +97,15 @@
                                     </select>
                                     @error('financial_type_id')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Batch No -->
+                                <div>
+                                    <label for="batch_no" class="block text-sm font-medium text-gray-500">Batch No</label>
+                                    <input type="text" name="batch_no" id="batch_no" value="{{ old('batch_no') }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('batch_no')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
 
@@ -151,7 +167,7 @@
 
                                 <!-- Process Fee -->
                                 <div>
-                                    <label for="process_fee" class="block text-sm font-medium text-gray-700">Process Fee</label>
+                                    <label for="process_fee" class="block text-sm font-medium text-gray-700">Process Fee (RM)</label>
                                     <input id="process_fee" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="process_fee" value="{{ old('process_fee') }}" step="0.01" min="0" required>
                                     @error('process_fee')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -160,7 +176,7 @@
 
                                 <!-- Total Facility Amount -->
                                 <div>
-                                    <label for="total_facility_amount" class="block text-sm font-medium text-gray-700">Total Facility Amount</label>
+                                    <label for="total_facility_amount" class="block text-sm font-medium text-gray-700">Total Facility Amount (RM)</label>
                                     <input id="total_facility_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="total_facility_amount" value="{{ old('total_facility_amount') }}" step="0.01" min="0" required>
                                     @error('total_facility_amount')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -169,7 +185,7 @@
 
                                 <!-- Utilization Amount -->
                                 <div>
-                                    <label for="utilization_amount" class="block text-sm font-medium text-gray-700">Utilization Amount</label>
+                                    <label for="utilization_amount" class="block text-sm font-medium text-gray-700">Utilization Amount (RM)</label>
                                     <input id="utilization_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="utilization_amount" value="{{ old('utilization_amount') }}" step="0.01" min="0" required>
                                     @error('utilization_amount')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -178,7 +194,7 @@
 
                                 <!-- Outstanding Amount -->
                                 <div>
-                                    <label for="outstanding_amount" class="block text-sm font-medium text-gray-700">Outstanding Amount</label>
+                                    <label for="outstanding_amount" class="block text-sm font-medium text-gray-700">Outstanding Amount (RM)</label>
                                     <input id="outstanding_amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="outstanding_amount" value="{{ old('outstanding_amount') }}" step="0.01" min="0" required>
                                     @error('outstanding_amount')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -187,7 +203,7 @@
 
                                 <!-- Interest Monthly -->
                                 <div>
-                                    <label for="interest_monthly" class="block text-sm font-medium text-gray-700">Interest Monthly</label>
+                                    <label for="interest_monthly" class="block text-sm font-medium text-gray-700">Interest Monthly (%)</label>
                                     <input id="interest_monthly" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="interest_monthly" value="{{ old('interest_monthly') }}" step="0.01" min="0" required>
                                     @error('interest_monthly')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -196,7 +212,7 @@
 
                                 <!-- Security Value Monthly -->
                                 <div>
-                                    <label for="security_value_monthly" class="block text-sm font-medium text-gray-700">Security Value Monthly</label>
+                                    <label for="security_value_monthly" class="block text-sm font-medium text-gray-700">Security Value Monthly (RM)</label>
                                     <input id="security_value_monthly" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="number" name="security_value_monthly" value="{{ old('security_value_monthly') }}" step="0.01" min="0" required>
                                     @error('security_value_monthly')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -233,20 +249,6 @@
                                     <label for="valuer" class="block text-sm font-medium text-gray-700">Valuer</label>
                                     <input id="valuer" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" type="text" name="valuer" value="{{ old('valuer') }}" required>
                                     @error('valuer')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Status -->
-                                <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                    <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                        <option value="pending" {{ old('status', 'pending') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                        <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                                    </select>
-                                    @error('status')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -330,9 +332,23 @@
         </div>
     </div>
 
-    @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Function to add remove button event listener
+            function addRemoveButtonListener(button) {
+                button.addEventListener('click', function() {
+                    const container = document.getElementById('properties-container');
+                    if (container.querySelectorAll('.property-item').length > 1) {
+                        this.closest('.property-item').remove();
+                    }
+                });
+            }
+
+            // Initialize remove buttons for existing items
+            document.querySelectorAll('.remove-property').forEach(button => {
+                addRemoveButtonListener(button);
+            });
+
             // Add Property
             document.getElementById('add-property').addEventListener('click', function() {
                 const container = document.getElementById('properties-container');
@@ -347,56 +363,19 @@
                 // Reset select
                 newItem.querySelector('select').selectedIndex = 0;
                 
-                // Add remove event listener
-                newItem.querySelector('.remove-property').addEventListener('click', function() {
-                    if (container.querySelectorAll('.property-item').length > 1) {
-                        this.closest('.property-item').remove();
-                    }
-                });
+                // Add remove event listener to the new item's remove button
+                const removeButton = newItem.querySelector('.remove-property');
+                addRemoveButtonListener(removeButton);
                 
                 container.appendChild(newItem);
-            });
-            
-            // Initialize remove buttons
-            document.querySelectorAll('.remove-property').forEach(button => {
-                button.addEventListener('click', function() {
-                    const container = document.getElementById('properties-container');
-                    if (container.querySelectorAll('.property-item').length > 1) {
-                        this.closest('.property-item').remove();
-                    }
-                });
+
+                // No need to update properties dropdown as we're showing all properties
             });
 
-            // Filter properties by selected portfolio
-            document.getElementById('portfolio_id').addEventListener('change', function() {
-                const portfolioId = this.value;
-                
-                if (portfolioId) {
-                    fetch(`/api/portfolios/${portfolioId}/properties`)
-                        .then(response => response.json())
-                        .then(data => {
-                            document.querySelectorAll('select[name="property_ids[]"]').forEach(select => {
-                                // Clear existing options except the first one
-                                while (select.options.length > 1) {
-                                    select.remove(1);
-                                }
-                                
-                                // Add new options
-                                data.forEach(property => {
-                                    const option = new Option(
-                                        `${property.name} (${property.address})`, 
-                                        property.id
-                                    );
-                                    select.add(option);
-                                });
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching properties:', error);
-                        });
-                }
-            });
+            // We're not using API calls to filter properties by portfolio
+            // All available properties will be shown regardless of portfolio selection
+
+            // Removed portfolio-property filtering functionality as requested
         });
     </script>
-    @endpush
 </x-app-layout>

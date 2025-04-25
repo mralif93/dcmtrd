@@ -20,6 +20,7 @@ class Financial extends Model implements Auditable
         'portfolio_id',
         'bank_id',
         'financial_type_id',
+        'batch_no',
         'purpose',
         'tenure',
         'installment_date',
@@ -35,6 +36,10 @@ class Financial extends Model implements Auditable
         'agent_contact',
         'valuer',
         'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
+        'remarks',
     ];
 
     /**
@@ -43,7 +48,6 @@ class Financial extends Model implements Auditable
      * @var array<string, string>
      */
     protected $casts = [
-        'installment_date' => 'date',
         'profit_rate' => 'decimal:4',
         'process_fee' => 'decimal:2',
         'total_facility_amount' => 'decimal:2',

@@ -25,10 +25,11 @@ class Tenant extends Model implements Auditable
         'commencement_date',
         'approval_date',
         'expiry_date',
+        'status',
         'prepared_by',
         'verified_by',
         'approval_datetime',
-        'status'
+        'remarks',
     ];
 
     /**
@@ -84,5 +85,15 @@ class Tenant extends Model implements Auditable
         }
         
         return now()->diffInDays($this->expiry_date);
+    }
+
+    /**
+     * The checklists associated with this tenant.
+     */
+    public function checklists()
+    {
+        return $this->belongsToMany(Checklist::class, 'checklist_tenant')
+                    ->withPivot('notes', 'status', 'prepared_by', 'verified_by', 'approval_datetime')
+                    ->withTimestamps();
     }
 }

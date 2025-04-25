@@ -12,41 +12,29 @@ class SiteVisitLog extends Model implements Auditable
     use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
-        'site_visit_id',
-        'no',
-        'visitation_date',
+        'property_id',
+        'visit_day',
+        'visit_month',
+        'visit_year',
         'purpose',
-        'status',
-        'report_submission_date',
-        'report_attachment',
-        'follow_up_required',
         'remarks',
+        'category',
+        'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
     ];
 
     protected $casts = [
-        'visitation_date' => 'date',
-        'report_submission_date' => 'date',
-        'follow_up_required' => 'boolean',
         'approval_datetime' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
     ];
 
     /**
-     * Get the site visit that owns this log entry.
-     */
-    public function siteVisit()
-    {
-        return $this->belongsTo(SiteVisit::class);
-    }
-
-    /**
-     * Get the property associated with this site visit log through the site visit.
+     * Get the property that owns this log entry.
      */
     public function property()
     {
-        return $this->hasOneThrough(Property::class, SiteVisit::class, 'id', 'id', 'site_visit_id', 'property_id');
+        return $this->belongsTo(Property::class);
     }
 
     /**
@@ -58,28 +46,32 @@ class SiteVisitLog extends Model implements Auditable
     }
 
     /**
-     * Scope a query to only include logs that require follow-up.
+     * Scope a query to only include logs from a specific year.
      */
-    public function scopeRequiringFollowUp($query)
+    public function scopeInYear($query, $year)
     {
-        return $query->where('follow_up_required', true);
+        return $query->where('visit_year', $year);
     }
 
     /**
-     * Scope a query to only include logs from a specific date range.
+     * Scope a query to only include logs from a specific month.
      */
-    public function scopeDateBetween($query, $startDate, $endDate)
+    public function scopeInMonth($query, $month)
     {
-        return $query->whereBetween('visitation_date', [$startDate, $endDate]);
+        return $query->where('visit_month', $month);
     }
     
     /**
-     * Get the report attachment URL
+     * Get the full visit date by combining day, month, and year
      *
-     * @return string|null
+     * @return string
      */
-    public function getReportAttachmentUrlAttribute()
+    public function getFullVisitDateAttribute()
     {
-        return $this->report_attachment ? asset('storage/' . $this->report_attachment) : null;
+        if ($this->visit_day && $this->visit_month && $this->visit_year) {
+            return "{$this->visit_day}/{$this->visit_month}/{$this->visit_year}";
+        }
+        
+        return null;
     }
 }

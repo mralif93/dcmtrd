@@ -6,6 +6,12 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
+// Models
+use App\Models\Property;
+use App\Models\SiteVisit;
+use App\Models\Checklist;
+use App\Models\Tenant;
+
 class ReitsSeeder extends Seeder
 {
     /**
@@ -933,8 +939,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 12 345 6789',
                 'commencement_date' => '2021-01-01',
                 'approval_date' => '2020-12-15',
-                'expiry_date' => '2026-12-31', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2026-12-31',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -944,8 +949,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 13 456 7890',
                 'commencement_date' => '2020-10-01',
                 'approval_date' => '2020-09-15',
-                'expiry_date' => '2025-09-30', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2025-09-30',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -955,8 +959,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 14 567 8901',
                 'commencement_date' => '2022-03-15',
                 'approval_date' => '2022-02-28',
-                'expiry_date' => '2025-03-14', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2025-03-14',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -966,8 +969,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 15 678 9012',
                 'commencement_date' => '2021-05-01',
                 'approval_date' => '2021-04-15',
-                'expiry_date' => '2026-04-30', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2026-04-30',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -977,8 +979,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 16 789 0123',
                 'commencement_date' => '2019-11-01',
                 'approval_date' => '2019-10-15',
-                'expiry_date' => '2024-10-31', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2024-10-31',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -988,8 +989,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 17 890 1234',
                 'commencement_date' => '2022-01-15',
                 'approval_date' => '2021-12-30',
-                'expiry_date' => '2027-01-14', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2027-01-14',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -999,8 +999,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 18 901 2345',
                 'commencement_date' => '2020-07-01',
                 'approval_date' => '2020-06-15',
-                'expiry_date' => '2025-06-30', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2025-06-30',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1010,8 +1009,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 19 012 3456',
                 'commencement_date' => '2021-09-01',
                 'approval_date' => '2021-08-15',
-                'expiry_date' => '2026-08-31', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2026-08-31',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1021,8 +1019,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 12 123 4567',
                 'commencement_date' => '2022-02-15',
                 'approval_date' => '2022-01-30',
-                'expiry_date' => '2025-02-14', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2025-02-14',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1032,8 +1029,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 13 234 5678',
                 'commencement_date' => '2019-04-01',
                 'approval_date' => '2019-03-15',
-                'expiry_date' => '2024-03-31', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2024-03-31',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1043,8 +1039,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 14 345 6789',
                 'commencement_date' => '2020-05-01',
                 'approval_date' => '2020-04-15',
-                'expiry_date' => '2025-04-30', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2025-04-30',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1054,8 +1049,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 15 456 7890',
                 'commencement_date' => '2021-03-01',
                 'approval_date' => '2021-02-15',
-                'expiry_date' => '2026-02-28', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2026-02-28',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1065,8 +1059,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 16 567 8901',
                 'commencement_date' => '2019-06-01',
                 'approval_date' => '2019-05-15',
-                'expiry_date' => '2024-05-31', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2024-05-31',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1076,8 +1069,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 17 678 9012',
                 'commencement_date' => '2022-04-01',
                 'approval_date' => '2022-03-15',
-                'expiry_date' => '2027-03-31', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2027-03-31',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1087,8 +1079,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 18 789 0123',
                 'commencement_date' => '2020-09-01',
                 'approval_date' => '2020-08-15',
-                'expiry_date' => '2025-08-31', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2025-08-31',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1098,8 +1089,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 19 890 1234',
                 'commencement_date' => '2021-11-01',
                 'approval_date' => '2021-10-15',
-                'expiry_date' => '2026-10-31', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2026-10-31',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1109,8 +1099,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 12 901 2345',
                 'commencement_date' => '2022-05-15',
                 'approval_date' => '2022-04-30',
-                'expiry_date' => '2027-05-14', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2027-05-14',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1120,8 +1109,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 13 012 3456',
                 'commencement_date' => '2019-02-01',
                 'approval_date' => '2019-01-15',
-                'expiry_date' => '2024-01-31', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2024-01-31',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1131,8 +1119,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 14 123 4567',
                 'commencement_date' => '2020-12-01',
                 'approval_date' => '2020-11-15',
-                'expiry_date' => '2025-11-30', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2025-11-30',
             ],
             [
                 'property_id' => $komtarJbcc->id,
@@ -1142,8 +1129,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 15 234 5678',
                 'commencement_date' => '2021-06-15',
                 'approval_date' => '2021-05-30',
-                'expiry_date' => '2026-06-14', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2026-06-14',
             ],
             // MART KEMPAS tenant
             [
@@ -1154,8 +1140,7 @@ class ReitsSeeder extends Seeder
                 'phone' => '+60 12 876 5432',
                 'commencement_date' => '2022-01-01',
                 'approval_date' => '2021-12-15',
-                'expiry_date' => '2027-12-31', 
-                'approval_status' => 'approved'
+                'expiry_date' => '2027-12-31',
             ],
         ];
 
@@ -1170,7 +1155,7 @@ class ReitsSeeder extends Seeder
                 'commencement_date' => $tenant['commencement_date'],
                 'approval_date' => $tenant['approval_date'],
                 'expiry_date' => $tenant['expiry_date'],
-                'approval_status' => $tenant['approval_status'],
+                'status' => 'active',
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -1668,7 +1653,6 @@ class ReitsSeeder extends Seeder
         $siteVisitLogs = [
             [
                 'site_visit_id' => 1,
-                'no' => 1,
                 'visitation_date' => '2024-01-15',
                 'purpose' => 'Annual facility inspection and tenant feedback collection',
                 'report_submission_date' => '2024-01-20',
@@ -1678,7 +1662,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 2,
-                'no' => 1,
                 'visitation_date' => '2024-01-16',
                 'purpose' => 'Annual facility inspection and tenant feedback collection',
                 'report_submission_date' => '2024-01-21',
@@ -1688,7 +1671,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 3,
-                'no' => 1,
                 'visitation_date' => '2024-02-10',
                 'purpose' => 'Inspection of newly renovated floors and tenant spaces',
                 'report_submission_date' => '2024-02-15',
@@ -1698,7 +1680,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 4,
-                'no' => 1,
                 'visitation_date' => '2024-02-20',
                 'purpose' => 'Assessment of common areas and facilities',
                 'report_submission_date' => '2024-02-25',
@@ -1708,7 +1689,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 5,
-                'no' => 1,
                 'visitation_date' => '2024-03-05',
                 'purpose' => 'Inspection of retail spaces and food court',
                 'report_submission_date' => '2024-03-10',
@@ -1718,7 +1698,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 6,
-                'no' => 1,
                 'visitation_date' => '2024-03-15',
                 'purpose' => 'Safety and compliance inspection of industrial facility',
                 'report_submission_date' => '2024-03-20',
@@ -1728,7 +1707,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 7,
-                'no' => 1,
                 'visitation_date' => '2024-04-10',
                 'purpose' => 'Review of building systems and tenant improvements',
                 'report_submission_date' => '2024-04-15',
@@ -1738,7 +1716,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 8,
-                'no' => 1,
                 'visitation_date' => '2024-04-20',
                 'purpose' => 'Inspection of resort facilities and guest accommodations',
                 'report_submission_date' => '2024-04-25',
@@ -1748,7 +1725,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 9,
-                'no' => 1,
                 'visitation_date' => '2024-05-05',
                 'purpose' => 'Review of medical facility compliance and systems',
                 'report_submission_date' => '2024-05-10',
@@ -1758,7 +1734,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 10,
-                'no' => 1,
                 'visitation_date' => '2024-05-15',
                 'purpose' => 'Inspection of research facilities and laboratories',
                 'report_submission_date' => '2024-05-20',
@@ -1768,7 +1743,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 11,
-                'no' => 1,
                 'visitation_date' => '2024-06-01',
                 'purpose' => 'Safety inspection of warehouse operations',
                 'report_submission_date' => '2024-06-06',
@@ -1778,7 +1752,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 12,
-                'no' => 1,
                 'visitation_date' => '2024-06-15',
                 'purpose' => 'Inspection of data center infrastructure and cooling systems',
                 'report_submission_date' => '2024-06-20',
@@ -1788,7 +1761,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 13,
-                'no' => 1,
                 'visitation_date' => '2024-07-01',
                 'purpose' => 'Review of storage facility security and climate control',
                 'report_submission_date' => '2024-07-06',
@@ -1798,7 +1770,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 14,
-                'no' => 1,
                 'visitation_date' => '2024-09-15',
                 'purpose' => 'Follow-up inspection for maintenance issues',
                 'report_submission_date' => null,
@@ -1808,7 +1779,6 @@ class ReitsSeeder extends Seeder
             ],
             [
                 'site_visit_id' => 15,
-                'no' => 1,
                 'visitation_date' => '2024-09-20',
                 'purpose' => 'Tenant improvement inspection',
                 'report_submission_date' => null,
@@ -1821,7 +1791,6 @@ class ReitsSeeder extends Seeder
         foreach ($siteVisitLogs as $log) {
             DB::table('site_visit_logs')->insert([
                 'site_visit_id' => $log['site_visit_id'],
-                'no' => $log['no'],
                 'visitation_date' => $log['visitation_date'],
                 'purpose' => $log['purpose'],
                 'status' => $statuses[array_rand($statuses)],
@@ -2359,10 +2328,6 @@ class ReitsSeeder extends Seeder
         // Seed Checklists
         $checklists = [
             [
-                // General property info
-                'property_title' => 'Skyline Tower A',
-                'property_location' => 'Singapore',
-                
                 // 1.0 Legal Documentation
                 'title_ref' => 'SKA-TITLE-001',
                 'title_location' => 'Legal Department Safe',
@@ -2376,13 +2341,6 @@ class ReitsSeeder extends Seeder
                 'maintenance_agreement_location' => 'Operations Office',
                 'development_agreement' => 'Not Applicable',
                 'other_legal_docs' => 'Insurance certificates, property tax records',
-                
-                // 2.0 Tenancy Agreement
-                'tenant_name' => 'Global Finance Corp',
-                'tenant_property' => 'Skyline Tower A, Floors 20-25',
-                'tenancy_approval_date' => '2023-05-15',
-                'tenancy_commencement_date' => '2023-06-01',
-                'tenancy_expiry_date' => '2028-05-31',
                 
                 // 3.0 External Area Conditions
                 'is_general_cleanliness_satisfied' => true,
@@ -2466,10 +2424,6 @@ class ReitsSeeder extends Seeder
 
         foreach ($checklists as $checklist) {
             DB::table('checklists')->insert([
-                // General property info
-                'property_title' => $checklist['property_title'],
-                'property_location' => $checklist['property_location'],
-                
                 // 1.0 Legal Documentation
                 'title_ref' => $checklist['title_ref'],
                 'title_location' => $checklist['title_location'],
@@ -2483,13 +2437,6 @@ class ReitsSeeder extends Seeder
                 'maintenance_agreement_location' => $checklist['maintenance_agreement_location'],
                 'development_agreement' => $checklist['development_agreement'],
                 'other_legal_docs' => $checklist['other_legal_docs'],
-                
-                // 2.0 Tenancy Agreement
-                'tenant_name' => $checklist['tenant_name'],
-                'tenant_property' => $checklist['tenant_property'],
-                'tenancy_approval_date' => $checklist['tenancy_approval_date'],
-                'tenancy_commencement_date' => $checklist['tenancy_commencement_date'],
-                'tenancy_expiry_date' => $checklist['tenancy_expiry_date'],
                 
                 // 3.0 External Area Conditions
                 'is_general_cleanliness_satisfied' => $checklist['is_general_cleanliness_satisfied'],
@@ -2579,8 +2526,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 1, // Skyline Residences
                 'party_name' => 'Master Alliance Innovations Sdn Bhd',
                 'date_of_approval' => '2024-03-18',
-                'appointment_title' => 'CONSULTANT FOR PUBLICATION OF ANNUAL REPORT',
-                'appointment_description' => 'APPOINTMENT OF MASTER ALLIANCE INNOVATIONS SDN BHD AS CONSULTANT FOR PUBLICATION OF AL-SALAM REIT 2023 ANNUAL REPORT',
+                'description' => 'APPOINTMENT OF MASTER ALLIANCE INNOVATIONS SDN BHD AS CONSULTANT FOR PUBLICATION OF AL-SALAM REIT 2023 ANNUAL REPORT',
                 'estimated_amount' => 64200.00,
                 'remarks' => 'Annual appointment for report preparation',
                 'year' => 2024,
@@ -2590,8 +2536,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 1, // Skyline Residences
                 'party_name' => 'CONSULTANT',
                 'date_of_approval' => '2024-03-29',
-                'appointment_title' => 'CONSULTANT FOR AGM',
-                'appointment_description' => 'PROPOSED APPOINTMENT OF CONSULTANT FOR AGM FOR AL-SALAM REIT',
+                'description' => 'PROPOSED APPOINTMENT OF CONSULTANT FOR AGM FOR AL-SALAM REIT',
                 'estimated_amount' => 32681.20,
                 'remarks' => 'For AGM coordination and execution',
                 'year' => 2024,
@@ -2601,8 +2546,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 2, // Downtown Business Center
                 'party_name' => 'KAF INVESTMENT BANK BERHAD ABDUL RAMAN SAAD & ASSOCIATES',
                 'date_of_approval' => '2024-04-08',
-                'appointment_title' => 'MANDATE FOR RECURRENT RELATED PARTY TRANSACTION',
-                'appointment_description' => 'PROPOSED UNITHOLDERS MANDATE FOR RECURRENT RELATED PARTY TRANSACTION OF A REVENUE OR TRADING NATURE FOR AL-SALAM REIT REAL ESTATE INVESTMENT TRUST ("AL-SALAM")',
+                'description' => 'PROPOSED UNITHOLDERS MANDATE FOR RECURRENT RELATED PARTY TRANSACTION OF A REVENUE OR TRADING NATURE FOR AL-SALAM REIT REAL ESTATE INVESTMENT TRUST ("AL-SALAM")',
                 'estimated_amount' => 53000.00,
                 'remarks' => 'Required for regulatory compliance',
                 'year' => 2024,
@@ -2612,8 +2556,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 3, // Urban Complex
                 'party_name' => 'KOMTAR JBCC, JOHOR',
                 'date_of_approval' => '2024-04-24',
-                'appointment_title' => 'TRADEMARK RENEWAL',
-                'appointment_description' => 'RENEWAL, RECORDAL AND REGISTRATION OF TRADEMARK FOR KOMTAR JBCC, JOHOR ("JBCC") ("Proposed Exercise")',
+                'description' => 'RENEWAL, RECORDAL AND REGISTRATION OF TRADEMARK FOR KOMTAR JBCC, JOHOR ("JBCC") ("Proposed Exercise")',
                 'estimated_amount' => 15000.00,
                 'remarks' => 'Intellectual property protection',
                 'year' => 2024,
@@ -2623,8 +2566,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 1, // Skyline Residences
                 'party_name' => 'AL-SALAM REIT',
                 'date_of_approval' => '2024-05-10',
-                'appointment_title' => 'AGM COST',
-                'appointment_description' => 'PROPOSED COST FOR ANNUAL GENERAL MEETING OF AL-AQAR AND AL-SALAM REIT 2024 ("Proposed Cost")',
+                'description' => 'PROPOSED COST FOR ANNUAL GENERAL MEETING OF AL-AQAR AND AL-SALAM REIT 2024 ("Proposed Cost")',
                 'estimated_amount' => 50000.00,
                 'remarks' => 'Annual general meeting expenses',
                 'year' => 2024,
@@ -2634,8 +2576,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => 2, // Downtown Business Center
                 'party_name' => 'DELOITTE TAX SERVICES SDN BHD',
                 'date_of_approval' => '2024-05-23',
-                'appointment_title' => 'TAX SERVICES APPOINTMENT',
-                'appointment_description' => 'PROPOSED APPOINTMENT OF DELOITTE TAX SERVICES SDN BHD',
+                'description' => 'PROPOSED APPOINTMENT OF DELOITTE TAX SERVICES SDN BHD',
                 'estimated_amount' => 27500.00,
                 'remarks' => 'Tax advisory and compliance services',
                 'year' => 2024,
@@ -2648,8 +2589,7 @@ class ReitsSeeder extends Seeder
                 'portfolio_id' => $appointment['portfolio_id'],
                 'party_name' => $appointment['party_name'],
                 'date_of_approval' => $appointment['date_of_approval'],
-                'appointment_title' => $appointment['appointment_title'],
-                'appointment_description' => $appointment['appointment_description'],
+                'description' => $appointment['description'],
                 'estimated_amount' => $appointment['estimated_amount'],
                 'remarks' => $appointment['remarks'],
                 'attachment' => null,

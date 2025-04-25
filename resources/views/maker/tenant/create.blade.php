@@ -73,7 +73,7 @@
                                 <!-- Tenant Name -->
                                 <div>
                                     <label for="name" class="block text-sm font-medium text-gray-500">Tenant Name</label>
-                                    <input id="name" type="text" name="name" value="{{ old('name') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="name" type="text" name="name" value="{{ old('name') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('name')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -115,7 +115,7 @@
                                 <!-- Commencement Date -->
                                 <div>
                                     <label for="commencement_date" class="block text-sm font-medium text-gray-500">Commencement Date</label>
-                                    <input id="commencement_date" type="date" name="commencement_date" value="{{ old('commencement_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="commencement_date" type="date" name="commencement_date" value="{{ old('commencement_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('commencement_date')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -124,21 +124,8 @@
                                 <!-- Expiry Date -->
                                 <div>
                                     <label for="expiry_date" class="block text-sm font-medium text-gray-500">Expiry Date</label>
-                                    <input id="expiry_date" type="date" name="expiry_date" value="{{ old('expiry_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="expiry_date" type="date" name="expiry_date" value="{{ old('expiry_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('expiry_date')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Status (Adding this field for consistency) -->
-                                <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-500">Status</label>
-                                    <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    </select>
-                                    @error('status')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>

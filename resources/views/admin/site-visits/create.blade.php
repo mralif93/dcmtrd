@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Create Site Visit') }}
             </h2>
-            <a href="{{ route('site-visits.index') }}" class="bg-indigo-500 hover:bg-indigo-700 rounded-lg text-white font-bold py-2 px-4">
+            <a href="{{ route('admin.site-visits.index') }}" class="bg-indigo-500 hover:bg-indigo-700 rounded-lg text-white font-bold py-2 px-4">
                 &larr; Back to List
             </a>
         </div>
@@ -37,7 +37,7 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <form action="{{ route('site-visits.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.site-visits.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -69,13 +69,6 @@
                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </div>
 
-                            <!-- Inspector Name -->
-                            <div>
-                                <label for="inspector_name" class="block text-sm font-medium text-gray-700 mb-1">Inspector Name</label>
-                                <input type="text" name="inspector_name" id="inspector_name" value="{{ old('inspector_name') }}"
-                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                            </div>
-
                             <!-- Status -->
                             <div>
                                 <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status *</label>
@@ -87,6 +80,48 @@
                                         </option>
                                     @endforeach
                                 </select>
+                            </div>
+
+                            <!-- Trustee -->
+                            <div>
+                                <label for="trustee" class="block text-sm font-medium text-gray-700 mb-1">Trustee</label>
+                                <input type="text" name="trustee" id="trustee" value="{{ old('trustee') }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </div>
+
+                            <!-- Manager -->
+                            <div>
+                                <label for="manager" class="block text-sm font-medium text-gray-700 mb-1">Manager</label>
+                                <input type="text" name="manager" id="manager" value="{{ old('manager') }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </div>
+
+                            <!-- Maintenance Manager -->
+                            <div>
+                                <label for="maintenance_manager" class="block text-sm font-medium text-gray-700 mb-1">Maintenance Manager</label>
+                                <input type="text" name="maintenance_manager" id="maintenance_manager" value="{{ old('maintenance_manager') }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </div>
+
+                            <!-- Building Manager -->
+                            <div>
+                                <label for="building_manager" class="block text-sm font-medium text-gray-700 mb-1">Building Manager</label>
+                                <input type="text" name="building_manager" id="building_manager" value="{{ old('building_manager') }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </div>
+
+                            <!-- Prepared By -->
+                            <div>
+                                <label for="prepared_by" class="block text-sm font-medium text-gray-700 mb-1">Prepared By</label>
+                                <input type="text" name="prepared_by" id="prepared_by" value="{{ old('prepared_by') }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </div>
+
+                            <!-- Verified By -->
+                            <div>
+                                <label for="verified_by" class="block text-sm font-medium text-gray-700 mb-1">Verified By</label>
+                                <input type="text" name="verified_by" id="verified_by" value="{{ old('verified_by') }}"
+                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </div>
 
                             <!-- Notes -->
@@ -110,7 +145,7 @@
                         </div>
 
                         <div class="flex justify-end gap-4 border-t border-gray-200 mt-6 pt-6">
-                            <a href="{{ route('site-visits.index') }}" 
+                            <a href="{{ route('admin.site-visits.index') }}" 
                             class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                 Cancel
                             </a>

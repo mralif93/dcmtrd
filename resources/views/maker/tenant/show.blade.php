@@ -89,7 +89,7 @@
                 <!-- Lease Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Lease Information</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Property Information</h3>
                     </div>
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -100,31 +100,16 @@
                                 </a>
                             </dd>
                         </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Commencement Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ date('d/m/Y', strtotime($tenant->commencement_date)) }}</dd>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Address</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $tenant->property->address }}
+                            </dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Expiry Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ date('d/m/Y', strtotime($tenant->expiry_date)) }}</dd>
-                        </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Lease Duration</dt>
+                            <dt class="text-sm font-medium text-gray-500">City</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                @php
-                                    $start = new DateTime($tenant->commencement_date);
-                                    $end = new DateTime($tenant->expiry_date);
-                                    $interval = $start->diff($end);
-                                    $years = $interval->y;
-                                    $months = $interval->m;
-                                    $days = $interval->d;
-                                    
-                                    $duration = [];
-                                    if ($years > 0) $duration[] = $years . ' ' . Str::plural('year', $years);
-                                    if ($months > 0) $duration[] = $months . ' ' . Str::plural('month', $months);
-                                    if ($days > 0) $duration[] = $days . ' ' . Str::plural('day', $days);
-                                @endphp
-                                {{ implode(', ', $duration) }}
+                                {{ $tenant->property->city }}
                             </dd>
                         </div>
                     </dl>
@@ -144,7 +129,6 @@
                                             <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lease Name</th>
                                             <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Premises</th>
                                             <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
-                                            <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Rental Amount</th>
                                             <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tenancy Type</th>
                                             <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         </tr>
@@ -157,10 +141,6 @@
                                                 <td class="px-4 py-3 text-sm text-gray-500">
                                                     {{ date('d/m/Y', strtotime($lease->start_date)) }} - 
                                                     {{ date('d/m/Y', strtotime($lease->end_date)) }}
-                                                </td>
-                                                <td class="px-4 py-3 text-sm text-gray-500 text-right">
-                                                    {{ number_format($lease->rental_amount, 2) }}
-                                                    <span class="text-xs text-gray-500">({{ $lease->rental_frequency }})</span>
                                                 </td>
                                                 <td class="px-4 py-3 text-sm text-gray-500 text-center">
                                                     {{ $lease->tenancy_type ? ucfirst($lease->tenancy_type) : 'N/A' }}

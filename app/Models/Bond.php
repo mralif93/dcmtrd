@@ -2,10 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Chart;
+use App\Models\Issuer;
+use App\Models\Redemption;
+use App\Models\RatingMovement;
+use App\Models\PaymentSchedule;
+use App\Models\TradingActivity;
+use App\Models\FacilityInformation;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Bond extends Model implements Auditable
 {
@@ -101,5 +108,22 @@ class Bond extends Model implements Auditable
     public function charts()
     {
         return $this->hasMany(Chart::class);
+    }
+
+    public function facility()
+    {
+        return $this->hasOne(FacilityInformation::class, 'facility_code', 'facility_code');
+    }
+
+    public function trusteeFees()
+    {
+        return $this->hasManyThrough(
+            \App\Models\TrusteeFee::class,
+            \App\Models\FacilityInformation::class,
+            'id', // Local key on FacilityInformation
+            'facility_information_id', // Foreign key on TrusteeFee
+            'facility_id', // Local key on Bond (if applicable, adapt as needed)
+            'id' // Local key on FacilityInformation
+        );
     }
 }

@@ -46,13 +46,20 @@ class LeaseController extends Controller
             'lease_name' => 'required|string|max:255',
             'demised_premises' => 'required|string|max:255',
             'permitted_use' => 'required|string|max:255',
-            'rental_amount' => 'required|numeric|min:0',
-            'rental_frequency' => 'required|string|max:255',
             'option_to_renew' => 'boolean',
             'term_years' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
-            'status' => 'required|string|in:active,inactive'
+            'base_rate_year_1' => 'required|numeric|min:0',
+            'monthly_gsto_year_1' => 'required|numeric|min:0',
+            'base_rate_year_2' => 'required|numeric|min:0',
+            'monthly_gsto_year_2' => 'required|numeric|min:0',
+            'base_rate_year_3' => 'required|numeric|min:0',
+            'monthly_gsto_year_3' => 'required|numeric|min:0',
+            'space' => 'required|numeric|min:0',
+            'tenancy_type' => 'nullable|string|max:255',
+            'attachment' => 'nullable|string|max:255',
+            'status' => 'required|string|in:pending,active,inactive,expired'
         ]);
 
         Lease::create($request->all());
@@ -101,13 +108,20 @@ class LeaseController extends Controller
             'lease_name' => 'required|string|max:255',
             'demised_premises' => 'required|string|max:255',
             'permitted_use' => 'required|string|max:255',
-            'rental_amount' => 'required|numeric|min:0',
-            'rental_frequency' => 'required|string|max:255',
             'option_to_renew' => 'boolean',
             'term_years' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
-            'status' => 'required|string|in:active,inactive'
+            'base_rate_year_1' => 'required|numeric|min:0',
+            'monthly_gsto_year_1' => 'required|numeric|min:0',
+            'base_rate_year_2' => 'required|numeric|min:0',
+            'monthly_gsto_year_2' => 'required|numeric|min:0',
+            'base_rate_year_3' => 'required|numeric|min:0',
+            'monthly_gsto_year_3' => 'required|numeric|min:0',
+            'space' => 'required|numeric|min:0',
+            'tenancy_type' => 'nullable|string|max:255',
+            'attachment' => 'nullable|string|max:255',
+            'status' => 'required|string|in:pending,active,inactive,expired'
         ]);
 
         $lease->update($request->all());

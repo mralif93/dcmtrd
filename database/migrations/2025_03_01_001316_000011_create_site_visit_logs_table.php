@@ -13,23 +13,30 @@ return new class extends Migration
     {
         Schema::create('site_visit_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('site_visit_id')->constrained()->onDelete('cascade');
-            $table->integer('no');
-            $table->date('visitation_date');
-            $table->text('purpose');
-            $table->date('report_submission_date')->nullable();
-            $table->string('report_attachment')->nullable();
-            $table->boolean('follow_up_required')->default(false);
-            $table->text('remarks')->nullable();
+
+            // foreign key to properties table
+            $table->foreignId('property_id')->constrained()->onDelete('cascade');
+
+            // site visit details
+            $table->string('visit_day')->nullable();
+            $table->string('visit_month')->nullable();
+            $table->string('visit_year')->nullable();
+            $table->text('purpose')->nullable();
+            $table->string('category')->nullable();
+
+            // system information
             $table->string('status')->default('pending');
             $table->string('prepared_by')->nullable();
             $table->string('verified_by')->nullable();
+            $table->text('remarks')->nullable();
             $table->dateTime('approval_datetime')->nullable();
+
+            // default information
             $table->timestamps();
             $table->softDeletes();
             
-            $table->index('visitation_date');
-            $table->index('status');
+            // Add indexes for better performance
+            $table->index(['visit_year', 'visit_month', 'visit_day']);
         });
     }
 

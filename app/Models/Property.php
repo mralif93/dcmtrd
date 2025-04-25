@@ -33,7 +33,13 @@ class Property extends Model implements Auditable
         'ownership',
         'share_amount',
         'market_value',
+        'master_lease_agreement',
+        'valuation_report',
         'status',
+        'prepared_by',
+        'verified_by',
+        'approval_datetime',
+        'remarks',
     ];
 
     /**
@@ -82,6 +88,14 @@ class Property extends Model implements Auditable
     }
 
     /**
+     * Get the approval properties for this property.
+     */
+    public function approvalProperties()
+    {
+        return $this->hasMany(ApprovalProperty::class);
+    }
+
+    /**
      * Get active tenants for this property.
      */
     public function activeTenantsWithLeases()
@@ -120,6 +134,14 @@ class Property extends Model implements Auditable
     public function hasActiveTenants()
     {
         return $this->tenants()->where('status', 'active')->exists();
+    }
+
+    /**
+     * Get pending property approvals.
+     */
+    public function pendingApprovals()
+    {
+        return $this->approvalProperties()->where('status', 'pending');
     }
 
     /**

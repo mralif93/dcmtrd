@@ -13,10 +13,16 @@ return new class extends Migration
     {
         Schema::create('call_schedules', function (Blueprint $table) {
             $table->id();
+
+            // foreign key to the redemptions table
+            $table->foreignId('redemption_id')->constrained('redemptions')->onDelete('cascade');
+
+            // call schedule details
             $table->date('start_date');
             $table->date('end_date');
             $table->decimal('call_price', 10, 2);
-            $table->foreignId('redemption_id')->constrained('redemptions')->onDelete('cascade');
+
+            // default information
             $table->timestamps();
             $table->softDeletes();
         });

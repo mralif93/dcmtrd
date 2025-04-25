@@ -163,6 +163,7 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bach No</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Portfolio</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
@@ -175,6 +176,9 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($financials as $financial)
                                 <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ $financial->batch_no }}</div>
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">{{ $financial->portfolio->portfolio_name }}</div>
                                     </td>
@@ -226,7 +230,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No financial records found {{ request('search') ? 'matching your search' : '' }}</td>
+                                    <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No financial records found {{ request('search') ? 'matching your search' : '' }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -39,7 +39,7 @@
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            Create New Form
+                            Create New Approval Form
                         </a>
                     </div>
                 </div>
@@ -49,9 +49,9 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Form Details</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Portfolio / Property</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Received Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Send Date</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -61,33 +61,20 @@
                             @foreach($approvalForms as $form)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">
+                                        {{ $form->received_date->format('d/m/Y') }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
                                     <div class="text-sm font-medium text-gray-900">
                                         <a href="{{ route('approval-form-m.show', $form) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $form->form_title }}
-                                            <p class="text-xs text-gray-500">{{ $form->form_number ?? 'No Form Number' }}</p>
-                                            <p class="text-xs text-gray-700">{{ $form->form_category }}</p>
+                                            {{ Str::limit($form->details, 50) }}
                                         </a>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">
-                                        @if($form->portfolio)
-                                            <a href="{{ route('portfolio-m.show', $form->portfolio) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                {{ $form->portfolio->portfolio_name }}
-                                            </a>
-                                        @endif
-                                        @if($form->property)
-                                            <p class="text-xs text-gray-500">
-                                                <a href="{{ route('property-m.show', $form->property) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                    {{ $form->property->name }}
-                                                </a>
-                                            </p>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">
-                                        {{ $form->received_date->format('d/m/Y') }}
+                                        {{ $form->category ?? 'N/A' }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -116,7 +103,7 @@
                                             </svg>
                                         </a>
                                         <a href="{{ route('approval-form-m.edit', $form) }}" class="text-indigo-600 hover:text-indigo-900" title="Edit">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                         </a>
@@ -153,19 +140,21 @@
             const portfolioFilter = document.getElementById('portfolio_id');
             const propertyFilter = document.getElementById('property_id');
             
-            // Optional: Dynamic filtering logic
-            portfolioFilter.addEventListener('change', function() {
-                const selectedPortfolioId = this.value;
-                
-                // Filter properties based on selected portfolio
-                Array.from(propertyFilter.options).forEach(option => {
-                    if (option.value === '' || !selectedPortfolioId || option.dataset.portfolioId === selectedPortfolioId) {
-                        option.style.display = '';
-                    } else {
-                        option.style.display = 'none';
-                    }
+            // Handle portfolio filter change if the elements exist
+            if (portfolioFilter && propertyFilter) {
+                portfolioFilter.addEventListener('change', function() {
+                    const selectedPortfolioId = this.value;
+                    
+                    // Filter properties based on selected portfolio
+                    Array.from(propertyFilter.options).forEach(option => {
+                        if (option.value === '' || !selectedPortfolioId || option.dataset.portfolioId === selectedPortfolioId) {
+                            option.style.display = '';
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
                 });
-            });
+            }
         });
     </script>
 </x-app-layout>

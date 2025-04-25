@@ -19,6 +19,7 @@ class PaymentSchedule extends Model implements Auditable
         'coupon_rate',
         'adjustment_date',
         'bond_id',
+        'reminder_total_date'
     ];
 
     protected $casts = [

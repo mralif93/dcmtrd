@@ -76,19 +76,12 @@
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">Leases List</h3>
                     <div class="flex gap-2">
-                        <!-- <a href="{{ route('leases-info.expiring') }}" 
-                        class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-medium text-xs text-white uppercase tracking-widest hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Expiring Soon
-                        </a> -->
                         <a href="{{ route('lease-m.create', $property) }}" 
                         class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            Add New Lease
+                            Create New Lease
                         </a>
                     </div>
                 </div>
@@ -183,11 +176,6 @@
                 <!-- Pagination Links -->
                 <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
                     {{ $leases->links() }}
-                </div>
-                
-                <!-- Results count -->
-                <div class="bg-white px-4 py-2 border-t border-gray-200 sm:px-6 text-sm text-gray-500">
-                    Showing {{ $leases->firstItem() ?? 0 }} to {{ $leases->lastItem() ?? 0 }} of {{ $leases->total() }} leases
                 </div>
             </div>
         </div>

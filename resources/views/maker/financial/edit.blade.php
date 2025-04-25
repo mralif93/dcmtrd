@@ -96,6 +96,15 @@
                                     @enderror
                                 </div>
 
+                                <!-- Batch No -->
+                                <div>
+                                    <label for="batch_no" class="block text-sm font-medium text-gray-500">Batch No</label>
+                                    <input type="text" name="batch_no" id="batch_no" value="{{ old('batch_no', $financial->batch_no) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('batch_no')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
                                 <!-- Purpose -->
                                 <div>
                                     <label for="purpose" class="block text-sm font-medium text-gray-500">Purpose</label>
@@ -152,7 +161,7 @@
 
                                 <!-- Process Fee -->
                                 <div>
-                                    <label for="process_fee" class="block text-sm font-medium text-gray-500">Process Fee</label>
+                                    <label for="process_fee" class="block text-sm font-medium text-gray-500">Process Fee (RM)</label>
                                     <input id="process_fee" type="number" name="process_fee" value="{{ old('process_fee', $financial->process_fee) }}" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     @error('process_fee')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -167,7 +176,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Total Facility Amount -->
                                 <div>
-                                    <label for="total_facility_amount" class="block text-sm font-medium text-gray-500">Total Facility Amount</label>
+                                    <label for="total_facility_amount" class="block text-sm font-medium text-gray-500">Total Facility Amount (RM)</label>
                                     <input id="total_facility_amount" type="number" name="total_facility_amount" value="{{ old('total_facility_amount', $financial->total_facility_amount) }}" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     @error('total_facility_amount')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -176,7 +185,7 @@
 
                                 <!-- Utilization Amount -->
                                 <div>
-                                    <label for="utilization_amount" class="block text-sm font-medium text-gray-500">Utilization Amount</label>
+                                    <label for="utilization_amount" class="block text-sm font-medium text-gray-500">Utilization Amount (RM)</label>
                                     <input id="utilization_amount" type="number" name="utilization_amount" value="{{ old('utilization_amount', $financial->utilization_amount) }}" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     @error('utilization_amount')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -185,7 +194,7 @@
 
                                 <!-- Outstanding Amount -->
                                 <div>
-                                    <label for="outstanding_amount" class="block text-sm font-medium text-gray-500">Outstanding Amount</label>
+                                    <label for="outstanding_amount" class="block text-sm font-medium text-gray-500">Outstanding Amount (RM)</label>
                                     <input id="outstanding_amount" type="number" name="outstanding_amount" value="{{ old('outstanding_amount', $financial->outstanding_amount) }}" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     @error('outstanding_amount')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -194,7 +203,7 @@
 
                                 <!-- Interest Monthly -->
                                 <div>
-                                    <label for="interest_monthly" class="block text-sm font-medium text-gray-500">Monthly Interest</label>
+                                    <label for="interest_monthly" class="block text-sm font-medium text-gray-500">Monthly Interest (%)</label>
                                     <input id="interest_monthly" type="number" name="interest_monthly" value="{{ old('interest_monthly', $financial->interest_monthly) }}" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     @error('interest_monthly')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -239,19 +248,6 @@
                                     <label for="valuer" class="block text-sm font-medium text-gray-500">Valuer</label>
                                     <input id="valuer" type="text" name="valuer" value="{{ old('valuer', $financial->valuer) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     @error('valuer')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Status -->
-                                <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-500">Status</label>
-                                    <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="active" {{ old('status', $financial->status) == 'active' ? 'selected' : '' }}>Active</option>
-                                        <option value="inactive" {{ old('status', $financial->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                        <option value="pending" {{ old('status', $financial->status) == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    </select>
-                                    @error('status')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>

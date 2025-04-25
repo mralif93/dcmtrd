@@ -277,6 +277,109 @@
                 </h2>
             </div>
 
+            <!-- Cards -->
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Properties -->
+                <x-dashboard-card
+                    title="Properties"
+                    icon="office-building"
+                    :count="$propertiesCount ?? 0"
+                    :pendingCount="$pendingPropertiesCount ?? 0"
+                    :href="route('property-a.main', ['tab' => 'all'])"
+                    color="bg-green-100"
+                />
+
+                <!-- Financials -->
+                <x-dashboard-card
+                    title="Financials"
+                    icon="document-chart-bar"
+                    :count="$financialsCount ?? 0"
+                    :pendingCount="$pendingFinancialsCount ?? 0"
+                    :href="route('financial-a.main', ['tab' => 'all'])"
+                    color="bg-green-100"
+                />
+
+                <!-- Tenants -->
+                <x-dashboard-card
+                    title="Tenants"
+                    icon="users"
+                    :count="$tenantsCount ?? 0"
+                    :pendingCount="$pendingTenantsCount ?? 0"
+                    :href="route('tenant-a.main', ['tab' => 'all'])"
+                    color="bg-green-100"
+                />
+
+                <!-- Lease -->
+                <x-dashboard-card
+                    title="Lease"
+                    icon="document-duplicate"
+                    :count="$leaseCount ?? 0"
+                    :pendingCount="$pendingLeaseCount ?? 0"
+                    :href="route('lease-a.main', ['tab' => 'all'])"
+                    color="bg-green-100"
+                />
+
+                <!-- Site Visit -->
+                <x-dashboard-card
+                    title="Site Visit"
+                    icon="location-marker"
+                    :count="$siteVisitCount ?? 0"
+                    :pendingCount="$pendingSiteVisitCount ?? 0"
+                    :href="route('site-visit-a.main', ['tab' => 'all'])"
+                    color="bg-green-100"
+                />
+
+                <!-- Checklist -->
+                <x-dashboard-card
+                    title="Checklist"
+                    icon="clipboard-check"
+                    :count="$checklistCount ?? 0"
+                    :pendingCount="$pendingChecklistCount ?? 0"
+                    :href="route('checklist-a.main', ['tab' => 'all'])"
+                    color="bg-green-100"
+                />
+
+                <!-- Appointment -->
+                <x-dashboard-card
+                    title="Appointment"
+                    icon="calendar"
+                    :count="$appointmentsCount ?? 0"
+                    :pendingCount="$pendingAppointmentsCount ?? 0"
+                    :href="route('appointment-a.main', ['tab' => 'all'])"
+                    color="bg-green-100"
+                />
+
+                <!-- Approval Form -->
+                <x-dashboard-card
+                    title="Approval Form"
+                    icon="document-check"
+                    :count="$approvalFormsCount ?? 0"
+                    :pendingCount="$pendingApprovalFormsCount ?? 0"
+                    :href="route('approval-form-a.main', ['tab' => 'all'])"
+                    color="bg-green-100"
+                />
+
+                <!-- Approval Property -->
+                <x-dashboard-card
+                    title="Approval Property"
+                    icon="check-circle"
+                    :count="$approvalPropertiesCount ?? 0"
+                    :pendingCount="$pendingApprovalPropertiesCount ?? 0"
+                    :href="route('approval-property-a.main', ['tab' => 'all'])"
+                    color="bg-green-100"
+                />
+
+                <!-- Activity Diary -->
+                <x-dashboard-card
+                    title="Activity Diary"
+                    icon="clipboard-list"
+                    :count="$siteVisitLogsCount ?? 0"
+                    :pendingCount="$pendingSiteVisitLogsCount ?? 0"
+                    :href="route('site-visit-log-a.main', ['tab' => 'all'])"
+                    color="bg-green-100"
+                />
+            </div>
+
             <!-- Table Portfolio -->
             <div class="bg-white shadow overflow-hidden rounded-lg mt-6">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">

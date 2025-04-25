@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('rating_movements', function (Blueprint $table) {
             $table->id();
+
+            // foreign key
+            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+
+            // rating movement details
             $table->string('rating_agency');
             $table->date('effective_date');
             $table->string('rating_tenure');
@@ -20,7 +25,8 @@ return new class extends Migration
             $table->string('rating_action')->nullable();
             $table->string('rating_outlook')->nullable();
             $table->string('rating_watch')->nullable();
-            $table->foreignId('bond_id')->constrained('bonds')->onDelete('cascade');
+            
+            // system information
             $table->timestamps();
             $table->softDeletes();
         });
