@@ -51,7 +51,7 @@ class TwoFactorCode extends Mailable
     public function content()
     {
         return new Content(
-            view: 'emails.two-factor-code',
+            view: 'emails.two_factor_code',
         );
     }
 
