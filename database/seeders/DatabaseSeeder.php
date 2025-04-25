@@ -30,7 +30,9 @@ class DatabaseSeeder extends Seeder
             ChecklistPropertyDevelopmentsSeeder::class,
             AppointmentSeeder::class,
             ApprovalFormSeeder::class,
+            ApprovalPropertySeeder::class,
             FinancialPropertySeeder::class,
+            SiteVisitLogSeeder::class,
         ]);
     }
 }
