@@ -86,7 +86,7 @@ class MakerController extends Controller
         }
 
         // Get filtered issuers with latest first and paginate
-        $issuers = $query->whereIn('status', ['Active', 'Inactive', 'Rejected', 'Draft'])
+        $issuers = $query
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -263,7 +263,7 @@ class MakerController extends Controller
 
             SendCreatedIssuerToApproval::dispatch($issuer);
 
-            return redirect()->route('maker.dashboard', $issuer)->with('success', 'Issuer submitted for approval successfully.');
+            return redirect()->route('maker.dashboard', ['section' => 'issuers'])->with('success', 'Issuer submitted for approval successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
