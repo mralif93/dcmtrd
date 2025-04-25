@@ -3380,7 +3380,6 @@ class MakerController extends Controller
             ->when($request->input('search'), function ($query, $search) {
                 return $query->where(function($q) use ($search) {
                     $q->where('party_name', 'like', "%{$search}%")
-                    ->orWhere('appointment_title', 'like', "%{$search}%")
                     ->orWhereHas('portfolio', function($portfolio) use ($search) {
                         $portfolio->where('portfolio_name', 'like', "%{$search}%");
                     });
@@ -3396,7 +3395,7 @@ class MakerController extends Controller
         $years = Appointment::orderBy('date_of_approval', 'desc')->get();
 
         // Get status options
-        $statuses = ['pending', 'approved', 'completed', 'cancelled'];
+        $statuses = ['active', 'pending', 'rejected', 'inactive'];
 
         return view('maker.appointment.index', [
             'appointments' => $query,
