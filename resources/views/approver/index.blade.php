@@ -345,7 +345,7 @@
                     icon="calendar"
                     :count="$appointmentsCount ?? 0"
                     :pendingCount="$pendingAppointmentsCount ?? 0"
-                    :href="route('appointment-a.index')"
+                    :href="route('appointment-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 
@@ -365,7 +365,7 @@
                     icon="check-circle"
                     :count="$approvalPropertiesCount ?? 0"
                     :pendingCount="$pendingApprovalPropertiesCount ?? 0"
-                    :href="route('approval-property-m.index')"
+                    :href="route('approval-property-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
 
@@ -375,7 +375,7 @@
                     icon="clipboard-list"
                     :count="$siteVisitLogsCount ?? 0"
                     :pendingCount="$pendingSiteVisitLogsCount ?? 0"
-                    :href="route('site-visit-log-m.index')"
+                    :href="route('site-visit-log-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
                 />
             </div>
