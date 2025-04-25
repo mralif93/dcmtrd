@@ -21,6 +21,16 @@ class DatabaseSeeder extends Seeder
             LeaseSeeder::class,
             FinancialSeeder::class,
             SiteVisitSeeder::class,
+            ChecklistSeeder::class,
+            ChecklistLegalDocumentationSeeder::class,
+            ChecklistTenantSeeder::class,
+            ChecklistExternalAreaConditionsSeeder::class,
+            ChecklistInternalAreaConditionsSeeder::class,
+            ChecklistDisposalInstallationsSeeder::class,
+            ChecklistPropertyDevelopmentsSeeder::class,
+            AppointmentSeeder::class,
+            ApprovalFormSeeder::class,
+            FinancialPropertySeeder::class,
         ]);
     }
 }

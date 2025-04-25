@@ -64,49 +64,4 @@ class ApprovalForm extends Model
     {
         return $this->belongsTo(User::class, 'prepared_by', 'id');
     }
-
-    /**
-     * Get the user who verified the approval form.
-     */
-    public function verifiedBy()
-    {
-        return $this->belongsTo(User::class, 'verified_by', 'id');
-    }
-
-    /**
-     * Scope a query to only include approval forms with a specific status.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $status
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeStatus($query, $status)
-    {
-        return $query->where('status', $status);
-    }
-
-    /**
-     * Scope a query to only include approval forms in a specific category.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $category
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeCategory($query, $category)
-    {
-        return $query->where('category', $category);
-    }
-
-    /**
-     * Scope a query to only include approval forms received within a date range.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $startDate
-     * @param  string  $endDate
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeReceivedBetween($query, $startDate, $endDate)
-    {
-        return $query->whereBetween('received_date', [$startDate, $endDate]);
-    }
 }
