@@ -1439,7 +1439,7 @@ class ApproverController extends Controller
         $activeTab = $request->query('tab', 'all');
 
         // search & filter
-        $query = Appointment::with(['siteVisit', 'siteVisit.property', 'siteVisit.property.portfolio']);
+        $query = Appointment::with(['portfolio']);
 
         // Apply status filter based on tab
         if ($request->has('status') && !empty($request->status)) {
@@ -1448,14 +1448,6 @@ class ApproverController extends Controller
 
         // fetch appointments
         $appointments = $query->latest()->paginate(10)->withQueryString();
-
-        // Get all properties for the dropdown
-        $propertyIds = $appointments->pluck('site_visit.property_id')->unique();
-        $properties = Property::whereIn('id', $propertyIds)->get();
-
-        // Get all portfolios for the dropdown
-        $portfolioIds = $appointments->pluck('site_visit.property.portfolio_id')->unique();
-        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
 
         // Count records for each tab
         $tabCounts = [
@@ -1466,7 +1458,7 @@ class ApproverController extends Controller
             'inactive' => Appointment::where('status', 'inactive')->count(),
         ];
 
-        return view('approver.appointment.main', compact('appointments', 'properties', 'portfolios', 'activeTab', 'tabCounts'));
+        return view('approver.appointment.main', compact('appointments', 'activeTab', 'tabCounts'));
     }
     
     public function AppointmentDetails(Appointment $appointment)

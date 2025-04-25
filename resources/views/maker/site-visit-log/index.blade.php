@@ -134,7 +134,7 @@
                             @foreach($siteVisitLogs as $log)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $log->visitation_date->format('d/m/Y') }}</div>
+                                    <div class="text-sm text-gray-900">{{ $log->visit_day }}/{{ $log->visit_month }}/{{ $log->visit_year }}</div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-sm text-gray-900">{{ Str::limit($log->purpose, 50) }}</div>
