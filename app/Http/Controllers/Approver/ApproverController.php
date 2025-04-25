@@ -1448,6 +1448,9 @@ class ApproverController extends Controller
 
     public function AppointmentMain(Request $request)
     {
+        // Get current tab or default to 'all'
+        $activeTab = $request->query('tab', 'all');
+
         // search & filter
         $query = Appointment::with(['siteVisit', 'siteVisit.property', 'siteVisit.property.portfolio']);
 
@@ -1459,7 +1462,24 @@ class ApproverController extends Controller
         // fetch appointments
         $appointments = $query->latest()->paginate(10)->withQueryString();
 
-        return view('approver.appointment.main', compact('appointments'));
+        // Get all properties for the dropdown
+        $propertyIds = $appointments->pluck('site_visit.property_id')->unique();
+        $properties = Property::whereIn('id', $propertyIds)->get();
+
+        // Get all portfolios for the dropdown
+        $portfolioIds = $appointments->pluck('site_visit.property.portfolio_id')->unique();
+        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
+
+        // Count records for each tab
+        $tabCounts = [
+            'all' => Appointment::count(),
+            'active' => Appointment::where('status', 'active')->count(),
+            'pending' => Appointment::where('status', 'pending')->count(),
+            'rejected' => Appointment::where('status', 'rejected')->count(),
+            'inactive' => Appointment::where('status', 'inactive')->count(),
+        ];
+
+        return view('approver.appointment.main', compact('appointments', 'properties', 'portfolios', 'activeTab', 'tabCounts'));
     }
     
     public function AppointmentDetails(Appointment $appointment)
@@ -1621,6 +1641,205 @@ class ApproverController extends Controller
     }
     
     // Approval Property Module
+    public function ApprovalPropertyIndex()
+    {
+        $query = ApprovalProperty::with(['portfolio', 'property']);
+
+        // Apply filters if provided
+        if (request()->has('status') && !empty(request()->status)) {
+            $query->where('status', request()->status);
+        }
+
+        // Get paginated results
+        $approvalProperties = $query->latest()->paginate(10)->withQueryString();
+
+        // portfolio
+        $portfolioIds = $approvalProperties->pluck('portfolio_id')->unique();
+        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
+
+        // category
+        $categories = ApprovalProperty::select('category')->distinct()->pluck('category');
+
+        return view('approver.approval-property.index', compact('approvalProperties', 'portfolios', 'categories'));
+    }
+
+    public function ApprovalPropertyShow(ApprovalProperty $approvalProperty)
+    {
+        return view('approver.approval-property.show', compact('approvalProperty'));
+    }
+
+    public function ApprovalPropertyMain(Request $request)
+    {
+        // Get current tab or default to 'all'
+        $activeTab = $request->query('tab', 'all');
+
+        // search & filter
+        $query = ApprovalProperty::with(['portfolio', 'property']);
+
+        // fetch approval properties
+        $approvalProperties = $query->latest()->paginate(10)->withQueryString();
+
+        // Count records for each tab
+        $tabCounts = [
+            'all' => ApprovalProperty::count(),
+            'active' => ApprovalProperty::where('status', 'active')->count(),
+            'pending' => ApprovalProperty::where('status', 'pending')->count(),
+            'rejected' => ApprovalProperty::where('status', 'rejected')->count(),
+            'inactive' => ApprovalProperty::where('status', 'inactive')->count(),
+        ];
+
+        // Get all portfolios for the dropdown
+        $portfolioIds = $approvalProperties->pluck('portfolio_id')->unique();
+        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
+
+        // Get all properties for the dropdown
+        $propertyIds = $approvalProperties->pluck('property_id')->unique();
+        $properties = Property::whereIn('id', $propertyIds)->get();
+
+        $categories = ApprovalProperty::select('category')->distinct()->pluck('category');
+        $statuses = ApprovalProperty::select('status')->distinct()->pluck('status');
+
+        return view('approver.approval-property.main', compact('approvalProperties', 'activeTab', 'tabCounts', 'portfolios', 'properties', 'categories', 'statuses'));
+    }
+
+    public function ApprovalPropertyDetails(ApprovalProperty $approvalProperty)
+    {
+        return view('approver.approval-property.details', compact('approvalProperty'));
+    }
+
+    public function ApprovalPropertyApprove(ApprovalProperty $approvalProperty)
+    {
+        try {
+            $approvalProperty->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('approval-property-a.index', ['status' => 'pending'])
+                ->with('success', 'Approval Property approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving approval property: ' . $e->getMessage());
+        }
+    }
+
+    public function ApprovalPropertyReject(Request $request, ApprovalProperty $approvalProperty)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $approvalProperty->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('approval-property-a.index', ['status' => 'pending'])
+                ->with('success', 'Approval Property rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting approval property: ' . $e->getMessage());
+        }
+    }
 
     // Site Visit Log Module
+    public function SiteVisitLogIndex(Request $request)
+    {
+        $siteVisitLogs = SiteVisitLog::latest()->paginate(10)->withQueryString();
+        return view('approver.site-visit-log.index', compact('siteVisitLogs'));
+    }
+
+    public function SiteVisitLogShow(SiteVisitLog $siteVisitLog)
+    {
+        return view('approver.site-visit-log.show', compact('siteVisitLog'));
+    }
+
+    public function SiteVisitLogMain(Request $request)
+    {
+        // Get current tab or default to 'all'
+        $activeTab = $request->query('tab', 'all');
+
+        // search & filter
+        $query = SiteVisitLog::with(['siteVisit', 'siteVisit.property', 'siteVisit.property.portfolio']);
+
+        // Apply status filter based on tab
+        if ($activeTab !== 'all') {
+            $query->where('status', $activeTab);
+        }
+
+        // fetch site visit logs
+        $siteVisitLogs = $query->latest()->paginate(10)->withQueryString();
+
+        // Get all properties for the dropdown
+        $propertyIds = $siteVisitLogs->pluck('site_visit.property_id')->unique();
+        $properties = Property::whereIn('id', $propertyIds)->get();
+
+        // Get all portfolios for the dropdown
+        $portfolioIds = $siteVisitLogs->pluck('site_visit.property.portfolio_id')->unique();
+        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
+
+        // Get all category for the dropdown
+        $categories = SiteVisitLog::select('category')->distinct()->pluck('category');
+
+        // Count records for each tab
+        $tabCounts = [
+            'all' => SiteVisitLog::count(),
+            'active' => SiteVisitLog::where('status', 'active')->count(),
+            'pending' => SiteVisitLog::where('status', 'pending')->count(),
+            'rejected' => SiteVisitLog::where('status', 'rejected')->count(),
+            'inactive' => SiteVisitLog::where('status', 'inactive')->count(),
+        ];
+
+        return view('approver.site-visit-log.main', compact('siteVisitLogs', 'activeTab', 'portfolios', 'properties', 'categories', 'tabCounts'));
+    }
+
+    public function SiteVisitLogDetails(SiteVisitLog $siteVisitLog)
+    {
+        return view('approver.site-visit-log.details', compact('siteVisitLog'));
+    }
+
+    public function SiteVisitLogApprove(SiteVisitLog $siteVisitLog)
+    {
+        try {
+            $siteVisitLog->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('site-visit-log-a.main', ['status' => 'pending'])
+                ->with('success', 'Site Visit Log approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving site visit log: ' . $e->getMessage());
+        }
+    }
+
+    public function SiteVisitLogReject(Request $request, SiteVisitLog $siteVisitLog)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $siteVisitLog->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('site-visit-log-a.main', ['status' => 'pending'])
+                ->with('success', 'Site Visit Log rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting site visit log: ' . $e->getMessage());
+        }
+    }
 }
