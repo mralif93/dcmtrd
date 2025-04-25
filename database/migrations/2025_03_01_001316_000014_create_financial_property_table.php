@@ -35,10 +35,10 @@ return new class extends Migration
             // default value
             $table->timestamps();
             $table->softDeletes();
-            
+
             // Add indexes for better performance
-            $table->index(['financial_id', 'property_id']);
-            $table->index(['property_value', 'financed_amount', 'security_value']);
+            $table->index(['financial_id', 'property_id'], 'financial_property_ids_idx');
+            $table->index(['property_value', 'financed_amount', 'security_value'], 'financial_prop_value_idx');
         });
     }
 

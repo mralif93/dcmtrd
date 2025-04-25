@@ -21,20 +21,22 @@ return new class extends Migration
             $table->string('lease_name');
             $table->string('demised_premises')->nullable();
             $table->string('permitted_use')->nullable();
+            $table->decimal('rental_amount', 15, 2)->unsigned()->nullable();
+            $table->string('rental_frequency')->nullable();
             $table->string('option_to_renew')->nullable();
             $table->string('term_years')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->decimal('base_rate_year_1', 15, 2)->unsigned();
-            $table->decimal('monthly_gsto_year_1', 15, 2)->unsigned();
+            $table->decimal('base_rate_year_1', 15, 2)->unsigned()->nullable();
+            $table->decimal('monthly_gsto_year_1', 15, 2)->unsigned()->nullable();
             $table->string('remarks_year_1')->nullable();
-            $table->decimal('base_rate_year_2', 15, 2)->unsigned();
-            $table->decimal('monthly_gsto_year_2', 15, 2)->unsigned();
+            $table->decimal('base_rate_year_2', 15, 2)->unsigned()->nullable();
+            $table->decimal('monthly_gsto_year_2', 15, 2)->unsigned()->nullable();
             $table->string('remarks_year_2')->nullable();
-            $table->decimal('base_rate_year_3', 15, 2)->unsigned();
-            $table->decimal('monthly_gsto_year_3', 15, 2)->unsigned();
+            $table->decimal('base_rate_year_3', 15, 2)->unsigned()->nullable();
+            $table->decimal('monthly_gsto_year_3', 15, 2)->unsigned()->nullable();
             $table->string('remarks_year_3')->nullable();
-            $table->decimal('space', 15, 2)->unsigned();
+            $table->decimal('space', 15, 2)->unsigned()->nullable();
             $table->string('tenancy_type')->nullable();
             $table->string('attachment')->nullable();
 
@@ -48,7 +50,7 @@ return new class extends Migration
             // default values
             $table->timestamps();
             $table->softDeletes();
-            
+
             // Add indexes for better performance
             $table->index(['lease_name', 'start_date', 'end_date']);
         });
