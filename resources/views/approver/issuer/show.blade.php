@@ -208,7 +208,7 @@
                 <!-- Action Buttons -->
                 <div class="px-4 py-4 border-t border-gray-200 sm:px-6">
                     <div class="flex justify-end gap-x-4">
-                        <a href="{{ route('dashboard') }}"
+                        <a href="{{ route('approver.dashboard', ['section' => 'dcmtrd']) }}"
                             class="inline-flex items-center px-4 py-2 font-medium text-gray-700 bg-gray-200 border border-transparent rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
