@@ -3,9 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Database\Seeders\BondsSeeder;
 use Database\Seeders\LeaseSeeder;
-use Database\Seeders\ReitsSeeder;
 use Database\Seeders\IssuerSeeder;
 use Database\Seeders\TenantSeeder;
 use Database\Seeders\PropertySeeder;
@@ -23,25 +21,26 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DefaultUsersSeeder::class,
             IssuerSeeder::class,
-            // BondsSeeder::class,
-            // ReitsSeeder::class,
-            PortfolioTypeSeeder::class,
-            PortfolioSeeder::class,
-            PropertySeeder::class,
-            LeaseSeeder::class,
-            TenantSeeder::class,
-            ChecklistSeeder::class,
-            ChecklistLegalDocumentationSeeder::class,
-            ChecklistTenantSeeder::class,
-            ChecklistExternalAreaConditionsSeeder::class,
-            ChecklistInternalAreaConditionsSeeder::class,
-            ChecklistDisposalInstallationsSeeder::class,
-            ChecklistPropertyDevelopmentsSeeder::class,
-            AppointmentSeeder::class,
-            ApprovalFormSeeder::class,
-            ApprovalPropertySeeder::class,
-            FinancialPropertySeeder::class,
-            SiteVisitLogSeeder::class,
+
+            // PortfolioTypeSeeder::class,
+            // PortfolioSeeder::class,
+            // PropertySeeder::class,
+            // TenantSeeder::class,
+            // LeaseSeeder::class,
+            // FinancialSeeder::class,
+            // SiteVisitSeeder::class,
+            // ChecklistSeeder::class,
+            // ChecklistLegalDocumentationSeeder::class,
+            // ChecklistTenantSeeder::class,
+            // ChecklistExternalAreaConditionsSeeder::class,
+            // ChecklistInternalAreaConditionsSeeder::class,
+            // ChecklistDisposalInstallationsSeeder::class,
+            // ChecklistPropertyDevelopmentsSeeder::class,
+            // AppointmentSeeder::class,
+            // ApprovalFormSeeder::class,
+            // ApprovalPropertySeeder::class,
+            // FinancialPropertySeeder::class,
+            // SiteVisitLogSeeder::class,
         ]);
     }
 }

@@ -263,7 +263,7 @@ class MakerController extends Controller
 
             SendCreatedIssuerToApproval::dispatch($issuer);
 
-            return redirect()->route('maker.dashboard', ['section' => 'issuers'])->with('success', 'Issuer submitted for approval successfully.');
+            return redirect()->route('maker.dashboard', ['section' => 'dcmtrd'])->with('success', 'Issuer submitted for approval successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
@@ -1301,7 +1301,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'draft';
+        $validated['status'] = 'Draft';
 
         $trusteeFee = TrusteeFee::create($validated);
 

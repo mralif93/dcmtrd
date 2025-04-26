@@ -281,9 +281,7 @@
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">
-                                            <a href="{{ route('security-info.show', $bond) }}">
-                                                {{ $bond->bond_sukuk_name }}
-                                            </a>
+                                            {{ $bond->bond_sukuk_name }}
                                         </div>
                                         @if($bond->sub_name)
                                             <div class="mt-1 text-sm text-gray-500">{{ $bond->sub_name }}</div>

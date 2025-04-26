@@ -33,8 +33,6 @@ use App\Http\Controllers\Admin\FinancialController;
 use App\Http\Controllers\Admin\PortfolioController;
 use App\Http\Controllers\Admin\SiteVisitController;
 use App\Http\Controllers\Admin\UserAdminController;
-
-// Bonds
 use App\Http\Controllers\User\UserIssuerController;
 use App\Http\Controllers\User\UserTenantController;
 
@@ -49,8 +47,9 @@ use App\Http\Controllers\User\UserPropertyController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\CallScheduleController;
 use App\Http\Controllers\Admin\SiteVisitLogController;
-
 use App\Http\Controllers\User\UserChecklistController;
+
+// Bonds
 use App\Http\Controllers\User\UserFinancialController;
 use App\Http\Controllers\User\UserPortfolioController;
 use App\Http\Controllers\User\UserSiteVisitController;
@@ -66,9 +65,9 @@ use App\Http\Controllers\Admin\PaymentScheduleController;
 use App\Http\Controllers\Admin\RelatedDocumentController;
 use App\Http\Controllers\Admin\TradingActivityController;
 use App\Http\Controllers\Compliance\ComplianceController;
+use App\Http\Controllers\User\UserAnnouncementController;
 
 // REITs
-use App\Http\Controllers\User\UserAnnouncementController;
 use App\Http\Controllers\User\UserCallScheduleController;
 use App\Http\Controllers\User\UserSiteVisitLogController;
 use App\Http\Controllers\User\UserActivityDiaryController;

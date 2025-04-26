@@ -53,15 +53,7 @@ class TwoFactorController extends Controller
             // Set session variable to indicate 2FA has been verified
             $request->session()->put('two_factor_verified', true);
     
-            // Redirect based on user role
-            if ($user->isAdmin()) {
-                return redirect()->route('admin.dashboard');
-            } else if ($user->isUser()) {
-                return redirect()->route('dashboard');
-            }
-            
-            // Default redirect for other roles based on naming convention
-            return redirect()->route($user->role . '.dashboard');
+            return redirect()->route('main');
         }
     
         return back()->withErrors(['code' => 'The provided two-factor code is invalid or has expired.']);
