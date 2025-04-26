@@ -1007,21 +1007,36 @@ class ApproverController extends Controller
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
         
-        // search & filter
-        $query = Tenant::with(['leases', 'property', 'property.portfolio']);
-
+        // Base query with relationships
+        $query = Tenant::with(['property']);
+        
         // Apply status filter based on tab
         if ($activeTab !== 'all') {
             $query->where('status', $activeTab);
         }
-
-        // fetch tenants
-        $tenants = $query->latest()->paginate(10)->withQueryString();
-
-        // fetch all property using list tenant
-        $properties = $query->distinct('property_id')->pluck('property_id');
-        $properties = Property::whereIn('id', $properties)->get();
-
+        
+        // Apply search filter if provided
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('contact_person', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+        
+        // Apply property filter if provided
+        if ($request->filled('property_id')) {
+            $query->where('property_id', $request->input('property_id'));
+        }
+        
+        // Fetch tenants with pagination
+        $tenants = $query->orderBy('name')->paginate(10)->withQueryString();
+        
+        // Fetch all properties for the filter dropdown (not just those related to displayed tenants)
+        $properties = Property::orderBy('name')->get();
+        
         // Count records for each tab
         $tabCounts = [
             'all' => Tenant::count(),
@@ -1030,7 +1045,7 @@ class ApproverController extends Controller
             'inactive' => Tenant::where('status', 'inactive')->count(),
             'rejected' => Tenant::where('status', 'rejected')->count(),
         ];
-
+        
         return view('approver.tenant.main', compact('tenants', 'activeTab', 'tabCounts', 'properties'));
     }
 
@@ -1126,26 +1141,42 @@ class ApproverController extends Controller
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
         
-        // search & filter
-        $query = Lease::with(['tenant', 'tenant.property', 'tenant.property.portfolio']);
+        // Base query with necessary relationships
+        $query = Lease::with(['tenant']);
         
         // Apply status filter based on tab
         if ($activeTab !== 'all') {
             $query->where('status', $activeTab);
         }
         
-        // fetch leases
-        $leases = $query->latest()->paginate(10)->withQueryString();
+        // Apply search filter if provided
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('lease_name', 'like', "%{$search}%")
+                  ->orWhereHas('tenant', function($tq) use ($search) {
+                      $tq->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+        
+        // Apply tenancy type filter if provided
+        if ($request->filled('tenancy_type')) {
+            $query->where('tenancy_type', $request->input('tenancy_type'));
+        }
+        
+        // Fetch leases with pagination
+        $leases = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
         
         // Count records for each tab
         $tabCounts = [
             'all' => Lease::count(),
             'active' => Lease::where('status', 'active')->count(),
             'pending' => Lease::where('status', 'pending')->count(),
-            'inactive' => Lease::where('status', 'inactive')->count(),
             'rejected' => Lease::where('status', 'rejected')->count(),
+            'inactive' => Lease::where('status', 'inactive')->count(),
         ];
-
+        
         return view('approver.lease.main', compact('leases', 'activeTab', 'tabCounts'));
     }
 
@@ -1215,35 +1246,76 @@ class ApproverController extends Controller
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
         
-        // search & filter
-        $query = SiteVisit::with(['property', 'property.portfolio']);
+        // Base query with relationships
+        $query = SiteVisit::with(['property']);
         
         // Apply status filter based on tab
         if ($activeTab !== 'all') {
-            $query->where('status', $activeTab);
+            if ($activeTab === 'active') {
+                $query->where('status', 'scheduled');
+            } else {
+                $query->where('status', $activeTab);
+            }
         }
         
-        // fetch site visits
-        $siteVisits = $query->latest()->paginate(10)->withQueryString();
-
-        // Get all properties for the dropdown from site visits
-        $propertyIds = $siteVisits->pluck('property_id')->unique();
-        $properties = Property::whereIn('id', $propertyIds)->get();
+        // Apply search filter if provided
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->whereHas('property', function($propertyQuery) use ($search) {
+                    $propertyQuery->where('name', 'like', "%{$search}%")
+                                 ->orWhere('address', 'like', "%{$search}%");
+                })
+                ->orWhere('manager', 'like', "%{$search}%")
+                ->orWhere('trustee', 'like', "%{$search}%");
+            });
+        }
+        
+        // Apply property filter if provided
+        if ($request->filled('property_id')) {
+            $query->where('property_id', $request->input('property_id'));
+        }
+        
+        // Apply date range filter if provided
+        if ($request->filled('date_range')) {
+            $dateRange = $request->input('date_range');
+            $today = now()->startOfDay();
+            
+            switch ($dateRange) {
+                case 'today':
+                    $query->whereDate('date_visit', $today);
+                    break;
+                case 'upcoming':
+                    $query->whereDate('date_visit', '>', $today);
+                    break;
+                case 'past':
+                    $query->whereDate('date_visit', '<', $today);
+                    break;
+                case 'this_week':
+                    $query->whereBetween('date_visit', [$today, $today->copy()->endOfWeek()]);
+                    break;
+                case 'this_month':
+                    $query->whereBetween('date_visit', [$today, $today->copy()->endOfMonth()]);
+                    break;
+            }
+        }
+        
+        // Fetch site visits with pagination
+        $siteVisits = $query->orderBy('date_visit', 'desc')->paginate(10)->withQueryString();
+        
+        // Fetch all properties for the filter dropdown
+        $properties = Property::orderBy('name')->get();
         
         // Count records for each tab
         $tabCounts = [
             'all' => SiteVisit::count(),
+            'active' => SiteVisit::where('status', 'scheduled')->count(),
             'pending' => SiteVisit::where('status', 'pending')->count(),
-            'active' => SiteVisit::where('status', 'active')->count(),
-            'scheduled' => SiteVisit::where('status', 'scheduled')->count(),
-            'completed' => SiteVisit::where('status', 'completed')->count(),
-            'rejected' => SiteVisit::where('status', 'rejected')->count(),
-            'cancelled' => SiteVisit::where('status', 'cancelled')->count(),
-            'rescheduled' => SiteVisit::where('status', 'rescheduled')->count(),
-            'inactive' => SiteVisit::where('status', 'inactive')->count(),
+            'rejected' => SiteVisit::where('status', 'cancelled')->count(), // mapping 'rejected' to 'cancelled'
+            'inactive' => SiteVisit::whereIn('status', ['completed', 'inactive'])->count(),
         ];
-
-        return view('approver.site-visit.main', compact('siteVisits', 'activeTab', 'tabCounts', 'properties'));
+        
+        return view('approver.site-visit.main', compact('siteVisits', 'properties', 'activeTab', 'tabCounts'));
     }
 
     public function SiteVisitDetails(SiteVisit $siteVisit)
@@ -1348,33 +1420,71 @@ class ApproverController extends Controller
         return view('approver.checklist.show', compact('checklist'));
     }
 
-    public function ChecklistMain(Request $request)
-    {
-        // Get current tab or default to 'all'
-        $activeTab = $request->query('tab', 'all');
-        
-        // search & filter
-        $query = Checklist::with(['siteVisit', 'siteVisit.property', 'siteVisit.property.portfolio']);
-        
-        // Apply status filter based on tab
-        if ($activeTab !== 'all') {
-            $query->where('status', $activeTab);
-        }
-        
-        // fetch checklists
-        $checklists = $query->latest()->paginate(10)->withQueryString();
-        
-        // Count records for each tab
-        $tabCounts = [
-            'all' => Checklist::count(),
-            'active' => Checklist::where('status', 'active')->count(),
-            'pending' => Checklist::where('status', 'pending')->count(),
-            'rejected' => Checklist::where('status', 'rejected')->count(),
-            'inactive' => Checklist::where('status', 'inactive')->count(),
-        ];
-
-        return view('approver.checklist.main', compact('checklists', 'activeTab', 'tabCounts'));
+    public function checklistMain(Request $request)
+{
+    // Get current tab or default to 'all'
+    $activeTab = $request->query('tab', 'all');
+    
+    // Base query with necessary relationships
+    $query = Checklist::with(['siteVisit', 'siteVisit.property']);
+    
+    // Apply status filter based on tab
+    if ($activeTab !== 'all') {
+        $query->where('status', $activeTab);
     }
+    
+    // Apply search filter if provided
+    if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where(function($q) use ($search) {
+            $q->where('prepared_by', 'like', "%{$search}%")
+              ->orWhere('verified_by', 'like', "%{$search}%")
+              ->orWhereHas('siteVisit.property', function($propertyQuery) use ($search) {
+                  $propertyQuery->where('name', 'like', "%{$search}%");
+              });
+        });
+    }
+    
+    // Apply property filter if provided
+    if ($request->filled('property_id')) {
+        $query->whereHas('siteVisit', function($q) use ($request) {
+            $q->where('property_id', $request->input('property_id'));
+        });
+    }
+    
+    // Apply site visit filter if provided
+    if ($request->filled('site_visit_id')) {
+        $query->where('site_visit_id', $request->input('site_visit_id'));
+    }
+    
+    // Fetch checklists with pagination
+    $checklists = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+    
+    // Fetch all site visits for the dropdown
+    $siteVisits = SiteVisit::with('property')
+                  ->orderBy('date_visit', 'desc')
+                  ->get();
+    
+    // Fetch available properties for filter dropdown
+    $properties = Property::orderBy('name')->get();
+    
+    // Count records for each tab
+    $tabCounts = [
+        'all' => Checklist::count(),
+        'active' => Checklist::where('status', 'active')->count(),
+        'pending' => Checklist::where('status', 'pending')->count(),
+        'rejected' => Checklist::where('status', 'rejected')->count(),
+        'inactive' => Checklist::where('status', 'inactive')->count(),
+    ];
+    
+    return view('approver.checklist.main', compact(
+        'checklists', 
+        'siteVisits', 
+        'properties', 
+        'activeTab', 
+        'tabCounts'
+    ));
+}
 
     public function ChecklistDetails(Checklist $checklist)
     {
@@ -1450,28 +1560,47 @@ class ApproverController extends Controller
     {
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
-
-        // search & filter
+    
+        // Initialize query builder with relationships
         $query = Appointment::with(['portfolio']);
-
-        // Apply status filter based on tab
-        if ($request->has('status') && !empty($request->status)) {
-            $query->where('status', $request->status);
+    
+        // Apply status filter based on active tab
+        if ($activeTab != 'all') {
+            $query->where('status', $activeTab);
         }
-
-        // fetch appointments
+    
+        // Apply search filter if provided
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('party_name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+        
+        // Apply portfolio filter if provided
+        if ($request->has('portfolio_id') && !empty($request->portfolio_id)) {
+            $query->where('portfolio_id', $request->portfolio_id);
+        }
+    
+        // Fetch appointments with pagination and maintain query string
         $appointments = $query->latest()->paginate(10)->withQueryString();
-
+        
+        // Get list of portfolios from appointment data
+        $portfolios = Portfolio::whereIn('id', Appointment::distinct()->pluck('portfolio_id'))
+                        ->orderBy('name')
+                        ->get();
+    
         // Count records for each tab
         $tabCounts = [
             'all' => Appointment::count(),
-            'active' => Appointment::where('status', 'active')->count(),
-            'pending' => Appointment::where('status', 'pending')->count(),
-            'rejected' => Appointment::where('status', 'rejected')->count(),
-            'inactive' => Appointment::where('status', 'inactive')->count(),
+            'active' => Appointment::status('active')->count(),
+            'pending' => Appointment::status('pending')->count(),
+            'rejected' => Appointment::status('rejected')->count(),
+            'inactive' => Appointment::status('inactive')->count(),
         ];
-
-        return view('approver.appointment.main', compact('appointments', 'activeTab', 'tabCounts'));
+    
+        return view('approver.appointment.main', compact('appointments', 'activeTab', 'tabCounts', 'portfolios'));
     }
     
     public function AppointmentDetails(Appointment $appointment)

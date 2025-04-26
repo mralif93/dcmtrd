@@ -31,9 +31,17 @@
             @endif
 
             @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
+                        </div>
+                    </div>
                 </div>
             @endif
 
@@ -75,7 +83,7 @@
 
                 <!-- Search and filter options -->
                 <div class="px-4 py-3 bg-gray-50 sm:px-6">
-                    <form action="{{ route('site-visit-a.main') }}" method="GET" class="grid grid-cols-1 gap-4 md:grid-cols-4">
+                    <form action="{{ route('site-visit-a.main') }}" method="GET" class="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <input type="hidden" name="tab" value="{{ $activeTab }}">
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
@@ -91,30 +99,19 @@
                             </div>
                         </div>
                         <div>
-                            <label for="property" class="block text-sm font-medium text-gray-700">Property</label>
-                            <select id="property" name="property_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <label for="property_id" class="block text-sm font-medium text-gray-700">Property</label>
+                            <select id="property_id" name="property_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                 <option value="">All Properties</option>
                                 @foreach($properties as $property)
                                     <option value="{{ $property->id }}" {{ request('property_id') == $property->id ? 'selected' : '' }}>{{ $property->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <label for="date_range" class="block text-sm font-medium text-gray-700">Date Range</label>
-                            <select id="date_range" name="date_range" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="">Any Time</option>
-                                <option value="today" {{ request('date_range') == 'today' ? 'selected' : '' }}>Today</option>
-                                <option value="upcoming" {{ request('date_range') == 'upcoming' ? 'selected' : '' }}>Upcoming</option>
-                                <option value="past" {{ request('date_range') == 'past' ? 'selected' : '' }}>Past</option>
-                                <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week</option>
-                                <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month</option>
-                            </select>
-                        </div>
                         <div class="flex items-end space-x-3">
                             <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 Filter Results
                             </button>
-                            <a href="{{ route('site-visit-a.main', ['status' => $activeTab]) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <a href="{{ route('site-visit-a.main', ['tab' => $activeTab]) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 Reset
                             </a>
                         </div>
@@ -170,22 +167,20 @@
                                     <div class="text-sm text-gray-500">
                                         {{ $siteVisit->manager ? 'Manager: '.$siteVisit->manager : '' }}
                                     </div>
+                                    @if($siteVisit->building_manager)
+                                        <div class="text-sm text-gray-500">
+                                            Building Manager: {{ $siteVisit->building_manager }}
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ match(strtolower($siteVisit->status)) {
-                                            'completed' => 'bg-green-100 text-green-800',
-                                            'scheduled' => 'bg-blue-100 text-blue-800',
-                                            'pending' => 'bg-yellow-100 text-yellow-800',
-                                            'cancelled' => 'bg-red-100 text-red-800',
-                                            default => 'bg-gray-100 text-gray-800'
-                                        } }}">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $siteVisit->getStatusBadgeClassAttribute() }}">
                                         {{ ucfirst($siteVisit->status) }}
                                     </span>
-                                    @if($siteVisit->follow_up_required)
+                                    @if($siteVisit->hasAttachment())
                                         <div class="mt-1">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                                Follow-up Required
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                Has Attachment
                                             </span>
                                         </div>
                                     @endif
@@ -216,6 +211,15 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                                 </svg>
                                             </button>
+                                        @endif
+
+                                        @if($siteVisit->status == 'scheduled' && !$siteVisit->checklist)
+                                            <!-- Create Checklist Button -->
+                                            <a href="{{ route('checklist-a.create', ['site_visit_id' => $siteVisit->id]) }}" class="text-blue-600 hover:text-blue-900" title="Create Checklist">
+                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                </svg>
+                                            </a>
                                         @endif
                                     </div>
                                 </td>
@@ -251,9 +255,9 @@
                         </svg>
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Reject Site Visit</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Cancel Site Visit</h3>
                         <div class="mt-2">
-                            <p class="text-sm text-gray-500">Please provide a reason for rejecting this site visit.</p>
+                            <p class="text-sm text-gray-500">Please provide a reason for cancelling this site visit.</p>
                         </div>
                     </div>
                 </div>
@@ -261,12 +265,12 @@
                 <form id="cancelForm" method="POST" action="">
                     @csrf
                     <div class="mt-4">
-                        <label for="rejection_reason" class="block text-sm font-medium text-gray-700">Rejection Reason</label>
-                        <textarea id="rejection_reason" name="rejection_reason" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
+                        <label for="notes" class="block text-sm font-medium text-gray-700">Cancellation Reason</label>
+                        <textarea id="notes" name="notes" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
                     </div>
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
-                            Reject
+                            Cancel Visit
                         </button>
                         <button type="button" onclick="closeCancelModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                             Back
@@ -283,7 +287,7 @@
         });
         
         function openCancelModal(siteVisitId) {
-            document.getElementById('cancelForm').action = `/approver/site-visit/${siteVisitId}/reject`;
+            document.getElementById('cancelForm').action = `/approver/site-visit/${siteVisitId}/cancel`;
             document.getElementById('cancelModal').classList.remove('hidden');
         }
         
