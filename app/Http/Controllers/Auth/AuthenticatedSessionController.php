@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Models\User;
-use App\Http\Controllers\TwoFactorController;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use Illuminate\View\View;
 use Carbon\Carbon;
+use App\Models\User;
+use Illuminate\View\View;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Controllers\TwoFactorController;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -48,7 +49,7 @@ class AuthenticatedSessionController extends Controller
                 $user->save();
 
                 // Send the code via email
-                // Mail::to($user->email)->send(new \App\Mail\TwoFactorCode($code));
+                Mail::to($user->email)->send(new \App\Mail\TwoFactorCode($code));
 
                 // Redirect to the 2FA verification page
                 return redirect()->route('two-factor.show');

@@ -67,14 +67,14 @@
                             @foreach ($reports as $bond)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4">{{ $index++ }}</td>
-                                    <td class="px-6 py-4">{{ $bond->issuer->issuer_short_name }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->facility_code }}</td>
+                                    <td class="px-6 py-4">{{ $bond->issuer->issuer_short_name ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $bond->facility_code ?? '-' }}</td>
                                     <td class="px-6 py-4 text-gray-500">{{ $bond->bonk_sukuk_name ?? '-' }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->issuer_short_name }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->facility?->facility_name }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->debenture }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->trustee_role_1 }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->trustee_role_2 }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->issuer_short_name ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $bond->facility?->facility_name ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->debenture ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->trustee_role_1 ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->trustee_role_2 ?? '-' }}</td>
                                     <td class="px-6 py-4 text-gray-500">
                                         {{ number_format($bond->facility?->facility_amount, 2) }}</td>
                                     <td class="px-6 py-4 text-gray-500">

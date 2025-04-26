@@ -83,15 +83,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            <label for="portfolio" class="block text-sm font-medium text-gray-700">Portfolio</label>
-                            <select id="portfolio" name="portfolio_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="">All Portfolios</option>
-                                @foreach($portfolios as $portfolio)
-                                    <option value="{{ $portfolio->id }}" {{ request('portfolio_id') == $portfolio->id ? 'selected' : '' }}>{{ $portfolio->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
                         <div class="flex items-end space-x-3">
                             <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 Filter Results
