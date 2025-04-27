@@ -58,8 +58,8 @@
                             <dt class="text-sm font-medium text-gray-500">Portfolio</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 @if($approvalForm->portfolio)
-                                <a href="{{ route('portfolio.show', $approvalForm->portfolio) }}" class="text-indigo-600 hover:text-indigo-900">
-                                    {{ $approvalForm->portfolio->name ?? 'N/A' }}
+                                <a href="{{ route('portfolio-a.show', $approvalForm->portfolio) }}" class="text-indigo-600 hover:text-indigo-900">
+                                    {{ $approvalForm->portfolio->portfolio_name ?? 'N/A' }}
                                 </a>
                                 @else
                                     N/A
@@ -203,7 +203,7 @@
                             </button>
                         @endif
                         
-                        <a href="{{ route('approval-form-a.index', ['status' => $approvalForm->status]) }}" 
+                        <a href="{{ route('approval-form-a.main', ['status' => $approvalForm->status]) }}" 
                             class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
