@@ -40,6 +40,10 @@ class PendingIssuerForApprovalEmails extends Mailable
     {
         return new Content(
             markdown: 'emails.issuer.pending',
+            with: [
+                'issuer' => $this->issuer,
+                'user' => $this->user,
+            ]
         );
     }
 
