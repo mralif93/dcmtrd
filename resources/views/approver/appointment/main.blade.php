@@ -68,20 +68,31 @@
 
                 <!-- Search and filter options -->
                 <div class="px-4 py-3 bg-gray-50 sm:px-6">
-                    <form action="{{ route('appointment-a.main') }}" method="GET" class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <form action="{{ route('appointment-a.main') }}" method="GET" class="grid grid-cols-1 gap-3 md:grid-cols-3">
                         <input type="hidden" name="tab" value="{{ $activeTab }}">
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <input type="text" name="search" id="search" value="{{ request('search') }}" 
-                                       class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md" 
-                                       placeholder="Party name, description...">
+                                    class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md" 
+                                    placeholder="Party name, description...">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                     <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
                                 </div>
                             </div>
+                        </div>
+                        <div>
+                            <label for="portfolio_id" class="block text-sm font-medium text-gray-700">Portfolio</label>
+                            <select id="portfolio_id" name="portfolio_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                <option value="">All Portfolios</option>
+                                @foreach($portfolios as $portfolio)
+                                    <option value="{{ $portfolio->id }}" {{ request('portfolio_id') == $portfolio->id ? 'selected' : '' }}>
+                                        {{ $portfolio->portfolio_name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="flex items-end space-x-3">
                             <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -118,7 +129,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $appointment->portfolio->name }}</div>
+                                    <div class="text-sm text-gray-900">{{ $appointment->portfolio->portfolio_name }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">{{ $appointment->date_of_approval->format('d M Y') }}</div>
