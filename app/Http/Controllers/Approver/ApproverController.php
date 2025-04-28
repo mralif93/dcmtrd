@@ -1680,40 +1680,73 @@ class ApproverController extends Controller
     {
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
-
-        // search & filter
+    
+        // Base query
         $query = ApprovalForm::with(['portfolio', 'property']);
-
-        // Apply portfolio filter based on tab
-        if ($activeTab === 'all') {
-            $query->whereHas('portfolio', function ($query) {
-                $query->where('status', 'active');
-            });
+    
+        // Apply status filter based on tab
+        if ($activeTab === 'pending') {
+            $query->where('status', 'pending');
+        } elseif ($activeTab === 'active') {
+            $query->where('status', 'active');
+        } elseif ($activeTab === 'rejected') {
+            $query->where('status', 'rejected');
         } elseif ($activeTab === 'inactive') {
-            $query->whereHas('portfolio', function ($query) {
-                $query->where('status', 'inactive');
-            });
+            $query->where('status', 'inactive');
         }
-
-        // fetch approval forms
+        // 'all' tab shows everything, so no status filter needed
+    
+        // Apply date filters if provided
+        if ($request->filled('received_date')) {
+            $query->whereDate('received_date', $request->received_date);
+        }
+        
+        if ($request->filled('send_date')) {
+            $query->whereDate('send_date', $request->send_date);
+        }
+        
+        // Apply category filter if provided
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+    
+        // Fetch approval forms with pagination
         $approvalForms = $query->latest()->paginate(10)->withQueryString();
-
-        // Count records for each tab
+    
+        // Count records for each tab - these should be filtered by the same criteria as the main query
+        // except for the status which defines each tab
+        $baseCountQuery = ApprovalForm::query();
+        
+        // Apply the same filters to the count queries (except status)
+        if ($request->filled('received_date')) {
+            $baseCountQuery->whereDate('received_date', $request->received_date);
+        }
+        
+        if ($request->filled('send_date')) {
+            $baseCountQuery->whereDate('send_date', $request->send_date);
+        }
+        
+        if ($request->filled('category')) {
+            $baseCountQuery->where('category', $request->category);
+        }
+        
         $tabCounts = [
-            'all' => ApprovalForm::count(),
-            'active' => ApprovalForm::where('status', 'active')->count(),
-            'pending' => ApprovalForm::where('status', 'pending')->count(),
-            'rejected' => ApprovalForm::where('status', 'rejected')->count(),
-            'inactive' => ApprovalForm::where('status', 'inactive')->count(),
+            'all' => (clone $baseCountQuery)->count(),
+            'pending' => (clone $baseCountQuery)->where('status', 'pending')->count(),
+            'active' => (clone $baseCountQuery)->where('status', 'active')->count(),
+            'rejected' => (clone $baseCountQuery)->where('status', 'rejected')->count(),
+            'inactive' => (clone $baseCountQuery)->where('status', 'inactive')->count(),
         ];
-
-        // Get all portfolios for the dropdown
-        $portfolioIds = $approvalForms->pluck('portfolio_id')->unique();
-        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
+    
+        // Get all categories for the dropdown - no need to tie this to the current results
         $categories = ApprovalForm::select('category')->distinct()->pluck('category');
-        $statuses = ApprovalForm::select('status')->distinct()->pluck('status');
-
-        return view('approver.approval-form.main', compact('approvalForms', 'activeTab', 'tabCounts', 'portfolios', 'categories', 'statuses'));
+    
+        return view('approver.approval-form.main', compact(
+            'approvalForms', 
+            'activeTab', 
+            'tabCounts', 
+            'categories'
+        ));
     }
 
     public function ApprovalFormDetails(ApprovalForm $approvalForm)
