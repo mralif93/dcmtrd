@@ -1793,13 +1793,38 @@ class ApproverController extends Controller
     {
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
-
-        // search & filter
-        $query = ApprovalProperty::with(['portfolio', 'property']);
-
-        // fetch approval properties
+    
+        // Base query with relationships
+        $query = ApprovalProperty::with(['property.portfolio']);
+    
+        // Apply filter by tab
+        if ($activeTab !== 'all') {
+            $query->where('status', $activeTab);
+        }
+    
+        // Apply search filter if present
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->whereHas('property', function($propertyQuery) use ($searchTerm) {
+                    $propertyQuery->where('name', 'like', "%{$searchTerm}%");
+                })
+                ->orWhere('estimated_amount', 'like', "%{$searchTerm}%")
+                ->orWhere('prepared_by', 'like', "%{$searchTerm}%")
+                ->orWhere('description', 'like', "%{$searchTerm}%");
+            });
+        }
+    
+        // Apply portfolio filter if present
+        if ($request->has('portfolio_id') && !empty($request->portfolio_id)) {
+            $query->whereHas('property', function($propertyQuery) use ($request) {
+                $propertyQuery->where('portfolio_id', $request->portfolio_id);
+            });
+        }
+    
+        // Fetch approval properties with pagination
         $approvalProperties = $query->latest()->paginate(10)->withQueryString();
-
+    
         // Count records for each tab
         $tabCounts = [
             'all' => ApprovalProperty::count(),
@@ -1808,19 +1833,26 @@ class ApproverController extends Controller
             'rejected' => ApprovalProperty::where('status', 'rejected')->count(),
             'inactive' => ApprovalProperty::where('status', 'inactive')->count(),
         ];
-
-        // Get all portfolios for the dropdown
-        $portfolioIds = $approvalProperties->pluck('portfolio_id')->unique();
-        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
-
-        // Get all properties for the dropdown
+    
+        // Get all properties for the dropdown - only get what's needed for the current page
         $propertyIds = $approvalProperties->pluck('property_id')->unique();
         $properties = Property::whereIn('id', $propertyIds)->get();
-
-        $categories = ApprovalProperty::select('category')->distinct()->pluck('category');
+    
+        // Get all portfolios for the dropdown - only get what's needed for the current page
+        $portfolioIds = $properties->pluck('portfolio_id')->unique()->filter();
+        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
+    
+        // Get all statuses for the dropdown
         $statuses = ApprovalProperty::select('status')->distinct()->pluck('status');
-
-        return view('approver.approval-property.main', compact('approvalProperties', 'activeTab', 'tabCounts', 'portfolios', 'properties', 'categories', 'statuses'));
+    
+        return view('approver.approval-property.main', compact(
+            'approvalProperties', 
+            'activeTab', 
+            'tabCounts', 
+            'properties', 
+            'portfolios', 
+            'statuses'
+        ));
     }
 
     public function ApprovalPropertyDetails(ApprovalProperty $approvalProperty)

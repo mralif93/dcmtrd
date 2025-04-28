@@ -68,14 +68,16 @@
 
                 <!-- Search and filter options -->
                 <div class="px-4 py-3 bg-gray-50 sm:px-6">
-                    <form action="{{ route('approval-property-a.main') }}" method="GET" class="grid grid-cols-1 gap-4 md:grid-cols-4">
+                    <form action="{{ route('approval-property-a.main') }}" method="GET" class="grid grid-cols-1 gap-3 md:grid-cols-3">
                         <input type="hidden" name="tab" value="{{ $activeTab }}">
+                        
+                        <!-- Search input -->
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <input type="text" name="search" id="search" value="{{ request('search') }}" 
                                        class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md" 
-                                       placeholder="Description, amount, prepared by...">
+                                       placeholder="Property name, amount, prepared by...">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                     <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -83,24 +85,20 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Portfolio filter dropdown -->
                         <div>
                             <label for="portfolio_id" class="block text-sm font-medium text-gray-700">Portfolio</label>
-                            <select id="portfolio_id" name="portfolio_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <select id="portfolio_id" name="portfolio_id" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                                 <option value="">All Portfolios</option>
                                 @foreach($portfolios as $portfolio)
-                                    <option value="{{ $portfolio->id }}" {{ request('portfolio_id') == $portfolio->id ? 'selected' : '' }}>{{ $portfolio->name }}</option>
+                                    <option value="{{ $portfolio->id }}" {{ request('portfolio_id') == $portfolio->id ? 'selected' : '' }}>
+                                        {{ $portfolio->portfolio_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <label for="property_id" class="block text-sm font-medium text-gray-700">Property</label>
-                            <select id="property_id" name="property_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="">All Properties</option>
-                                @foreach($properties as $property)
-                                    <option value="{{ $property->id }}" {{ request('property_id') == $property->id ? 'selected' : '' }}>{{ $property->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        
                         <div class="flex items-end space-x-3">
                             <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 Filter Results
@@ -117,30 +115,30 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Portfolio</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($approvalProperties as $approvalProperty)
+                            @forelse($approvalProperties as $approvalProperty)
                             <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">
+                                        {{ $approvalProperty->property && $approvalProperty->property->portfolio 
+                                            ? $approvalProperty->property->portfolio->portfolio_name 
+                                            : 'N/A' 
+                                        }}
+                                    </div>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
                                         <a href="{{ route('approval-property-a.details', $approvalProperty) }}" class="text-indigo-600 hover:text-indigo-900">
                                             {{ $approvalProperty->property ? $approvalProperty->property->name : 'N/A' }}
                                         </a>
                                     </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $approvalProperty->portfolio ? $approvalProperty->portfolio->name : 'N/A' }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ Str::limit($approvalProperty->description, 30) }}</div>
-                                    <div class="text-sm text-gray-500">{{ $approvalProperty->prepared_by ? 'By: ' . $approvalProperty->prepared_by : '' }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">
@@ -189,14 +187,13 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforeach
-                            @if($approvalProperties->count() === 0)
+                            @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center">
+                                <td colspan="5" class="px-6 py-4 text-center">
                                     <div class="text-sm text-gray-500">No approval properties found.</div>
                                 </td>
                             </tr>
-                            @endif
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -247,16 +244,30 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Add any JavaScript functionality needed for filtering or dynamic behavior
+            // Close modal if ESC key is pressed
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && !document.getElementById('rejectModal').classList.contains('hidden')) {
+                    closeRejectModal();
+                }
+            });
+            
+            // Close modal if clicked outside
+            document.getElementById('rejectModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeRejectModal();
+                }
+            });
         });
         
         function openRejectModal(approvalPropertyId) {
             document.getElementById('rejectForm').action = `/approver/approval-property/${approvalPropertyId}/reject`;
             document.getElementById('rejectModal').classList.remove('hidden');
+            document.getElementById('rejection_reason').focus();
         }
         
         function closeRejectModal() {
             document.getElementById('rejectModal').classList.add('hidden');
+            document.getElementById('rejection_reason').value = '';
         }
     </script>
 </x-app-layout>
