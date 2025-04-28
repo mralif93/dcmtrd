@@ -68,14 +68,16 @@
 
                 <!-- Search and filter options -->
                 <div class="px-4 py-3 bg-gray-50 sm:px-6">
-                    <form action="{{ route('site-visit-log-a.main') }}" method="GET" class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <form action="{{ route('site-visit-log-a.main') }}" method="GET" class="grid grid-cols-4 gap-4 md:grid-cols-5">
                         <input type="hidden" name="tab" value="{{ $activeTab }}">
+                        
+                        <!-- Search input -->
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <input type="text" name="search" id="search" value="{{ request('search') }}" 
-                                       class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md" 
-                                       placeholder="Purpose, property...">
+                                    class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md" 
+                                    placeholder="Purpose, property...">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                     <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -83,15 +85,48 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Portfolio dropdown -->
                         <div>
-                            <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
-                            <select id="category" name="category" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="">All Categories</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
+                            <label for="portfolio_id" class="block text-sm font-medium text-gray-700">Portfolio</label>
+                            <select id="portfolio_id" name="portfolio_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="">All Portfolios</option>
+                                @foreach($portfolios as $portfolio)
+                                    <option value="{{ $portfolio->id }}" {{ request('portfolio_id') == $portfolio->id ? 'selected' : '' }}>
+                                        {{ $portfolio->portfolio_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
+                        
+                        <!-- Property dropdown -->
+                        <div>
+                            <label for="property_id" class="block text-sm font-medium text-gray-700">Property</label>
+                            <select id="property_id" name="property_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="">All Properties</option>
+                                @foreach($properties as $property)
+                                    <option value="{{ $property->id }}" 
+                                            data-portfolio="{{ $property->portfolio_id }}"
+                                            {{ request('property_id') == $property->id ? 'selected' : '' }}>
+                                        {{ $property->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- Category dropdown -->
+                        <div>
+                            <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                            <select id="category" name="category" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                @foreach($categories as $category)
+                                    <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
+                                        {{ $category }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- Filter buttons -->
                         <div class="flex items-end space-x-3">
                             <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 Filter Results
@@ -151,7 +186,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        <a href="{{ route('site-visit-log-a.show', $log) }}" class="text-indigo-600 hover:text-indigo-900" title="View Details">
+                                        <a href="{{ route('site-visit-log-a.details', $log) }}" class="text-indigo-600 hover:text-indigo-900" title="View Details">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -238,7 +273,48 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Add any JavaScript functionality needed for filtering or dynamic behavior
+            // Get references to our select elements
+            const portfolioSelect = document.getElementById('portfolio_id');
+            const propertySelect = document.getElementById('property_id');
+            
+            // Store all property options for filtering
+            const propertyOptions = Array.from(propertySelect.options);
+            
+            // Function to filter properties based on selected portfolio
+            function filterPropertiesByPortfolio() {
+                const selectedPortfolioId = portfolioSelect.value;
+                
+                // If a portfolio is selected, only show properties from that portfolio
+                if (selectedPortfolioId) {
+                    propertyOptions.forEach(option => {
+                        if (option.value === '' || option.dataset.portfolio === selectedPortfolioId) {
+                            propertySelect.appendChild(option.cloneNode(true));
+                        }
+                    });
+                } else {
+                    // If no portfolio selected, show all properties
+                    propertyOptions.forEach(option => {
+                        propertySelect.appendChild(option.cloneNode(true));
+                    });
+                }
+                
+                // Restore the previously selected property if it's still available
+                const previouslySelectedProperty = "{{ request('property_id') }}";
+                if (previouslySelectedProperty) {
+                    for (let i = 0; i < propertySelect.options.length; i++) {
+                        if (propertySelect.options[i].value === previouslySelectedProperty) {
+                            propertySelect.options[i].selected = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Attach event listener to portfolio select
+            portfolioSelect.addEventListener('change', filterPropertiesByPortfolio);
+            
+            // Initial filter on page load
+            filterPropertiesByPortfolio();
         });
         
         function openRejectModal(logId) {

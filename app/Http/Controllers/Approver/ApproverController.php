@@ -1949,29 +1949,80 @@ class ApproverController extends Controller
     {
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
-
-        // search & filter
-        $query = SiteVisitLog::with(['siteVisit', 'siteVisit.property', 'siteVisit.property.portfolio']);
-
+    
+        // Initialize the query with relationships
+        $query = SiteVisitLog::with(['property', 'property.portfolio']);
+        
         // Apply status filter based on tab
         if ($activeTab !== 'all') {
             $query->where('status', $activeTab);
         }
-
-        // fetch site visit logs
+        
+        // Apply search filter if provided
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('purpose', 'like', "%{$search}%")
+                  ->orWhereHas('property', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('address', 'like', "%{$search}%");
+                  });
+            });
+        }
+        
+        // Apply category filter if provided
+        if ($request->has('category') && !empty($request->category)) {
+            $query->where('category', $request->category);
+        }
+        
+        // Apply portfolio filter if provided
+        if ($request->has('portfolio_id') && !empty($request->portfolio_id)) {
+            $query->whereHas('property', function($q) use ($request) {
+                $q->where('portfolio_id', $request->portfolio_id);
+            });
+        }
+        
+        // Apply property filter if provided
+        if ($request->has('property_id') && !empty($request->property_id)) {
+            $query->where('property_id', $request->property_id);
+        }
+    
+        // Fetch site visit logs
         $siteVisitLogs = $query->latest()->paginate(10)->withQueryString();
-
-        // Get all properties for the dropdown
-        $propertyIds = $siteVisitLogs->pluck('site_visit.property_id')->unique();
-        $properties = Property::whereIn('id', $propertyIds)->get();
-
-        // Get all portfolios for the dropdown
-        $portfolioIds = $siteVisitLogs->pluck('site_visit.property.portfolio_id')->unique();
-        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
-
-        // Get all category for the dropdown
-        $categories = SiteVisitLog::select('category')->distinct()->pluck('category');
-
+    
+        // Get all property IDs referenced in the current filtered records
+        $filteredPropertyIds = $siteVisitLogs->pluck('property_id')->unique();
+        
+        // Include the currently selected property even if it's not in the result set
+        if ($request->has('property_id') && !empty($request->property_id)) {
+            $filteredPropertyIds->push($request->property_id);
+        }
+        
+        // Get properties for the dropdown based on current query results
+        $properties = Property::whereIn('id', $filteredPropertyIds)->orderBy('name')->get();
+        
+        // Get all portfolio IDs from the filtered properties
+        $filteredPortfolioIds = $properties->pluck('portfolio_id')->unique();
+        
+        // Include the currently selected portfolio even if it's not in the result set
+        if ($request->has('portfolio_id') && !empty($request->portfolio_id)) {
+            $filteredPortfolioIds->push($request->portfolio_id);
+        }
+        
+        // Get portfolios for the dropdown based on current query results
+        $portfolios = Portfolio::whereIn('id', $filteredPortfolioIds)->orderBy('name')->get();
+    
+        // Get all category values from the current query results
+        $filteredCategories = $siteVisitLogs->pluck('category')->unique()->filter();
+        
+        // Include the currently selected category even if it's not in the result set
+        if ($request->has('category') && !empty($request->category)) {
+            $filteredCategories->push($request->category);
+        }
+        
+        // Get categories for the dropdown
+        $categories = $filteredCategories;
+    
         // Count records for each tab
         $tabCounts = [
             'all' => SiteVisitLog::count(),
@@ -1980,8 +2031,15 @@ class ApproverController extends Controller
             'rejected' => SiteVisitLog::where('status', 'rejected')->count(),
             'inactive' => SiteVisitLog::where('status', 'inactive')->count(),
         ];
-
-        return view('approver.site-visit-log.main', compact('siteVisitLogs', 'activeTab', 'portfolios', 'properties', 'categories', 'tabCounts'));
+    
+        return view('approver.site-visit-log.main', compact(
+            'siteVisitLogs', 
+            'activeTab', 
+            'portfolios', 
+            'properties', 
+            'categories', 
+            'tabCounts'
+        ));
     }
 
     public function SiteVisitLogDetails(SiteVisitLog $siteVisitLog)
