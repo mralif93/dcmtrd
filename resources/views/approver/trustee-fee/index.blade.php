@@ -151,7 +151,7 @@
                             <tr>
                                 <th scope="col"
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                    Facility</th>
+                                    Facility / Issuer</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                     Fee Amount</th>
@@ -171,10 +171,14 @@
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">
-                                            <a href="{{ route('trustee-fee-a.show', $fee) }}"
+                                            <a href="{{ route('trustee-fee-m.show', $fee) }}"
                                                 class="text-indigo-600 hover:text-indigo-900">
-                                                {{ $fee->facility->name }}
-                                                <p>({{ $fee->description }})</p>
+                                                {{ $fee->facility?->facility_code }} -
+                                                {{ $fee->facility?->facility_name }}
+                                                <p class="text-xs text-gray-500">
+                                                    {{ $fee->facility?->issuer->issuer_short_name }} -
+                                                    {{ $fee->facility?->issuer->issuer_name }}</p>
+                                                <p class="mt-1 text-xs text-gray-700">{{ $fee->description }}</p>
                                             </a>
                                         </div>
                                     </td>
