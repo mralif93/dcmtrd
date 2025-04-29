@@ -85,28 +85,28 @@ class ApproverController extends Controller
                     (SELECT COUNT(*) FROM financials) AS financials_count,
                     (SELECT COUNT(*) FROM tenants) AS tenants_count,
                     (SELECT COUNT(*) FROM leases) AS leases_count,
-                    (SELECT COUNT(*) FROM site_visits) AS siteVisits_count,
+                    (SELECT COUNT(*) FROM site_visits) AS site_visits_count,
                     (SELECT COUNT(*) FROM checklists) AS checklists_count,
                     (SELECT COUNT(*) FROM appointments) AS appointments_count,
-                    (SELECT COUNT(*) FROM approval_forms) AS approvalForms_count,
-                    (SELECT COUNT(*) FROM approval_properties) AS approvalProperties_count,
-                    (SELECT COUNT(*) FROM site_visit_logs) AS siteVisitLogs_count,
+                    (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
+                    (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
+                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
                     
                     -- Add pending counts
-                    (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS pending_trusteeFees_count,
-                    (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS pending_complianceCovenants_count,
-                    (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS pending_activityDiaries_count,
+                    (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS pending_trustee_fees_count,
+                    (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS pending_compliance_covenants_count,
+                    (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS pending_activity_diaries_count,
                     (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
                     (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
                     (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
                     (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
                     (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
-                    (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_siteVisits_count,
+                    (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_site_visits_count,
                     (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
                     (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
-                    (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approvalForms_count,
-                    (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approvalProperties_count,
-                    (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_siteVisitLogs_count
+                    (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approval_forms_count,
+                    (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approval_properties_count,
+                    (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_site_visit_logs_count
             ");
             return (array) $result[0];
         });
@@ -122,24 +122,24 @@ class ApproverController extends Controller
             'financialsCount' => $counts['financials_count'],
             'tenantsCount' => $counts['tenants_count'],
             'leasesCount' => $counts['leases_count'],
-            'siteVisitsCount' => $counts['siteVisits_count'],
+            'siteVisitsCount' => $counts['site_visits_count'],
             'checklistsCount' => $counts['checklists_count'],
             'appointmentsCount' => $counts['appointments_count'],
-            'approvalFormsCount' => $counts['approvalForms_count'],
-            'approvalPropertiesCount' => $counts['approvalProperties_count'],
-            'siteVisitLogsCount' => $counts['siteVisitLogs_count'],
+            'approvalFormsCount' => $counts['approval_forms_count'],
+            'approvalPropertiesCount' => $counts['approval_properties_count'],
+            'siteVisitLogsCount' => $counts['site_visit_logs_count'],
             
             // Add pending counts to view data
             'pendingPropertiesCount' => $counts['pending_properties_count'],
             'pendingFinancialsCount' => $counts['pending_financials_count'],
             'pendingTenantsCount' => $counts['pending_tenants_count'],
             'pendingLeaseCount' => $counts['pending_leases_count'],
-            'pendingSiteVisitCount' => $counts['pending_siteVisits_count'],
+            'pendingSiteVisitCount' => $counts['pending_site_visits_count'],
             'pendingChecklistCount' => $counts['pending_checklists_count'],
             'pendingAppointmentsCount' => $counts['pending_appointments_count'],
-            'pendingApprovalFormsCount' => $counts['pending_approvalForms_count'],
-            'pendingApprovalPropertiesCount' => $counts['pending_approvalProperties_count'],
-            'pendingSiteVisitLogsCount' => $counts['pending_siteVisitLogs_count'],
+            'pendingApprovalFormsCount' => $counts['pending_approval_forms_count'],
+            'pendingApprovalPropertiesCount' => $counts['pending_approval_properties_count'],
+            'pendingSiteVisitLogsCount' => $counts['pending_site_visit_logs_count'],
         ]);
     }
 
