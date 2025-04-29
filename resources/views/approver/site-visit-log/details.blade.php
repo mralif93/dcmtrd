@@ -131,7 +131,7 @@
                 <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
                     <div class="flex justify-end gap-x-4">
                         @if($siteVisitLog->status == 'pending')
-                            <form method="POST" action="{{ route('site-visit-logs.approve', $siteVisitLog) }}" class="inline">
+                            <form method="POST" action="{{ route('site-visit-log-a.approve', $siteVisitLog) }}" class="inline">
                                 @csrf
                                 <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                     <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -149,7 +149,7 @@
                             </button>
                         @endif
                         
-                        <a href="{{ route('site-visit-logs.main', ['tab' => $siteVisitLog->status]) }}" 
+                        <a href="{{ route('site-visit-log-a.main', ['tab' => $siteVisitLog->status]) }}" 
                             class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
