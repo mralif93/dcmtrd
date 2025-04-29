@@ -365,9 +365,12 @@ Route::middleware(['auth', 'two-factor', 'role:legal'])->group(function () {
     Route::get('legal/site-visit/{siteVisit}/show', [LegalController::class, 'SiteVisitShow'])->name('site-visit-l.show')->middleware('permission:REITS');
 
     // Checklist Module
-    Route::get('legal/checklist/{checklist}/edit', [LegalController::class, 'ChecklistEdit'])->name('checklist-l.edit')->middleware('permission:REITS');
-    Route::patch('legal/checklist/{checklist}/update', [LegalController::class, 'ChecklistUpdate'])->name('checklist-l.update')->middleware('permission:REITS');
     Route::get('legal/checklist/{checklist}/show', [LegalController::class, 'ChecklistShow'])->name('checklist-l.show')->middleware('permission:REITS');
+
+    // Checklist Legal Module
+    Route::get('legal/checklist-legal/{checklist}/edit', [LegalController::class, 'ChecklistLegalDocumentationEdit'])->name('checklist-legal-l.edit')->middleware('permission:REITS');
+    Route::patch('legal/checklist-legal/{checklistLegalDocumentation}/update', [LegalController::class, 'ChecklistLegalDocumentationUpdate'])->name('checklist-legal-l.update')->middleware('permission:REITS');
+    Route::get('legal/checklist-legal/{checklistLegalDocumentation}/show', [LegalController::class, 'ChecklistLegalDocumentationShow'])->name('checklist-legal-l.show')->middleware('permission:REITS');
 });
 
 // Compliance routes
