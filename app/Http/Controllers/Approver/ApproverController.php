@@ -102,7 +102,6 @@ class ApproverController extends Controller
             (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approval_forms_count,
             (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approval_properties_count
     ");
-        $counts = (array) $counts[0];
 
         return view('approver.index', [
             'issuers' => $issuers,
