@@ -171,7 +171,7 @@
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">
-                                            <a href="{{ route('trustee-fee-m.show', $fee) }}"
+                                            <a href="{{ route('trustee-fee-a.show', $fee) }}"
                                                 class="text-indigo-600 hover:text-indigo-900">
                                                 {{ $fee->facility?->facility_code }} -
                                                 {{ $fee->facility?->facility_name }}
