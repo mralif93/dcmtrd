@@ -17,48 +17,61 @@ use App\Models\Lease;
 use App\Models\Financial;
 use App\Models\Checklist;
 use App\Models\SiteVisit;
+use App\Models\ChecklistLegalDocumentation;
 
 class LegalController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Checklist::query();
+        // Start with the Checklist query
+        $query = Checklist::with(['siteVisit.property', 'legalDocumentation']);
+
+        // Get checklists with related data
         $checklists = $query->latest()->paginate(10)->withQueryString();
+
         return view('legal.index', compact('checklists'));
     }
 
-    // Site Visit Module
-    public function SiteVisitShow(SiteVisit $siteVisit)
-    {
-        return view('legal.site-visit.show', compact('siteVisit'));
-    }
-
     // Checklist Module
-    public function ChecklistEdit(Checklist $checklist)
+    public function ChecklistShow(Checklist $checklist)
     {
-        $siteVisits = SiteVisit::where('status', 'active')->get();
-        return view('legal.checklist.edit', compact('checklist', 'siteVisits'));
+        return view('legal.checklist.show', compact('checklist'));
     }
 
-    public function ChecklistUpdate(Request $request, Checklist $checklist)
+    // Checklist Legal Module
+    public function ChecklistLegalDocumentationEdit(Checklist $checklist)
     {
-        $validated = $this->ChecklistValidate($request);
+        $checklistLegalDocumentation = $checklist->legalDocumentation;
+        return view('legal.checklist.legal-documentation.edit', compact('checklistLegalDocumentation'));
+    }
 
+    public function ChecklistLegalDocumentationUpdate(Request $request, ChecklistLegalDocumentation $checklistLegalDocumentation)
+    {
+        $validated = $this->ChecklistLegalDocumentationValidate($request);
+    
         $validated['verified_by'] = Auth::user()->name;
         $validated['status'] = 'Active';
 
         try {
-            $checklist->update($validated);
-            return redirect()->route('legal.dashboard', ['section' => 'reits'])->with('success', 'Checklist updated successfully.');
+            // Update the legal documentation
+            $checklistLegalDocumentation->update($validated);
+
+            // Updated checklist to active
+            $checklist = $checklistLegalDocumentation->checklist;
+            $checklist['verified_by'] = Auth::user()->name;
+            $checklist['status'] = 'Active';
+            $checklist['approval_datetime'] = now();
+            $checklist->update();
+            
+            return redirect()->route('legal.dashboard', ['section' => 'reits'])->with('success', 'Legal documentation updated successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error updating checklist: ' . $e->getMessage());
+            return back()->with('error', 'Error updating legal documentation: ' . $e->getMessage());
         }
     }
 
-    public function ChecklistValidate(Request $request, Checklist $checklist = null)
+    public function ChecklistLegalDocumentationValidate(Request $request, ChecklistLegalDocumentation $checklistLegalDocumentation = null)
     {
         return $request->validate([
-            // 1.0 Legal Documentation
             'title_ref' => 'nullable|string|max:255',
             'title_location' => 'nullable|string|max:255',
             'trust_deed_ref' => 'nullable|string|max:255',
@@ -71,11 +84,16 @@ class LegalController extends Controller
             'maintenance_agreement_location' => 'nullable|string|max:255',
             'development_agreement' => 'nullable|string|max:255',
             'other_legal_docs' => 'nullable|string',
+            'status' => 'nullable|string|in:active,pending,rejected,inactive',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
         ]);
     }
 
-    public function ChecklistShow(Checklist $checklist)
+    public function ChecklistLegalDocumentationShow(Checklist $checklist)
     {
-        return view('legal.checklist.show', compact('checklist'));
+        return view('legal.checklist-legal-documentation.show', compact('checklist'));
     }
 }

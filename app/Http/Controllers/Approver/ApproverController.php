@@ -114,24 +114,24 @@ class ApproverController extends Controller
             'financialsCount' => $counts['financials_count'],
             'tenantsCount' => $counts['tenants_count'],
             'leasesCount' => $counts['leases_count'],
-            'siteVisitsCount' => $counts['siteVisits_count'],
+            'siteVisitsCount' => $counts['site_visits_count'],
             'checklistsCount' => $counts['checklists_count'],
             'appointmentsCount' => $counts['appointments_count'],
-            'approvalFormsCount' => $counts['approvalForms_count'],
-            'approvalPropertiesCount' => $counts['approvalProperties_count'],
-            'siteVisitLogsCount' => $counts['siteVisitLogs_count'],
-
+            'approvalFormsCount' => $counts['approval_forms_count'],
+            'approvalPropertiesCount' => $counts['approval_properties_count'],
+            'siteVisitLogsCount' => $counts['site_visit_logs_count'],
+            
             // Add pending counts to view data
             'pendingPropertiesCount' => $counts['pending_properties_count'],
             'pendingFinancialsCount' => $counts['pending_financials_count'],
             'pendingTenantsCount' => $counts['pending_tenants_count'],
             'pendingLeaseCount' => $counts['pending_leases_count'],
-            'pendingSiteVisitCount' => $counts['pending_siteVisits_count'],
+            'pendingSiteVisitCount' => $counts['pending_site_visits_count'],
             'pendingChecklistCount' => $counts['pending_checklists_count'],
             'pendingAppointmentsCount' => $counts['pending_appointments_count'],
-            'pendingApprovalFormsCount' => $counts['pending_approvalForms_count'],
-            'pendingApprovalPropertiesCount' => $counts['pending_approvalProperties_count'],
-            'pendingSiteVisitLogsCount' => $counts['pending_siteVisitLogs_count'],
+            'pendingApprovalFormsCount' => $counts['pending_approval_forms_count'],
+            'pendingApprovalPropertiesCount' => $counts['pending_approval_properties_count'],
+            'pendingSiteVisitLogsCount' => $counts['pending_site_visit_logs_count'],
         ]);
     }
 
