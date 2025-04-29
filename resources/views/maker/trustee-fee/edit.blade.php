@@ -136,12 +136,6 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div>
-                                    <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
-                                    <input type="number" name="date" id="date" min="1" max="31"
-                                        value="{{ old('date', $trusteeFee->date) }}"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
                             </div>
                         </div>
 
