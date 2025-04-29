@@ -61,6 +61,12 @@ class DcmtReportController extends Controller
 
     public function trusteeReports()
     {
-        return view('admin.dcmt-report.trustee-reports');
+        $reports = Bond::with(['issuer', 'facility.trusteeFees'])
+            ->paginate(10)
+            ->withQueryString();
+
+            // dd($reports);
+
+        return view('admin.dcmt-report.trustee-reports', compact('reports'));
     }
 }

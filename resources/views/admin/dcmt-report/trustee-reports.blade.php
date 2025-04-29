@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-3xl font-semibold text-gray-800">{{ __('Corporate Bond Reports') }}</h2>
+        <h2 class="text-3xl font-semibold text-gray-800">{{ __('Trustee Master Reports') }}</h2>
     </x-slot>
 
     <div class="py-12">
@@ -48,23 +48,23 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
-                                {{-- @php $index = 1; @endphp
+                                @php $index = 1; @endphp
                                 @foreach ($reports as $item)
                                     <tr class="transition-all duration-150 hover:bg-gray-100">
                                         <td class="px-6 py-4 text-sm text-gray-900">{{ $index++ }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->trust ?? '-' }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->name ?? '-' }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->trust_type ?? '-' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer->issuer_short_name ?? '-' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer->issuer_name ?? '-' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer->debenture ?? '-' }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-500">
-                                            {{ number_format($item->trust_amount, 2) }}</td>
+                                            {{ number_format($item->issuer->trust_amount_escrow_sum, 2) }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-500">
-                                            {{ number_format($item->number_of_shares, 0) }}</td>
+                                            {{ number_format($item->issuer->no_of_share, 0) }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-500">
                                             {{ number_format($item->outstanding_size, 2) }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-500">
                                             {{ number_format($item->trustee_fee_amount, 2) }}</td>
                                     </tr>
-                                @endforeach --}}
+                                @endforeach
                             </tbody>
                         </table>
 

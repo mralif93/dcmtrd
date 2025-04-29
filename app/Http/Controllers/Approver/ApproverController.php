@@ -68,42 +68,40 @@ class ApproverController extends Controller
         $portfolioQuery = Portfolio::query()->whereIn('status', ['pending', 'active', 'rejected']);
         $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
 
-        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(1), function () {
-            $result = DB::select("
-                SELECT 
-                    (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
-                    (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
-                    (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
-                    (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
-                    (SELECT COUNT(*) FROM properties) AS properties_count,
-                    (SELECT COUNT(*) FROM financials) AS financials_count,
-                    (SELECT COUNT(*) FROM tenants) AS tenants_count,
-                    (SELECT COUNT(*) FROM leases) AS leases_count,
-                    (SELECT COUNT(*) FROM site_visits) AS siteVisits_count,
-                    (SELECT COUNT(*) FROM checklists) AS checklists_count,
-                    (SELECT COUNT(*) FROM appointments) AS appointments_count,
-                    (SELECT COUNT(*) FROM approval_forms) AS approvalForms_count,
-                    (SELECT COUNT(*) FROM approval_properties) AS approvalProperties_count,
-                    (SELECT COUNT(*) FROM site_visit_logs) AS siteVisitLogs_count,
-                    
-                    -- Add pending counts
-                    (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS pending_trusteeFees_count,
-                    (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS pending_complianceCovenants_count,
-                    (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS pending_activityDiaries_count,
-                    (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
-                    (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
-                    (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
-                    (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
-                    (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
-                    (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_siteVisits_count,
-                    (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
-                    (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
-                    (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approvalForms_count,
-                    (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approvalProperties_count,
-                    (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_siteVisitLogs_count
-            ");
-            return (array) $result[0];
-        });
+        $counts = DB::select("
+            SELECT 
+                (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
+                (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
+                (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
+                (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
+                (SELECT COUNT(*) FROM properties) AS properties_count,
+                (SELECT COUNT(*) FROM financials) AS financials_count,
+                (SELECT COUNT(*) FROM tenants) AS tenants_count,
+                (SELECT COUNT(*) FROM leases) AS leases_count,
+                (SELECT COUNT(*) FROM site_visits) AS siteVisits_count,
+                (SELECT COUNT(*) FROM checklists) AS checklists_count,
+                (SELECT COUNT(*) FROM appointments) AS appointments_count,
+                (SELECT COUNT(*) FROM approval_forms) AS approvalForms_count,
+                (SELECT COUNT(*) FROM approval_properties) AS approvalProperties_count,
+                (SELECT COUNT(*) FROM site_visit_logs) AS siteVisitLogs_count,
+                
+                -- Add pending counts
+                (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS pending_trusteeFees_count,
+                (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS pending_complianceCovenants_count,
+                (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS pending_activityDiaries_count,
+                (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
+                (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
+                (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
+                (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
+                (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
+                (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_siteVisits_count,
+                (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
+                (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
+                (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approvalForms_count,
+                (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approvalProperties_count,
+                (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_siteVisitLogs_count
+        ");
+        $counts = (array) $counts[0];
 
         return view('approver.index', [
             'issuers' => $issuers,
@@ -232,61 +230,36 @@ class ApproverController extends Controller
      */
     public function BondShow(Bond $bond)
     {
-        // STRATEGY 1: Load only what's shown on initial page view
-        // Deferred loading for elements that might not be immediately visible
-
-        // Get bare minimum data first to render the page quickly
         $bond->load([
-            'issuer:id,issuer_name,issuer_short_name',
-            // Only get the 3 most recent rating movements
-            'ratingMovements' => function ($q) {
-                $q->select('id', 'bond_id', 'rating', 'effective_date')
-                    ->orderBy('effective_date', 'desc')
-                    ->limit(3);
-            },
-            // Only load upcoming payment schedules
-            'paymentSchedules' => function ($q) {
-                $q->select('id', 'bond_id', 'payment_date', 'coupon_rate')
-                    ->where('payment_date', '>=', now())
-                    ->orderBy('payment_date')
-                    ->limit(3);
-            },
-            // Only most recent trading activity
-            'tradingActivities' => function ($q) {
-                $q->select('id', 'bond_id', 'trade_date', 'price', 'yield', 'amount')
-                    ->latest('trade_date')
-                    ->limit(5);
-            },
+            'issuer',
+            'ratingMovements',
+            'paymentSchedules',
+            'tradingActivities' => fn($q) => $q->latest()->limit(10),
+            'redemption.callSchedules',
+            'redemption.lockoutPeriods',
+            'charts'
         ]);
 
-        // STRATEGY 2: Perform manual efficient query for related documents
-        // Skip nested relationships entirely
+        // Get related documents through the issuer
         $relatedDocuments = null;
-        if ($bond->facility_code) {
-            // Direct DB query with specific columns and indexes
-            $relatedDocuments = DB::table('related_documents AS rd')
-                ->join('facility_informations AS fi', 'fi.id', '=', 'rd.facility_id')
-                ->select('rd.id', 'rd.document_name', 'rd.document_type', 'rd.upload_date', 'rd.file_path')
-                ->where('fi.facility_code', $bond->facility_code)
-                ->where('fi.issuer_id', $bond->issuer_id)
-                ->orderBy('rd.upload_date', 'desc')
-                ->limit(5) // Use limit instead of paginate for faster response
-                ->get();
+        if ($bond->issuer) {
+            // Get the facilityInformation linked to this bond
+            $facilityCode = $bond->facility_code;
+
+            if ($facilityCode) {
+                $facilityInfo = $bond->issuer->facilities()
+                    ->where('facility_code', $facilityCode)
+                    ->first();
+
+                if ($facilityInfo) {
+                    $relatedDocuments = $facilityInfo->documents()
+                        ->orderBy('upload_date', 'desc')
+                        ->paginate(10);
+                }
+            }
         }
 
-        // STRATEGY 3: Use separate AJAX endpoints for heavy data
-        // Instead of loading redemption data here, create a separate endpoint
-        // Then load it via AJAX after the page renders
-
-        // STRATEGY 4: Tell the view which parts of the bond object to render immediately
-        // and which parts to defer
-        $viewData = [
-            'bond' => $bond,
-            'relatedDocuments' => $relatedDocuments,
-            'showFullData' => false // Flag for view to know to show minimal UI initially
-        ];
-
-        return view('approver.bond.show', $viewData);
+        return view('approver.bond.show', compact('bond', 'relatedDocuments'));
     }
 
     /**

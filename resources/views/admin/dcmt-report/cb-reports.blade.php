@@ -62,6 +62,7 @@
                                 <th class="px-6 py-3">Last Modified</th>
                             </tr>
                         </thead>
+                        @dump($reports)
                         <tbody class="divide-y divide-gray-200">
                             @php $index = ($reports->currentPage() - 1) * $reports->perPage() + 1; @endphp
                             @foreach ($reports as $bond)
