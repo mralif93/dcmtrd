@@ -172,12 +172,6 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div>
-                                    <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
-                                    <input type="number" name="date" id="date" min="1"
-                                        max="31" value="{{ old('date') }}"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
                             </div>
                         </div>
 
@@ -229,7 +223,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Payment Information Section -->
                         <div>
                             <h3 class="mb-4 text-lg font-medium text-gray-900">Payment Information</h3>
@@ -269,6 +262,31 @@
                                     <input type="text" name="receipt_no" id="receipt_no"
                                         value="{{ old('receipt_no') }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+
+                                <!-- New: Remark to Management -->
+                                <div class="md:col-span-2">
+                                    <label for="remark_to_management"
+                                        class="block text-sm font-medium text-gray-700">Remark to Management</label>
+                                    <textarea name="remark_to_management" id="remark_to_management" rows="3"
+                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remark_to_management') }}</textarea>
+                                </div>
+
+                                <!-- New: Payment Status -->
+                                <div>
+                                    <label for="payment_status"
+                                        class="block text-sm font-medium text-gray-700">Payment Status</label>
+                                    <select name="payment_status" id="payment_status"
+                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">-- Select Status --</option>
+                                        <option value="Paid"
+                                            {{ old('payment_status') == 'Paid' ? 'selected' : '' }}>Paid</option>
+                                        <option value="Pending"
+                                            {{ old('payment_status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="Early Redemption"
+                                            {{ old('payment_status') == 'Early Redemption' ? 'selected' : '' }}>Early
+                                            Redemption</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>

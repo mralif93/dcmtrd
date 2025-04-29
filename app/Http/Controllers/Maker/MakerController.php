@@ -1357,10 +1357,8 @@ class MakerController extends Controller
         }
     }
 
-    protected function validateTrusteeFee(Request $request)
+    protected function validateTrusteeFee(Request $request, TrusteeFee $trusteeFee = null)
     {
-        $trusteeFee = null;
-
         return $request->validate([
             'facility_information_id' => 'required|exists:facility_informations,id',
             'description' => 'required|string',
@@ -1368,11 +1366,11 @@ class MakerController extends Controller
             'trustee_fee_amount_2' => 'nullable|numeric',
             'start_anniversary_date' => 'required|date',
             'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
-            'invoice_no' => 'required|string|' . ($trusteeFee ? 'unique:trustee_fees,invoice_no,' . $trusteeFee->id : 'unique:trustee_fees'),
+            'invoice_no' => 'required|string|unique:trustee_fees,invoice_no,' . ($trusteeFee ? $trusteeFee->id : 'NULL'),
             'month' => 'nullable|string|max:10',
-            'date' => 'nullable|integer|min:1|max:31',
             'memo_to_fad' => 'nullable|date',
             'date_letter_to_issuer' => 'nullable|date',
+            'payment_status' => 'nullable|in:Paid,Pending,Early Redemption',
             'first_reminder' => 'nullable|date',
             'second_reminder' => 'nullable|date',
             'third_reminder' => 'nullable|date',
@@ -1385,6 +1383,7 @@ class MakerController extends Controller
             'verified_by' => 'nullable|string|max:255',
             'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
             'remarks' => 'nullable|string',
+            'remark_to_management' => 'nullable|string|max:1000',
         ]);
     }
 
@@ -1442,7 +1441,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'Pending';
+        $validated['status'] = 'Draft';
 
         $compliance = ComplianceCovenant::create($validated);
 
