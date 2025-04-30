@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Bond;
+use App\Models\Issuer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -12,10 +13,10 @@ class DcmtReportController extends Controller
     {
         return view('admin.dcmt-report.index');
     }
-    public function indexA()
-    {
-        return view('approver.dcmt-report.index');
-    }
+    // public function indexA()
+    // {
+    //     return view('approver.dcmt-report.index');
+    // }
     public function cbReports(Request $request)
     {
         // Get the search query from the request
@@ -112,12 +113,25 @@ class DcmtReportController extends Controller
 
     public function trusteeReports()
     {
-        $reports = Bond::with(['issuer', 'facility.trusteeFees'])
+        $reports = Issuer::with(['facilities.trusteeFees'])
+            ->where('debenture', 'Corporate Trust')
             ->paginate(10)
             ->withQueryString();
-
-            // dd($reports);
-
+    
+        $reports->getCollection()->transform(function ($issuer) {
+            $total = $issuer->facilities->reduce(function ($carry, $facility) {
+                $feeTotal = $facility->trusteeFees->reduce(function ($subCarry, $fee) {
+                    return $subCarry + ($fee->trustee_fee_amount_1 ?? 0) + ($fee->trustee_fee_amount_2 ?? 0);
+                }, 0);
+    
+                return $carry + $feeTotal;
+            }, 0);
+    
+            $issuer->total_trustee_fee = $total;
+            return $issuer;
+        });
+    
         return view('admin.dcmt-report.trustee-reports', compact('reports'));
     }
+    
 }
