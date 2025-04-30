@@ -45,7 +45,7 @@ class AuthenticatedSessionController extends Controller
                 // Generate a random 6-digit code
                 $code = Str::random(6);
                 $user->two_factor_code = $code;
-                $user->two_factor_expires_at = Carbon::now()->addMinutes(10); // Code valid for 10 minutes
+                $user->two_factor_expires_at = Carbon::now()->addDay();
                 $user->save();
 
                 // Send the code via email
