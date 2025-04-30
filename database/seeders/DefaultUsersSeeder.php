@@ -525,7 +525,6 @@ class DefaultUsersSeeder extends Seeder
         
         // Admin users get ALL permissions
         $adminEmails = [
-            'admin@example.com',
             'ashraf_azmi@artrustees.com.my',
             'muqri.amin@artrustees.com.my',
             'nurfarzana@artrustees.com.my'
