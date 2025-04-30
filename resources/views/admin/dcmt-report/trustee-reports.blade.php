@@ -24,10 +24,11 @@
             @endif
 
             <!-- Export Buttons -->
-            <div class="flex justify-end mb-6 space-x-2">
-                <a
-                    class="px-6 py-2 text-sm font-medium text-white transition-all duration-200 ease-in-out bg-gray-700 rounded-lg hover:bg-gray-800">Export
-                    CSV</a>
+            <div class="flex justify-end">
+                <a href="{{ route('dcmt-reports.cb-export', ['type' => 'xls']) }}"
+                    class="inline-block px-6 py-2 text-sm font-semibold text-white transition bg-gray-800 rounded-md shadow hover:bg-gray-900">
+                    Export XLS
+                </a>
             </div>
 
             <div class="overflow-hidden bg-white rounded-lg shadow-lg">
@@ -52,9 +53,12 @@
                                 @foreach ($reports as $item)
                                     <tr class="transition-all duration-150 hover:bg-gray-100">
                                         <td class="px-6 py-4 text-sm text-gray-900">{{ $index++ }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer->issuer_short_name ?? '-' }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer->issuer_name ?? '-' }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer->debenture ?? '-' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">
+                                            {{ $item->issuer->issuer_short_name ?? '-' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">
+                                            {{ $item->issuer->issuer_name ?? '-' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">
+                                            {{ $item->issuer->debenture ?? '-' }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-500">
                                             {{ number_format($item->issuer->trust_amount_escrow_sum, 2) }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-500">

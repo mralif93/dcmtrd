@@ -395,7 +395,7 @@ Route::middleware(['auth', 'two-factor', 'role:compliance'])->group(function () 
 });
 
 // Maker routes
-Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
+Route::middleware(['auth', 'two-factor', 'role:maker|approver'])->group(function () {
     // Dashboard
     Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
 
@@ -686,6 +686,15 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
 Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     // Dashboard
     Route::get('/approver/dashboard', [ApproverController::class, 'index'])->name('approver.dashboard');
+
+    Route::prefix('/approver/dcmt')->name('a.dcmt-reports.')->group(function () {
+        Route::get('/reports', [DcmtReportController::class, 'indexA'])->name('index');
+        Route::get('/cb-reports', [DcmtReportController::class, 'cbReportsA'])->name('cb-reports.a');
+        Route::get('/export-cb', function () {
+            return Excel::download(new CorporateBondExport, 'corporate_bonds.xlsx');
+        })->name('cb-export.a');
+        Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports.a');
+    });
 
     // Issuer Module
     Route::get('approver/issuer/{issuer}/show', [ApproverController::class, 'IssuerShow'])->name('issuer-a.show')->middleware('permission:DCMTRD');
