@@ -395,7 +395,7 @@ Route::middleware(['auth', 'two-factor', 'role:compliance'])->group(function () 
 });
 
 // Maker routes
-Route::middleware(['auth', 'two-factor', 'role:maker|approver'])->group(function () {
+Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     // Dashboard
     Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
 
