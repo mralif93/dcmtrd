@@ -113,25 +113,26 @@ class DcmtReportController extends Controller
 
     public function trusteeReports()
     {
+        // Eager-load relationships and filter only Corporate Trust issuers
         $reports = Issuer::with(['facilities.trusteeFees'])
             ->where('debenture', 'Corporate Trust')
             ->paginate(10)
             ->withQueryString();
-    
+
+        // Compute total trustee fee for each issuer using functional reduce
         $reports->getCollection()->transform(function ($issuer) {
-            $total = $issuer->facilities->reduce(function ($carry, $facility) {
+            $totalTrusteeFee = $issuer->facilities->reduce(function ($carry, $facility) {
                 $feeTotal = $facility->trusteeFees->reduce(function ($subCarry, $fee) {
                     return $subCarry + ($fee->trustee_fee_amount_1 ?? 0) + ($fee->trustee_fee_amount_2 ?? 0);
                 }, 0);
-    
                 return $carry + $feeTotal;
             }, 0);
-    
-            $issuer->total_trustee_fee = $total;
+
+            // Attach to issuer object
+            $issuer->total_trustee_fee = $totalTrusteeFee;
             return $issuer;
         });
-    
+
         return view('admin.dcmt-report.trustee-reports', compact('reports'));
     }
-    
 }
