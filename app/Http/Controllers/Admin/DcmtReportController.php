@@ -13,10 +13,10 @@ class DcmtReportController extends Controller
     {
         return view('admin.dcmt-report.index');
     }
-    // public function indexA()
-    // {
-    //     return view('approver.dcmt-report.index');
-    // }
+    public function indexA()
+    {
+        return view('approver.dcmt-report.index');
+    }
     public function cbReports(Request $request)
     {
         // Get the search query from the request
