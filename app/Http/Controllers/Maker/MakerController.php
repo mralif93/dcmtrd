@@ -2876,7 +2876,7 @@ class MakerController extends Controller
             ChecklistLegalDocumentation::create($validated);
             
             return redirect()
-                ->route('checklist-m.legal-documentation.index', $checklist)
+                ->route('checklist-m.show', $checklist)
                 ->with('success', 'Legal documentation created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3008,7 +3008,7 @@ class MakerController extends Controller
             ChecklistExternalAreaCondition::create($validated);
             
             return redirect()
-                ->route('checklist-m.external-area-condition.index', $checklist)
+                ->route('checklist-m.show', $checklist)
                 ->with('success', 'External area condition created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3082,7 +3082,7 @@ class MakerController extends Controller
             ChecklistInternalAreaCondition::create($validated);
             
             return redirect()
-                ->route('checklist-m.internal-area-condition.index', $checklist)
+                ->route('checklist-m.show', $checklist)
                 ->with('success', 'Internal area condition created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3158,7 +3158,7 @@ class MakerController extends Controller
             ChecklistPropertyDevelopment::create($validated);
             
             return redirect()
-                ->route('checklist-m.property-development.index', $checklist)
+                ->route('checklist-m.show', $checklist)
                 ->with('success', 'Property development created successfully.');
         } catch (\Exception $e) {
             return back()
