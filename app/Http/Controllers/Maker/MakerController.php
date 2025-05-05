@@ -1842,19 +1842,19 @@ class MakerController extends Controller
 
         // Handle file uploads
         if ($request->hasFile('annual_report')) {
-            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports', 'public');
         }
 
         if ($request->hasFile('trust_deed_document')) {
-            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents', 'public');
         }
 
         if ($request->hasFile('insurance_document')) {
-            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents', 'public');
         }
 
         if ($request->hasFile('valuation_report')) {
-            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports', 'public');
         }
 
         try {
@@ -1879,44 +1879,33 @@ class MakerController extends Controller
 
         // Handle file uploads
         if ($request->hasFile('annual_report')) {
-            // Remove old file if it exists
             if ($portfolio->annual_report) {
-                Storage::delete($portfolio->annual_report);
+                Storage::disk('public')->delete($portfolio->annual_report);
             }
-
-            // Store the new file and get its path
-            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports', 'public');
         }
 
         if ($request->hasFile('trust_deed_document')) {
-            // Remove old file if it exists
             if ($portfolio->trust_deed_document) {
-                Storage::delete($portfolio->trust_deed_document);
+                Storage::disk('public')->delete($portfolio->trust_deed_document);
             }
-
-            // Store the new file and get its path
-            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents', 'public');
         }
 
         if ($request->hasFile('insurance_document')) {
-            // Remove old file if it exists
             if ($portfolio->insurance_document) {
-                Storage::delete($portfolio->insurance_document);
+                Storage::disk('public')->delete($portfolio->insurance_document);
             }
-
-            // Store the new file and get its path
-            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents', 'public');
         }
 
         if ($request->hasFile('valuation_report')) {
-            // Remove old file if it exists
             if ($portfolio->valuation_report) {
-                Storage::delete($portfolio->valuation_report);
+                Storage::disk('public')->delete($portfolio->valuation_report);
             }
-
-            // Store the new file and get its path
-            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports', 'public');
         }
+
 
         try {
             $portfolio->update($validated);
@@ -2541,10 +2530,10 @@ class MakerController extends Controller
     public function TenancyLetterIndex(Property $property)
     {
         $tenancyLetters = $property->tenancyLetters()
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(10)
-                        ->withQueryString();
-                        
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('maker.tenancy-letter.index', compact('tenancyLetters', 'propertyInfo'));
     }
 
@@ -2570,7 +2559,7 @@ class MakerController extends Controller
         try {
             $tenancyLetter = TenancyLetter::create($validated);
             return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error creating tenancy letter: ' . $e->getMessage());
         }
     }
@@ -2584,21 +2573,21 @@ class MakerController extends Controller
     public function TenancyLetterUpdate(Request $request, TenancyLetter $tenancyLetter)
     {
         $validated = $this->TenancyLetterValidate($request);
-        
+
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
             // Delete old file if exists
             if ($tenancyLetter->attachment && Storage::disk('public')->exists($tenancyLetter->attachment)) {
                 Storage::disk('public')->delete($tenancyLetter->attachment);
             }
-            
+
             $validated['attachment'] = $request->file('attachment')->store('tenancy-letter-attachments', 'public');
         }
 
         try {
             $tenancyLetter->update($validated);
             return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error updating tenancy letter: ' . $e->getMessage());
         }
     }
@@ -2625,7 +2614,7 @@ class MakerController extends Controller
         try {
             $tenancyLetter->delete();
             return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter deleted successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error deleting tenancy letter: ' . $e->getMessage());
         }
     }
@@ -3551,9 +3540,9 @@ class MakerController extends Controller
             ->when($request->input('search'), function ($query, $search) {
                 return $query->where(function ($q) use ($search) {
                     $q->where('party_name', 'like', "%{$search}%")
-                    ->orWhereHas('portfolio', function($portfolio) use ($search) {
-                        $portfolio->where('portfolio_name', 'like', "%{$search}%");
-                    });
+                        ->orWhereHas('portfolio', function ($portfolio) use ($search) {
+                            $portfolio->where('portfolio_name', 'like', "%{$search}%");
+                        });
                 });
             })
             ->when($request->input('status'), function ($query, $status) {

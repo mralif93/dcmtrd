@@ -50,7 +50,7 @@ class PortfolioSeeder extends Seeder
 
         foreach ($portfolios as &$portfolio) {
             $portfolio += [
-                'status' => 'Draft',
+                'status' => 'draft',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ];
