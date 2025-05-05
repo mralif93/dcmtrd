@@ -107,7 +107,7 @@ class CorporateBondExportBatch implements FromCollection, WithHeadings, ShouldAu
         $rows->push(['Bond vs Loan Summary']);
         $rows->push(['Type', 'Nominal Value (RM)', 'Outstanding Size (RM)', 'Trustee Fee 1 (RM)']);
 
-        $bondItems = $items->filter(fn($i) => $i->debenture_or_loan === 'Debenture');
+        $bondItems = $items->filter(fn($i) => $i->debenture_or_loan === 'Corporate Bond');
         $loanItems = $items->filter(fn($i) => $i->debenture_or_loan === 'Loan');
 
         $rows->push([

@@ -143,11 +143,11 @@
                                         <td class="px-4 py-2 font-semibold">Bond Total</td>
                                         <td class="px-4 py-2">{{ number_format($bondNominal, 2) }}</td>
                                         <td class="px-4 py-2">{{ number_format($bondOutstanding, 2) }}</td>
-                                        <td class="px-4 py-2">{{ number_format($bondTrusteeFee, 2) }}</td>
+                                        <td class="px-4 py-2">{{ number_format($bondOutstandingbondOutstanding, 2) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="px-4 py-2 font-semibold">Loan Total</td>
-                                        <td class="px-4 py-2">{{ number_format($loanNominal, 2) }}</td>
+                                        <td class="px-4 py-2">{{ number_format($bondOutstanding, 2) }}</td>
                                         <td class="px-4 py-2">{{ number_format($loanOutstanding, 2) }}</td>
                                         <td class="px-4 py-2">{{ number_format($loanTrusteeFee, 2) }}</td>
                                     </tr>

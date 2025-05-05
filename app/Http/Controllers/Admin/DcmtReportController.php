@@ -39,19 +39,19 @@ class DcmtReportController extends Controller
             ->withQueryString();
 
         $totalNominalValue = $reports->sum(fn($bond) => (float) $bond->facility?->facility_amount);
-        $totalOutstandingSize = $reports->sum(fn($bond) => (float) $bond->amount_outstanding);
+        $totalOutstandingSize = $reports->sum(fn($bond) => (float) $bond->facility?->outstanding_amount);
         $totalTrusteeFeeAmount1 = $reports->sum(fn($bond) => (float) $bond->facility?->trusteeFees->first()?->trustee_fee_amount_1);
         $totalTrusteeFeeAmount2 = $reports->sum(fn($bond) => (float) $bond->facility?->trusteeFees->first()?->trustee_fee_amount_2);
 
-        $bondTotals = $reports->filter(fn($b) => $b->issuer->debenture === 'Debenture');
+        $bondTotals = $reports->filter(fn($b) => $b->issuer->debenture === 'Corporate Bond');
         $loanTotals = $reports->filter(fn($b) => $b->issuer->debenture === 'Loan');
 
         $bondNominal = $bondTotals->sum(fn($b) => (float) $b->facility?->facility_amount);
-        $bondOutstanding = $bondTotals->sum(fn($b) => (float) $b->amount_outstanding);
+        $bondOutstanding = $bondTotals->sum(fn($b) => (float) $b->facility?->outstanding_amount);
         $bondTrusteeFee = $bondTotals->sum(fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1);
 
         $loanNominal = $loanTotals->sum(fn($b) => (float) $b->facility?->facility_amount);
-        $loanOutstanding = $loanTotals->sum(fn($b) => (float) $b->amount_outstanding);
+        $loanOutstanding = $loanTotals->sum(fn($b) => (float) $b->facility?->outstanding_amount);
         $loanTrusteeFee = $loanTotals->sum(fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1);
 
         return view('admin.dcmt-report.cb-reports', compact(
@@ -86,19 +86,19 @@ class DcmtReportController extends Controller
             ->withQueryString();
 
         $totalNominalValue = $reports->sum(fn($bond) => (float) $bond->facility?->facility_amount);
-        $totalOutstandingSize = $reports->sum(fn($bond) => (float) $bond->amount_outstanding);
+        $totalOutstandingSize = $reports->sum(fn($bond) => (float) $bond->facility?->outstanding_amount);
         $totalTrusteeFeeAmount1 = $reports->sum(fn($bond) => (float) $bond->facility?->trusteeFees->first()?->trustee_fee_amount_1);
         $totalTrusteeFeeAmount2 = $reports->sum(fn($bond) => (float) $bond->facility?->trusteeFees->first()?->trustee_fee_amount_2);
 
-        $bondTotals = $reports->filter(fn($b) => $b->issuer->debenture === 'Debenture');
+        $bondTotals = $reports->filter(fn($b) => $b->issuer->debenture === 'Corporate Bond');
         $loanTotals = $reports->filter(fn($b) => $b->issuer->debenture === 'Loan');
 
         $bondNominal = $bondTotals->sum(fn($b) => (float) $b->facility?->facility_amount);
-        $bondOutstanding = $bondTotals->sum(fn($b) => (float) $b->amount_outstanding);
+        $bondOutstanding = $bondTotals->sum(fn($b) => (float) $b->facility?->outstanding_amount);
         $bondTrusteeFee = $bondTotals->sum(fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1);
 
         $loanNominal = $loanTotals->sum(fn($b) => (float) $b->facility?->facility_amount);
-        $loanOutstanding = $loanTotals->sum(fn($b) => (float) $b->amount_outstanding);
+        $loanOutstanding = $loanTotals->sum(fn($b) => (float) $b->facility?->outstanding_amount);
         $loanTrusteeFee = $loanTotals->sum(fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1);
 
         return view('approver.dcmt-report.cb-reports', compact(
@@ -189,7 +189,7 @@ class DcmtReportController extends Controller
                 'trustee_role_1' => $bond->issuer->trustee_role_1,
                 'trustee_role_2' => $bond->issuer->trustee_role_2,
                 'nominal_value' => $bond->facility?->facility_amount,
-                'outstanding_size' => $bond->amount_outstanding,
+                'outstanding_size' => $bond->facility?->outstanding_amount,
                 'trustee_fee_1' => $bond->facility?->trusteeFees->first()?->trustee_fee_amount_1,
                 'trustee_fee_2' => $bond->facility?->trusteeFees->first()?->trustee_fee_amount_2,
                 'trust_deed_date' => $bond->issuer->trust_deed_date,
