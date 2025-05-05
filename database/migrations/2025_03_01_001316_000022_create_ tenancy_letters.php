@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tenancy_letter', function (Blueprint $table) {
+        Schema::create('tenancy_letters', function (Blueprint $table) {
             $table->id();
 
             // Foreign key to the lease table
@@ -24,10 +24,24 @@ return new class extends Migration
 
             // Recipient information
             $table->string('recipient_company')->nullable();
-            $table->text('recipient_address')->nullable();
+            $table->text('recipient_address_line_1')->nullable();
+            $table->text('recipient_address_line_2')->nullable();
+            $table->text('recipient_address_line_3')->nullable();
+            $table->text('recipient_address_postcode')->nullable();
+            $table->text('recipient_address_city')->nullable();
+            $table->text('recipient_address_country')->nullable();
+
+            // Attention information
             $table->string('attention_to_name')->nullable();
             $table->string('attention_to_position')->nullable();
 
+            // Description
+            $table->text('description')->nullable();
+
+            // Letter Offer Date & Supplementary Letter Date
+            $table->date('letter_offer_date')->nullable();
+            $table->date('supplementary_letter_date')->nullable();
+            
             // Approver information
             $table->string('trustee_name')->nullable();
             $table->string('approver_name')->nullable();
