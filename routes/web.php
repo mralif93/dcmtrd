@@ -412,6 +412,9 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
         Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports');
         Route::delete('/cb-reports/batches/{id}', [DcmtReportController::class, 'deleteBatch'])->name('cb-reports.delete');
         Route::get('/cb-reports/batches/{id}/download', [DcmtReportController::class, 'downloadBatch'])->name('cb-reports.download');
+        Route::get('/trustee-reports/batches', [DcmtReportController::class, 'viewTrusteeBatches'])->name('trustee-reports.batches');
+        Route::post('/trustee-reports/cutoff', [DcmtReportController::class, 'cutOffTrustee'])->name('trustee-reports.cutoff');
+        Route::get('/trustee-reports/batches/{id}/download', [DcmtReportController::class, 'downloadBatchTrustee'])->name('trustee-reports.download');
     });
 
     // Issuer Module

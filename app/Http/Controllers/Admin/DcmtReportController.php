@@ -6,6 +6,7 @@ use App\Models\Bond;
 use App\Models\Issuer;
 use App\Models\ReportBatch;
 use Illuminate\Http\Request;
+use App\Models\ReportBatchTrustee;
 use App\Exports\CorporateBondExport;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
@@ -204,7 +205,7 @@ class DcmtReportController extends Controller
     {
         $batch = ReportBatch::findOrFail($id);
 
-        return Excel::download(new CorporateBondExportBatch($batch), 'corporate_bonds_' . $batch->id . '.xlsx');
+        return Excel::download(new CorporateBondExportBatch($batch), $batch->title_report . '.xlsx');
     }
 
     public function deleteBatch($id)
@@ -213,6 +214,67 @@ class DcmtReportController extends Controller
         $batch->delete();
 
         return redirect()->route('dcmt-reports.cb-reports.batches')
+            ->with('success', 'Batch deleted successfully.');
+    }
+
+    public function viewTrusteeBatches()
+    {
+        $batches = ReportBatchTrustee::withCount('items')->orderByDesc('cut_off_at')->paginate(10);
+        return view('admin.dcmt-report.view-trustee-batches', compact('batches'));
+    }
+
+    public function cutOffTrustee(Request $request)
+    {
+        $user = auth()->user();
+        $cutoffTime = now();
+
+        // Prevent multiple cut-offs in a single day
+        $alreadyCutoffToday = ReportBatchTrustee::whereDate('cut_off_at', $cutoffTime->toDateString())
+            ->where('created_by', $user->id) // optional: restrict per user
+            ->exists();
+
+        if ($alreadyCutoffToday) {
+            return redirect()->back()->with('error', 'You have already performed a cut-off today.');
+        }
+
+        $batch = ReportBatchTrustee::create([
+            'title_report' => 'Trustee Master Report - ' . $cutoffTime->format('Y-m-d'),
+            'cut_off_at' => $cutoffTime,
+            'created_by' => $user->id,
+        ]);
+
+        $reports = Issuer::with(['facilities.trusteeFees'])
+            ->where('debenture', 'Corporate Trust')
+            ->paginate(10)
+            ->withQueryString();
+
+        foreach ($reports as $bond) {
+            $batch->items()->create([
+                'issuer_short_name' => $bond->issuer_short_name ?? null,
+                'issuer_name' => $bond->issuer_name ?? null,
+                'debenture' => $bond->debenture,
+                'trust_amount_escrow_sum' => is_numeric($bond->trust_amount_escrow_sum) ? $bond->trust_amount_escrow_sum : 0,
+                'no_of_share' => is_numeric($bond->no_of_share) ? $bond->no_of_share : 0,
+                'outstanding_size' => is_numeric($bond->outstanding_size) ? $bond->outstanding_size : 0,
+                'total_trustee_fee' => is_numeric($bond->total_trustee_fee) ? $bond->total_trustee_fee : 0,
+            ]);
+        }
+
+        return redirect()->route('dcmt-reports.cb-reports')->with('success', 'Report cut off and stored in batch successfully.');
+    }
+
+    public function downloadBatchTrustee($id)
+    {
+        $batch = ReportBatchTrustee::findOrFail($id);
+
+        return Excel::download(new TrusteeExportBatch($batch), $batch->title_report . '.xlsx');
+    }
+    public function deleteTrusteeBatch($id)
+    {
+        $batch = ReportBatchTrustee::findOrFail($id);
+        $batch->delete();
+
+        return redirect()->route('dcmt-reports.cb-reports.trustee-batches')
             ->with('success', 'Batch deleted successfully.');
     }
 }

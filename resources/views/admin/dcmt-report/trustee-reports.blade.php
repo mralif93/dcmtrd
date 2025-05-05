@@ -5,7 +5,7 @@
 
     <div class="py-12">
         <div class="mx-auto space-y-6 max-w-7xl sm:px-6 lg:px-8">
-            
+
             {{-- Success Message --}}
             @if (session('success'))
                 <div class="p-4 mb-6 border-l-4 border-green-500 rounded-md shadow bg-green-50">
@@ -16,6 +16,20 @@
                                 clip-rule="evenodd" />
                         </svg>
                         <p class="ml-3 text-sm font-medium text-green-800">{{ session('success') }}</p>
+                    </div>
+                </div>
+            @endif
+
+            {{-- Error Message --}}
+            @if (session('error'))
+                <div class="p-4 mb-6 border-l-4 border-red-500 rounded-md shadow bg-red-50">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <p class="ml-3 text-sm font-medium text-red-800">{{ session('error') }}</p>
                     </div>
                 </div>
             @endif
@@ -35,11 +49,11 @@
                         class="px-6 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700">
                         Export XLS
                     </a>
-                    <a href="{{ route('dcmt-reports.cb-reports.batches') }}"
+                    <a href="{{ route('dcmt-reports.trustee-reports.batches') }}"
                         class="px-6 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">
                         View Batches
                     </a>
-                    <form method="POST" action="{{ route('dcmt-reports.cb-reports.cutoff') }}">
+                    <form method="POST" action="{{ route('dcmt-reports.trustee-reports.cutoff') }}">
                         @csrf
                         <button type="submit"
                             onclick="return confirm('Are you sure you want to cut off and save this report to a batch?')"
@@ -70,8 +84,10 @@
                         <tbody class="divide-y divide-gray-200">
                             @forelse ($reports as $index => $item)
                                 <tr class="transition-all duration-150 hover:bg-gray-100">
-                                    <td class="px-6 py-4 text-sm text-gray-900">{{ $reports->firstItem() + $index }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer_short_name ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900">{{ $reports->firstItem() + $index }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer_short_name ?? '-' }}
+                                    </td>
                                     <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer_name ?? '-' }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500">{{ $item->debenture ?? '-' }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500">
