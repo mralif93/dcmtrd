@@ -638,20 +638,20 @@ class DefaultUsersSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
-            // Add DCMTRD permission
-            $permissionUserData[] = [
-                'user_id' => $userId,
-                'permission_id' => $dcmtrdPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-            // Add REITS permission
-            $permissionUserData[] = [
-                'user_id' => $userId,
-                'permission_id' => $reitsPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
+            // // Add DCMTRD permission
+            // $permissionUserData[] = [
+            //     'user_id' => $userId,
+            //     'permission_id' => $dcmtrdPermissionId,
+            //     'created_at' => now(),
+            //     'updated_at' => now(),
+            // ];
+            // // Add REITS permission
+            // $permissionUserData[] = [
+            //     'user_id' => $userId,
+            //     'permission_id' => $reitsPermissionId,
+            //     'created_at' => now(),
+            //     'updated_at' => now(),
+            // ];
         }
         
         // Legal users get both DCMTRD and REITS permissions

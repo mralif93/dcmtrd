@@ -221,14 +221,14 @@
         </style>
     </head>
     <body class="font-sans">
-        <div class="container mx-auto px-4 flex flex-col items-center justify-center py-12 relative">
+        <div class="container relative flex flex-col items-center justify-center px-4 py-12 mx-auto">
             <!-- Header Section -->
             <div class="header-container">
                 <!-- Logo (centered) -->
                 <div class="logo-container">
                     <a href="#" class="block">
                         <img 
-                            class="h-24 w-auto" 
+                            class="w-auto h-24" 
                             src="{{ asset('images/art_logo.png') }}" 
                             alt="Application Logo"
                         >
@@ -236,11 +236,11 @@
                 </div>
                 
                 <!-- User Info and Logout Button (centered) -->
-                <div class="user-section flex justify-center w-full">
-                    <div class="text-gray-600 font-medium">
+                <div class="flex justify-center w-full user-section">
+                    <div class="font-medium text-gray-600">
                         Hello, <span class="font-semibold">{{ Auth::user()->name }}</span>
                     </div>
-                    <button type="button" onclick="showLogoutConfirmation()" class="flex items-center gap-2 px-5 py-2 red-btn rounded-lg shadow-md hover:shadow-lg ml-4">
+                    <button type="button" onclick="showLogoutConfirmation()" class="flex items-center gap-2 px-5 py-2 ml-4 rounded-lg shadow-md red-btn hover:shadow-lg">
                         <i class="fas fa-sign-out-alt"></i>
                         <span class="font-medium">Logout</span>
                     </button>
@@ -274,16 +274,16 @@
                 (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'dcmtrd']) : 
                 (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'dcmtrd']) : 
                 route('dashboard', ['section' => 'dcmtrd']))) 
-            }}" class="card bond-card shadow-lg">
+            }}" class="shadow-lg card bond-card">
                 <div class="p-8">
                     <div class="icon-container blue-bg-light">
                         <i class="fas fa-building blue-icon fa-3x"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-center mb-4">Bond Monitoring (DCMTRD)</h2>
-                    <p class="text-gray-600 text-center mb-6">Track bond performance, market trends, and explore issuers available in the market.</p>
+                    <h2 class="mb-4 text-2xl font-bold text-center">Bond Monitoring (DCMTRD)</h2>
+                    <p class="mb-6 text-center text-gray-600">Track bond performance, market trends, and explore issuers available in the market.</p>
                     <div class="flex justify-center">
-                        <span class="inline-flex items-center px-4 py-2 blue-btn font-medium rounded-md">
-                            View Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                        <span class="inline-flex items-center px-4 py-2 font-medium rounded-md blue-btn">
+                            View Dashboard <i class="ml-2 fas fa-arrow-right"></i>
                         </span>
                     </div>
                 </div>
@@ -298,16 +298,16 @@
                 (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'reits']) : 
                 (Auth::user()->role === 'legal' ? route('legal.dashboard', ['section' => 'reits']) : 
                 route('dashboard', ['section' => 'reits'])))) 
-            }}" class="card reit-card shadow-lg">
+            }}" class="shadow-lg card reit-card">
                 <div class="p-8">
                     <div class="icon-container green-bg-light">
                         <i class="fas fa-home green-icon fa-3x"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-center mb-4">Real Estate Investment Trusts (REITs)</h2>
-                    <p class="text-gray-600 text-center mb-6">Discover and analyze Real Estate Investment Trusts and their benefits.</p>
+                    <h2 class="mb-4 text-2xl font-bold text-center">Real Estate Investment Trusts (REITs)</h2>
+                    <p class="mb-6 text-center text-gray-600">Discover and analyze Real Estate Investment Trusts and their benefits.</p>
                     <div class="flex justify-center">
-                        <span class="inline-flex items-center px-4 py-2 green-btn font-medium rounded-md">
-                            View Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                        <span class="inline-flex items-center px-4 py-2 font-medium rounded-md green-btn">
+                            View Dashboard <i class="ml-2 fas fa-arrow-right"></i>
                         </span>
                     </div>
                 </div>
@@ -322,16 +322,16 @@
                 (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'legal']) : 
                 (Auth::user()->role === 'legal' ? route('legal.dashboard', ['section' => 'legal']) : 
                 route('dashboard', ['section' => 'legal'])))) 
-            }}" class="card legal-card shadow-lg">
+            }}" class="shadow-lg card legal-card">
                 <div class="p-8">
                     <div class="icon-container purple-bg-light">
                         <i class="fas fa-balance-scale purple-icon fa-3x"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-center mb-4">Legal Department</h2>
-                    <p class="text-gray-600 text-center mb-6">Manage legal documentation, review contracts, and ensure regulatory compliance.</p>
+                    <h2 class="mb-4 text-2xl font-bold text-center">Legal Department</h2>
+                    <p class="mb-6 text-center text-gray-600">Manage legal documentation, review contracts, and ensure regulatory compliance.</p>
                     <div class="flex justify-center">
-                        <span class="inline-flex items-center px-4 py-2 purple-btn font-medium rounded-md">
-                            View Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                        <span class="inline-flex items-center px-4 py-2 font-medium rounded-md purple-btn">
+                            View Dashboard <i class="ml-2 fas fa-arrow-right"></i>
                         </span>
                     </div>
                 </div>
@@ -345,16 +345,16 @@
                 (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'compliance']) : 
                 (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'compliance']) : 
                 route('compliance.dashboard', ['section' => 'compliance']))) 
-            }}" class="card compliance-card shadow-lg">
+            }}" class="shadow-lg card compliance-card">
                 <div class="p-8">
                     <div class="icon-container yellow-bg-light">
                         <i class="fas fa-clipboard-check yellow-icon fa-3x"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-center mb-4">Compliance Management</h2>
-                    <p class="text-gray-600 text-center mb-6">Monitor compliance requirements, track deadlines, and manage regulatory obligations.</p>
+                    <h2 class="mb-4 text-2xl font-bold text-center">Compliance Management</h2>
+                    <p class="mb-6 text-center text-gray-600">Monitor compliance requirements, track deadlines, and manage regulatory obligations.</p>
                     <div class="flex justify-center">
-                        <span class="inline-flex items-center px-4 py-2 yellow-btn font-medium rounded-md">
-                            View Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                        <span class="inline-flex items-center px-4 py-2 font-medium rounded-md yellow-btn">
+                            View Dashboard <i class="ml-2 fas fa-arrow-right"></i>
                         </span>
                     </div>
                 </div>
@@ -366,15 +366,15 @@
         <!-- Logout Confirmation Modal -->
         <div id="logoutModal" class="modal">
             <div class="modal-content">
-                <h3 class="text-xl font-bold mb-4">Confirm Logout</h3>
+                <h3 class="mb-4 text-xl font-bold">Confirm Logout</h3>
                 <p>Are you sure you want to logout?</p>
                 <div class="modal-buttons">
-                    <button onclick="hideLogoutConfirmation()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+                    <button onclick="hideLogoutConfirmation()" class="px-4 py-2 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300">
                         Cancel
                     </button>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="px-4 py-2 red-btn rounded-md">
+                        <button type="submit" class="px-4 py-2 rounded-md red-btn">
                             Logout
                         </button>
                     </form>
