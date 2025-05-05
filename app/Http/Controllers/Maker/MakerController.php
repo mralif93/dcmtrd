@@ -2537,6 +2537,13 @@ class MakerController extends Controller
         ]);
     }
 
+    public function LeaseLetter(Lease $lease)
+    {
+        $lease = $lease->load('tenant.property.portfolio');
+        // dd($lease->toArray());
+        return view('maker.lease.letter', compact('lease'));
+    }
+
     // Tenancy Letter Module
     public function TenancyLetterIndex(Property $property)
     {
@@ -2938,7 +2945,7 @@ class MakerController extends Controller
             ChecklistLegalDocumentation::create($validated);
 
             return redirect()
-                ->route('checklist-m.legal-documentation.index', $checklist)
+                ->route('checklist-m.show', $checklist)
                 ->with('success', 'Legal documentation created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2965,7 +2972,7 @@ class MakerController extends Controller
             $legalDocumentation->update($validated);
 
             return redirect()
-                ->route('checklist-m.show', $legalDocumentation->checklist->siteVisit->property)
+                ->route('checklist-m.show', $legalDocumentation->checklist)
                 ->with('success', 'Legal documentation updated successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3003,7 +3010,7 @@ class MakerController extends Controller
             $checklistTenant = ChecklistTenant::create($validated);
 
             return redirect()
-                ->route('checklist-m.show', $checklistTenant->checklist->siteVisit->property)
+                ->route('checklist-m.show', $checklistTenant->checklist)
                 ->with('success', 'Tenant association created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3029,7 +3036,7 @@ class MakerController extends Controller
             $checklistTenant->update($validated);
 
             return redirect()
-                ->route('checklist-m.show', $checklistTenant->checklist->siteVisit->property)
+                ->route('checklist-m.show', $checklistTenant->checklist)
                 ->with('success', 'Tenant updated successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3070,7 +3077,7 @@ class MakerController extends Controller
             ChecklistExternalAreaCondition::create($validated);
 
             return redirect()
-                ->route('checklist-m.external-area-condition.index', $checklist)
+                ->route('checklist-m.show', $checklist)
                 ->with('success', 'External area condition created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3103,7 +3110,7 @@ class MakerController extends Controller
             $checklistExternalAreaCondition->update($validated);
 
             return redirect()
-                ->route('checklist-m.show', $checklistExternalAreaCondition->checklist->siteVisit->property)
+                ->route('checklist-m.show', $checklistExternalAreaCondition->checklist)
                 ->with('success', 'External area condition updated successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3144,7 +3151,7 @@ class MakerController extends Controller
             ChecklistInternalAreaCondition::create($validated);
 
             return redirect()
-                ->route('checklist-m.internal-area-condition.index', $checklist)
+                ->route('checklist-m.show', $checklist)
                 ->with('success', 'Internal area condition created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3179,7 +3186,7 @@ class MakerController extends Controller
             $checklistInternalAreaCondition->update($validated);
 
             return redirect()
-                ->route('checklist-m.show', $checklistInternalAreaCondition->checklist->siteVisit->property)
+                ->route('checklist-m.show', $checklistInternalAreaCondition->checklist)
                 ->with('success', 'Internal area condition updated successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3220,7 +3227,7 @@ class MakerController extends Controller
             ChecklistPropertyDevelopment::create($validated);
 
             return redirect()
-                ->route('checklist-m.property-development.index', $checklist)
+                ->route('checklist-m.show', $checklist)
                 ->with('success', 'Property development created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3253,7 +3260,7 @@ class MakerController extends Controller
             $checklistPropertyDevelopment->update($validated);
 
             return redirect()
-                ->route('checklist-m.show', $checklistPropertyDevelopment->checklist->siteVisit->property)
+                ->route('checklist-m.show', $checklistPropertyDevelopment->checklist)
                 ->with('success', 'Property development updated successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3295,7 +3302,7 @@ class MakerController extends Controller
             $checklistDisposalInstallation = ChecklistDisposalInstallation::create($validated);
 
             return redirect()
-                ->route('checklist-m.show', $checklistDisposalInstallation->checklist->siteVisit->property)
+                ->route('checklist-m.show', $checklistDisposalInstallation->checklist)
                 ->with('success', 'Disposal installation created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3328,7 +3335,7 @@ class MakerController extends Controller
             $checklistDisposalInstallation->update($validated);
 
             return redirect()
-                ->route('checklist-m.show', $checklistDisposalInstallation->checklist->siteVisit->property)
+                ->route('checklist-m.show', $checklistDisposalInstallation->checklist)
                 ->with('success', 'Disposal installation updated successfully.');
         } catch (\Exception $e) {
             return back()

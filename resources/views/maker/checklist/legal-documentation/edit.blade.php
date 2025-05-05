@@ -41,7 +41,8 @@
                     <form method="POST" action="{{ route('checklist-legal-documentation-m.update', $legalDocumentation) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-                        <input type="hidden" name="checklist_id" value="{{ $checklist->id }}">
+
+                        <input type="hidden" name="checklist_id" value="{{ $legalDocumentation->checklist->id }}">
 
                         <!-- Legal Documentation Section -->
                         <div class="mb-6 rounded-lg">
