@@ -36,6 +36,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendIssuerApprovedNotification;
 use App\Jobs\Issuer\SendIssuerRejectedNotification;
+use App\Jobs\TrusteeFee\SendTrusteeFeeApprovedNotification;
+use App\Jobs\TrusteeFee\SendTrusteeFeeRejectedNotification;
 
 class ApproverController extends Controller
 {
@@ -399,6 +401,8 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
 
+            SendTrusteeFeeApprovedNotification::dispatch($trusteeFee);
+
             return redirect()->route('trustee-fee-a.index')->with('success', 'Trustee Fee approved successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error approving trustee fee: ' . $e->getMessage());
@@ -424,6 +428,8 @@ class ApproverController extends Controller
                 'verified_by' => Auth::user()->name,
                 'remarks' => $request->input('rejection_reason'),
             ]);
+
+            SendTrusteeFeeRejectedNotification::dispatch($trusteeFee);
 
             return redirect()->route('trustee-fee-a.index')->with('success', 'Trustee Fee rejected successfully.');
         } catch (\Exception $e) {
