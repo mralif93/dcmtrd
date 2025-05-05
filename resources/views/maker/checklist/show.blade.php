@@ -837,6 +837,7 @@
                         </svg>
                         Back to List
                     </a>
+                    @if($checklist->internalAreaCondition)
                     <a href="{{ route('checklist-internal-area-condition-m.edit', $checklist->internalAreaCondition) }}" 
                         class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -844,6 +845,7 @@
                         </svg>
                         Edit Internal Area Conditions
                     </a>
+                    @endif
                 </div>
             </div>
 
