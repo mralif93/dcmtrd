@@ -2,64 +2,65 @@
 
 namespace App\Http\Controllers\Maker;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Bank;
+use App\Models\Bond;
+use App\Models\User;
+use App\Models\Lease;
+use App\Models\Issuer;
+use App\Models\Tenant;
+use App\Models\Property;
+use App\Models\Checklist;
+use App\Models\Financial;
+use App\Models\Portfolio;
+use App\Models\SiteVisit;
+use App\Models\Redemption;
+use App\Models\TrusteeFee;
 use App\Imports\BondImport;
+
+use App\Models\Appointment;
+
+// Bonds
+use App\Models\Announcement;
+use App\Models\ApprovalForm;
+use App\Models\CallSchedule;
+use App\Models\SiteVisitLog;
+use Illuminate\Http\Request;
+use App\Models\ActivityDiary;
+use App\Models\FinancialType;
+use App\Models\LockoutPeriod;
+use App\Models\PortfolioType;
+use App\Models\TenancyLetter;
+use App\Models\RatingMovement;
+use App\Models\ChecklistTenant;
+use App\Models\PaymentSchedule;
+use App\Models\RelatedDocument;
+
+// REITs
+use App\Models\TradingActivity;
+use Illuminate\Validation\Rule;
+use App\Models\ApprovalProperty;
+use App\Models\ComplianceCovenant;
+use Illuminate\Support\Facades\DB;
+use App\Models\FacilityInformation;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Cache;
 use App\Imports\PaymentScheduleImport;
 use App\Imports\RatingMovementsImport;
 use App\Imports\TradingActivityImport;
-
-use App\Models\User;
-
-// Bonds
-use App\Models\Issuer;
-use App\Models\Bond;
-use App\Models\Announcement;
-use App\Models\RelatedDocument;
-use App\Models\FacilityInformation;
-use App\Models\RatingMovement;
-use App\Models\PaymentSchedule;
-use App\Models\Redemption;
-use App\Models\CallSchedule;
-use App\Models\LockoutPeriod;
-use App\Models\TradingActivity;
-use App\Models\TrusteeFee;
-use App\Models\ComplianceCovenant;
-use App\Models\ActivityDiary;
-
-// REITs
-use App\Models\Bank;
-use App\Models\FinancialType;
-use App\Models\PortfolioType;
-use App\Models\Portfolio;
-use App\Models\Property;
-use App\Models\Tenant;
-use App\Models\Lease;
-use App\Models\Financial;
-use App\Models\Checklist;
-use App\Models\SiteVisit;
-use App\Models\SiteVisitLog;
-use App\Models\Appointment;
-use App\Models\ApprovalForm;
-use App\Models\ApprovalProperty;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\User\BondFormRequest;
 use App\Models\ChecklistLegalDocumentation;
-use App\Models\ChecklistTenant;
-use App\Models\ChecklistExternalAreaCondition;
-use App\Models\ChecklistInternalAreaCondition;
 use App\Models\ChecklistPropertyDevelopment;
 use App\Models\ChecklistDisposalInstallation;
-use App\Models\TenancyLetter;
+use App\Models\ChecklistExternalAreaCondition;
+use App\Models\ChecklistInternalAreaCondition;
 
-use App\Http\Requests\User\BondFormRequest;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
+use App\Jobs\TrusteeFee\SendTrusteeFeeSubmittedEmail;
 
 class MakerController extends Controller
 {
@@ -1349,6 +1350,8 @@ class MakerController extends Controller
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
+            
+            dispatch(new SendTrusteeFeeSubmittedEmail($trusteeFee));
 
             return redirect()
                 ->route('trustee-fee-m.show', $trusteeFee)
