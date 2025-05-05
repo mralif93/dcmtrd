@@ -548,6 +548,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/lease/{lease}/edit', [MakerController::class, 'LeaseEdit'])->name('lease-m.edit')->middleware('permission:REITS');
     Route::put('maker/lease/{lease}/update', [MakerController::class, 'LeaseUpdate'])->name('lease-m.update')->middleware('permission:REITS');
     Route::get('maker/lease/{lease}/show', [MakerController::class, 'LeaseShow'])->name('lease-m.show')->middleware('permission:REITS');
+    Route::get('maker/lease/{lease}/letter', [MakerController::class, 'LeaseLetter'])->name('lease-m.letter')->middleware('permission:REITS');
 
     // Tenancy Letter Module
     Route::get('maker/tenancy-letter/{lease}/', [MakerController::class, 'TenancyLetterIndex'])->name('tenancy-letter-m.index')->middleware('permission:REITS');

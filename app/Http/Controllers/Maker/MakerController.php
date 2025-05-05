@@ -2468,6 +2468,13 @@ class MakerController extends Controller
         ]);
     }
 
+    public function LeaseLetter(Lease $lease)
+    {
+        $lease = $lease->load('tenant.property.portfolio');
+        // dd($lease->toArray());
+        return view('maker.lease.letter', compact('lease'));
+    }
+
     // Tenancy Letter Module
     public function TenancyLetterIndex(Property $property)
     {
