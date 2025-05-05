@@ -56,6 +56,7 @@ use App\Models\ChecklistExternalAreaCondition;
 use App\Models\ChecklistInternalAreaCondition;
 use App\Models\ChecklistPropertyDevelopment;
 use App\Models\ChecklistDisposalInstallation;
+use App\Models\TenancyLetter;
 
 use App\Http\Requests\User\BondFormRequest;
 
@@ -2467,6 +2468,99 @@ class MakerController extends Controller
         ]);
     }
 
+    // Tenancy Letter Module
+    public function TenancyLetterIndex(Property $property)
+    {
+        $tenancyLetters = $property->tenancyLetters()
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10)
+                        ->withQueryString();
+                        
+        return view('maker.tenancy-letter.index', compact('tenancyLetters', 'propertyInfo'));
+    }
+
+    public function TenancyLetterCreate(Property $property)
+    {
+        $propertyInfo = $property;
+        $properties = Property::orderBy('name')->get();
+        return view('maker.tenancy-letter.create', compact('properties', 'propertyInfo'));
+    }
+
+    public function TenancyLetterStore(Request $request)
+    {
+        $validated = $this->TenancyLetterValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('tenancy-letter-attachments', 'public');
+        }
+
+        try {
+            $tenancyLetter = TenancyLetter::create($validated);
+            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter created successfully.');
+        } catch(\Exception $e) {
+            return back()->with('error', 'Error creating tenancy letter: ' . $e->getMessage());
+        }
+    }
+
+    public function TenancyLetterEdit(TenancyLetter $tenancyLetter)
+    {
+        $properties = Property::orderBy('name')->get();
+        return view('maker.tenancy-letter.edit', compact('properties', 'tenancyLetter'));
+    }
+
+    public function TenancyLetterUpdate(Request $request, TenancyLetter $tenancyLetter)
+    {
+        $validated = $this->TenancyLetterValidate($request);
+        
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            // Delete old file if exists
+            if ($tenancyLetter->attachment && Storage::disk('public')->exists($tenancyLetter->attachment)) {
+                Storage::disk('public')->delete($tenancyLetter->attachment);
+            }
+            
+            $validated['attachment'] = $request->file('attachment')->store('tenancy-letter-attachments', 'public');
+        }
+
+        try {
+            $tenancyLetter->update($validated);
+            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter updated successfully.');
+        } catch(\Exception $e) {
+            return back()->with('error', 'Error updating tenancy letter: ' . $e->getMessage());
+        }
+    }
+
+    public function TenancyLetterShow()
+    {
+        return view('maker.tenancy-letter.show');
+    }
+
+    public function TenancyLetterValidate(Request $request)
+    {
+        return $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'tenant_id' => 'required|exists:tenants,id',
+            'lease_id' => 'required|exists:leases,id',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+            'prepared_by' => 'nullable|string|max:255',
+            'status' => 'nullable|string|max:255',
+        ]);
+    }
+
+    public function TenancyLetterDestroy(TenancyLetter $tenancyLetter)
+    {
+        try {
+            $tenancyLetter->delete();
+            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter deleted successfully.');
+        } catch(\Exception $e) {
+            return back()->with('error', 'Error deleting tenancy letter: ' . $e->getMessage());
+        }
+    }
+
     // Site Visit Module
     public function SiteVisitIndex(Property $property)
     {
@@ -2738,6 +2832,13 @@ class MakerController extends Controller
     public function ChecklistShow(Checklist $checklist)
     {
         return view('maker.checklist.show', compact('checklist'));
+    }
+
+    public function ChecklistLetter(Checklist $checklist)
+    {
+        $checklist = $checklist->load('siteVisit.property.tenants');
+        dd($checklist->disposalInstallation->toArray());
+        return view('maker.checklist.letter', compact('checklist'));
     }
 
     // Checklist Legal Documentation
