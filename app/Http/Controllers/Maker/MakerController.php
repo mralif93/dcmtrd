@@ -2837,7 +2837,8 @@ class MakerController extends Controller
     public function ChecklistLetter(Checklist $checklist)
     {
         $checklist = $checklist->load('siteVisit.property.tenants');
-        dd($checklist->disposalInstallation->toArray());
+        // dd($checklist->toArray());
+        // dd($checklist->disposalInstallation->toArray());
         return view('maker.checklist.letter', compact('checklist'));
     }
 

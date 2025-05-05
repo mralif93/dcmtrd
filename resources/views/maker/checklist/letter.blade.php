@@ -360,47 +360,29 @@
                                             <td style="border: 1px solid #ccc; padding: 5px;"></td>
                                             <td style="border: 1px solid #ccc; padding: 5px;"></td>
                                         </tr>
-                                        <tr>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;">a) Water tank/calorifier tank</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">N/A</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;">b) Air condition/ Chiller System/Air Handling Unit ("AHU")</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">14/12/2022</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;">Proposed Total Replacement and Disposal of one (1) unit of Air Handling Unit (AHU) for Cardiac Operation Theatre at 1st floor Block B</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">Completed</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;">c) Lift/Escalator system</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">N/A</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;">d) Fire Fighting/Alarm system</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">N/A</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;">e) Others</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">N/A</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                        </tr>
+                                        @if ($checklist->disposalInstallation)
+                                            @foreach ($checklist->disposalInstallation as $key => $disposal)
+                                                <tr>
+                                                    <td style="border: 1px solid #ccc; padding: 5px;"></td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px;">
+                                                        {{ chr(97 + $key) }}) {{ $disposal->component_name ?? 'N/A' }}
+                                                    </td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
+                                                        {{ $disposal->component_date ? $disposal->component_date->format('d/m/Y') : 'N/A' }}
+                                                    </td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
+                                                        {{ $disposal->component_scope_of_work ?? 'N/A' }}
+                                                    </td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
+                                                        {{ ucfirst($disposal->component_status) ?? 'N/A' }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">5.5</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Other proposals/approvals</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">N/A</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;" colspan="3">{{ $checklist->other_proposals ?? 'N/A' }}</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -415,12 +397,12 @@
                                             <td style="width: 50%; padding-bottom: 10px;">Confirmed by:</td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-top: 60px;">Dang Fathihah binti Ibrahim</td>
-                                            <td style="padding-top: 60px;">Roslim Syah bin Idris</td>
+                                            <td style="padding-top: 60px;">{{ $checklist->prepared_by ?? 'N/A' }}</td>
+                                            <td style="padding-top: 60px;">{{ $checklist->verified_by ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Date: 23/12/2024</td>
-                                            <td>Date: 23/12/2024</td>
+                                            <td>Date: {{ $checklist->created_at ? $checklist->created_at->format('d/m/Y') : 'N/A' }}</td>
+                                            <td>Date: {{ $checklist->approval_datetime ? $checklist->approval_datetime->format('d/m/Y') : 'N/A' }}</td>
                                         </tr>
                                     </table>
                                 </td>
