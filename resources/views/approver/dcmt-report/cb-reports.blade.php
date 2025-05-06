@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-2xl font-bold leading-tight text-center text-gray-800">
+        <h2 class="text-2xl font-bold leading-tight text-left text-gray-800">
             {{ __('Corporate Bond Reports') }}
         </h2>
     </x-slot>
@@ -77,7 +77,7 @@
                                 <td class="px-6 py-4 text-gray-500">
                                     {{ number_format($bond->facility?->facility_amount, 2) }}</td>
                                 <td class="px-6 py-4 text-gray-500">
-                                    {{ number_format($bond->facility?->amount_outstanding, 2) }}</td>
+                                    {{ number_format($bond->facility?->outstanding_amount, 2) }}</td>
                                 <td class="px-6 py-4 text-gray-500">
                                     {{ $bond->facility?->trusteeFees->first()?->trustee_fee_amount_1 }}</td>
                                 <td class="px-6 py-4 text-gray-500">
@@ -143,11 +143,11 @@
                                         <td class="px-4 py-2 font-semibold">Bond Total</td>
                                         <td class="px-4 py-2">{{ number_format($bondNominal, 2) }}</td>
                                         <td class="px-4 py-2">{{ number_format($bondOutstanding, 2) }}</td>
-                                        <td class="px-4 py-2">{{ number_format($bondOutstandingbondOutstanding, 2) }}</td>
+                                        <td class="px-4 py-2">{{ number_format($bondTrusteeFee, 2) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="px-4 py-2 font-semibold">Loan Total</td>
-                                        <td class="px-4 py-2">{{ number_format($bondOutstanding, 2) }}</td>
+                                        <td class="px-4 py-2">{{ number_format($loanNominal, 2) }}</td>
                                         <td class="px-4 py-2">{{ number_format($loanOutstanding, 2) }}</td>
                                         <td class="px-4 py-2">{{ number_format($loanTrusteeFee, 2) }}</td>
                                     </tr>
