@@ -3896,8 +3896,7 @@ class MakerController extends Controller
     public function SiteVisitLogValidate(Request $request)
     {
         return $request->validate([
-            'site_visit_id' => 'required|exists:site_visits,id',
-            'visitation_date' => 'required|date',
+            'property_id' => 'required|exists:properties,id',
             'purpose' => 'nullable|string',
             'report_submission_date' => 'nullable|date',
             'report_attachment' => 'nullable|file|mimes:pdf|max:10240',
