@@ -27,6 +27,7 @@ class ComplianceCovenant extends Model implements Auditable
      */
     protected $casts = [
         'approval_datetime' => 'datetime',
+        'letter_to_issuer' => 'date',
     ];
 
     /**

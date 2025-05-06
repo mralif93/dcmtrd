@@ -16,32 +16,7 @@ class TrusteeFee extends Model implements Auditable
      *
      * @var array
      */
-    protected $fillable = [
-        'month',
-        'date',
-        'description',
-        'trustee_fee_amount_1',
-        'trustee_fee_amount_2',
-        'start_anniversary_date',
-        'end_anniversary_date',
-        'memo_to_fad',
-        'invoice_no',
-        'date_letter_to_issuer',
-        'first_reminder',
-        'second_reminder',
-        'third_reminder',
-        'payment_received',
-        'tt_cheque_no',
-        'memo_receipt_to_fad',
-        'receipt_to_issuer',
-        'receipt_no',
-        'status',
-        'prepared_by',
-        'verified_by',
-        'remarks',
-        'approval_datetime',
-        'facility_information_id'
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be cast.

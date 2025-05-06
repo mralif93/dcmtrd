@@ -38,6 +38,10 @@ class ApproveIssuerToPreparerEmails extends Mailable
     {
         return new Content(
             markdown: 'emails.issuer.approve',
+            with: [
+                'issuer' => $this->issuer,
+                'user' => $this->user,
+            ]
         );
     }
 

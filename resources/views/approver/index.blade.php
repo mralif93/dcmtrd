@@ -106,6 +106,9 @@
                     <x-dashboard-card title="Activity Diary" icon="calendar" :count="$activityDairyCount ?? 0" :href="route('activity-diary-a.index')"
                         color="bg-blue-100" />
 
+                    <!-- Activity Diary -->
+                    <x-dashboard-card title="Reports" icon="document" :count="2" :href="route('a.dcmt-reports.index')"
+                        color="bg-blue-100" />
                     <div class="hidden">
                         <!-- Audit Log -->
                         <x-dashboard-card title="Audit Log" icon="clipboard-list" :count="$auditLogCount ?? 0" href="#"
@@ -164,7 +167,8 @@
 
                                 <!-- Status Filter -->
                                 <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                    <label for="status"
+                                        class="block text-sm font-medium text-gray-700">Status</label>
                                     <select name="status" id="status"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">All Status</option>
@@ -495,7 +499,7 @@
                                             <span
                                                 class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         @php
-                                            $statusColors = [
+$statusColors = [
                                             'active' => 'bg-green-100 text-green-800',
                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                             'rejected' => 'bg-red-100 text-red-800',

@@ -73,12 +73,12 @@ class TenantSeeder extends Seeder
                 Tenant::create([
                     'property_id' => $property->id,
                     'name' => $data['tenant_name'],
-                    'contact_person' => 'Default Name',
-                    'email' => 'default@tenant.com',
+                    'contact_person' => 'N/A',
+                    'email' => 'na@gmail.com',
                     'phone' => '000-0000000',
                     'commencement_date' => Carbon::parse('2023-01-01'),
                     'expiry_date' => Carbon::parse('2026-01-01'),
-                    'status' => 'active',
+                    'status' => 'Draft',
                 ]);
             }
         }

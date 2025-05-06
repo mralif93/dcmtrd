@@ -2,64 +2,65 @@
 
 namespace App\Http\Controllers\Maker;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Bank;
+use App\Models\Bond;
+use App\Models\User;
+use App\Models\Lease;
+use App\Models\Issuer;
+use App\Models\Tenant;
+use App\Models\Property;
+use App\Models\Checklist;
+use App\Models\Financial;
+use App\Models\Portfolio;
+use App\Models\SiteVisit;
+use App\Models\Redemption;
+use App\Models\TrusteeFee;
 use App\Imports\BondImport;
+
+use App\Models\Appointment;
+
+// Bonds
+use App\Models\Announcement;
+use App\Models\ApprovalForm;
+use App\Models\CallSchedule;
+use App\Models\SiteVisitLog;
+use Illuminate\Http\Request;
+use App\Models\ActivityDiary;
+use App\Models\FinancialType;
+use App\Models\LockoutPeriod;
+use App\Models\PortfolioType;
+use App\Models\TenancyLetter;
+use App\Models\RatingMovement;
+use App\Models\ChecklistTenant;
+use App\Models\PaymentSchedule;
+use App\Models\RelatedDocument;
+
+// REITs
+use App\Models\TradingActivity;
+use Illuminate\Validation\Rule;
+use App\Models\ApprovalProperty;
+use App\Models\ComplianceCovenant;
+use Illuminate\Support\Facades\DB;
+use App\Models\FacilityInformation;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Cache;
 use App\Imports\PaymentScheduleImport;
 use App\Imports\RatingMovementsImport;
 use App\Imports\TradingActivityImport;
-
-use App\Models\User;
-
-// Bonds
-use App\Models\Issuer;
-use App\Models\Bond;
-use App\Models\Announcement;
-use App\Models\RelatedDocument;
-use App\Models\FacilityInformation;
-use App\Models\RatingMovement;
-use App\Models\PaymentSchedule;
-use App\Models\Redemption;
-use App\Models\CallSchedule;
-use App\Models\LockoutPeriod;
-use App\Models\TradingActivity;
-use App\Models\TrusteeFee;
-use App\Models\ComplianceCovenant;
-use App\Models\ActivityDiary;
-
-// REITs
-use App\Models\Bank;
-use App\Models\FinancialType;
-use App\Models\PortfolioType;
-use App\Models\Portfolio;
-use App\Models\Property;
-use App\Models\Tenant;
-use App\Models\Lease;
-use App\Models\Financial;
-use App\Models\Checklist;
-use App\Models\SiteVisit;
-use App\Models\SiteVisitLog;
-use App\Models\Appointment;
-use App\Models\ApprovalForm;
-use App\Models\ApprovalProperty;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\User\BondFormRequest;
 use App\Models\ChecklistLegalDocumentation;
-use App\Models\ChecklistTenant;
-use App\Models\ChecklistExternalAreaCondition;
-use App\Models\ChecklistInternalAreaCondition;
 use App\Models\ChecklistPropertyDevelopment;
 use App\Models\ChecklistDisposalInstallation;
-use App\Models\TenancyLetter;
+use App\Models\ChecklistExternalAreaCondition;
+use App\Models\ChecklistInternalAreaCondition;
 
-use App\Http\Requests\User\BondFormRequest;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
+use App\Jobs\TrusteeFee\SendTrusteeFeeSubmittedEmail;
 
 class MakerController extends Controller
 {
@@ -92,44 +93,41 @@ class MakerController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        // Get count data from cache or database
-        $counts = Cache::remember('dashboard_user_counts', now()->addMinutes(1), function () {
-            $result = DB::select("
-                SELECT 
-                    (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
-                    (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
-                    (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
+        // Get count data directly from the database
+        $counts = DB::selectOne("
+            SELECT 
+                (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
+                (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
+                (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
 
-                    (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS trustee_fees_pending_count,
-                    (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS compliance_covenants_pending_count,
-                    (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS activity_diaries_pending_count,
-                
-                    (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
-                    (SELECT COUNT(*) FROM properties) AS properties_count,
-                    (SELECT COUNT(*) FROM financials) AS financials_count,
-                    (SELECT COUNT(*) FROM leases) AS leases_count,
-                    (SELECT COUNT(*) FROM tenants) AS tenants_count,
-                    (SELECT COUNT(*) FROM site_visits) AS site_visists_count,
-                    (SELECT COUNT(*) FROM checklists) AS checklists_count,
-                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
-                    (SELECT COUNT(*) FROM appointments) AS appointments_count,
-                    (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
-                    (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
+                (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS trustee_fees_pending_count,
+                (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS compliance_covenants_pending_count,
+                (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS activity_diaries_pending_count,
+            
+                (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
+                (SELECT COUNT(*) FROM properties) AS properties_count,
+                (SELECT COUNT(*) FROM financials) AS financials_count,
+                (SELECT COUNT(*) FROM leases) AS leases_count,
+                (SELECT COUNT(*) FROM tenants) AS tenants_count,
+                (SELECT COUNT(*) FROM site_visits) AS site_visists_count,
+                (SELECT COUNT(*) FROM checklists) AS checklists_count,
+                (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
+                (SELECT COUNT(*) FROM appointments) AS appointments_count,
+                (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
+                (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
 
-                    (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
-                    (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
-                    (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
-                    (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
-                    (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
-                    (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_site_visits_count,
-                    (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
-                    (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_site_visit_logs_count,
-                    (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
-                    (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approval_forms_count,
-                    (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approval_properties_count
-            ");
-            return (array) $result[0];
-        });
+                (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
+                (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
+                (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
+                (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
+                (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
+                (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_site_visits_count,
+                (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
+                (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_site_visit_logs_count,
+                (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
+                (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approval_forms_count,
+                (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approval_properties_count
+        ");
 
         // Portfolios Query - also section-specific
         $portfolioQuery = Portfolio::query()->whereIn('status', ['draft', 'active', 'pending', 'rejected', 'inactive']);
@@ -151,28 +149,28 @@ class MakerController extends Controller
             'issuers' => $issuers,
             'portfolios' => $portfolios,
             'currentSection' => $request->section,
-            'trusteeFeesCount' => $counts['trustee_fees_count'],
-            'complianceCovenantCount' => $counts['compliance_covenants_count'],
-            'activityDairyCount' => $counts['activity_diaries_count'],
-            'propertiesCount' => $counts['properties_count'],
-            'financialsCount' => $counts['financials_count'],
-            'tenantsCount' => $counts['tenants_count'],
-            'appointmentsCount' => $counts['appointments_count'],
-            'approvalFormsCount' => $counts['approval_forms_count'],
-            'approvalPropertiesCount' => $counts['approval_properties_count'],
-            'siteVisitLogsCount' => $counts['site_visit_logs_count'],
+            'trusteeFeesCount' => $counts->trustee_fees_count,
+            'complianceCovenantCount' => $counts->compliance_covenants_count,
+            'activityDairyCount' => $counts->activity_diaries_count,
+            'propertiesCount' => $counts->properties_count,
+            'financialsCount' => $counts->financials_count,
+            'tenantsCount' => $counts->tenants_count,
+            'appointmentsCount' => $counts->appointments_count,
+            'approvalFormsCount' => $counts->approval_forms_count,
+            'approvalPropertiesCount' => $counts->approval_properties_count,
+            'siteVisitLogsCount' => $counts->site_visit_logs_count,
 
             // Adding pending counts
-            'trusteeFeePendingCount' => $counts['trustee_fees_pending_count'],
-            'complianceCovenantPendingCount' => $counts['compliance_covenants_pending_count'],
-            'activityDiaryPendingCount' => $counts['activity_diaries_pending_count'],
-            'propertiesPendingCount' => $counts['pending_properties_count'],
-            'financialsPendingCount' => $counts['pending_financials_count'],
-            'tenantsPendingCount' => $counts['pending_tenants_count'],
-            'appointmentsPendingCount' => $counts['pending_appointments_count'],
-            'approvalFormsPendingCount' => $counts['pending_approval_forms_count'],
-            'approvalPropertiesPendingCount' => $counts['pending_approval_properties_count'],
-            'siteVisitLogsPendingCount' => $counts['pending_site_visit_logs_count'],
+            'trusteeFeePendingCount' => $counts->trustee_fees_pending_count,
+            'complianceCovenantPendingCount' => $counts->compliance_covenants_pending_count,
+            'activityDiaryPendingCount' => $counts->activity_diaries_pending_count,
+            'propertiesPendingCount' => $counts->pending_properties_count,
+            'financialsPendingCount' => $counts->pending_financials_count,
+            'tenantsPendingCount' => $counts->pending_tenants_count,
+            'appointmentsPendingCount' => $counts->pending_appointments_count,
+            'approvalFormsPendingCount' => $counts->pending_approval_forms_count,
+            'approvalPropertiesPendingCount' => $counts->pending_approval_properties_count,
+            'siteVisitLogsPendingCount' => $counts->pending_site_visit_logs_count,
         ]);
     }
 
@@ -1352,6 +1350,8 @@ class MakerController extends Controller
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
+            
+            dispatch(new SendTrusteeFeeSubmittedEmail($trusteeFee));
 
             return redirect()
                 ->route('trustee-fee-m.show', $trusteeFee)
@@ -1361,10 +1361,8 @@ class MakerController extends Controller
         }
     }
 
-    protected function validateTrusteeFee(Request $request)
+    protected function validateTrusteeFee(Request $request, TrusteeFee $trusteeFee = null)
     {
-        $trusteeFee = null;
-
         return $request->validate([
             'facility_information_id' => 'required|exists:facility_informations,id',
             'description' => 'required|string',
@@ -1372,11 +1370,11 @@ class MakerController extends Controller
             'trustee_fee_amount_2' => 'nullable|numeric',
             'start_anniversary_date' => 'required|date',
             'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
-            'invoice_no' => 'required|string|' . ($trusteeFee ? 'unique:trustee_fees,invoice_no,' . $trusteeFee->id : 'unique:trustee_fees'),
+            'invoice_no' => 'required|string|unique:trustee_fees,invoice_no,' . ($trusteeFee ? $trusteeFee->id : 'NULL'),
             'month' => 'nullable|string|max:10',
-            'date' => 'nullable|integer|min:1|max:31',
             'memo_to_fad' => 'nullable|date',
             'date_letter_to_issuer' => 'nullable|date',
+            'payment_status' => 'nullable|in:Paid,Pending,Early Redemption',
             'first_reminder' => 'nullable|date',
             'second_reminder' => 'nullable|date',
             'third_reminder' => 'nullable|date',
@@ -1389,6 +1387,7 @@ class MakerController extends Controller
             'verified_by' => 'nullable|string|max:255',
             'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
             'remarks' => 'nullable|string',
+            'remark_to_management' => 'nullable|string|max:1000',
         ]);
     }
 
@@ -1446,7 +1445,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'draft';
+        $validated['status'] = 'Draft';
 
         $compliance = ComplianceCovenant::create($validated);
 
@@ -1846,19 +1845,19 @@ class MakerController extends Controller
 
         // Handle file uploads
         if ($request->hasFile('annual_report')) {
-            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports', 'public');
         }
 
         if ($request->hasFile('trust_deed_document')) {
-            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents', 'public');
         }
 
         if ($request->hasFile('insurance_document')) {
-            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents', 'public');
         }
 
         if ($request->hasFile('valuation_report')) {
-            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports', 'public');
         }
 
         try {
@@ -1883,44 +1882,33 @@ class MakerController extends Controller
 
         // Handle file uploads
         if ($request->hasFile('annual_report')) {
-            // Remove old file if it exists
             if ($portfolio->annual_report) {
-                Storage::delete($portfolio->annual_report);
+                Storage::disk('public')->delete($portfolio->annual_report);
             }
-
-            // Store the new file and get its path
-            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports', 'public');
         }
 
         if ($request->hasFile('trust_deed_document')) {
-            // Remove old file if it exists
             if ($portfolio->trust_deed_document) {
-                Storage::delete($portfolio->trust_deed_document);
+                Storage::disk('public')->delete($portfolio->trust_deed_document);
             }
-
-            // Store the new file and get its path
-            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents', 'public');
         }
 
         if ($request->hasFile('insurance_document')) {
-            // Remove old file if it exists
             if ($portfolio->insurance_document) {
-                Storage::delete($portfolio->insurance_document);
+                Storage::disk('public')->delete($portfolio->insurance_document);
             }
-
-            // Store the new file and get its path
-            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents', 'public');
         }
 
         if ($request->hasFile('valuation_report')) {
-            // Remove old file if it exists
             if ($portfolio->valuation_report) {
-                Storage::delete($portfolio->valuation_report);
+                Storage::disk('public')->delete($portfolio->valuation_report);
             }
-
-            // Store the new file and get its path
-            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports', 'public');
         }
+
 
         try {
             $portfolio->update($validated);
@@ -2551,10 +2539,10 @@ class MakerController extends Controller
     public function TenancyLetterIndex(Property $property)
     {
         $tenancyLetters = $property->tenancyLetters()
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(10)
-                        ->withQueryString();
-                        
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('maker.tenancy-letter.index', compact('tenancyLetters', 'propertyInfo'));
     }
 
@@ -2580,7 +2568,7 @@ class MakerController extends Controller
         try {
             $tenancyLetter = TenancyLetter::create($validated);
             return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error creating tenancy letter: ' . $e->getMessage());
         }
     }
@@ -2594,21 +2582,21 @@ class MakerController extends Controller
     public function TenancyLetterUpdate(Request $request, TenancyLetter $tenancyLetter)
     {
         $validated = $this->TenancyLetterValidate($request);
-        
+
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
             // Delete old file if exists
             if ($tenancyLetter->attachment && Storage::disk('public')->exists($tenancyLetter->attachment)) {
                 Storage::disk('public')->delete($tenancyLetter->attachment);
             }
-            
+
             $validated['attachment'] = $request->file('attachment')->store('tenancy-letter-attachments', 'public');
         }
 
         try {
             $tenancyLetter->update($validated);
             return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error updating tenancy letter: ' . $e->getMessage());
         }
     }
@@ -2635,7 +2623,7 @@ class MakerController extends Controller
         try {
             $tenancyLetter->delete();
             return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter deleted successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error deleting tenancy letter: ' . $e->getMessage());
         }
     }
@@ -3561,9 +3549,9 @@ class MakerController extends Controller
             ->when($request->input('search'), function ($query, $search) {
                 return $query->where(function ($q) use ($search) {
                     $q->where('party_name', 'like', "%{$search}%")
-                    ->orWhereHas('portfolio', function($portfolio) use ($search) {
-                        $portfolio->where('portfolio_name', 'like', "%{$search}%");
-                    });
+                        ->orWhereHas('portfolio', function ($portfolio) use ($search) {
+                            $portfolio->where('portfolio_name', 'like', "%{$search}%");
+                        });
                 });
             })
             ->when($request->input('status'), function ($query, $status) {

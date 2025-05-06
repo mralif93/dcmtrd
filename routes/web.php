@@ -92,12 +92,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 // Welcome Page & 2FA Routes
-Route::middleware(['auth'])->group(function() {
+Route::middleware(['auth'])->group(function () {
     // Welcome Page
-    Route::get('/welcome', function() {
+    Route::get('/welcome', function () {
         return view('welcome');
     })->name('main');
 
@@ -142,7 +142,7 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
     Route::resource('/admin/charts', ChartController::class);
 
     Route::resource('/admin/trustee-fees', TrusteeFeeController::class);
-    
+
     // Additional
     Route::prefix('/admin/trustee-fees')->name('trustee-fees.')->group(function () {
         Route::get('/admin/trustee-fees-search', [TrusteeFeeController::class, 'search'])->name('search');
@@ -272,7 +272,7 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     Route::resource('/user/facility-informations-info', UserFacilityInformationController::class);
     Route::resource('/user/related-documents-info', UserRelatedDocumentController::class);
     Route::resource('/user/charts-info', UserChartController::class);
-    
+
     Route::resource('/user/trustee-fees-info', UserTrusteeFeeController::class);
 
     // Additional
@@ -284,7 +284,7 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
     });
 
     Route::resource('/user/compliance-covenants-info', UserComplianceCovenantController::class);
-    
+
     // Additional
     Route::prefix('/user/compliance-covenants-info')->name('compliance-covenants-info.')->group(function () {
         Route::get('/compliance-covenants/report', [UserComplianceCovenantController::class, 'report'])->name('report');
@@ -305,7 +305,7 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
         Route::post('/user/related-documents-info/{id}/restore', [UserRelatedDocumentController::class, 'restore'])->name('restore');
         Route::post('/user/related-documents-info/{id}/force-delete', [UserRelatedDocumentController::class, 'forceDelete'])->name('force-delete');
     });
-    
+
     // For Issuers
     Route::post('/issuers-info/{issuers_info}/submit', [UserIssuerController::class, 'submitForApproval'])->name('issuers-info.submit');
     Route::post('/issuers-info/{issuers_info}/approve', [UserIssuerController::class, 'approve'])->name('issuers-info.approve');
@@ -392,6 +392,8 @@ Route::middleware(['auth', 'two-factor', 'role:legal'])->group(function () {
 Route::middleware(['auth', 'two-factor', 'role:compliance'])->group(function () {
     // Dashboard
     Route::get('/compliance/dashboard', [ComplianceController::class, 'index'])->name('compliance.dashboard');
+    Route::get('/cb-reports/batches', [ComplianceController::class, 'viewBatches'])->name('compliance.cb-reports.batches');
+    Route::get('/cb-reports/batches/{id}/download', [ComplianceController::class, 'downloadBatch'])->name('compliance.cb-reports.download');
 });
 
 // Maker routes
@@ -402,10 +404,17 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::prefix('/maker/dcmt')->name('dcmt-reports.')->group(function () {
         Route::get('/reports', [DcmtReportController::class, 'index'])->name('index');
         Route::get('/cb-reports', [DcmtReportController::class, 'cbReports'])->name('cb-reports');
+        Route::post('/cb-reports/cutoff', [DcmtReportController::class, 'cutOff'])->name('cb-reports.cutoff');
+        Route::get('/cb-reports/batches', [DcmtReportController::class, 'viewBatches'])->name('cb-reports.batches');
         Route::get('/export-cb', function () {
             return Excel::download(new CorporateBondExport, 'corporate_bonds.xlsx');
         })->name('cb-export');
         Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports');
+        Route::delete('/cb-reports/batches/{id}', [DcmtReportController::class, 'deleteBatch'])->name('cb-reports.delete');
+        Route::get('/cb-reports/batches/{id}/download', [DcmtReportController::class, 'downloadBatch'])->name('cb-reports.download');
+        Route::get('/trustee-reports/batches', [DcmtReportController::class, 'viewTrusteeBatches'])->name('trustee-reports.batches');
+        Route::post('/trustee-reports/cutoff', [DcmtReportController::class, 'cutOffTrustee'])->name('trustee-reports.cutoff');
+        Route::get('/trustee-reports/batches/{id}/download', [DcmtReportController::class, 'downloadBatchTrustee'])->name('trustee-reports.download');
     });
 
     // Issuer Module
@@ -447,7 +456,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/facility-info/{facility}/update', [MakerController::class, 'FacilityInfoUpdate'])->name('facility-info-m.update')->middleware('permission:DCMTRD');
     Route::get('maker/facility-info/{facility}/show', [MakerController::class, 'FacilityInfoShow'])->name('facility-info-m.show')->middleware('permission:DCMTRD');
 
-    Route::patch('/maker/facility-info/{facility}/toggle-redeem', [MakerController::class, 'toggleRedeem']) ->name('facility.toggle-redeem');
+    Route::patch('/maker/facility-info/{facility}/toggle-redeem', [MakerController::class, 'toggleRedeem'])->name('facility.toggle-redeem');
     // Rating Movement Module
     Route::get('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementCreate'])->name('rating-m.create')->middleware('permission:DCMTRD');
     Route::post('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementStore'])->name('rating-m.store')->middleware('permission:DCMTRD');
@@ -501,7 +510,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/trading-activity/{trading}/show', [MakerController::class, 'TradingActivityShow'])->name('trading-m.show')->middleware('permission:DCMTRD');
     Route::get('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadForm'])->name('trading-m.upload-form')->middleware('permission:DCMTRD');
     Route::post('maker/trading-activity/{bond}/upload', [MakerController::class, 'TradingActivityUploadStore'])->name('trading-m.upload-store')->middleware('permission:DCMTRD');
-    
+
     // Trustee Fee Module
     Route::get('maker/trustee-fee', [MakerController::class, 'TrusteeFeeIndex'])->name('trustee-fee-m.index')->middleware('permission:DCMTRD');
     Route::get('maker/trustee-fee/create', [MakerController::class, 'TrusteeFeeCreate'])->name('trustee-fee-m.create')->middleware('permission:DCMTRD');
@@ -549,7 +558,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/financial/{financial}/edit', [MakerController::class, 'FinancialEdit'])->name('financial-m.edit')->middleware('permission:REITS');
     Route::put('maker/financial/{financial}/update', [MakerController::class, 'FinancialUpdate'])->name('financial-m.update')->middleware('permission:REITS');
     Route::get('maker/financial/{financial}/show', [MakerController::class, 'FinancialShow'])->name('financial-m.show')->middleware('permission:REITS');
-    
+
     // Property Module
     Route::get('maker/property/{portfolio}/', [MakerController::class, 'PropertyIndex'])->name('property-m.index')->middleware('permission:REITS');
     Route::get('maker/property/{portfolio}/create', [MakerController::class, 'PropertyCreate'])->name('property-m.create')->middleware('permission:REITS');
@@ -590,7 +599,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/site-visit/{siteVisit}/edit', [MakerController::class, 'SiteVisitEdit'])->name('site-visit-m.edit')->middleware('permission:REITS');
     Route::put('maker/site-visit/{siteVisit}/update', [MakerController::class, 'SiteVisitUpdate'])->name('site-visit-m.update')->middleware('permission:REITS');
     Route::get('maker/site-visit/{siteVisit}/show', [MakerController::class, 'SiteVisitShow'])->name('site-visit-m.show')->middleware('permission:REITS');
-    
+
     // Checklist Module
     Route::get('maker/checklist/{property}/', [MakerController::class, 'ChecklistIndex'])->name('checklist-m.index')->middleware('permission:REITS');
     Route::get('maker/checklist/{property}/create', [MakerController::class, 'ChecklistCreate'])->name('checklist-m.create')->middleware('permission:REITS');
@@ -654,7 +663,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/checklist-disposal-installation/{checklistDisposalInstallation}/update', [MakerController::class, 'ChecklistDisposalInstallationUpdate'])->name('checklist-disposal-installation-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist-disposal-installation/{checklistDisposalInstallation}/show', [MakerController::class, 'ChecklistDisposalInstallationShow'])->name('checklist-disposal-installation-m.show')->middleware('permission:REITS');
     Route::get('maker/checklist-disposal-installation/{checklistDisposalInstallation}/submission-legal', [MakerController::class, 'ChecklistDisposalInstallationSubmissionLegal'])->name('checklist-disposal-installation-m.submission-legal')->middleware('permission:REITS');
-    
+
     // Appointment Module
     Route::get('maker/appointment/', [MakerController::class, 'AppointmentIndex'])->name('appointment-m.index')->middleware('permission:REITS');
     Route::get('maker/appointment/create', [MakerController::class, 'AppointmentCreate'])->name('appointment-m.create')->middleware('permission:REITS');
@@ -697,11 +706,20 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     // Dashboard
     Route::get('/approver/dashboard', [ApproverController::class, 'index'])->name('approver.dashboard');
 
+    Route::prefix('/approver/dcmt')->name('a.dcmt-reports.')->group(function () {
+        Route::get('/reports', [DcmtReportController::class, 'indexA'])->name('index');
+        Route::get('/cb-reports', [DcmtReportController::class, 'cbReportsA'])->name('cb-reports.a');
+        Route::get('/export-cb', function () {
+            return Excel::download(new CorporateBondExport, 'corporate_bonds.xlsx');
+        })->name('cb-export.a');
+        Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports.a');
+    });
+
     // Issuer Module
     Route::get('approver/issuer/{issuer}/show', [ApproverController::class, 'IssuerShow'])->name('issuer-a.show')->middleware('permission:DCMTRD');
     Route::post('approver/{issuer}/approve', [ApproverController::class, 'IssuerApprove'])->name('issuer-a.approve')->middleware('permission:DCMTRD');
     Route::post('approver/{issuer}/reject', [ApproverController::class, 'IssuerReject'])->name('issuer-a.reject')->middleware('permission:DCMTRD');
-    
+
     // Bond Module
     Route::get('approver/{issuer}/details', [ApproverController::class, 'BondIndex'])->name('bond-a.details')->middleware('permission:DCMTRD');
     Route::get('approver/bond/{bond}/show', [ApproverController::class, 'BondShow'])->name('bond-a.show')->middleware('permission:DCMTRD');
@@ -829,6 +847,4 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/approval-property/{approvalProperty}/details', [ApproverController::class, 'ApprovalPropertyDetails'])->name('approval-property-a.details')->middleware('permission:REITS');
     Route::post('approver/approval-property/{approvalProperty}/approve', [ApproverController::class, 'ApprovalPropertyApprove'])->name('approval-property-a.approve')->middleware('permission:REITS');
     Route::post('approver/approval-property/{approvalProperty}/reject', [ApproverController::class, 'ApprovalPropertyReject'])->name('approval-property-a.reject')->middleware('permission:REITS');
-
-
 });

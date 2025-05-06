@@ -714,24 +714,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Charts Accordion -->
-                {{-- <div class="bg-white shadow-sm sm:rounded-lg">
-                    <button @click="openSection = openSection === 'chart' ? null : 'chart'" 
-                            class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-xl font-semibold">Charts</h3>
-                            <svg class="w-6 h-6 transition-transform transform" 
-                                :class="{ 'rotate-180': openSection === 'chart' }" 
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                        </div>
-                    </button>
-                    <div x-show="openSection === 'chart'" x-collapse class="p-6 overflow-x-auto border-t border-gray-200">
-                        <p>Content</p>
-                    </div>
-                </div> --}}
             </div>
         </div>
     </div>

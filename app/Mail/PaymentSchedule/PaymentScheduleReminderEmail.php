@@ -38,6 +38,10 @@ class PaymentScheduleReminderEmail extends Mailable
     {
         return new Content(
             markdown: 'emails.payment-schedule.reminders',
+            with: [
+                'paymentSchedule' => $this->paymentSchedule,
+                'user' => $this->user,
+            ]
         );
     }
 

@@ -38,6 +38,10 @@ class RejectIssuerToPreparerEmails extends Mailable
     {
         return new Content(
             markdown: 'emails.issuer.reject',
+            with: [
+                'issuer' => $this->issuer,
+                'user' => $this->user,
+            ]
         );
     }
 

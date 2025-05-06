@@ -26,7 +26,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2021-05-01',
                 'end_date' => '2024-05-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Al Bagus Food and Beverage Sdn Bhd',
@@ -39,7 +39,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'BNX Delight Sdn Bhd',
@@ -52,7 +52,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'BNX Takahara Sdn Bhd',
@@ -65,7 +65,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Caring Pharmacy Retail Management Sdn Bhd',
@@ -78,7 +78,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Chamelon Sdn Bhd',
@@ -91,7 +91,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Chrisna Jenio Sdn Bhd',
@@ -104,7 +104,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Era Sag (JB) Sdn Bhd',
@@ -117,7 +117,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Eyeflex Optometrix Sdn Bhd',
@@ -130,7 +130,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'F.O.S Apparel Group Sdn Bhd',
@@ -143,7 +143,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Grand Companies Sdn Bhd',
@@ -156,7 +156,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'KPK Quantity Surveyors (Semenanjung) Sdn Bhd',
@@ -169,7 +169,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Johor Corporation',
@@ -182,7 +182,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Habib Jewels Franchise Sdn Bhd',
@@ -195,7 +195,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'JPS Fashions (Malaysia) Sdn Bhd',
@@ -208,7 +208,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'La Mior Sdn Bhd',
@@ -221,7 +221,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'LAC Global Brands (Malaysia) Sdn Bhd',
@@ -234,7 +234,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Azmi & Associates',
@@ -247,7 +247,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Maxenta Cosmeceuticals Sdn Bhd',
@@ -260,7 +260,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-01-01',
                 'end_date' => '2026-01-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'TT Dotcom Sdn Bhd',
@@ -273,7 +273,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-06-01',
                 'end_date' => '2027-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Howden Insurance Brokers Sdn Bhd',
@@ -286,7 +286,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 4,
                 'start_date' => '2021-05-01',
                 'end_date' => '2025-05-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Cemara Astka Solutions Sdn Bhd',
@@ -299,7 +299,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-03-01',
                 'end_date' => '2026-03-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Johor Corporation',
@@ -312,7 +312,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2020-10-01',
                 'end_date' => '2025-10-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Mynews Retails Sdn Bhd',
@@ -325,7 +325,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2021-12-01',
                 'end_date' => '2024-12-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Nails Studio JBCC',
@@ -338,7 +338,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2022-08-01',
                 'end_date' => '2025-08-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'NDIS Group Development',
@@ -351,7 +351,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 4,
                 'start_date' => '2023-01-01',
                 'end_date' => '2027-01-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Orax Enterprise',
@@ -364,7 +364,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2022-06-01',
                 'end_date' => '2025-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Struys Leslie Oswin',
@@ -377,7 +377,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2021-05-01',
                 'end_date' => '2024-05-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Padini Dot Com Sdn Bhd',
@@ -390,7 +390,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2020-12-01',
                 'end_date' => '2025-12-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Richeese Factory Malaysia Sdn Bhd',
@@ -403,7 +403,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-02-01',
                 'end_date' => '2026-02-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'SEKVS Trading Sdn Bhd',
@@ -416,7 +416,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-06-01',
                 'end_date' => '2026-06-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Willis (Malaysia) Sdn Bhd',
@@ -429,7 +429,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2022-04-01',
                 'end_date' => '2027-04-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Luggage Lockers PLT',
@@ -442,7 +442,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2021-07-01',
                 'end_date' => '2024-07-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Sorella (M) Sdn Bhd',
@@ -455,7 +455,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2022-09-01',
                 'end_date' => '2025-09-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Tea Garden Restaurant (MY) Sdn Bhd',
@@ -468,7 +468,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 4,
                 'start_date' => '2023-03-01',
                 'end_date' => '2027-03-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'TEC Malaysia Sdn Bhd',
@@ -481,7 +481,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2021-08-01',
                 'end_date' => '2024-08-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Azman, Wong, Salleh & Co',
@@ -494,7 +494,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 5,
                 'start_date' => '2020-10-01',
                 'end_date' => '2025-10-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'JL Project Sdn Bhd',
@@ -507,7 +507,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-01-01',
                 'end_date' => '2026-01-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Mohd Akhir & Partners',
@@ -520,7 +520,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 4,
                 'start_date' => '2022-05-01',
                 'end_date' => '2026-05-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Thai Odyssey Group Sdn Bhd',
@@ -533,7 +533,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-07-01',
                 'end_date' => '2026-07-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'The Coffee Bean & Tea Leaf (M) Sdn Bhd',
@@ -546,7 +546,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-01-01',
                 'end_date' => '2026-01-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'TMT Delight Sdn Bhd',
@@ -559,7 +559,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-01-01',
                 'end_date' => '2026-01-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Vincci Ladies’ Specialties Centre Sdn Bhd',
@@ -572,7 +572,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-01-01',
                 'end_date' => '2026-01-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Vitality Boost Sdn Bhd',
@@ -585,7 +585,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-01-01',
                 'end_date' => '2026-01-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Vivo Food Sdn Bhd',
@@ -598,7 +598,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-01-01',
                 'end_date' => '2026-01-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Yee Fong Hung (M) Sdn Bhd',
@@ -611,7 +611,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-01-01',
                 'end_date' => '2026-01-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ],
             [
                 'tenant_name' => 'Yung Fa Retail Sdn Bhd',
@@ -624,7 +624,7 @@ class LeaseSeeder extends Seeder
                 'term_years' => 3,
                 'start_date' => '2023-01-01',
                 'end_date' => '2026-01-01',
-                'status' => 'active',
+                'status' => 'Draft',
             ]
 
         ];
