@@ -1927,7 +1927,7 @@ class MakerController extends Controller
     
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'active';
+        $validated['status'] = 'pending';
         
         try {
             // Create the financial record
@@ -2293,7 +2293,7 @@ class MakerController extends Controller
         $validated = $this->TenantValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'active';
+        $validated['status'] = 'pending';
 
         try {
             $tenant = Tenant::create($validated);
