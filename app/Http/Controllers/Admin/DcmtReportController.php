@@ -7,6 +7,7 @@ use App\Models\Issuer;
 use App\Models\ReportBatch;
 use Illuminate\Http\Request;
 use App\Models\ReportBatchTrustee;
+use App\Exports\TrusteeExportBatch;
 use App\Exports\CorporateBondExport;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
@@ -260,7 +261,7 @@ class DcmtReportController extends Controller
             ]);
         }
 
-        return redirect()->route('dcmt-reports.cb-reports')->with('success', 'Report cut off and stored in batch successfully.');
+        return redirect()->route('dcmt-reports.trustee-reports')->with('success', 'Report cut off and stored in batch successfully.');
     }
 
     public function downloadBatchTrustee($id)

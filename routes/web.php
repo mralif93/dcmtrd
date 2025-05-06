@@ -394,6 +394,8 @@ Route::middleware(['auth', 'two-factor', 'role:compliance'])->group(function () 
     Route::get('/compliance/dashboard', [ComplianceController::class, 'index'])->name('compliance.dashboard');
     Route::get('/cb-reports/batches', [ComplianceController::class, 'viewBatches'])->name('compliance.cb-reports.batches');
     Route::get('/cb-reports/batches/{id}/download', [ComplianceController::class, 'downloadBatch'])->name('compliance.cb-reports.download');
+    Route::get('/trustee-reports/batches', [ComplianceController::class, 'viewTrusteeBatches'])->name('compliance.trustee-reports.batches');
+    Route::get('/trustee-reports/batches/{id}/download', [ComplianceController::class, 'downloadBatchTrustee'])->name('compliance.trustee-reports.download');
 });
 
 // Maker routes
