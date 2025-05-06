@@ -2797,7 +2797,7 @@ class MakerController extends Controller
         // Get site visits related to the property
         $property = $checklist->siteVisit->property;
         $siteVisits = SiteVisit::where('property_id', $property->id)
-                            ->where('status', 'active')
+                            ->where('status', 'pending')
                             ->orderBy('date_visit', 'desc')
                             ->get();
         
