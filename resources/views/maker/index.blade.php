@@ -361,15 +361,6 @@
                     color="bg-blue-100"
                 />
 
-                <!-- Approval Form -->
-                <x-dashboard-card
-                    title="Approval Form"
-                    icon="users"
-                    :count="$approvalFormsCount ?? 0"
-                    :href="route('approval-form-m.index')"
-                    color="bg-blue-100"
-                />
-
                 <!-- Approval Property -->
                 <x-dashboard-card
                     title="Approval Property"

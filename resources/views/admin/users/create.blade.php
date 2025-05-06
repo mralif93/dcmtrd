@@ -104,6 +104,12 @@
                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
                                         <label for="permission_compliance" class="ml-2 block text-sm text-gray-900">COMPLIANCE</label>
                                     </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" name="permissions[]" id="permission_smd" value="smd"
+                                            {{ is_array(old('permissions')) && in_array('smd', old('permissions')) ? 'checked' : '' }}
+                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                        <label for="permission_smd" class="ml-2 block text-sm text-gray-900">SMD</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

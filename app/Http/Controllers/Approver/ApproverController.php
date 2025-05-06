@@ -79,28 +79,28 @@ class ApproverController extends Controller
                     (SELECT COUNT(*) FROM financials) AS financials_count,
                     (SELECT COUNT(*) FROM tenants) AS tenants_count,
                     (SELECT COUNT(*) FROM leases) AS leases_count,
-                    (SELECT COUNT(*) FROM site_visits) AS siteVisits_count,
+                    (SELECT COUNT(*) FROM site_visits) AS site_visits_count,
                     (SELECT COUNT(*) FROM checklists) AS checklists_count,
                     (SELECT COUNT(*) FROM appointments) AS appointments_count,
-                    (SELECT COUNT(*) FROM approval_forms) AS approvalForms_count,
-                    (SELECT COUNT(*) FROM approval_properties) AS approvalProperties_count,
-                    (SELECT COUNT(*) FROM site_visit_logs) AS siteVisitLogs_count,
+                    (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
+                    (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
+                    (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
                     
                     -- Add pending counts
-                    (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS pending_trusteeFees_count,
-                    (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS pending_complianceCovenants_count,
-                    (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS pending_activityDiaries_count,
+                    (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS pending_trustee_fees_count,
+                    (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS pending_compliance_covenants_count,
+                    (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS pending_activity_diaries_count,
                     (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
                     (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
                     (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
                     (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
                     (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
-                    (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_siteVisits_count,
+                    (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_site_visits_count,
                     (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
                     (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
-                    (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approvalForms_count,
-                    (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approvalProperties_count,
-                    (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_siteVisitLogs_count
+                    (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approval_forms_count,
+                    (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approval_properties_count,
+                    (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_site_visit_logs_count
             ");
             return (array) $result[0];
         });
@@ -116,24 +116,24 @@ class ApproverController extends Controller
             'financialsCount' => $counts['financials_count'],
             'tenantsCount' => $counts['tenants_count'],
             'leasesCount' => $counts['leases_count'],
-            'siteVisitsCount' => $counts['siteVisits_count'],
+            'siteVisitsCount' => $counts['site_visits_count'],
             'checklistsCount' => $counts['checklists_count'],
             'appointmentsCount' => $counts['appointments_count'],
-            'approvalFormsCount' => $counts['approvalForms_count'],
-            'approvalPropertiesCount' => $counts['approvalProperties_count'],
-            'siteVisitLogsCount' => $counts['siteVisitLogs_count'],
-
+            'approvalFormsCount' => $counts['approval_forms_count'],
+            'approvalPropertiesCount' => $counts['approval_properties_count'],
+            'siteVisitLogsCount' => $counts['site_visit_logs_count'],
+            
             // Add pending counts to view data
             'pendingPropertiesCount' => $counts['pending_properties_count'],
             'pendingFinancialsCount' => $counts['pending_financials_count'],
             'pendingTenantsCount' => $counts['pending_tenants_count'],
             'pendingLeaseCount' => $counts['pending_leases_count'],
-            'pendingSiteVisitCount' => $counts['pending_siteVisits_count'],
+            'pendingSiteVisitCount' => $counts['pending_site_visits_count'],
             'pendingChecklistCount' => $counts['pending_checklists_count'],
             'pendingAppointmentsCount' => $counts['pending_appointments_count'],
-            'pendingApprovalFormsCount' => $counts['pending_approvalForms_count'],
-            'pendingApprovalPropertiesCount' => $counts['pending_approvalProperties_count'],
-            'pendingSiteVisitLogsCount' => $counts['pending_siteVisitLogs_count'],
+            'pendingApprovalFormsCount' => $counts['pending_approval_forms_count'],
+            'pendingApprovalPropertiesCount' => $counts['pending_approval_properties_count'],
+            'pendingSiteVisitLogsCount' => $counts['pending_site_visit_logs_count'],
         ]);
     }
 
@@ -1681,40 +1681,73 @@ class ApproverController extends Controller
     {
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
-
-        // search & filter
+    
+        // Base query
         $query = ApprovalForm::with(['portfolio', 'property']);
-
-        // Apply portfolio filter based on tab
-        if ($activeTab === 'all') {
-            $query->whereHas('portfolio', function ($query) {
-                $query->where('status', 'active');
-            });
+    
+        // Apply status filter based on tab
+        if ($activeTab === 'pending') {
+            $query->where('status', 'pending');
+        } elseif ($activeTab === 'active') {
+            $query->where('status', 'active');
+        } elseif ($activeTab === 'rejected') {
+            $query->where('status', 'rejected');
         } elseif ($activeTab === 'inactive') {
-            $query->whereHas('portfolio', function ($query) {
-                $query->where('status', 'inactive');
-            });
+            $query->where('status', 'inactive');
         }
-
-        // fetch approval forms
+        // 'all' tab shows everything, so no status filter needed
+    
+        // Apply date filters if provided
+        if ($request->filled('received_date')) {
+            $query->whereDate('received_date', $request->received_date);
+        }
+        
+        if ($request->filled('send_date')) {
+            $query->whereDate('send_date', $request->send_date);
+        }
+        
+        // Apply category filter if provided
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+    
+        // Fetch approval forms with pagination
         $approvalForms = $query->latest()->paginate(10)->withQueryString();
-
-        // Count records for each tab
+    
+        // Count records for each tab - these should be filtered by the same criteria as the main query
+        // except for the status which defines each tab
+        $baseCountQuery = ApprovalForm::query();
+        
+        // Apply the same filters to the count queries (except status)
+        if ($request->filled('received_date')) {
+            $baseCountQuery->whereDate('received_date', $request->received_date);
+        }
+        
+        if ($request->filled('send_date')) {
+            $baseCountQuery->whereDate('send_date', $request->send_date);
+        }
+        
+        if ($request->filled('category')) {
+            $baseCountQuery->where('category', $request->category);
+        }
+        
         $tabCounts = [
-            'all' => ApprovalForm::count(),
-            'active' => ApprovalForm::where('status', 'active')->count(),
-            'pending' => ApprovalForm::where('status', 'pending')->count(),
-            'rejected' => ApprovalForm::where('status', 'rejected')->count(),
-            'inactive' => ApprovalForm::where('status', 'inactive')->count(),
+            'all' => (clone $baseCountQuery)->count(),
+            'pending' => (clone $baseCountQuery)->where('status', 'pending')->count(),
+            'active' => (clone $baseCountQuery)->where('status', 'active')->count(),
+            'rejected' => (clone $baseCountQuery)->where('status', 'rejected')->count(),
+            'inactive' => (clone $baseCountQuery)->where('status', 'inactive')->count(),
         ];
-
-        // Get all portfolios for the dropdown
-        $portfolioIds = $approvalForms->pluck('portfolio_id')->unique();
-        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
+    
+        // Get all categories for the dropdown - no need to tie this to the current results
         $categories = ApprovalForm::select('category')->distinct()->pluck('category');
-        $statuses = ApprovalForm::select('status')->distinct()->pluck('status');
-
-        return view('approver.approval-form.main', compact('approvalForms', 'activeTab', 'tabCounts', 'portfolios', 'categories', 'statuses'));
+    
+        return view('approver.approval-form.main', compact(
+            'approvalForms', 
+            'activeTab', 
+            'tabCounts', 
+            'categories'
+        ));
     }
 
     public function ApprovalFormDetails(ApprovalForm $approvalForm)
@@ -1794,13 +1827,38 @@ class ApproverController extends Controller
     {
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
-
-        // search & filter
-        $query = ApprovalProperty::with(['portfolio', 'property']);
-
-        // fetch approval properties
+    
+        // Base query with relationships
+        $query = ApprovalProperty::with(['property.portfolio']);
+    
+        // Apply filter by tab
+        if ($activeTab !== 'all') {
+            $query->where('status', $activeTab);
+        }
+    
+        // Apply search filter if present
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->whereHas('property', function($propertyQuery) use ($searchTerm) {
+                    $propertyQuery->where('name', 'like', "%{$searchTerm}%");
+                })
+                ->orWhere('estimated_amount', 'like', "%{$searchTerm}%")
+                ->orWhere('prepared_by', 'like', "%{$searchTerm}%")
+                ->orWhere('description', 'like', "%{$searchTerm}%");
+            });
+        }
+    
+        // Apply portfolio filter if present
+        if ($request->has('portfolio_id') && !empty($request->portfolio_id)) {
+            $query->whereHas('property', function($propertyQuery) use ($request) {
+                $propertyQuery->where('portfolio_id', $request->portfolio_id);
+            });
+        }
+    
+        // Fetch approval properties with pagination
         $approvalProperties = $query->latest()->paginate(10)->withQueryString();
-
+    
         // Count records for each tab
         $tabCounts = [
             'all' => ApprovalProperty::count(),
@@ -1809,19 +1867,26 @@ class ApproverController extends Controller
             'rejected' => ApprovalProperty::where('status', 'rejected')->count(),
             'inactive' => ApprovalProperty::where('status', 'inactive')->count(),
         ];
-
-        // Get all portfolios for the dropdown
-        $portfolioIds = $approvalProperties->pluck('portfolio_id')->unique();
-        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
-
-        // Get all properties for the dropdown
+    
+        // Get all properties for the dropdown - only get what's needed for the current page
         $propertyIds = $approvalProperties->pluck('property_id')->unique();
         $properties = Property::whereIn('id', $propertyIds)->get();
-
-        $categories = ApprovalProperty::select('category')->distinct()->pluck('category');
+    
+        // Get all portfolios for the dropdown - only get what's needed for the current page
+        $portfolioIds = $properties->pluck('portfolio_id')->unique()->filter();
+        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
+    
+        // Get all statuses for the dropdown
         $statuses = ApprovalProperty::select('status')->distinct()->pluck('status');
-
-        return view('approver.approval-property.main', compact('approvalProperties', 'activeTab', 'tabCounts', 'portfolios', 'properties', 'categories', 'statuses'));
+    
+        return view('approver.approval-property.main', compact(
+            'approvalProperties', 
+            'activeTab', 
+            'tabCounts', 
+            'properties', 
+            'portfolios', 
+            'statuses'
+        ));
     }
 
     public function ApprovalPropertyDetails(ApprovalProperty $approvalProperty)
@@ -1885,29 +1950,80 @@ class ApproverController extends Controller
     {
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
-
-        // search & filter
-        $query = SiteVisitLog::with(['siteVisit', 'siteVisit.property', 'siteVisit.property.portfolio']);
-
+    
+        // Initialize the query with relationships
+        $query = SiteVisitLog::with(['property', 'property.portfolio']);
+        
         // Apply status filter based on tab
         if ($activeTab !== 'all') {
             $query->where('status', $activeTab);
         }
-
-        // fetch site visit logs
+        
+        // Apply search filter if provided
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('purpose', 'like', "%{$search}%")
+                  ->orWhereHas('property', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('address', 'like', "%{$search}%");
+                  });
+            });
+        }
+        
+        // Apply category filter if provided
+        if ($request->has('category') && !empty($request->category)) {
+            $query->where('category', $request->category);
+        }
+        
+        // Apply portfolio filter if provided
+        if ($request->has('portfolio_id') && !empty($request->portfolio_id)) {
+            $query->whereHas('property', function($q) use ($request) {
+                $q->where('portfolio_id', $request->portfolio_id);
+            });
+        }
+        
+        // Apply property filter if provided
+        if ($request->has('property_id') && !empty($request->property_id)) {
+            $query->where('property_id', $request->property_id);
+        }
+    
+        // Fetch site visit logs
         $siteVisitLogs = $query->latest()->paginate(10)->withQueryString();
-
-        // Get all properties for the dropdown
-        $propertyIds = $siteVisitLogs->pluck('site_visit.property_id')->unique();
-        $properties = Property::whereIn('id', $propertyIds)->get();
-
-        // Get all portfolios for the dropdown
-        $portfolioIds = $siteVisitLogs->pluck('site_visit.property.portfolio_id')->unique();
-        $portfolios = Portfolio::whereIn('id', $portfolioIds)->get();
-
-        // Get all category for the dropdown
-        $categories = SiteVisitLog::select('category')->distinct()->pluck('category');
-
+    
+        // Get all property IDs referenced in the current filtered records
+        $filteredPropertyIds = $siteVisitLogs->pluck('property_id')->unique();
+        
+        // Include the currently selected property even if it's not in the result set
+        if ($request->has('property_id') && !empty($request->property_id)) {
+            $filteredPropertyIds->push($request->property_id);
+        }
+        
+        // Get properties for the dropdown based on current query results
+        $properties = Property::whereIn('id', $filteredPropertyIds)->orderBy('name')->get();
+        
+        // Get all portfolio IDs from the filtered properties
+        $filteredPortfolioIds = $properties->pluck('portfolio_id')->unique();
+        
+        // Include the currently selected portfolio even if it's not in the result set
+        if ($request->has('portfolio_id') && !empty($request->portfolio_id)) {
+            $filteredPortfolioIds->push($request->portfolio_id);
+        }
+        
+        // Get portfolios for the dropdown based on current query results
+        $portfolios = Portfolio::whereIn('id', $filteredPortfolioIds)->orderBy('name')->get();
+    
+        // Get all category values from the current query results
+        $filteredCategories = $siteVisitLogs->pluck('category')->unique()->filter();
+        
+        // Include the currently selected category even if it's not in the result set
+        if ($request->has('category') && !empty($request->category)) {
+            $filteredCategories->push($request->category);
+        }
+        
+        // Get categories for the dropdown
+        $categories = $filteredCategories;
+    
         // Count records for each tab
         $tabCounts = [
             'all' => SiteVisitLog::count(),
@@ -1916,8 +2032,15 @@ class ApproverController extends Controller
             'rejected' => SiteVisitLog::where('status', 'rejected')->count(),
             'inactive' => SiteVisitLog::where('status', 'inactive')->count(),
         ];
-
-        return view('approver.site-visit-log.main', compact('siteVisitLogs', 'activeTab', 'portfolios', 'properties', 'categories', 'tabCounts'));
+    
+        return view('approver.site-visit-log.main', compact(
+            'siteVisitLogs', 
+            'activeTab', 
+            'portfolios', 
+            'properties', 
+            'categories', 
+            'tabCounts'
+        ));
     }
 
     public function SiteVisitLogDetails(SiteVisitLog $siteVisitLog)
