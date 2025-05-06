@@ -106,7 +106,7 @@
 
             <div class="py-6">
                 <h2 class="text-xl font-bold leading-tight text-gray-800">
-                    {{ __('Debt Capital Market Trust Real Estate Department (DCMTRD)') }}
+                    {{ __('Debt Capital Market Trust Unit (DCMT)') }}
                 </h2>
             </div>
 

@@ -144,16 +144,6 @@
                                 </select>
                             </div>
 
-                            <!-- Invoice Number Filter -->
-                            <div>
-                                <label for="invoice_no" class="block text-sm font-medium text-gray-700">Invoice
-                                    No</label>
-                                <input type="text" name="invoice_no" id="invoice_no"
-                                    value="{{ request('invoice_no') }}"
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                    placeholder="Invoice number...">
-                            </div>
-
                             <!-- Month Filter -->
                             <div>
                                 <label for="month" class="block text-sm font-medium text-gray-700">Month</label>
