@@ -218,6 +218,9 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    No
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                     Issuer Name
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
@@ -234,6 +237,9 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($issuers as $issuer)
                                 <tr class="transition-colors hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+                                        {{ $loop->iteration + ($issuers->currentPage() - 1) * $issuers->perPage() }}
+                                    </td>
                                     <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
                                         <a href="{{ route('bond-m.details', $issuer) }}" class="text-blue-600 cursor-pointer hover:text-blue-900">
                                             {{ $issuer->issuer_name }}

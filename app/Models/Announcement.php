@@ -2,38 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\FacilityInformation;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Announcement extends Model implements Auditable
 {
     use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
- 
-    protected $fillable = [
-        'announcement_date',
-        'category',
-        'sub_category',
-        'title',
-        'description',
-        'content',
-        'attachment',
-        'source',
-        'status',
-        'prepared_by',
-        'verified_by',
-        'approval_datetime',
-        'remarks',
-        'issuer_id',
-    ];
+
+    protected $guarded = [];
 
     protected $casts = [
         'announcement_date' => 'date',
     ];
 
-    public function issuer()
+    public function facility()
     {
-        return $this->belongsTo(Issuer::class);
+        return $this->belongsTo(FacilityInformation::class, 'facility_id');
     }
 }

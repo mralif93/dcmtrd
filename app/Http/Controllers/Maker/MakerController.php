@@ -278,11 +278,6 @@ class MakerController extends Controller
         $bonds = $issuer->bonds()
             ->paginate($perPage, ['*'], 'bondsPage');
 
-        // Announcements with empty handling
-        $announcements = $issuer->announcements()
-            ->latest()
-            ->paginate($perPage, ['*'], 'announcementsPage');
-
         // Documents with empty handling
         $documents = $issuer->documents()
             ->paginate($perPage, ['*'], 'documentsPage');
@@ -294,7 +289,6 @@ class MakerController extends Controller
         return view('maker.details', [
             'issuer' => $issuer,
             'bonds' => $bonds,
-            'announcements' => $announcements,
             'documents' => $documents,
             'facilities' => $facilities,
         ]);
@@ -464,9 +458,9 @@ class MakerController extends Controller
     public function AnnouncementCreate(Issuer $issuer)
     {
         $issuerInfo = $issuer;
-        $issuers = Issuer::all();
-        return view('maker.announcement.create', compact('issuers', 'issuerInfo'));
-    }
+        $facilities = FacilityInformation::all(); 
+        return view('maker.announcement.create', compact('facilities', 'issuerInfo'));
+    }    
 
     public function AnnouncementStore(Request $request)
     {
@@ -485,7 +479,7 @@ class MakerController extends Controller
             $announcement = Announcement::create($validated);
 
             // Redirect to the details page of the created announcement with a success message
-            return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement created successfully');
+            return redirect()->route('facility-info-m.show', $announcement->facility)->with('success', 'Announcement created successfully');
         } catch (\Exception $e) {
             // If an error occurs, redirect back with the error message
             return back()->withErrors(['error' => 'Error creating: ' . $e->getMessage()])->withInput();
@@ -494,9 +488,9 @@ class MakerController extends Controller
 
     public function AnnouncementEdit(Announcement $announcement)
     {
-        $announcement = $announcement->load('issuer');
-        $issuers = Issuer::all();
-        return view('maker.announcement.edit', compact('announcement', 'issuers'));
+        $announcement = $announcement->load('facility');
+        $facilities = FacilityInformation::all();
+        return view('maker.announcement.edit', compact('announcement', 'facilities'));
     }
 
     public function AnnouncementUpdate(Request $request, Announcement $announcement)
@@ -522,7 +516,7 @@ class MakerController extends Controller
             $announcement->update($validated);
 
             // Redirect to the details page with a success message
-            return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement updated successfully');
+            return redirect()->route('facility-info-m.show', $announcement->facility)->with('success', 'Announcement created successfully');
         } catch (\Exception $e) {
             // If an error occurs, return to the previous page with the error message
             return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
@@ -531,14 +525,14 @@ class MakerController extends Controller
 
     public function AnnouncementShow(Announcement $announcement)
     {
-        $announcement = $announcement->load('issuer');
+        $announcement = $announcement->load('facility');
         return view('maker.announcement.show', compact('announcement'));
     }
 
     protected function validateAnnouncement(Request $request)
     {
         return $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
+            'facility_id' => 'required|exists:facility_informations,id',
             'category' => 'required|string|max:50',
             'sub_category' => 'nullable|string|max:50',
             'source' => 'required|string|max:100',
@@ -579,7 +573,7 @@ class MakerController extends Controller
 
         // Find the related facility and redirect back with a success message
         $facility = FacilityInformation::findOrFail($validated['facility_id']);
-        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document created successfully');
+        return redirect()->route('facility-info-m.show', $facility)->with('success', 'Document created successfully');
     }
 
 
@@ -616,7 +610,7 @@ class MakerController extends Controller
 
         // Find the related facility and redirect back with a success message
         $facility = FacilityInformation::findOrFail($validated['facility_id']);
-        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document updated successfully');
+        return redirect()->route('facility-info-m.show', $facility)->with('success', 'Document updated successfully');
     }
 
 
@@ -679,13 +673,19 @@ class MakerController extends Controller
 
         // Fetch bonds with pagination
         $bonds = $facility->issuer->bonds()
-            ? $facility->issuer->bonds()->paginate($perPage, ['*'], 'bondsPage')
+            ? $facility->issuer->bonds()
+            ->where('facility_code', $facility->facility_code)
+            ->paginate($perPage, ['*'], 'bondsPage')
             : collect(); // Use an empty collection instead of $emptyPaginator
 
         // Documents Pagination
         $documents = $facility->documents()
             ? $facility->documents()->paginate($perPage, ['*'], 'documentsPage')
             : collect(); // Use an empty collection instead of $emptyPaginator
+
+        $announcements = $facility->announcements()
+            ->latest()
+            ->paginate($perPage, ['*'], 'announcementsPage');
 
         // Load all rating movements across all bonds
         $allRatingMovements = $facility->issuer->bonds->flatMap(function ($bond) {
@@ -705,6 +705,7 @@ class MakerController extends Controller
             'facility' => $facility,
             'activeBonds' => $bonds,
             'documents' => $documents,
+            'announcements' => $announcements,
             'ratingMovements' => $ratingMovements,
         ]);
     }
@@ -1257,10 +1258,6 @@ class MakerController extends Controller
             });
         }
 
-        if ($request->has('invoice_no') && !empty($request->invoice_no)) {
-            $query->where('invoice_no', 'LIKE', '%' . $request->invoice_no . '%');
-        }
-
         if ($request->has('month') && !empty($request->month)) {
             $query->where('month', $request->month);
         }
@@ -1350,7 +1347,7 @@ class MakerController extends Controller
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
-            
+
             dispatch(new SendTrusteeFeeSubmittedEmail($trusteeFee));
 
             return redirect()
@@ -1370,7 +1367,6 @@ class MakerController extends Controller
             'trustee_fee_amount_2' => 'nullable|numeric',
             'start_anniversary_date' => 'required|date',
             'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
-            'invoice_no' => 'required|string|unique:trustee_fees,invoice_no,' . ($trusteeFee ? $trusteeFee->id : 'NULL'),
             'month' => 'nullable|string|max:10',
             'memo_to_fad' => 'nullable|date',
             'date_letter_to_issuer' => 'nullable|date',

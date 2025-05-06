@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('announcements', function (Blueprint $table) {
             $table->id();
-
             // foreign key to the issuer table
-            $table->foreignId('issuer_id')->constrained('issuers')->onDelete('cascade');
+            $table->foreignId('facility_id')->constrained('facility_informations')->onDelete('cascade');
 
             // announcement details
             $table->date('announcement_date');
@@ -40,6 +39,9 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('announcements');

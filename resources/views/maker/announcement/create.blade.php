@@ -38,20 +38,20 @@
                         <div class="pb-6 border-b border-gray-200">
                             <h3 class="mb-4 text-lg font-medium text-gray-900">Basic Information</h3>
                             <div>
-                                <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer *</label>
-                                <select name="issuer_id" id="issuer_id" required
+                                <label for="facility_information_id" class="block text-sm font-medium text-gray-700">Facility *</label>
+                                <select name="facility_id" id="facility_id" required
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">-- Select Issuer --</option>
-                                    @foreach($issuers as $issuer)
-                                        <option value="{{ $issuer->id }}" @selected(old('issuer_id', $issuerInfo->id) == $issuer->id)>
-                                            {{ $issuer->issuer_name }}
+                                    <option value="">-- Select Facility --</option>
+                                    @foreach($facilities as $facility)
+                                        <option value="{{ $facility->id }}" @selected(old('facility_id', $selectedFacilityId ?? '') == $facility->id)>
+                                            {{ $facility->facility_name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('issuer_id')
+                                @error('facility_id')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
-                            </div>
+                            </div>                            
                         </div>
 
                         <!-- Category Information Section -->
