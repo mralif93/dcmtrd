@@ -24,7 +24,9 @@ class SendCreatedIssuerToApproval implements ShouldQueue
      */
     public function handle(): void
     {
-        $users = User::where('department', 'DEBT CAPITAL MARKET & TRUST UNIT')->get();
+        $emails = ['roslimsyah@artrustees.com.my', 'mohamad.azahari@artrustees.com.my'];
+
+        $users = User::whereIn('email', $emails)->get();
 
         Log::info("SendCreatedIssuerToApproval job started:\nIssuer:\n" . json_encode($this->issuer->toArray(), JSON_PRETTY_PRINT));
         Log::info("Users:\n" . json_encode($users->toArray(), JSON_PRETTY_PRINT));

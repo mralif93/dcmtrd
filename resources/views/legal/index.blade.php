@@ -68,10 +68,10 @@
                             <select name="status" id="status" 
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="">All Status</option>
-                                <option value="draft" @selected(request('status') === 'draft')>Draft</option>
+                                <option value="active" @selected(request('status') === 'active')>Active</option>
                                 <option value="pending" @selected(request('status') === 'pending')>Pending</option>
-                                <option value="completed" @selected(request('status') === 'completed')>Completed</option>
-                                <option value="verified" @selected(request('status') === 'verified')>Verified</option>
+                                <option value="rejected" @selected(request('status') === 'rejected')>Rejected</option>
+                                <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
                             </select>
                         </div>
 
@@ -102,6 +102,7 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Legal Documents</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prepared By</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -114,34 +115,37 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-500">
-                                            @if($checklist->title_ref)
-                                                <span class="mr-1 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Title</span>
-                                            @endif
-                                            @if($checklist->lease_agreement_ref)
-                                                <span class="mr-1 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Lease</span>
-                                            @endif
-                                            @if($checklist->maintenance_agreement_ref)
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">Maintenance</span>
+                                            @if($checklist->legalDocumentation)
+                                                @if($checklist->legalDocumentation->title_ref)
+                                                    <span class="mr-1 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Title</span>
+                                                @endif
+                                                @if($checklist->legalDocumentation->lease_agreement_ref)
+                                                    <span class="mr-1 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Lease</span>
+                                                @endif
+                                                @if($checklist->legalDocumentation->maintenance_agreement_ref)
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">Maintenance</span>
+                                                @endif
+                                                @if($checklist->legalDocumentation->trust_deed_ref)
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Trust Deed</span>
+                                                @endif
+                                                @if($checklist->legalDocumentation->sale_purchase_agreement)
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Sale Purchase</span>
+                                                @endif
+                                                @if($checklist->legalDocumentation->development_agreement)
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Development</span>
+                                                @endif
+                                            @else
+                                                <span class="text-xs text-gray-500">No documents</span>
                                             @endif
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                                             {{ match(strtolower($checklist->status)) {
-                                                'completed' => 'bg-green-100 text-green-800',
-                                                'scheduled' => 'bg-blue-100 text-blue-800',
-                                                'cancelled' => 'bg-red-100 text-red-800',
-                                                'pending' => 'bg-yellow-100 text-yellow-800',
                                                 'active' => 'bg-green-100 text-green-800',
-                                                'inactive' => 'bg-gray-100 text-gray-800',
+                                                'pending' => 'bg-yellow-100 text-yellow-800',
                                                 'rejected' => 'bg-red-100 text-red-800',
-                                                'draft' => 'bg-blue-100 text-blue-800',
-                                                'withdrawn' => 'bg-purple-100 text-purple-800',
-                                                'in progress' => 'bg-indigo-100 text-indigo-800',
-                                                'on hold' => 'bg-orange-100 text-orange-800',
-                                                'reviewing' => 'bg-teal-100 text-teal-800',
-                                                'approved' => 'bg-emerald-100 text-emerald-800',
-                                                'expired' => 'bg-rose-100 text-rose-800',
+                                                'inactive' => 'bg-gray-100 text-gray-800',
                                                 default => 'bg-gray-100 text-gray-800'
                                             } }}">
                                             {{ ucfirst($checklist->status) }}
@@ -152,9 +156,15 @@
                                             </div>
                                         @endif
                                     </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ $checklist->prepared_by ?? 'Not assigned' }}</div>
+                                        @if($checklist->verified_by)
+                                            <div class="text-xs text-gray-500">Verified by: {{ $checklist->verified_by }}</div>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end space-x-2">
-                                            <a href="{{ route('checklist-l.edit', $checklist) }}" class="text-indigo-600 hover:text-indigo-900">
+                                            <a href="{{ route('checklist-legal-l.edit', $checklist) }}" class="text-indigo-600 hover:text-indigo-900">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 </svg>
@@ -219,8 +229,14 @@
                     }
                 }
             } else {
-                // If no section parameter, show the default message
-                if (defaultMessage) {
+                // If no section parameter, show REITS section by default if user has permission
+                const reitsSection = document.getElementById('reits-section');
+                if (reitsSection) {
+                    reitsSection.classList.remove('hidden');
+                    if (defaultMessage) {
+                        defaultMessage.classList.add('hidden');
+                    }
+                } else if (defaultMessage) {
                     defaultMessage.classList.remove('hidden');
                 }
             }

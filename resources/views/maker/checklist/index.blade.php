@@ -265,14 +265,20 @@
                                                 </div>
                                             @endif
                                             
-                                            @if($checklist->disposalInstallation)
+                                            @if($checklist->disposalInstallation && $checklist->disposalInstallation->count() > 0)
                                                 <div class="flex items-center">
                                                     <span class="w-24 text-gray-600">Installation:</span>
+                                                    @php
+                                                        // Get the first disposal installation item from the collection
+                                                        $dispInstall = $checklist->disposalInstallation->first();
+                                                        $installStatus = $dispInstall ? $dispInstall->status : null;
+                                                    @endphp
+                                                    
                                                     <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $checklist->disposalInstallation->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                                           ($checklist->disposalInstallation->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                                           ($checklist->disposalInstallation->status == 'verified' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800')) }}">
-                                                        {{ ucfirst($checklist->disposalInstallation->status ?? 'N/A') }}
+                                                        {{ $installStatus == 'completed' ? 'bg-green-100 text-green-800' : 
+                                                        ($installStatus == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                                        ($installStatus == 'verified' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800')) }}">
+                                                        {{ ucfirst($installStatus ?? 'N/A') }}
                                                     </span>
                                                 </div>
                                             @endif
@@ -289,6 +295,11 @@
                                             <a href="{{ route('checklist-m.edit', $checklist) }}" class="text-indigo-600 hover:text-indigo-900">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="{{ route('checklist-m.letter', $checklist) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                                 </svg>
                                             </a>
                                         </div>
@@ -369,19 +380,31 @@
                             <div class="space-y-2">
                                 <div class="flex justify-between">
                                     <span class="text-xs text-gray-500">Completed:</span>
-                                    <span class="text-xs font-medium text-green-600">{{ $checklists->filter(function($item) { return $item->disposalInstallation && $item->disposalInstallation->status === 'completed'; })->count() }}</span>
+                                    <span class="text-xs font-medium text-green-600">{{ $checklists->filter(function($item) { 
+                                        return $item->disposalInstallation && $item->disposalInstallation->count() > 0 && 
+                                            $item->disposalInstallation->first()->status === 'completed'; 
+                                    })->count() }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-xs text-gray-500">Pending:</span>
-                                    <span class="text-xs font-medium text-yellow-600">{{ $checklists->filter(function($item) { return $item->disposalInstallation && $item->disposalInstallation->status === 'pending'; })->count() }}</span>
+                                    <span class="text-xs font-medium text-yellow-600">{{ $checklists->filter(function($item) { 
+                                        return $item->disposalInstallation && $item->disposalInstallation->count() > 0 && 
+                                            $item->disposalInstallation->first()->status === 'pending'; 
+                                    })->count() }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-xs text-gray-500">Verified:</span>
-                                    <span class="text-xs font-medium text-blue-600">{{ $checklists->filter(function($item) { return $item->legalDocumentation && $item->legalDocumentation->status === 'verified'; })->count() }}</span>
+                                    <span class="text-xs font-medium text-blue-600">{{ $checklists->filter(function($item) { 
+                                        return $item->disposalInstallation && $item->disposalInstallation->count() > 0 && 
+                                            $item->disposalInstallation->first()->status === 'verified'; 
+                                    })->count() }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-xs text-gray-500">Not Started:</span>
-                                    <span class="text-xs font-medium text-gray-600">{{ $checklists->filter(function($item) { return !$item->legalDocumentation || !$item->legalDocumentation->status; })->count() }}</span>
+                                    <span class="text-xs font-medium text-gray-600">{{ $checklists->filter(function($item) { 
+                                        return !$item->disposalInstallation || $item->disposalInstallation->count() === 0 || 
+                                            !$item->disposalInstallation->first()->status; 
+                                    })->count() }}</span>
                                 </div>
                             </div>
                         </div>
@@ -423,11 +446,11 @@
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-xs text-gray-500">Verified:</span>
-                                    <span class="text-xs font-medium text-blue-600">{{ $checklists->filter(function($item) { return $item->disposalInstallation && $item->disposalInstallation->status === 'verified'; })->count() }}</span>
+                                    <span class="text-xs font-medium text-blue-600">{{ $checklists->filter(function($item) { return $item->internalAreaCondition && $item->internalAreaCondition->status === 'verified'; })->count() }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-xs text-gray-500">Not Started:</span>
-                                    <span class="text-xs font-medium text-gray-600">{{ $checklists->filter(function($item) { return !$item->disposalInstallation || !$item->disposalInstallation->status; })->count() }}</span>
+                                    <span class="text-xs font-medium text-gray-600">{{ $checklists->filter(function($item) { return !$item->internalAreaCondition || !$item->internalAreaCondition->status; })->count() }}</span>
                                 </div>
                             </div>
                         </div>

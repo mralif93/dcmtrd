@@ -1,155 +1,123 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-3xl font-semibold text-gray-800">{{ __('Corporate Bond Reports') }}</h2>
+        <h2 class="text-3xl font-semibold text-gray-800">{{ __('Trustee Master Reports') }}</h2>
     </x-slot>
 
     <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <!-- Success Message -->
+        <div class="mx-auto space-y-6 max-w-7xl sm:px-6 lg:px-8">
+
+            {{-- Success Message --}}
             @if (session('success'))
-                <div class="p-4 mb-6 border-l-4 border-green-500 rounded-md shadow-md bg-green-50">
+                <div class="p-4 mb-6 border-l-4 border-green-500 rounded-md shadow bg-green-50">
                     <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-                        </div>
+                        <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <p class="ml-3 text-sm font-medium text-green-800">{{ session('success') }}</p>
                     </div>
                 </div>
             @endif
 
-            <!-- Export Buttons -->
-            <div class="flex justify-end mb-6 space-x-2">
-                <a
-                    class="px-6 py-2 text-sm font-medium text-white transition-all duration-200 ease-in-out bg-gray-700 rounded-lg hover:bg-gray-800">Export
-                    CSV</a>
+            {{-- Error Message --}}
+            @if (session('error'))
+                <div class="p-4 mb-6 border-l-4 border-red-500 rounded-md shadow bg-red-50">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <p class="ml-3 text-sm font-medium text-red-800">{{ session('error') }}</p>
+                    </div>
+                </div>
+            @endif
+
+            <div class="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-0">
+                <form method="GET" action="{{ route('dcmt-reports.cb-reports') }}"
+                    class="flex w-full max-w-md space-x-2">
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        class="flex-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-300"
+                        placeholder="Search by Bond Name, Facility Code, etc.">
+                    <button type="submit"
+                        class="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Search</button>
+                </form>
+
+                <div class="flex flex-wrap justify-end gap-2">
+                    <a href="{{ route('a.dcmt-reports.cb-export.a', ['type' => 'xls']) }}"
+                        class="px-6 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700">
+                        Export XLS
+                    </a>
+                    <a href="{{ route('dcmt-reports.trustee-reports.batches') }}"
+                        class="px-6 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                        View Batches
+                    </a>
+                    <form method="POST" action="{{ route('dcmt-reports.trustee-reports.cutoff') }}">
+                        @csrf
+                        <button type="submit"
+                            onclick="return confirm('Are you sure you want to cut off and save this report to a batch?')"
+                            class="px-6 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700">
+                            Cut Off (Save to Batch)
+                        </button>
+                    </form>
+
+                </div>
             </div>
 
-            <div class="overflow-hidden bg-white rounded-lg shadow-lg">
-                <!-- Table with Scroll -->
+            {{-- Data Table --}}
+            <div class="overflow-hidden bg-white rounded-lg shadow-md">
                 <div class="overflow-x-auto max-h-[500px]">
-                    <table class="min-w-full border-separate table-auto border-spacing-0">
-                        <table class="min-w-full border-separate table-auto border-spacing-0">
-                            <thead class="bg-gray-50">
-                                <tr class="text-xs font-semibold text-gray-600 uppercase">
-                                    <th class="px-6 py-3 text-left text-gray-500">Sl No.</th>
-                                    <th class="px-6 py-3 text-left text-gray-500">Trust</th>
-                                    <th class="px-6 py-3 text-left text-gray-500">Name</th>
-                                    <th class="px-6 py-3 text-left text-gray-500">Trust Type</th>
-                                    <th class="px-6 py-3 text-left text-gray-500">Trust Amount / Escrow Sum (RM)</th>
-                                    <th class="px-6 py-3 text-left text-gray-500">No. Of Shares (unit)</th>
-                                    <th class="px-6 py-3 text-left text-gray-500">Outstanding Size</th>
-                                    <th class="px-6 py-3 text-left text-gray-500">Trustee Fee Amount</th>
+                    <table class="w-full text-sm text-left text-gray-700 table-auto">
+                        <thead class="sticky top-0 z-10 bg-indigo-50">
+                            <tr class="text-xs font-semibold text-gray-600 uppercase">
+                                <th class="px-6 py-3 text-left">Sl No.</th>
+                                <th class="px-6 py-3 text-left">Trust</th>
+                                <th class="px-6 py-3 text-left">Name</th>
+                                <th class="px-6 py-3 text-left">Trust Type</th>
+                                <th class="px-6 py-3 text-left">Trust Amount / Escrow Sum (RM)</th>
+                                <th class="px-6 py-3 text-left">No. Of Shares (unit)</th>
+                                <th class="px-6 py-3 text-left">Outstanding Size</th>
+                                <th class="px-6 py-3 text-left">Trustee Fee Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @forelse ($reports as $index => $item)
+                                <tr class="transition-all duration-150 hover:bg-gray-100">
+                                    <td class="px-6 py-4 text-sm text-gray-900">{{ $reports->firstItem() + $index }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer_short_name ?? '-' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer_name ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $item->debenture ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ is_numeric($item->trust_amount_escrow_sum) ? number_format((float) $item->trust_amount_escrow_sum, 2) : '0.00' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ is_numeric($item->no_of_share) ? number_format((float) $item->no_of_share, 0) : '0' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ is_numeric($item->outstanding_size) ? number_format((float) $item->outstanding_size, 2) : '0.00' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        {{ number_format($item->total_trustee_fee, 2) }}
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                {{-- @php $index = 1; @endphp
-                                @foreach ($reports as $item)
-                                    <tr class="transition-all duration-150 hover:bg-gray-100">
-                                        <td class="px-6 py-4 text-sm text-gray-900">{{ $index++ }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->trust ?? '-' }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->name ?? '-' }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $item->trust_type ?? '-' }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">
-                                            {{ number_format($item->trust_amount, 2) }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">
-                                            {{ number_format($item->number_of_shares, 0) }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">
-                                            {{ number_format($item->outstanding_size, 2) }}</td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">
-                                            {{ number_format($item->trustee_fee_amount, 2) }}</td>
-                                    </tr>
-                                @endforeach --}}
-                            </tbody>
-                        </table>
-
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="px-6 py-4 text-sm text-center text-gray-500">
+                                        No records found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
                     </table>
                 </div>
 
-                <!-- Summary Row (Sticky to Bottom) -->
-                {{-- <div class="sticky bottom-0 z-10 px-6 py-4 bg-gray-100 border-t shadow-inner">
-                    <div class="grid grid-cols-1 gap-4 text-sm font-semibold text-center text-gray-700 md:grid-cols-4">
-                        <div>
-                            <span>Total Nominal Value</span><br>
-                            <span class="text-lg font-bold text-gray-900">RM
-                                {{ number_format($totalNominalValue, 2) }}</span>
-                        </div>
-                        <div>
-                            <span>Total Outstanding Size</span><br>
-                            <span
-                                class="text-lg font-bold text-gray-900">{{ number_format($totalOutstandingSize, 2) }}</span>
-                        </div>
-                        <div>
-                            <span>Total Trustee Fee Amount 1</span><br>
-                            <span
-                                class="text-lg font-bold text-gray-900">{{ number_format($totalTrusteeFeeAmount1, 2) }}</span>
-                        </div>
-                        <div>
-                            <span>Total Trustee Fee Amount 2</span><br>
-                            <span
-                                class="text-lg font-bold text-gray-900">{{ number_format($totalTrusteeFeeAmount2, 2) }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                @php
-                    $bondTotals = $reports->filter(fn($b) => $b->issuer->debenture === 'Debenture');
-                    $loanTotals = $reports->filter(fn($b) => $b->issuer->debenture === 'Loan');
-
-                    $bondNominal = $bondTotals->sum(fn($b) => (float) $b->facility?->facility_amount);
-                    $bondOutstanding = $bondTotals->sum(fn($b) => (float) $b->amount_outstanding);
-                    $bondTrusteeFee = $bondTotals->sum(
-                        fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1,
-                    );
-
-                    $loanNominal = $loanTotals->sum(fn($b) => (float) $b->facility?->facility_amount);
-                    $loanOutstanding = $loanTotals->sum(fn($b) => (float) $b->amount_outstanding);
-                    $loanTrusteeFee = $loanTotals->sum(
-                        fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1,
-                    );
-                @endphp
-
-
-                <div class="px-6 py-4 bg-white border-t shadow-inner">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm text-gray-700 table-auto">
-                            <thead>
-                                <tr class="text-xs text-left text-gray-600 uppercase">
-                                    <th class="px-4 py-2">Type</th>
-                                    <th class="px-4 py-2">Nominal Value (RM)</th>
-                                    <th class="px-4 py-2">Outstanding Size (RM)</th>
-                                    <th class="px-4 py-2">Trustee Fee (RM)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="bg-gray-50">
-                                    <td class="px-4 py-2 font-semibold">BOND TOTAL</td>
-                                    <td class="px-4 py-2">{{ number_format($bondNominal, 2) }}</td>
-                                    <td class="px-4 py-2">{{ number_format($bondOutstanding, 2) }}</td>
-                                    <td class="px-4 py-2">{{ number_format($bondTrusteeFee, 2) }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-2 font-semibold">LOAN TOTAL</td>
-                                    <td class="px-4 py-2">{{ number_format($loanNominal, 2) }}</td>
-                                    <td class="px-4 py-2">{{ number_format($loanOutstanding, 2) }}</td>
-                                    <td class="px-4 py-2">{{ number_format($loanTrusteeFee, 2) }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div> --}}
-
-
-
-                <!-- Pagination Links -->
-                {{-- <div class="px-4 py-3 bg-white border-t border-gray-200">
+                {{-- Pagination --}}
+                <div class="px-4 py-3 bg-white border-t border-gray-200">
                     {{ $reports->links() }}
-                </div> --}}
+                </div>
             </div>
         </div>
     </div>

@@ -1,17 +1,35 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Compliance Information') }}
+        <h2 class="text-2xl font-semibold leading-tight text-gray-800">
+            {{ __('Compliance Reports') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                  <p>Welcome to the Compliance page. Here you can find all the Compliance information related to our services.</p>
-                  <!-- Add more content as needed -->
-                </div>
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+                <!-- Card 1 -->
+                <a href="{{ route('compliance.cb-reports.batches') }}"
+                    class="block p-6 transition-all duration-200 bg-white border border-gray-200 shadow rounded-xl hover:shadow-lg">
+                    <h3 class="text-lg font-semibold text-indigo-700">CB Master Report</h3>
+                    <p class="mt-2 text-sm text-gray-600">View and manage trustee master data and batch reports.</p>
+                </a>
+
+                <!-- Card 1 -->
+                <a
+                    class="block p-6 transition-all duration-200 bg-white border border-gray-200 shadow rounded-xl hover:shadow-lg">
+                    <h3 class="text-lg font-semibold text-indigo-700">Trustee Master Report</h3>
+                    <p class="mt-2 text-sm text-gray-600">View and manage trustee master data and batch reports.</p>
+                </a>
+
+                <!-- Card 2 -->
+                <a
+                    class="block p-6 transition-all duration-200 bg-white border border-gray-200 shadow rounded-xl hover:shadow-lg">
+                    <h3 class="text-lg font-semibold text-indigo-700">Audit Logs</h3>
+                    <p class="mt-2 text-sm text-gray-600">Review all user activity and system audit trails.</p>
+                </a>
+
             </div>
         </div>
     </div>
