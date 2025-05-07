@@ -47,6 +47,8 @@ class RoleMiddleware
                     return redirect()->route('maker.dashboard')->withErrors(['access' => 'You do not have access to this page.']);
                 case 'approver':
                     return redirect()->route('approver.dashboard')->withErrors(['access' => 'You do not have access to this page.']);
+                case 'sales':
+                    return redirect()->route('sales.dashboard')->withErrors(['access' => 'You do not have access to this page.']);
                 default:
                     return redirect()->route('main')->withErrors(['access' => 'You do not have access to this page.']);
             }

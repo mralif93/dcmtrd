@@ -97,7 +97,7 @@ class UserAdminController extends Controller
             'department' => 'required|string|max:255',
             'office_location' => 'nullable|string|max:255',
             'permissions' => 'present|array',
-            'permissions.*' => 'nullable|in:dcmtrd,reits,legal,compliance,smd',
+            'permissions.*' => 'nullable|in:dcmtrd,reits,legal,compliance,sales',
             'two_factor_enabled' => 'sometimes|boolean',
         ]);
 
@@ -181,7 +181,7 @@ class UserAdminController extends Controller
             'department' => 'required|string|max:255',
             'office_location' => 'nullable|string|max:255',
             'permissions' => 'present|array',
-            'permissions.*' => 'nullable|in:dcmtrd,reits,legal,compliance,smd',
+            'permissions.*' => 'nullable|in:dcmtrd,reits,legal,compliance,sales',
             'password' => 'nullable|string|min:8|confirmed',
             'two_factor_enabled' => 'sometimes|boolean',
         ]);
@@ -214,9 +214,11 @@ class UserAdminController extends Controller
         
         // Then attach the new ones
         $permissions = collect($request->permissions ?? [])->filter()->values();
+
+        // dd($permissions);
                 
         foreach ($permissions as $permissionName) {
-            $permission = Permission::where('name', strtoupper($permissionName))->first();
+            $permission = Permission::where('short_name', strtoupper($permissionName))->first();
             if ($permission) {
                 $user->permissions()->attach($permission->id);
             }

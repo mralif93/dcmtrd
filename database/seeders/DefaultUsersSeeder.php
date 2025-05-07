@@ -49,8 +49,8 @@ class DefaultUsersSeeder extends Seeder
             ],
             [
                 'name' => 'SALES & MARKETING',
-                'short_name' => 'SMD',
-                'full_name' => 'SALES & MARKETING Department',
+                'short_name' => 'SALES',
+                'full_name' => 'Sales & Marketing Department',
                 'description' => 'Access to sales & marketing features',
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -545,6 +545,62 @@ class DefaultUsersSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
+
+            // SMD
+            [
+                'name' => 'SALES & MARKETING USER 1',
+                'email' => 'sales1@example.com.my',
+                'role' => 'sales',
+                'job_title' => 'MANAGER',
+                'department' => 'SALES & MARKETING DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => $now,
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'name' => 'SALES & MARKETING USER 2',
+                'email' => 'sales2@example.com.my',
+                'role' => 'sales',
+                'job_title' => 'ASSISTANT MANAGER',
+                'department' => 'SALES & MARKETING DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => $now,
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'name' => 'SALES & MARKETING USER 3',
+                'email' => 'sales3@example.com.my',
+                'role' => 'sales',
+                'job_title' => 'EXECUTIVE',
+                'department' => 'SALES & MARKETING DEPARTMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => $now,
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
         ];
 
         // Insert data into the users table
@@ -739,8 +795,25 @@ class DefaultUsersSeeder extends Seeder
             }
         }
         
-        // Sales & Marketing users (note: no users assigned yet, but added for future use)
-        // If you have specific Sales & Marketing users, add them here
+        // Sales & Marketing users get SALES_MARKETING
+        $salesMarketingEmails = [
+            'sales1@example.com.my',
+            'sales2@example.com.my',
+            'sales3@example.com.my'
+        ];
+
+        foreach ($salesMarketingEmails as $email) {
+            $userId = DB::table('users')->where('email', $email)->value('id');
+            if ($userId) {
+                // Add SALES_MARKETING permission
+                $permissionUserData[] = [
+                    'user_id' => $userId,
+                    'permission_id' => $smdPermissionId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+        }
         
         // Insert the permission relationships
         DB::table('permission_users')->insert($permissionUserData);

@@ -14,6 +14,9 @@ use App\Http\Controllers\TwoFactorController;
 // User Main
 use App\Http\Controllers\MainController;
 
+// Sales
+use App\Http\Controllers\Sales\SalesController;
+
 // Permission
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PermissionUserController;
@@ -806,4 +809,10 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/approval-property/{approvalProperty}/reject', [ApproverController::class, 'ApprovalPropertyReject'])->name('approval-property-a.reject')->middleware('permission:REITS');
 
 
+});
+
+// Sales routes
+Route::middleware(['auth', 'two-factor', 'role:sales'])->group(function () {
+    // Dashboard
+    Route::get('/sales/dashboard', [SalesController::class, 'index'])->name('sales.dashboard');
 });
