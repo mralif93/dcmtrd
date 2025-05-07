@@ -458,9 +458,9 @@ class MakerController extends Controller
     public function AnnouncementCreate(Issuer $issuer)
     {
         $issuerInfo = $issuer;
-        $facilities = FacilityInformation::all(); 
+        $facilities = FacilityInformation::all();
         return view('maker.announcement.create', compact('facilities', 'issuerInfo'));
-    }    
+    }
 
     public function AnnouncementStore(Request $request)
     {
@@ -1507,15 +1507,23 @@ class MakerController extends Controller
 
             'audited_financial_statements' => 'nullable|date',
             'audited_financial_statements_due' => 'nullable|date',
+            'afs_not_required' => 'nullable|boolean',  // ensures true/false
 
             'compliance_certificate' => 'nullable|date',
+            'cc_not_required' => 'nullable|boolean',  // ensures true/false
 
             'unaudited_financial_statements' => 'nullable|date',
             'unaudited_financial_statements_due' => 'nullable|date',
+            'ufs_not_required' => 'nullable|boolean',  // ensures true/false
 
             'finance_service_cover_ratio' => 'nullable|date',
+            'fscr_not_required' => 'nullable|boolean',
+
             'annual_budget' => 'nullable|date',
+            'budget_not_required' => 'nullable|boolean',
+
             'computation_of_finance_to_ebitda' => 'nullable|date',
+            'ebitda_not_required' => 'nullable|boolean',
 
             'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
             'prepared_by' => 'nullable|string|max:255',
@@ -1523,6 +1531,7 @@ class MakerController extends Controller
             'remarks' => 'nullable|string',
         ]);
     }
+
 
 
     // Activity Diary

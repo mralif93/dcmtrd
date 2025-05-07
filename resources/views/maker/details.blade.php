@@ -158,20 +158,20 @@
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" title="Toggle Redeem"
-                                                    class="{{ $facility->is_redeemed ? 'text-green-600 hover:text-green-800' : 'text-red-600 hover:text-red-800' }}">
+                                                    class="{{ $facility->is_redeemed ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800' }}">
                                                     @if ($facility->is_redeemed)
                                                         <!-- Icon for Redeemed -->
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
                                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2" d="M5 13l4 4L19 7" />
+                                                                stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                                         </svg>
                                                     @else
                                                         <!-- Icon for Not Redeemed -->
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
                                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                                stroke-width="2" d="M5 13l4 4L19 7" />
                                                         </svg>
                                                     @endif
                                                 </button>

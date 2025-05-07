@@ -22,8 +22,25 @@
         <div x-data="{ openSection: 'none' }">
             <div class="pb-6 mx-auto space-y-4 max-w-7xl sm:px-6 lg:px-8">
 
-                <h2 class="text-2xl font-bold">{{ $facility->issuer->issuer_name }}</h2>
-                <p>Issuer Short Name: {{ $facility->issuer->issuer_short_name }}</p>
+                <div class="flex flex-col justify-between gap-2 mb-6 sm:flex-row sm:items-center sm:gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Facility Code: {{ $facility->facility_code }}</h2>
+                        <p class="text-gray-600">Facility Name: {{ $facility->facility_name }}</p>
+                    </div>
+                    <div>
+                        @if ($facility->is_redeemed)
+                            <span
+                                class="inline-flex items-center px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">
+                                ✅ Redeemed
+                            </span>
+                        @else
+                            <span
+                                class="inline-flex items-center px-3 py-1 text-sm font-medium text-red-800 bg-red-100 rounded-full">
+                                ❌ Not Redeemed
+                            </span>
+                        @endif
+                    </div>
+                </div>
 
                 <div class="flex justify-end space-x-2">
                     <x-custom-dropdown>
@@ -259,11 +276,11 @@
                             </tbody>
                         </table>
 
-                        {{-- @if ($announcements->hasPages())
+                        @if ($announcements->hasPages())
                             <div class="p-6 border-t">
                                 {{ $announcements->links() }}
                             </div>
-                        @endif --}}
+                        @endif
                     </div>
                 </div>
                 <!-- Related Documents & Financials Accordion -->
@@ -367,8 +384,7 @@
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'bonds'" x-collapse
-                        class="overflow-x-auto border-t border-gray-200"">
+                    <div x-show="openSection === 'bonds'" x-collapse class="overflow-x-auto border-t border-gray-200">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>

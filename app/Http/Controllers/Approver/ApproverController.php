@@ -205,11 +205,6 @@ class ApproverController extends Controller
         $bonds = $issuer->bonds()
             ->paginate($perPage, ['*'], 'bondsPage');
 
-        // Announcements with empty handling
-        $announcements = $issuer->announcements()
-            ->latest()
-            ->paginate($perPage, ['*'], 'announcementsPage');
-
         // Documents with empty handling
         $documents = $issuer->documents()
             ->paginate($perPage, ['*'], 'documentsPage');
@@ -221,7 +216,7 @@ class ApproverController extends Controller
         return view('approver.details', [
             'issuer' => $issuer,
             'bonds' => $bonds,
-            'announcements' => $announcements,
+            // 'announcements' => $announcements,
             'documents' => $documents,
             'facilities' => $facilities,
         ]);
@@ -288,7 +283,7 @@ class ApproverController extends Controller
     // Announcement Module
     public function AnnouncementShow(Announcement $announcement)
     {
-        $announcement = $announcement->load('issuer');
+        $announcement = $announcement->load('facility');
         return view('approver.announcement.show', compact('announcement'));
     }
 
@@ -307,8 +302,14 @@ class ApproverController extends Controller
 
         // Fetch bonds with pagination
         $bonds = $facility->issuer->bonds()
-            ? $facility->issuer->bonds()->paginate($perPage, ['*'], 'bondsPage')
-            : collect(); // Use an empty collection instead of $emptyPaginator
+            ? $facility->issuer->bonds()
+            ->where('facility_code', $facility->facility_code)
+            ->paginate($perPage, ['*'], 'bondsPage')
+            : collect();
+
+        $announcements = $facility->announcements()
+            ->latest()
+            ->paginate($perPage, ['*'], 'announcementsPage');
 
         // Documents Pagination
         $documents = $facility->documents()
@@ -333,6 +334,7 @@ class ApproverController extends Controller
             'facility' => $facility,
             'activeBonds' => $bonds,
             'documents' => $documents,
+            'announcements' => $announcements,
             'ratingMovements' => $ratingMovements,
         ]);
     }
