@@ -52,8 +52,9 @@
                         </a>
 
                         <!-- Audit Log -->
-                        <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Audit Log') }}
+                        <a href="{{ route('list-security-a.index') }}"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Listing Security') }}
                         </a>
 
                         <!-- Reports -->

@@ -51,9 +51,10 @@
                             {{ __('Activity Diary') }}
                         </a>
 
-                        <!-- Audit Log -->
-                        <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Audit Log') }}
+                        <!-- Listing Security -->
+                        <a href="{{ route('list-security-a.index') }}"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Listing Security') }}
                         </a>
 
                         <!-- Reports -->
@@ -106,18 +107,13 @@
                     <x-dashboard-card title="Activity Diary" icon="calendar" :count="$activityDairyCount ?? 0" :href="route('activity-diary-a.index')"
                         color="bg-blue-100" />
 
+                    <!-- Corporate Bond Listing Security -->
+                    <x-dashboard-card title="Corporate Bond Listing Security" icon="shield-check" :count="$listSecuritiesCount ?? 0"
+                        :href="route('list-security-a.index')" color="bg-blue-100" />
+
                     <!-- Activity Diary -->
                     <x-dashboard-card title="Reports" icon="document" :count="2" :href="route('a.dcmt-reports.index')"
                         color="bg-blue-100" />
-                    <div class="hidden">
-                        <!-- Audit Log -->
-                        <x-dashboard-card title="Audit Log" icon="clipboard-list" :count="$auditLogCount ?? 0" href="#"
-                            color="bg-blue-100" />
-
-                        <!-- Reports -->
-                        <x-dashboard-card title="Reports" icon="document" :count="$reportsCount ?? 0" href="#"
-                            color="bg-blue-100" />
-                    </div>
                 </div>
 
                 <!-- Table Issuer -->
@@ -167,8 +163,7 @@
 
                                 <!-- Status Filter -->
                                 <div>
-                                    <label for="status"
-                                        class="block text-sm font-medium text-gray-700">Status</label>
+                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
                                     <select name="status" id="status"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">All Status</option>

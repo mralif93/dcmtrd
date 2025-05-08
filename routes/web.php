@@ -374,18 +374,22 @@ Route::middleware(['auth', 'two-factor', 'role:user'])->group(function () {
 // Legal routes
 Route::middleware(['auth', 'two-factor', 'role:legal'])->group(function () {
     // Dashboard
-    Route::get('/legal/dashboard', [LegalController::class, 'index'])->name('legal.dashboard');
+    Route::get('/legal/dashboard', [LegalController::class, 'index'])->name('legal.dashboard')->middleware('permission:LEGAL');
+
+    Route::get('/legal/dcmt/sec-documents', [LegalController::class, 'SecDocuments'])->name('legal.sec-documents')->middleware('permission:LEGAL');
+    Route::get('/legal/dcmt/{id}/request-documents', [LegalController::class, 'RequestDocuments'])->name('legal.request-documents')->middleware('permission:LEGAL');
+    Route::post('/legal/dcmt/{id}/request-documents', [LegalController::class, 'RequestDocumentsStore'])->name('legal.request-documents.store')->middleware('permission:LEGAL');
 
     // Site Visit Module
-    Route::get('legal/site-visit/{siteVisit}/show', [LegalController::class, 'SiteVisitShow'])->name('site-visit-l.show')->middleware('permission:REITS');
+    Route::get('legal/site-visit/{siteVisit}/show', [LegalController::class, 'SiteVisitShow'])->name('site-visit-l.show')->middleware('permission:LEGAL');
 
     // Checklist Module
-    Route::get('legal/checklist/{checklist}/show', [LegalController::class, 'ChecklistShow'])->name('checklist-l.show')->middleware('permission:REITS');
+    Route::get('legal/checklist/{checklist}/show', [LegalController::class, 'ChecklistShow'])->name('checklist-l.show')->middleware('permission:LEGAL');
 
     // Checklist Legal Module
-    Route::get('legal/checklist-legal/{checklist}/edit', [LegalController::class, 'ChecklistLegalDocumentationEdit'])->name('checklist-legal-l.edit')->middleware('permission:REITS');
-    Route::patch('legal/checklist-legal/{checklistLegalDocumentation}/update', [LegalController::class, 'ChecklistLegalDocumentationUpdate'])->name('checklist-legal-l.update')->middleware('permission:REITS');
-    Route::get('legal/checklist-legal/{checklistLegalDocumentation}/show', [LegalController::class, 'ChecklistLegalDocumentationShow'])->name('checklist-legal-l.show')->middleware('permission:REITS');
+    Route::get('legal/checklist-legal/{checklist}/edit', [LegalController::class, 'ChecklistLegalDocumentationEdit'])->name('checklist-legal-l.edit')->middleware('permission:LEGAL');
+    Route::patch('legal/checklist-legal/{checklistLegalDocumentation}/update', [LegalController::class, 'ChecklistLegalDocumentationUpdate'])->name('checklist-legal-l.update')->middleware('permission:LEGAL');
+    Route::get('legal/checklist-legal/{checklistLegalDocumentation}/show', [LegalController::class, 'ChecklistLegalDocumentationShow'])->name('checklist-legal-l.show')->middleware('permission:LEGAL');
 });
 
 // Compliance routes
@@ -543,6 +547,16 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/activity-diary/upcoming', [MakerController::class, 'ActivityUpcoming'])->name('activity-diary-m.upcoming')->middleware('permission:DCMTRD');
     Route::get('maker/activity-diary/export', [MakerController::class, 'ActivityExportActivities'])->name('activity-diary-m.export')->middleware('permission:DCMTRD');
     Route::get('maker/activity-diary/{activity}/submit-for-approval', [MakerController::class, 'SubmitApprovalActivityDiary'])->name('activity-diary-m.approval')->middleware('permission:DCMTRD');
+
+    // Listing Security Module
+    Route::get('maker/list-security', [MakerController::class, 'ListSecurityIndex'])->name('list-security-m.index')->middleware('permission:DCMTRD');
+    Route::get('maker/list-security/create', [MakerController::class, 'ListSecurityCreate'])->name('list-security-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/list-security/create', [MakerController::class, 'ListSecurityStore'])->name('list-security-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/list-security/{listSecurity}/edit', [MakerController::class, 'ListSecurityEdit'])->name('list-security-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/list-security/{listSecurity}/update', [MakerController::class, 'ListSecurityUpdate'])->name('list-security-m.update')->middleware('permission:DCMTRD');
+    Route::post('maker/list-security/{listSecurity}/submit-for-approval', [MakerController::class, 'SubmitApprovalListSecurity'])->name('list-security-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/list-security/show-request', [MakerController::class, 'ListSecurityRequest'])->name('list-security-request-m.show')->middleware('permission:DCMTRD');
+    Route::get('maker/list-security/{listSecurity}/show', [MakerController::class, 'ListSecurityShow'])->name('security-details-m.show')->middleware('permission:DCMTRD');
 
     // Portfolio Module
     Route::get('maker/portfolio', [MakerController::class, 'PortfolioIndex'])->name('portfolio-m.index')->middleware('permission:REITS');
@@ -757,6 +771,10 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/activity-diary/{activity}/approve', [ApproverController::class, 'ActivityApprove'])->name('activity-diary-a.approve')->middleware('permission:DCMTRD');
     Route::post('approver/activity-diary/{activity}/reject', [ApproverController::class, 'ActivityReject'])->name('activity-diary-a.reject')->middleware('permission:DCMTRD');
 
+    // Listing Security Module
+    Route::get('approver/list-security', [ApproverController::class, 'ListSecurityIndex'])->name('list-security-a.index')->middleware('permission:DCMTRD');
+    Route::post('approver/list-security/{id}/approve', [ApproverController::class, 'ListSecurityApprove']) ->name('list-security-a.approve')->middleware('permission:DCMTRD');
+    Route::post('approver/list-security/{id}/reject', [ApproverController::class, 'ListSecurityReject'])->name('list-security-a.reject')->middleware('permission:DCMTRD');
 
     // REITS Section
 

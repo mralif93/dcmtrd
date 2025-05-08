@@ -23,6 +23,7 @@ use App\Models\Appointment;
 use App\Models\Announcement;
 use App\Models\ApprovalForm;
 use App\Models\CallSchedule;
+use App\Models\ListSecurity;
 use App\Models\SiteVisitLog;
 use Illuminate\Http\Request;
 use App\Models\ActivityDiary;
@@ -33,31 +34,34 @@ use App\Models\TenancyLetter;
 use App\Models\RatingMovement;
 use App\Models\ChecklistTenant;
 use App\Models\PaymentSchedule;
-use App\Models\RelatedDocument;
 
 // REITs
+use App\Models\RelatedDocument;
 use App\Models\TradingActivity;
 use Illuminate\Validation\Rule;
 use App\Models\ApprovalProperty;
 use App\Models\ComplianceCovenant;
+use App\Models\SecurityDocRequest;
 use Illuminate\Support\Facades\DB;
 use App\Models\FacilityInformation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use App\Imports\PaymentScheduleImport;
 use App\Imports\RatingMovementsImport;
 use App\Imports\TradingActivityImport;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\ListSecurityRequest;
 use App\Http\Requests\User\BondFormRequest;
 use App\Models\ChecklistLegalDocumentation;
+
 use App\Models\ChecklistPropertyDevelopment;
 use App\Models\ChecklistDisposalInstallation;
 use App\Models\ChecklistExternalAreaCondition;
 use App\Models\ChecklistInternalAreaCondition;
-
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
 use App\Jobs\TrusteeFee\SendTrusteeFeeSubmittedEmail;
@@ -115,6 +119,7 @@ class MakerController extends Controller
                 (SELECT COUNT(*) FROM appointments) AS appointments_count,
                 (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
                 (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
+                (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
 
                 (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
                 (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
@@ -159,6 +164,7 @@ class MakerController extends Controller
             'approvalFormsCount' => $counts->approval_forms_count,
             'approvalPropertiesCount' => $counts->approval_properties_count,
             'siteVisitLogsCount' => $counts->site_visit_logs_count,
+            'listSecuritiesCount' => $counts->list_securities_count,
 
             // Adding pending counts
             'trusteeFeePendingCount' => $counts->trustee_fees_pending_count,
@@ -4062,5 +4068,100 @@ class MakerController extends Controller
             'remarks' => 'nullable|string',
             'attachment' => 'nullable|file|max:10240',
         ]);
+    }
+
+    public function ListSecurityIndex(Request $request)
+    {
+        $query = ListSecurity::with('issuer')->latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $securities = $query->paginate(10)->withQueryString();
+
+        // Count totals per status
+        $statusCounts = ListSecurity::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        // Add total count for all
+        $statusCounts[''] = ListSecurity::count();
+
+        return view('maker.listing-security.index', compact('securities', 'statusCounts'));
+    }
+
+    public function ListSecurityCreate()
+    {
+        $facilities = FacilityInformation::all();
+        $issuers = Issuer::all();
+
+        return view('maker.listing-security.create', compact('facilities', 'issuers'));
+    }
+
+    public function ListSecurityStore(ListSecurityRequest $req): RedirectResponse
+    {
+        $validated = $req->validated();
+
+        $validated['status'] = 'Draft';
+        $validated['prepared_by'] = Auth::user()->name;
+
+        ListSecurity::create($validated);
+
+        return redirect()
+            ->route('list-security-m.index')
+            ->with('success', 'Listing security created successfully.');
+    }
+
+    public function ListSecurityEdit($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        $issuers = Issuer::all();
+
+        return view('maker.listing-security.edit', compact('security', 'issuers'));
+    }
+
+    public function ListSecurityUpdate(ListSecurityRequest $req, $id): RedirectResponse
+    {
+        $validated = $req->validated();
+
+        $validated['status'] = 'Draft';
+        $validated['prepared_by'] = Auth::user()->name;
+
+        ListSecurity::findOrFail($id)->update($validated);
+        return redirect()
+            ->route('list-security-m.index')
+            ->with('success', 'Listing security updated successfully.');
+    }
+
+    public function SubmitApprovalListSecurity($id)
+    {
+        $security = ListSecurity::findOrFail($id);
+
+        $security->status = 'Pending';
+        $security->prepared_by = Auth::user()->name;
+        $security->save();
+
+        return redirect()->route('list-security-m.index')->with('success', 'Security submitted for approval.');
+    }
+
+    public function ListSecurityRequest()
+    {
+        $getListReq = SecurityDocRequest::with('listSecurity.issuer')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        // dd($getListReq);
+        return view('maker.listing-security.list-request', compact('getListReq'));
+    }
+
+    public function ListSecurityShow($id)
+    {
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+        
+        return view('maker.listing-security.show', compact('security'));
     }
 }

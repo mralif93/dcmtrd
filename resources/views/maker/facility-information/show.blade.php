@@ -61,6 +61,10 @@
                                 class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
                                 Security Document
                             </a>
+                            <a href="{{ route('document-m.create', $issuer) }}"
+                                class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
+                                ADI Holder
+                            </a>
                         </x-slot>
                     </x-custom-dropdown>
 
@@ -490,6 +494,93 @@
                         @if ($activeBonds->hasPages())
                             <div class="p-4 border-t">
                                 {{ $activeBonds->links() }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Related Documents & Financials Accordion -->
+                <div class="bg-white shadow-sm sm:rounded-lg">
+                    <button @click="openSection = openSection === 'ADI' ? null : 'ADI'"
+                        class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-semibold">Authorized Depository Institution (ADI) Holder</h3>
+                            <svg class="w-6 h-6 transition-transform transform"
+                                :class="{ 'rotate-180': openSection === 'ADI' }" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </button>
+                    <div x-show="openSection === 'ADI'" x-collapse class="border-t border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">
+                                        Document Type</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">
+                                        Document Name</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">
+                                        Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse($documents as $document)
+                                    <tr>
+                                        <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <span class="px-2 py-1 text-xs bg-gray-100 rounded-full">
+                                                {{ $document->document_type }}
+                                            </span>
+                                        </td>
+                                        <td class="max-w-xs px-6 py-4 text-sm text-gray-900">
+                                            @if ($document->file_path)
+                                                <a href="{{ asset('storage/' . $document->file_path) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900" target="_blank">
+                                                    {{ $document->document_name }}
+                                                </a>
+                                            @else
+                                                {{ $document->document_name }}
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex justify-end space-x-2">
+                                                <a href="{{ route('document-m.show', $document) }}"
+                                                    class="text-yellow-600 hover:text-yellow-900" title="View">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                </a>
+                                                <a href="{{ route('document-m.edit', $document) }}"
+                                                    class="text-yellow-600 hover:text-yellow-900">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                                            No documents found
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+
+                        @if ($documents->hasPages())
+                            <div class="p-6 border-t">
+                                {{ $documents->links() }}
                             </div>
                         @endif
                     </div>
