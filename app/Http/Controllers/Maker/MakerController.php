@@ -1998,7 +1998,7 @@ class MakerController extends Controller
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
-        
+
         try {
             // Create the financial record
             $financial = Financial::create($validated);
@@ -2869,10 +2869,10 @@ class MakerController extends Controller
         // Get site visits related to the property
         $property = $checklist->siteVisit->property;
         $siteVisits = SiteVisit::where('property_id', $property->id)
-                            ->where('status', 'pending')
-                            ->orderBy('date_visit', 'desc')
-                            ->get();
-        
+            ->where('status', 'pending')
+            ->orderBy('date_visit', 'desc')
+            ->get();
+
         // Eager load the property's tenants
         $property->load(['tenants' => function ($query) {
             $query->where('status', 'active');
@@ -4160,7 +4160,54 @@ class MakerController extends Controller
     public function ListSecurityShow($id)
     {
         $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
-        
+
         return view('maker.listing-security.show', compact('security'));
     }
+    public function SendDocumentsStatus($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->find($id);
+
+        // Check if the record exists
+        if (!$security) {
+            return response()->json(['message' => 'Security document request not found.'], 404);
+        }
+
+        // Validate that withdrawal date is passed with the request
+        $withdrawalDate = request('withdraw_date');
+        if (!$withdrawalDate) {
+            return response()->json(['message' => 'Withdrawal date is required'], 400); // Respond with an error if no date is provided
+        }
+
+        // Update the status and other fields
+        $security->status = 'Withdrawal';
+        $security->withdrawal_date = $withdrawalDate; // Set the withdrawal date
+        $security->save(); // Save the updates to the database
+
+        // Return success response
+        return response()->json(['message' => 'Documents sent successfully.'], 200);
+    }
+
+    public function ReturnDocumentsStatus($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->find($id);
+
+        // Check if the record exists
+        if (!$security) {
+            return response()->json(['message' => 'Security document request not found.'], 404);
+        }
+
+        $returnDate = request('return_date');
+        if (!$returnDate) {
+            return response()->json(['message' => 'Return date is required'], 400); // Respond with an error if no date is provided
+        }
+
+        $security->status = 'Return';
+        $security->return_date = $returnDate; // Set the return date
+        $security->save(); // Save the updates to the database
+
+        // Return success response
+        return response()->json(['message' => 'Documents returned successfully.'], 200);
+    }   
 }

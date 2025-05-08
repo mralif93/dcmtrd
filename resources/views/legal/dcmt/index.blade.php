@@ -37,28 +37,28 @@
                             <tr>
                                 <th
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                    #
-                                </th>
+                                    #</th>
                                 <th
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                    Issuer
-                                </th>
+                                    Issuer</th>
                                 <th
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                    Security Name
-                                </th>
+                                    Security Name</th>
                                 <th
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                    Security Code
-                                </th>
+                                    Security Code</th>
                                 <th
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                    Asset Name Type
-                                </th>
+                                    Asset Name Type</th>
+                                <th
+                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Withdrawal Date</th>
+                                <th
+                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Return Date</th>
                                 <th
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">
-                                    Actions
-                                </th>
+                                    Actions/Status</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -79,37 +79,97 @@
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                                         {{ $security->asset_name_type }}
                                     </td>
+                                    @php
+                                        $latest = $security->latestDocRequest;
+                                    @endphp
+
+                                    <!-- Withdrawal Date with Highlight -->
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                        <span
+                                            class="inline-block px-3 py-1 text-xs font-medium rounded-full 
+                                        @if ($latest?->withdrawal_date) bg-yellow-100 text-yellow-800 @else bg-gray-200 text-gray-500 @endif"
+                                            data-tooltip="{{ $latest?->withdrawal_date ? \Carbon\Carbon::parse($latest->withdrawal_date)->format('Y-m-d') : 'N/A' }}">
+                                            {{ $latest?->withdrawal_date ? \Carbon\Carbon::parse($latest->withdrawal_date)->format('Y-m-d') : 'N/A' }}
+                                        </span>
+                                    </td>
+
+                                    <!-- Withdrawal Date with Highlight -->
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                        <span
+                                            class="inline-block px-3 py-1 text-xs font-medium rounded-full 
+                                    @if ($latest?->return_date) bg-green-100 text-green-800 @else bg-gray-200 text-gray-500 @endif"
+                                            data-tooltip="{{ $latest?->return_date ? \Carbon\Carbon::parse($latest->return_date)->format('Y-m-d') : 'N/A' }}">
+                                            {{ $latest?->return_date ? \Carbon\Carbon::parse($latest->return_date)->format('Y-m-d') : 'N/A' }}
+                                        </span>
+                                    </td>
+
                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                        @if ($security->hasPendingRequest() || $security->hasExistingRequest())  <!-- Check if request exists or status is pending -->
-                                            <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-500 bg-gray-200 rounded cursor-not-allowed">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2l4-4m1-6h-6a2 2 0 00-2 2v1H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-3V5a2 2 0 00-2-2z" />
+                                        @if ($security->hasPendingRequest())
+                                            <!-- Check if the request is pending -->
+                                            <span
+                                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-500 bg-gray-200 rounded cursor-not-allowed">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12l2 2l4-4m1-6h-6a2 2 0 00-2 2v1H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-3V5a2 2 0 00-2-2z" />
                                                 </svg>
                                                 Request Are Pending
                                             </span>
+                                        @elseif ($security->hasWithdrawnRequest())
+                                            <!-- Check if the request has been withdrawn -->
+                                            <span
+                                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-200 rounded cursor-not-allowed"
+                                                data-toggle="tooltip"
+                                                title="Request has been withdrawn. Contact support for more details.">
+                                                <svg class="w-4 h-4 mr-1 animate-spin" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M4 4v5h.582M20 20v-5h-.581M4.93 19.07a10 10 0 0014.14-14.14" />
+                                                </svg>
+                                                Withdrawal Are On Going
+                                            </span>
+                                        @elseif ($security->hasExistingRequest())
+                                            <!-- Check if there's any existing request -->
+                                            <span
+                                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-500 bg-blue-200 rounded cursor-not-allowed">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12l2 2l4-4m1-6h-6a2 2 0 00-2 2v1H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-3V5a2 2 0 00-2-2z" />
+                                                </svg>
+                                                Request Was Done
+                                            </span>
                                         @else
+                                            <!-- If there is no pending, withdrawn, or existing request, allow making a new request -->
                                             <a href="{{ route('legal.request-documents', $security->id) }}"
-                                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2l4-4m1-6h-6a2 2 0 00-2 2v1H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-3V5a2 2 0 00-2-2z" />
+                                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded hover:bg-green-200">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12l2 2l4-4m1-6h-6a2 2 0 00-2 2v1H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-3V5a2 2 0 00-2-2z" />
                                                 </svg>
                                                 Make Request
                                             </a>
                                         @endif
                                     </td>
-                                    
+
+
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-4 text-sm text-center text-gray-500">
+                                    <td colspan="8" class="px-6 py-4 text-sm text-center text-gray-500">
                                         No securities found.
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
-
                     </table>
                 </div>
+
 
                 <!-- Pagination Links -->
                 <div class="px-4 py-3 bg-white border-t border-gray-200 sm:px-6">

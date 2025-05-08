@@ -18,6 +18,7 @@ use App\Models\FinancialType;
 use App\Models\PortfolioType;
 use App\Models\SecurityDocRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ChecklistLegalDocumentation;
@@ -113,7 +114,7 @@ class LegalController extends Controller
         return view('legal.dcmt.index', compact('getListReq', 'securities'));
     }
 
-    public function RequestDocuments($id)
+    public function RequestDocuments($id): View
     {
         $getListSec = ListSecurity::with('issuer')->findOrFail($id);
 

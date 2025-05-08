@@ -560,7 +560,9 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::post('maker/list-security/{listSecurity}/submit-for-approval', [MakerController::class, 'SubmitApprovalListSecurity'])->name('list-security-m.approval')->middleware('permission:DCMTRD');
     Route::get('maker/list-security/show-request', [MakerController::class, 'ListSecurityRequest'])->name('list-security-request-m.show')->middleware('permission:DCMTRD');
     Route::get('maker/list-security/{listSecurity}/show', [MakerController::class, 'ListSecurityShow'])->name('security-details-m.show')->middleware('permission:DCMTRD');
-
+    Route::get('maker/list-security/{listSecurity}/show-request', [MakerController::class, 'ListSecurityShowRequest'])->name('list-security-m.show-request')->middleware('permission:DCMTRD');
+    Route::patch('maker/list-security/{id}/send-documents', [MakerController::class, 'SendDocumentsStatus'])->name('send-documents-m.approval')->middleware('permission:DCMTRD');
+    Route::patch('maker/list-security/{id}/return-documents', [MakerController::class, 'ReturnDocumentsStatus'])->name('return-documents-m.approval')->middleware('permission:DCMTRD');
     // Portfolio Module
     Route::get('maker/portfolio', [MakerController::class, 'PortfolioIndex'])->name('portfolio-m.index')->middleware('permission:REITS');
     Route::get('maker/portfolio/create', [MakerController::class, 'PortfolioCreate'])->name('portfolio-m.create')->middleware('permission:REITS');
