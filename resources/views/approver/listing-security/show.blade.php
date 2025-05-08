@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <a href="{{ route('list-security-request-m.show') }}"
+            <a href="{{ route('list-security-request-a.show') }}"
                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 ← Back
             </a>
@@ -205,7 +205,7 @@
             // Get the security ID from the Blade template
             const securityId = "{{ $security->id }}";
 
-            fetch(`/maker/list-security/${securityId}/send-documents`, { // Using the security ID in the URL
+            fetch(`/approver/list-security/${securityId}/send-documents`, { // Using the security ID in the URL
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -250,7 +250,7 @@
             // Get the security ID from the Blade template
             const securityId = "{{ $security->id }}";
 
-            fetch(`/maker/list-security/${securityId}/return-documents`, { // Using the security ID in the URL
+            fetch(`/approver/list-security/${securityId}/return-documents`, { // Using the security ID in the URL
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',

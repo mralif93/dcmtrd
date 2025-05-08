@@ -90,7 +90,7 @@
                 <div class="flex items-center justify-between px-4 py-5 sm:px-6">
                     <div class="flex space-x-2">
                         <!-- List Security Requests Button -->
-                        <a href="{{ route('list-security-request-m.show') }}"
+                        <a href="{{ route('list-security-request-a.show') }}"
                             class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-green-500 border border-transparent rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

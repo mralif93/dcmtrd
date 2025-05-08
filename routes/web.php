@@ -563,6 +563,16 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/list-security/{listSecurity}/show-request', [MakerController::class, 'ListSecurityShowRequest'])->name('list-security-m.show-request')->middleware('permission:DCMTRD');
     Route::patch('maker/list-security/{id}/send-documents', [MakerController::class, 'SendDocumentsStatus'])->name('send-documents-m.approval')->middleware('permission:DCMTRD');
     Route::patch('maker/list-security/{id}/return-documents', [MakerController::class, 'ReturnDocumentsStatus'])->name('return-documents-m.approval')->middleware('permission:DCMTRD');
+
+    // Listing Security Module
+    Route::get('maker/fund-transfer', [MakerController::class, 'ListFundTransfer'])->name('fund-transfer-m.index')->middleware('permission:DCMTRD');
+
+    // Listing Security Module
+    Route::get('maker/{facility}/adi-holder', [MakerController::class, 'ADIHolderCreate'])->name('adi-holder-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/{facility}/adi-holder/store', [MakerController::class, 'ADIHolderStore'])->name('adi-holder-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/adi-holder/{adiHolderName}/edit', [MakerController::class, 'ADIHolderEdit'])->name('adi-holder-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/adi-holder/update', [MakerController::class, 'ADIHolderUpdate'])->name('adi-holder-m.update')->middleware('permission:DCMTRD');
+
     // Portfolio Module
     Route::get('maker/portfolio', [MakerController::class, 'PortfolioIndex'])->name('portfolio-m.index')->middleware('permission:REITS');
     Route::get('maker/portfolio/create', [MakerController::class, 'PortfolioCreate'])->name('portfolio-m.create')->middleware('permission:REITS');
@@ -780,6 +790,11 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/list-security', [ApproverController::class, 'ListSecurityIndex'])->name('list-security-a.index')->middleware('permission:DCMTRD');
     Route::post('approver/list-security/{id}/approve', [ApproverController::class, 'ListSecurityApprove']) ->name('list-security-a.approve')->middleware('permission:DCMTRD');
     Route::post('approver/list-security/{id}/reject', [ApproverController::class, 'ListSecurityReject'])->name('list-security-a.reject')->middleware('permission:DCMTRD');
+    Route::get('approver/list-security/show-request', [ApproverController::class, 'ListSecurityRequest'])->name('list-security-request-a.show')->middleware('permission:DCMTRD');
+    Route::get('approver/list-security/{listSecurity}/show', [ApproverController::class, 'ListSecurityShow'])->name('security-details-a.show')->middleware('permission:DCMTRD');
+    Route::get('approver/list-security/{listSecurity}/show-request', [ApproverController::class, 'ListSecurityShowRequest'])->name('list-security-a.show-request')->middleware('permission:DCMTRD');
+    Route::patch('approver/list-security/{id}/send-documents', [ApproverController::class, 'SendDocumentsStatus'])->name('send-documents-a.approval')->middleware('permission:DCMTRD');
+    Route::patch('approver/list-security/{id}/return-documents', [ApproverController::class, 'ReturnDocumentsStatus'])->name('return-documents-a.approval')->middleware('permission:DCMTRD');
 
     // REITS Section
 

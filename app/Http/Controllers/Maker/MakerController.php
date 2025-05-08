@@ -4,22 +4,22 @@ namespace App\Http\Controllers\Maker;
 
 use App\Models\Bank;
 use App\Models\Bond;
-use App\Models\User;
 use App\Models\Lease;
 use App\Models\Issuer;
 use App\Models\Tenant;
 use App\Models\Property;
+use App\Models\AdiHolder;
 use App\Models\Checklist;
 use App\Models\Financial;
 use App\Models\Portfolio;
 use App\Models\SiteVisit;
 use App\Models\Redemption;
 use App\Models\TrusteeFee;
+
 use App\Imports\BondImport;
 
-use App\Models\Appointment;
-
 // Bonds
+use App\Models\Appointment;
 use App\Models\Announcement;
 use App\Models\ApprovalForm;
 use App\Models\CallSchedule;
@@ -33,9 +33,9 @@ use App\Models\PortfolioType;
 use App\Models\TenancyLetter;
 use App\Models\RatingMovement;
 use App\Models\ChecklistTenant;
-use App\Models\PaymentSchedule;
 
 // REITs
+use App\Models\PaymentSchedule;
 use App\Models\RelatedDocument;
 use App\Models\TradingActivity;
 use Illuminate\Validation\Rule;
@@ -48,16 +48,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Cache;
 use App\Imports\PaymentScheduleImport;
 use App\Imports\RatingMovementsImport;
 use App\Imports\TradingActivityImport;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\ListSecurityRequest;
 use App\Http\Requests\User\BondFormRequest;
-use App\Models\ChecklistLegalDocumentation;
 
+use App\Models\ChecklistLegalDocumentation;
+use App\Http\Requests\StoreADIHolderRequest;
 use App\Models\ChecklistPropertyDevelopment;
 use App\Models\ChecklistDisposalInstallation;
 use App\Models\ChecklistExternalAreaCondition;
@@ -698,6 +697,10 @@ class MakerController extends Controller
             return $bond->ratingMovements; // Collect rating movements from each bond
         });
 
+        $adiHoldersPaginated = $facility->adiHolders()->paginate(15);
+        $adiHoldersGrouped = $adiHoldersPaginated->getCollection()->groupBy('adi_holder');
+        $totalNominal = $adiHoldersPaginated->getCollection()->sum('nominal_value');
+
         // Paginate the rating movements
         $currentPage = request()->get('ratingMovementsPage', 1); // Get current page from request
         $currentPageItems = $allRatingMovements->slice(($currentPage - 1) * $perPage, $perPage)->all(); // Slice the collection
@@ -713,6 +716,9 @@ class MakerController extends Controller
             'documents' => $documents,
             'announcements' => $announcements,
             'ratingMovements' => $ratingMovements,
+            'adiHolders' => $adiHoldersGrouped,
+            'adiHoldersPaginated' => $adiHoldersPaginated,
+            'totalNominal' => $totalNominal,
         ]);
     }
 
@@ -4181,6 +4187,7 @@ class MakerController extends Controller
 
         // Update the status and other fields
         $security->status = 'Withdrawal';
+        $security->verified_by = Auth::user()->name;
         $security->withdrawal_date = $withdrawalDate; // Set the withdrawal date
         $security->save(); // Save the updates to the database
 
@@ -4209,5 +4216,60 @@ class MakerController extends Controller
 
         // Return success response
         return response()->json(['message' => 'Documents returned successfully.'], 200);
-    }   
+    }
+
+    public function ADIHolderCreate($id)
+    {
+        $facilities = FacilityInformation::all();
+
+        return view('maker.adi-holder.create', compact('facilities', 'id'));
+    }
+
+    public function ADIHolderStore(StoreADIHolderRequest $request, $id)
+    {
+        foreach ($request->stock_codes as $index => $stockCode) {
+            AdiHolder::create([
+                'facility_information_id' => $id,
+                'adi_holder' => $request->adi_holder,
+                'stock_code' => $stockCode,
+                'nominal_value' => $request->nominal_values[$index],
+            ]);
+        }
+
+        return redirect()->route('facility-info-m.show', $id)->with('success', 'ADI Holder(s) added successfully.');
+    }
+
+    public function ADIHolderEdit($adiHolderName)
+    {
+        // Fetch all records with the same adi_holder
+        $adiHolders = AdiHolder::where('adi_holder', $adiHolderName)->get();
+
+        // You can also fetch other related data, such as facilities
+        $facility = FacilityInformation::all();
+
+        // Pass both the adiHolders and facility data to the view
+        return view('maker.adi-holder.edit', compact('adiHolders', 'facility'));
+    }
+
+    public function ADIHolderUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'facility_id' => 'required|exists:facility_informations,id',
+            'adi_holder_ids' => 'required|array',
+            'adi_holder_ids.*' => 'exists:adi_holders,id',
+            'stock_codes' => 'required|array',
+            'nominal_values' => 'required|array',
+            'adi_holder_name' => 'required|string|max:255',
+        ]);
+
+        foreach ($validated['adi_holder_ids'] as $index => $id) {
+            AdiHolder::where('id', $id)->update([
+                'adi_holder' => $validated['adi_holder_name'],
+                'stock_code' => $validated['stock_codes'][$index],
+                'nominal_value' => $validated['nominal_values'][$index],
+            ]);
+        }
+
+        return redirect()->route('facility-info-m.show', $request->facility_id)->with('success', 'ADI Holder(s) added successfully.');
+    }
 }

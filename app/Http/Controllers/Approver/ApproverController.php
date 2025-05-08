@@ -29,11 +29,14 @@ use App\Models\PortfolioType;
 use App\Models\RelatedDocument;
 use App\Models\ApprovalProperty;
 use App\Models\ComplianceCovenant;
+use App\Models\SecurityDocRequest;
 use Illuminate\Support\Facades\DB;
 use App\Models\FacilityInformation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\ListSecurityRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendIssuerApprovedNotification;
 use App\Jobs\Issuer\SendIssuerRejectedNotification;
@@ -324,6 +327,10 @@ class ApproverController extends Controller
             return $bond->ratingMovements; // Collect rating movements from each bond
         });
 
+        $adiHoldersPaginated = $facility->adiHolders()->paginate(15);
+        $adiHoldersGrouped = $adiHoldersPaginated->getCollection()->groupBy('adi_holder');
+        $totalNominal = $adiHoldersPaginated->getCollection()->sum('nominal_value');
+
         // Paginate the rating movements
         $currentPage = request()->get('ratingMovementsPage', 1); // Get current page from request
         $currentPageItems = $allRatingMovements->slice(($currentPage - 1) * $perPage, $perPage)->all(); // Slice the collection
@@ -339,6 +346,9 @@ class ApproverController extends Controller
             'documents' => $documents,
             'announcements' => $announcements,
             'ratingMovements' => $ratingMovements,
+            'adiHolders' => $adiHoldersGrouped,
+            'adiHoldersPaginated' => $adiHoldersPaginated,
+            'totalNominal' => $totalNominal,
         ]);
     }
 
@@ -2128,5 +2138,70 @@ class ApproverController extends Controller
         $security->save();
 
         return redirect()->route('list-security-a.index')->with('success', 'Security rejected successfully.');
+    }
+
+    public function ListSecurityRequest()
+    {
+        $getListReq = SecurityDocRequest::with('listSecurity.issuer')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        // dd($getListReq);
+        return view('approver.listing-security.list-request', compact('getListReq'));
+    }
+    public function ListSecurityShow($id)
+    {
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        return view('approver.listing-security.show', compact('security'));
+    }
+    public function SendDocumentsStatus($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->find($id);
+
+        // Check if the record exists
+        if (!$security) {
+            return response()->json(['message' => 'Security document request not found.'], 404);
+        }
+
+        // Validate that withdrawal date is passed with the request
+        $withdrawalDate = request('withdraw_date');
+        if (!$withdrawalDate) {
+            return response()->json(['message' => 'Withdrawal date is required'], 400); // Respond with an error if no date is provided
+        }
+
+        // Update the status and other fields
+        $security->status = 'Withdrawal';
+        $security->verified_by = Auth::user()->name;
+        $security->withdrawal_date = $withdrawalDate; // Set the withdrawal date
+        $security->save(); // Save the updates to the database
+
+        // Return success response
+        return response()->json(['message' => 'Documents sent successfully.'], 200);
+    }
+
+    public function ReturnDocumentsStatus($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->find($id);
+
+        // Check if the record exists
+        if (!$security) {
+            return response()->json(['message' => 'Security document request not found.'], 404);
+        }
+
+        $returnDate = request('return_date');
+        if (!$returnDate) {
+            return response()->json(['message' => 'Return date is required'], 400); // Respond with an error if no date is provided
+        }
+
+        $security->status = 'Return';
+        $security->return_date = $returnDate; // Set the return date
+        $security->save(); // Save the updates to the database
+
+        // Return success response
+        return response()->json(['message' => 'Documents returned successfully.'], 200);
     }
 }
