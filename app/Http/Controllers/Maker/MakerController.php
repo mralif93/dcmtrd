@@ -23,6 +23,7 @@ use App\Models\Appointment;
 use App\Models\Announcement;
 use App\Models\ApprovalForm;
 use App\Models\CallSchedule;
+use App\Models\ListSecurity;
 use App\Models\SiteVisitLog;
 use Illuminate\Http\Request;
 use App\Models\ActivityDiary;
@@ -33,31 +34,34 @@ use App\Models\TenancyLetter;
 use App\Models\RatingMovement;
 use App\Models\ChecklistTenant;
 use App\Models\PaymentSchedule;
-use App\Models\RelatedDocument;
 
 // REITs
+use App\Models\RelatedDocument;
 use App\Models\TradingActivity;
 use Illuminate\Validation\Rule;
 use App\Models\ApprovalProperty;
 use App\Models\ComplianceCovenant;
+use App\Models\SecurityDocRequest;
 use Illuminate\Support\Facades\DB;
 use App\Models\FacilityInformation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use App\Imports\PaymentScheduleImport;
 use App\Imports\RatingMovementsImport;
 use App\Imports\TradingActivityImport;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\ListSecurityRequest;
 use App\Http\Requests\User\BondFormRequest;
 use App\Models\ChecklistLegalDocumentation;
+
 use App\Models\ChecklistPropertyDevelopment;
 use App\Models\ChecklistDisposalInstallation;
 use App\Models\ChecklistExternalAreaCondition;
 use App\Models\ChecklistInternalAreaCondition;
-
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
 use App\Jobs\TrusteeFee\SendTrusteeFeeSubmittedEmail;
@@ -115,6 +119,7 @@ class MakerController extends Controller
                 (SELECT COUNT(*) FROM appointments) AS appointments_count,
                 (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
                 (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
+                (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
 
                 (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
                 (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
@@ -159,6 +164,7 @@ class MakerController extends Controller
             'approvalFormsCount' => $counts->approval_forms_count,
             'approvalPropertiesCount' => $counts->approval_properties_count,
             'siteVisitLogsCount' => $counts->site_visit_logs_count,
+            'listSecuritiesCount' => $counts->list_securities_count,
 
             // Adding pending counts
             'trusteeFeePendingCount' => $counts->trustee_fees_pending_count,
@@ -278,11 +284,6 @@ class MakerController extends Controller
         $bonds = $issuer->bonds()
             ->paginate($perPage, ['*'], 'bondsPage');
 
-        // Announcements with empty handling
-        $announcements = $issuer->announcements()
-            ->latest()
-            ->paginate($perPage, ['*'], 'announcementsPage');
-
         // Documents with empty handling
         $documents = $issuer->documents()
             ->paginate($perPage, ['*'], 'documentsPage');
@@ -294,7 +295,6 @@ class MakerController extends Controller
         return view('maker.details', [
             'issuer' => $issuer,
             'bonds' => $bonds,
-            'announcements' => $announcements,
             'documents' => $documents,
             'facilities' => $facilities,
         ]);
@@ -464,8 +464,8 @@ class MakerController extends Controller
     public function AnnouncementCreate(Issuer $issuer)
     {
         $issuerInfo = $issuer;
-        $issuers = Issuer::all();
-        return view('maker.announcement.create', compact('issuers', 'issuerInfo'));
+        $facilities = FacilityInformation::all();
+        return view('maker.announcement.create', compact('facilities', 'issuerInfo'));
     }
 
     public function AnnouncementStore(Request $request)
@@ -485,7 +485,7 @@ class MakerController extends Controller
             $announcement = Announcement::create($validated);
 
             // Redirect to the details page of the created announcement with a success message
-            return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement created successfully');
+            return redirect()->route('facility-info-m.show', $announcement->facility)->with('success', 'Announcement created successfully');
         } catch (\Exception $e) {
             // If an error occurs, redirect back with the error message
             return back()->withErrors(['error' => 'Error creating: ' . $e->getMessage()])->withInput();
@@ -494,9 +494,9 @@ class MakerController extends Controller
 
     public function AnnouncementEdit(Announcement $announcement)
     {
-        $announcement = $announcement->load('issuer');
-        $issuers = Issuer::all();
-        return view('maker.announcement.edit', compact('announcement', 'issuers'));
+        $announcement = $announcement->load('facility');
+        $facilities = FacilityInformation::all();
+        return view('maker.announcement.edit', compact('announcement', 'facilities'));
     }
 
     public function AnnouncementUpdate(Request $request, Announcement $announcement)
@@ -522,7 +522,7 @@ class MakerController extends Controller
             $announcement->update($validated);
 
             // Redirect to the details page with a success message
-            return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement updated successfully');
+            return redirect()->route('facility-info-m.show', $announcement->facility)->with('success', 'Announcement created successfully');
         } catch (\Exception $e) {
             // If an error occurs, return to the previous page with the error message
             return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
@@ -531,14 +531,14 @@ class MakerController extends Controller
 
     public function AnnouncementShow(Announcement $announcement)
     {
-        $announcement = $announcement->load('issuer');
+        $announcement = $announcement->load('facility');
         return view('maker.announcement.show', compact('announcement'));
     }
 
     protected function validateAnnouncement(Request $request)
     {
         return $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
+            'facility_id' => 'required|exists:facility_informations,id',
             'category' => 'required|string|max:50',
             'sub_category' => 'nullable|string|max:50',
             'source' => 'required|string|max:100',
@@ -579,7 +579,7 @@ class MakerController extends Controller
 
         // Find the related facility and redirect back with a success message
         $facility = FacilityInformation::findOrFail($validated['facility_id']);
-        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document created successfully');
+        return redirect()->route('facility-info-m.show', $facility)->with('success', 'Document created successfully');
     }
 
 
@@ -616,7 +616,7 @@ class MakerController extends Controller
 
         // Find the related facility and redirect back with a success message
         $facility = FacilityInformation::findOrFail($validated['facility_id']);
-        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document updated successfully');
+        return redirect()->route('facility-info-m.show', $facility)->with('success', 'Document updated successfully');
     }
 
 
@@ -679,13 +679,19 @@ class MakerController extends Controller
 
         // Fetch bonds with pagination
         $bonds = $facility->issuer->bonds()
-            ? $facility->issuer->bonds()->paginate($perPage, ['*'], 'bondsPage')
+            ? $facility->issuer->bonds()
+            ->where('facility_code', $facility->facility_code)
+            ->paginate($perPage, ['*'], 'bondsPage')
             : collect(); // Use an empty collection instead of $emptyPaginator
 
         // Documents Pagination
         $documents = $facility->documents()
             ? $facility->documents()->paginate($perPage, ['*'], 'documentsPage')
             : collect(); // Use an empty collection instead of $emptyPaginator
+
+        $announcements = $facility->announcements()
+            ->latest()
+            ->paginate($perPage, ['*'], 'announcementsPage');
 
         // Load all rating movements across all bonds
         $allRatingMovements = $facility->issuer->bonds->flatMap(function ($bond) {
@@ -705,6 +711,7 @@ class MakerController extends Controller
             'facility' => $facility,
             'activeBonds' => $bonds,
             'documents' => $documents,
+            'announcements' => $announcements,
             'ratingMovements' => $ratingMovements,
         ]);
     }
@@ -1257,10 +1264,6 @@ class MakerController extends Controller
             });
         }
 
-        if ($request->has('invoice_no') && !empty($request->invoice_no)) {
-            $query->where('invoice_no', 'LIKE', '%' . $request->invoice_no . '%');
-        }
-
         if ($request->has('month') && !empty($request->month)) {
             $query->where('month', $request->month);
         }
@@ -1350,7 +1353,7 @@ class MakerController extends Controller
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
-            
+
             dispatch(new SendTrusteeFeeSubmittedEmail($trusteeFee));
 
             return redirect()
@@ -1370,7 +1373,6 @@ class MakerController extends Controller
             'trustee_fee_amount_2' => 'nullable|numeric',
             'start_anniversary_date' => 'required|date',
             'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
-            'invoice_no' => 'required|string|unique:trustee_fees,invoice_no,' . ($trusteeFee ? $trusteeFee->id : 'NULL'),
             'month' => 'nullable|string|max:10',
             'memo_to_fad' => 'nullable|date',
             'date_letter_to_issuer' => 'nullable|date',
@@ -1511,15 +1513,23 @@ class MakerController extends Controller
 
             'audited_financial_statements' => 'nullable|date',
             'audited_financial_statements_due' => 'nullable|date',
+            'afs_not_required' => 'nullable|boolean',  // ensures true/false
 
             'compliance_certificate' => 'nullable|date',
+            'cc_not_required' => 'nullable|boolean',  // ensures true/false
 
             'unaudited_financial_statements' => 'nullable|date',
             'unaudited_financial_statements_due' => 'nullable|date',
+            'ufs_not_required' => 'nullable|boolean',  // ensures true/false
 
             'finance_service_cover_ratio' => 'nullable|date',
+            'fscr_not_required' => 'nullable|boolean',
+
             'annual_budget' => 'nullable|date',
+            'budget_not_required' => 'nullable|boolean',
+
             'computation_of_finance_to_ebitda' => 'nullable|date',
+            'ebitda_not_required' => 'nullable|boolean',
 
             'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
             'prepared_by' => 'nullable|string|max:255',
@@ -1527,6 +1537,7 @@ class MakerController extends Controller
             'remarks' => 'nullable|string',
         ]);
     }
+
 
 
     // Activity Diary
@@ -2857,10 +2868,10 @@ class MakerController extends Controller
         // Get site visits related to the property
         $property = $checklist->siteVisit->property;
         $siteVisits = SiteVisit::where('property_id', $property->id)
-            ->where('status', 'active')
-            ->orderBy('date_visit', 'desc')
-            ->get();
-
+                            ->where('status', 'pending')
+                            ->orderBy('date_visit', 'desc')
+                            ->get();
+        
         // Eager load the property's tenants
         $property->load(['tenants' => function ($query) {
             $query->where('status', 'active');
@@ -4055,5 +4066,100 @@ class MakerController extends Controller
             'remarks' => 'nullable|string',
             'attachment' => 'nullable|file|max:10240',
         ]);
+    }
+
+    public function ListSecurityIndex(Request $request)
+    {
+        $query = ListSecurity::with('issuer')->latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $securities = $query->paginate(10)->withQueryString();
+
+        // Count totals per status
+        $statusCounts = ListSecurity::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        // Add total count for all
+        $statusCounts[''] = ListSecurity::count();
+
+        return view('maker.listing-security.index', compact('securities', 'statusCounts'));
+    }
+
+    public function ListSecurityCreate()
+    {
+        $facilities = FacilityInformation::all();
+        $issuers = Issuer::all();
+
+        return view('maker.listing-security.create', compact('facilities', 'issuers'));
+    }
+
+    public function ListSecurityStore(ListSecurityRequest $req): RedirectResponse
+    {
+        $validated = $req->validated();
+
+        $validated['status'] = 'Draft';
+        $validated['prepared_by'] = Auth::user()->name;
+
+        ListSecurity::create($validated);
+
+        return redirect()
+            ->route('list-security-m.index')
+            ->with('success', 'Listing security created successfully.');
+    }
+
+    public function ListSecurityEdit($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        $issuers = Issuer::all();
+
+        return view('maker.listing-security.edit', compact('security', 'issuers'));
+    }
+
+    public function ListSecurityUpdate(ListSecurityRequest $req, $id): RedirectResponse
+    {
+        $validated = $req->validated();
+
+        $validated['status'] = 'Draft';
+        $validated['prepared_by'] = Auth::user()->name;
+
+        ListSecurity::findOrFail($id)->update($validated);
+        return redirect()
+            ->route('list-security-m.index')
+            ->with('success', 'Listing security updated successfully.');
+    }
+
+    public function SubmitApprovalListSecurity($id)
+    {
+        $security = ListSecurity::findOrFail($id);
+
+        $security->status = 'Pending';
+        $security->prepared_by = Auth::user()->name;
+        $security->save();
+
+        return redirect()->route('list-security-m.index')->with('success', 'Security submitted for approval.');
+    }
+
+    public function ListSecurityRequest()
+    {
+        $getListReq = SecurityDocRequest::with('listSecurity.issuer')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        // dd($getListReq);
+        return view('maker.listing-security.list-request', compact('getListReq'));
+    }
+
+    public function ListSecurityShow($id)
+    {
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+        
+        return view('maker.listing-security.show', compact('security'));
     }
 }

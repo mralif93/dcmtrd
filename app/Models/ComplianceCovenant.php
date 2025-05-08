@@ -45,17 +45,37 @@ class ComplianceCovenant extends Model implements Auditable
      *
      * @return bool
      */
+    /**
+     * Check if an issuer has completed all required documents
+     *
+     * @return bool
+     */
     public function isCompliant(): bool
     {
-        // Check if all document fields have values
-        return !empty($this->audited_financial_statements) &&
-               !empty($this->unaudited_financial_statements) &&
-               !empty($this->compliance_certificate) &&
-               !empty($this->finance_service_cover_ratio) &&
-               !empty($this->annual_budget) &&
-               !empty($this->computation_of_finance_to_ebitda);
-    }
+        // Skip checks for fields marked as not required (Not Applicable)
+        if ($this->afs_not_required) {
+            $this->audited_financial_statements = null;
+        }
 
+        if ($this->cc_not_required) {
+            $this->compliance_certificate = null;
+        }
+
+        if ($this->ufs_not_required) {
+            $this->unaudited_financial_statements = null;
+        }
+
+        // Check if all document fields have values or are marked as not required
+        return !empty($this->audited_financial_statements) ||
+            $this->afs_not_required &&
+            !empty($this->unaudited_financial_statements) ||
+            $this->ufs_not_required &&
+            !empty($this->compliance_certificate) ||
+            $this->cc_not_required &&
+            !empty($this->finance_service_cover_ratio) &&
+            !empty($this->annual_budget) &&
+            !empty($this->computation_of_finance_to_ebitda);
+    }
     /**
      * Get all missing documents
      *
@@ -64,31 +84,31 @@ class ComplianceCovenant extends Model implements Auditable
     public function getMissingDocuments(): array
     {
         $missingDocuments = [];
-        
+
         if (empty($this->audited_financial_statements)) {
             $missingDocuments[] = 'Audited Financial Statements';
         }
-        
+
         if (empty($this->unaudited_financial_statements)) {
             $missingDocuments[] = 'Unaudited Financial Statements';
         }
-        
+
         if (empty($this->compliance_certificate)) {
             $missingDocuments[] = 'Compliance Certificate';
         }
-        
+
         if (empty($this->finance_service_cover_ratio)) {
             $missingDocuments[] = 'Finance Service Cover Ratio';
         }
-        
+
         if (empty($this->annual_budget)) {
             $missingDocuments[] = 'Annual Budget';
         }
-        
+
         if (empty($this->computation_of_finance_to_ebitda)) {
             $missingDocuments[] = 'Computation of Finance to EBITDA';
         }
-        
+
         return $missingDocuments;
     }
 
@@ -125,11 +145,11 @@ class ComplianceCovenant extends Model implements Auditable
     public function scopeCompliant(Builder $query): Builder
     {
         return $query->whereNotNull('audited_financial_statements')
-                    ->whereNotNull('unaudited_financial_statements')
-                    ->whereNotNull('compliance_certificate')
-                    ->whereNotNull('finance_service_cover_ratio')
-                    ->whereNotNull('annual_budget')
-                    ->whereNotNull('computation_of_finance_to_ebitda');
+            ->whereNotNull('unaudited_financial_statements')
+            ->whereNotNull('compliance_certificate')
+            ->whereNotNull('finance_service_cover_ratio')
+            ->whereNotNull('annual_budget')
+            ->whereNotNull('computation_of_finance_to_ebitda');
     }
 
     /**
@@ -140,13 +160,13 @@ class ComplianceCovenant extends Model implements Auditable
      */
     public function scopeNonCompliant(Builder $query): Builder
     {
-        return $query->where(function($q) {
+        return $query->where(function ($q) {
             $q->whereNull('audited_financial_statements')
-              ->orWhereNull('unaudited_financial_statements')
-              ->orWhereNull('compliance_certificate')
-              ->orWhereNull('finance_service_cover_ratio')
-              ->orWhereNull('annual_budget')
-              ->orWhereNull('computation_of_finance_to_ebitda');
+                ->orWhereNull('unaudited_financial_statements')
+                ->orWhereNull('compliance_certificate')
+                ->orWhereNull('finance_service_cover_ratio')
+                ->orWhereNull('annual_budget')
+                ->orWhereNull('computation_of_finance_to_ebitda');
         });
     }
 }

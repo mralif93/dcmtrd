@@ -47,7 +47,7 @@
                 </form>
 
                 <div class="flex flex-wrap justify-end gap-2">
-                    <a href="{{ route('a.dcmt-reports.cb-export.a', ['type' => 'xls']) }}"
+                    <a href="{{ route('dcmt-reports.cb-export', ['type' => 'xls']) }}"
                         class="px-6 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700">
                         Export XLS
                     </a>
@@ -111,7 +111,7 @@
                                     <td class="px-6 py-4 text-gray-500">
                                         {{ number_format($bond->facility?->facility_amount, 2) }}</td>
                                     <td class="px-6 py-4 text-gray-500">
-                                        {{ number_format($bond->facility?->amount_outstanding, 2) }}</td>
+                                        {{ number_format($bond->facility?->outstanding_amount, 2) }}</td>
                                     <td class="px-6 py-4 text-gray-500">
                                         {{ $bond->facility?->trusteeFees->first()?->trustee_fee_amount_1 }}</td>
                                     <td class="px-6 py-4 text-gray-500">
@@ -146,7 +146,7 @@
                         </div>
                         <div>
                             <div>Total Outstanding Size</div>
-                            <div class="text-lg font-bold text-gray-900">{{ number_format($totalOutstandingSize, 2) }}
+                            <div class="text-lg font-bold text-gray-900">RM {{ number_format($totalOutstandingSize, 2) }}
                             </div>
                         </div>
                         <div>

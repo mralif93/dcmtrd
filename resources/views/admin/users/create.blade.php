@@ -61,6 +61,7 @@
                                     <option value="approver" @selected(old('role') == 'approver')>Approver</option>
                                     <option value="legal" @selected(old('role') == 'legal')>Legal</option>
                                     <option value="compliance" @selected(old('role') == 'compliance')>Compliance</option>
+                                    <option value="sales" @selected(old('role') == 'smd')>Sales & Marketing</option>
                                 </select>
                             </div>
                             <div>

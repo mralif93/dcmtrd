@@ -96,9 +96,9 @@
                             <dt class="text-sm font-medium text-gray-500">Issuer of Letter</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 {{ $compliance->letter_to_issuer ? \Carbon\Carbon::parse($compliance->letter_to_issuer)->format('d/m/Y') : '-' }}
-                            </dd>                            
+                            </dd>
                         </div>
-                        
+
                     </dl>
                 </div>
 
@@ -114,7 +114,11 @@
                             <div class="p-4 rounded-lg bg-gray-50">
                                 <dt class="text-sm font-medium text-gray-500">Audited Financial Statements</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $compliance->audited_financial_statements ?? 'Not Submitted' }}
+                                    @if ($compliance->afs_not_required)
+                                        <span class="font-bold text-red-600">Not Applicable</span>
+                                    @else
+                                        {{ $compliance->audited_financial_statements ?? 'Not Submitted' }}
+                                    @endif
                                 </dd>
                                 <dt class="mt-2 text-sm font-medium text-gray-500">Due Date</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
@@ -126,7 +130,11 @@
                             <div class="p-4 bg-white rounded-lg">
                                 <dt class="text-sm font-medium text-gray-500">Compliance Certificate</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $compliance->compliance_certificate ?? 'Not Submitted' }}
+                                    @if ($compliance->cc_not_required)
+                                        <span class="font-bold text-red-600">Not Applicable</span>
+                                    @else
+                                        {{ $compliance->compliance_certificate ?? 'Not Submitted' }}
+                                    @endif
                                 </dd>
                             </div>
 
@@ -145,7 +153,11 @@
                             <div class="p-4 bg-white rounded-lg">
                                 <dt class="text-sm font-medium text-gray-500">Unaudited Financial Statements</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $compliance->unaudited_financial_statements ?? 'Not Submitted' }}
+                                    @if ($compliance->ufs_not_required)
+                                        <span class="font-bold text-red-600">Not Applicable</span>
+                                    @else
+                                        {{ $compliance->unaudited_financial_statements ?? 'Not Submitted' }}
+                                    @endif
                                 </dd>
                                 <dt class="mt-2 text-sm font-medium text-gray-500">Due Date</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
@@ -171,6 +183,8 @@
                         </div>
                     </div>
                 </div>
+
+
 
                 <!-- System Information Section -->
                 <div class="border-t border-gray-200">

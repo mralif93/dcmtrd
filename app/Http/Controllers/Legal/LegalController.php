@@ -2,22 +2,26 @@
 
 namespace App\Http\Controllers\Legal;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Models\Bank;
+use App\Models\Lease;
+use App\Models\Tenant;
 
 // REITs
-use App\Models\Bank;
+use App\Models\Property;
+use App\Models\Checklist;
+use App\Models\Financial;
+use App\Models\Portfolio;
+use App\Models\SiteVisit;
+use App\Models\ListSecurity;
+use Illuminate\Http\Request;
 use App\Models\FinancialType;
 use App\Models\PortfolioType;
-use App\Models\Portfolio;
-use App\Models\Property;
-use App\Models\Tenant;
-use App\Models\Lease;
-use App\Models\Financial;
-use App\Models\Checklist;
-use App\Models\SiteVisit;
+use App\Models\SecurityDocRequest;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Models\ChecklistLegalDocumentation;
+use App\Http\Requests\RequestDocumentsStoreRequest;
 
 class LegalController extends Controller
 {
@@ -48,7 +52,7 @@ class LegalController extends Controller
     public function ChecklistLegalDocumentationUpdate(Request $request, ChecklistLegalDocumentation $checklistLegalDocumentation)
     {
         $validated = $this->ChecklistLegalDocumentationValidate($request);
-    
+
         $validated['verified_by'] = Auth::user()->name;
         $validated['status'] = 'Active';
 
@@ -62,7 +66,7 @@ class LegalController extends Controller
             $checklist['status'] = 'Active';
             $checklist['approval_datetime'] = now();
             $checklist->update();
-            
+
             return redirect()->route('legal.dashboard', ['section' => 'reits'])->with('success', 'Legal documentation updated successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error updating legal documentation: ' . $e->getMessage());
@@ -95,5 +99,48 @@ class LegalController extends Controller
     public function ChecklistLegalDocumentationShow(Checklist $checklist)
     {
         return view('legal.checklist-legal-documentation.show', compact('checklist'));
+    }
+
+    public function SecDocuments(Request $request)
+    {
+        $getListReq = SecurityDocRequest::with('listSecurity.issuer')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $securities = ListSecurity::with('issuer')->latest()->where('status', 'Active')->paginate(10)->withQueryString();
+
+        return view('legal.dcmt.index', compact('getListReq', 'securities'));
+    }
+
+    public function RequestDocuments($id)
+    {
+        $getListSec = ListSecurity::with('issuer')->findOrFail($id);
+
+        $getListReq = SecurityDocRequest::with('listSecurity.issuer')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('legal.dcmt.request', compact('getListSec', 'getListReq'));
+    }
+
+    public function RequestDocumentsStore(RequestDocumentsStoreRequest $request, $id)
+    {
+        // Add the list_security_id to the validated data
+        $validated = $request->validated();
+        $validated['list_security_id'] = $id;  // This will add the list_security_id
+
+        // Add extra fields
+        $validated['prepared_by'] = Auth::user()->name;
+
+        // Set the status to 'Pending' by default
+        $validated['status'] = 'Pending';
+        $validated['request_date'] = now(); // Set the request date to the current date
+
+        // Create the document request
+        SecurityDocRequest::create($validated);
+
+        return redirect()->route('legal.sec-documents')->with('success', 'Document request created successfully.');
     }
 }
