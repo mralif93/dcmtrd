@@ -33,7 +33,7 @@ class CorporateBondExport implements FromCollection, WithHeadings, WithTitle
                 $bond->issuer->trustee_role_1,
                 $bond->issuer->trustee_role_2,
                 (float) $bond->facility?->facility_amount,
-                (float) $bond->amount_outstanding,
+                (float) $bond->facility?->outstanding_amount,
                 (float) $bond->facility?->trusteeFees->first()?->trustee_fee_amount_1,
                 (float) $bond->facility?->trusteeFees->first()?->trustee_fee_amount_2,
                 optional($bond->issuer->trust_deed_date)?->format('d/m/Y'),
@@ -70,7 +70,7 @@ class CorporateBondExport implements FromCollection, WithHeadings, WithTitle
             '',
             '',
             '',
-            $this->bonds->sum(fn($b) => (float) $b->amount_outstanding)
+            $this->bonds->sum(fn($b) => (float) $b->facility?->outstanding_amount)
         ]);
         $rows->push([
             'Trustee Fee Amount 1',
@@ -105,20 +105,20 @@ class CorporateBondExport implements FromCollection, WithHeadings, WithTitle
         $rows->push(['Bond vs Loan Summary']);
         $rows->push(['Type', 'Nominal Value (RM)', 'Outstanding Size (RM)', 'Trustee Fee (RM)']);
 
-        $bondTotals = $this->bonds->filter(fn($b) => $b->issuer->debenture === 'Debenture');
+        $bondTotals = $this->bonds->filter(fn($b) => $b->issuer->debenture === 'Corporate Bond');
         $loanTotals = $this->bonds->filter(fn($b) => $b->issuer->debenture === 'Loan');
 
         $rows->push([
             'Bond',
             $bondTotals->sum(fn($b) => (float) $b->facility?->facility_amount),
-            $bondTotals->sum(fn($b) => (float) $b->amount_outstanding),
+            $bondTotals->sum(fn($b) => (float) $b->facility?->outstanding_amount),
             $bondTotals->sum(fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1),
         ]);
 
         $rows->push([
             'Loan',
             $loanTotals->sum(fn($b) => (float) $b->facility?->facility_amount),
-            $loanTotals->sum(fn($b) => (float) $b->amount_outstanding),
+            $loanTotals->sum(fn($b) => (float) $b->facility?->outstanding_amount),
             $loanTotals->sum(fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1),
         ]);
 
@@ -150,6 +150,6 @@ class CorporateBondExport implements FromCollection, WithHeadings, WithTitle
 
     public function title(): string
     {
-        return 'Corporate Bonds';
+        return 'CB MASTER REPORT'; 
     }
 }

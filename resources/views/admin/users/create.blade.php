@@ -61,6 +61,7 @@
                                     <option value="approver" @selected(old('role') == 'approver')>Approver</option>
                                     <option value="legal" @selected(old('role') == 'legal')>Legal</option>
                                     <option value="compliance" @selected(old('role') == 'compliance')>Compliance</option>
+                                    <option value="sales" @selected(old('role') == 'smd')>Sales & Marketing</option>
                                 </select>
                             </div>
                             <div>
@@ -103,6 +104,12 @@
                                             {{ is_array(old('permissions')) && in_array('compliance', old('permissions')) ? 'checked' : '' }}
                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
                                         <label for="permission_compliance" class="ml-2 block text-sm text-gray-900">COMPLIANCE</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" name="permissions[]" id="permission_smd" value="smd"
+                                            {{ is_array(old('permissions')) && in_array('smd', old('permissions')) ? 'checked' : '' }}
+                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                        <label for="permission_smd" class="ml-2 block text-sm text-gray-900">SMD</label>
                                     </div>
                                 </div>
                             </div>

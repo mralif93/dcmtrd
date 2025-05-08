@@ -80,6 +80,7 @@
                                     <option value="reits" @selected(request('permission') === 'reits')>REITS</option>
                                     <option value="legal" @selected(request('permission') === 'legal')>LEGAL</option>
                                     <option value="compliance" @selected(request('permission') === 'compliance')>COMPLIANCE</option>
+                                    <option value="smd" @selected(request('permission') === 'smd')>SALES & MARKETING</option>
                                     <option value="all" @selected(request('permission') === 'all')>Multiple Permissions</option>
                                 </select>
                             </div>
@@ -127,7 +128,8 @@
                                         ($user->role === 'maker' ? 'bg-blue-100 text-blue-800' :
                                         ($user->role === 'approver' ? 'bg-green-100 text-green-800' :
                                         ($user->role === 'compliance' ? 'bg-yellow-100 text-yellow-800' :
-                                        ($user->role === 'legal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'))))
+                                         ($user->role === 'smd' ? 'bg-indigo-100 text-yellow-800' :
+                                        ($user->role === 'legal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')))))
                                     }}">
                                         {{ ucfirst($user->role) }}
                                     </span>

@@ -47,6 +47,8 @@ class PermissionMiddleware
                     return redirect()->route('maker.dashboard')->withErrors(['access' => 'You do not have permission to access this page.']);
                 case 'approver':
                     return redirect()->route('approver.dashboard')->withErrors(['access' => 'You do not have permission to access this page.']);
+                case 'sales':
+                    return redirect()->route('sales.dashboard')->withErrors(['access' => 'You do not have permission to access this page.']);
                 default:
                     return redirect()->route('main')->withErrors(['access' => 'You do not have permission to access this page.']);
             }

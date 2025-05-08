@@ -73,13 +73,6 @@
                                 </div>
 
                                 <div>
-                                    <label for="invoice_no" class="block text-sm font-medium text-gray-700">Invoice
-                                        Number *</label>
-                                    <input type="text" name="invoice_no" id="invoice_no"
-                                        value="{{ old('invoice_no') }}" required
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <div>
                                     <label for="description" class="block text-sm font-medium text-gray-700">Description
                                         *</label>
                                     <textarea name="description" id="description" rows="3" required

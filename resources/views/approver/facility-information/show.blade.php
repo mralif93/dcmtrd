@@ -22,8 +22,25 @@
         <div x-data="{ openSection: 'null' }">
             <div class="pb-6 mx-auto space-y-4 max-w-7xl sm:px-6 lg:px-8">
 
-                <h2 class="text-2xl font-bold">{{ $facility->issuer->issuer_name }}</h2>
-                <p>Issuer Short Name: {{ $facility->issuer->issuer_short_name }}</p>
+                <div class="flex flex-col justify-between gap-2 mb-6 sm:flex-row sm:items-center sm:gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Facility Code: {{ $facility->facility_code }}</h2>
+                        <p class="text-gray-600">Facility Name: {{ $facility->facility_name }}</p>
+                    </div>
+                    <div>
+                        @if ($facility->is_redeemed)
+                            <span
+                                class="inline-flex items-center px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">
+                                ✅ Redeemed
+                            </span>
+                        @else
+                            <span
+                                class="inline-flex items-center px-3 py-1 text-sm font-medium text-red-800 bg-red-100 rounded-full">
+                                ❌ Not Redeemed
+                            </span>
+                        @endif
+                    </div>
+                </div>
 
                 <!-- General + Facility Information Accordion -->
                 <div class="bg-white shadow-sm sm:rounded-lg">
@@ -138,65 +155,84 @@
                     </div>
                 </div>
 
-                <!-- Rating Movements Accordion -->
+                <!-- Announcements Accordion -->
                 <div class="bg-white shadow-sm sm:rounded-lg">
-                    <button @click="openSection = openSection === 'ratings' ? null : 'ratings'"
+                    <button @click="openSection = openSection === 'announcements' ? null : 'announcements'"
                         class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-xl font-semibold">Rating Movements</h3>
+                            <h3 class="text-xl font-semibold">Announcements</h3>
                             <svg class="w-6 h-6 transition-transform transform"
-                                :class="{ 'rotate-180': openSection === 'ratings' }" fill="none"
+                                :class="{ 'rotate-180': openSection === 'announcements' }" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 9l-7 7-7-7" />
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'ratings'" x-collapse class="border-t border-gray-200">
+                    <div x-show="openSection === 'announcements'" x-collapse
+                        class="overflow-x-auto border-t border-gray-200">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Date
+                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">
+                                        Announce
+                                        Date</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">
+                                        Category
                                     </th>
-                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Agency
-                                    </th>
-                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Rating
-                                    </th>
-                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Action
-                                    </th>
-                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Outlook
-                                    </th>
+                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">
+                                        Announcement Title</th>
+                                    <th
+                                        class="flex justify-end px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">
+                                        Action</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($ratingMovements as $movement)
-                                    <tr class="hover:bg-gray-50">
+                                @forelse($announcements as $announcement)
+                                    <tr>
                                         <td class="px-6 py-4 text-sm whitespace-nowrap">
-                                            {{ $movement->effective_date->format('d M Y') }}</td>
-                                        <td class="px-6 py-4 text-sm whitespace-nowrap">{{ $movement->rating_agency }}
+                                            {{ $announcement->announcement_date->format('d/m/Y') }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 text-sm whitespace-nowrap">
                                             <span class="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
-                                                {{ $movement->rating }}
+                                                {{ $announcement->category }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 text-sm whitespace-nowrap">{{ $movement->rating_action }}
+                                        <td class="max-w-md px-6 py-4 text-sm">
+                                            <a href="{{ route('announcement-m.show', $announcement) }}">
+                                                <div class="font-medium text-gray-500">{{ $announcement->title }}
+                                                </div>
+                                            </a>
                                         </td>
-                                        <td class="px-6 py-4 text-sm whitespace-nowrap">
-                                            {{ $movement->rating_outlook }}</td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex justify-end space-x-2">
+                                                <a href="{{ route('announcement-a.show', $announcement) }}"
+                                                    class="text-yellow-600 hover:text-yellow-900" title="View">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                                            No rating movements found
+                                        <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                                            No announcements found
                                         </td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
-                        @if ($ratingMovements->hasPages())
-                            <div class="p-4 border-t">
-                                {{ $ratingMovements->links() }}
+
+                        @if ($announcements->hasPages())
+                            <div class="p-6 border-t">
+                                {{ $announcements->links() }}
                             </div>
                         @endif
                     </div>
@@ -207,7 +243,7 @@
                     <button @click="openSection = openSection === 'documents' ? null : 'documents'"
                         class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-xl font-semibold">Related Documents & Financials</h3>
+                            <h3 class="text-xl font-semibold">Security Documents</h3>
                             <svg class="w-6 h-6 transition-transform transform"
                                 :class="{ 'rotate-180': openSection === 'documents' }" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
@@ -224,6 +260,9 @@
                                         Document Type</th>
                                     <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">
                                         Document Name</th>
+                                    <th
+                                        class="flex justify-end px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">
+                                        Action</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -244,7 +283,21 @@
                                                 {{ $document->document_name }}
                                             @endif
                                         </td>
-
+                                        <td class="px-6 py-4">
+                                            <div class="flex justify-end space-x-2">
+                                                <a href="{{ route('document-a.show', $document) }}"
+                                                    class="text-yellow-600 hover:text-yellow-900" title="View">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -269,7 +322,7 @@
                     <button @click="openSection = openSection === 'bonds' ? null : 'bonds'"
                         class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-xl font-semibold">List of Active Bond + Sukuk</h3>
+                            <h3 class="text-xl font-semibold">Coupon Payments</h3>
                             <svg class="w-6 h-6 transition-transform transform"
                                 :class="{ 'rotate-180': openSection === 'bonds' }" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
@@ -278,7 +331,7 @@
                             </svg>
                         </div>
                     </button>
-                    <div x-show="openSection === 'bonds'" x-collapse class="border-t border-gray-200">
+                    <div x-show="openSection === 'bonds'" x-collapse class="overflow-x-auto border-t border-gray-200">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
@@ -307,7 +360,7 @@
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-medium text-gray-900">
-                                                <a href="{{ route('security-info.show', $bond) }}">
+                                                <a href="{{ route('bond-a.show', $bond) }}">
                                                     {{ $bond->bond_sukuk_name }}
                                                 </a>
                                             </div>

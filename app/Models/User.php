@@ -115,7 +115,7 @@ class User extends Authenticatable implements Auditable
      */
     public function hasPermission($permission)
     {
-        return $this->permissions()->where('name', $permission)->exists();
+        return $this->permissions()->where('short_name', $permission)->exists();
     }
 
     /**
@@ -125,7 +125,7 @@ class User extends Authenticatable implements Auditable
      */
     public function getPermissionsArray()
     {
-        return $this->permissions->pluck('name')->map(function($name) {
+        return $this->permissions->pluck('short_name')->map(function($name) {
             return strtolower($name);
         })->toArray();
     }

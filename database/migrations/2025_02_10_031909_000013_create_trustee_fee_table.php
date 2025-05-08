@@ -26,7 +26,6 @@ return new class extends Migration
             $table->date('start_anniversary_date')->nullable();
             $table->date('end_anniversary_date')->nullable();
             $table->date('memo_to_fad')->nullable();
-            $table->string('invoice_no')->unique();
             $table->date('date_letter_to_issuer')->nullable();
             $table->date('first_reminder')->nullable();
             $table->date('second_reminder')->nullable();

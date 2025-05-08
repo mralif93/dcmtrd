@@ -19,6 +19,7 @@ use App\Models\Appointment;
 use App\Models\Announcement;
 use App\Models\ApprovalForm;
 use App\Models\CallSchedule;
+use App\Models\ListSecurity;
 use App\Models\SiteVisitLog;
 use Illuminate\Http\Request;
 use App\Models\ActivityDiary;
@@ -91,6 +92,7 @@ class ApproverController extends Controller
             (SELECT COUNT(*) FROM appointments) AS appointments_count,
             (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
             (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
+            (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
 
             (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
             (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
@@ -122,6 +124,7 @@ class ApproverController extends Controller
             'approvalFormsCount' => $counts->approval_forms_count,
             'approvalPropertiesCount' => $counts->approval_properties_count,
             'siteVisitLogsCount' => $counts->site_visit_logs_count,
+            'listSecuritiesCount' => $counts->list_securities_count,
 
             // Add pending counts to view data
             'pendingPropertiesCount' => $counts->pending_properties_count,
@@ -205,11 +208,6 @@ class ApproverController extends Controller
         $bonds = $issuer->bonds()
             ->paginate($perPage, ['*'], 'bondsPage');
 
-        // Announcements with empty handling
-        $announcements = $issuer->announcements()
-            ->latest()
-            ->paginate($perPage, ['*'], 'announcementsPage');
-
         // Documents with empty handling
         $documents = $issuer->documents()
             ->paginate($perPage, ['*'], 'documentsPage');
@@ -221,7 +219,7 @@ class ApproverController extends Controller
         return view('approver.details', [
             'issuer' => $issuer,
             'bonds' => $bonds,
-            'announcements' => $announcements,
+            // 'announcements' => $announcements,
             'documents' => $documents,
             'facilities' => $facilities,
         ]);
@@ -288,7 +286,7 @@ class ApproverController extends Controller
     // Announcement Module
     public function AnnouncementShow(Announcement $announcement)
     {
-        $announcement = $announcement->load('issuer');
+        $announcement = $announcement->load('facility');
         return view('approver.announcement.show', compact('announcement'));
     }
 
@@ -307,8 +305,14 @@ class ApproverController extends Controller
 
         // Fetch bonds with pagination
         $bonds = $facility->issuer->bonds()
-            ? $facility->issuer->bonds()->paginate($perPage, ['*'], 'bondsPage')
-            : collect(); // Use an empty collection instead of $emptyPaginator
+            ? $facility->issuer->bonds()
+            ->where('facility_code', $facility->facility_code)
+            ->paginate($perPage, ['*'], 'bondsPage')
+            : collect();
+
+        $announcements = $facility->announcements()
+            ->latest()
+            ->paginate($perPage, ['*'], 'announcementsPage');
 
         // Documents Pagination
         $documents = $facility->documents()
@@ -333,6 +337,7 @@ class ApproverController extends Controller
             'facility' => $facility,
             'activeBonds' => $bonds,
             'documents' => $documents,
+            'announcements' => $announcements,
             'ratingMovements' => $ratingMovements,
         ]);
     }
@@ -2065,5 +2070,63 @@ class ApproverController extends Controller
             return back()
                 ->with('error', 'Error rejecting site visit log: ' . $e->getMessage());
         }
+    }
+
+    public function ListSecurityIndex(Request $request)
+    {
+        $status = $request->get('status');
+
+        // Base query
+        $query = ListSecurity::with('issuer');
+
+        // Apply status filter if not empty
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+
+        // Paginated data
+        $securities = $query->latest()->paginate(10)->withQueryString();
+
+        // Count for each tab (including 'All')
+        $statusCounts = [
+            '' => ListSecurity::count(),
+            'Draft' => ListSecurity::where('status', 'Draft')->count(),
+            'Active' => ListSecurity::where('status', 'Active')->count(),
+            'Pending' => ListSecurity::where('status', 'Pending')->count(),
+            'Rejected' => ListSecurity::where('status', 'Rejected')->count(),
+        ];
+
+        return view('approver.listing-security.index', compact('securities', 'statusCounts'));
+    }
+
+
+    public function ListSecurityApprove($id)
+    {
+        $security = ListSecurity::findOrFail($id);
+
+        // Update status
+        $security->status = 'Active';
+        $security->verified_by = Auth::user()->name;
+        $security->approval_datetime = now();
+        $security->save();
+
+        return redirect()->route('list-security-a.index')->with('success', 'Security approved successfully.');
+    }
+
+    public function ListSecurityReject(Request $request, $id)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        $security = ListSecurity::findOrFail($id);
+
+        // Update the security status to 'Rejected'
+        $security->status = 'Rejected';
+        $security->verified_by = Auth::user()->name;
+        $security->remarks = $request->input('rejection_reason');  // Storing the rejection reason
+        $security->save();
+
+        return redirect()->route('list-security-a.index')->with('success', 'Security rejected successfully.');
     }
 }
