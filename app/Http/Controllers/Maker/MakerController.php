@@ -3486,30 +3486,48 @@ class MakerController extends Controller
     {
         // Retrieve appointments with related portfolio, handling search and filtering
         $query = Appointment::with('portfolio')
-            ->when($request->input('search'), function ($query, $search) {
-                return $query->where(function($q) use ($search) {
-                    $q->where('party_name', 'like', "%{$search}%")
-                    ->orWhereHas('portfolio', function($portfolio) use ($search) {
-                        $portfolio->where('portfolio_name', 'like', "%{$search}%");
-                    });
-                });
-            })
-            ->when($request->input('status'), function ($query, $status) {
-                return $query->where('status', $status);
-            })
-            ->latest()
-            ->paginate(15);
+        // Handle search - only for party name
+        ->when($request->input('search'), function ($query, $search) {
+            return $query->where('party_name', 'like', "%{$search}%");
+        })
+        // Filter by status
+        ->when($request->input('status'), function ($query, $status) {
+            return $query->where('status', $status);
+        })
+        // Filter by portfolio
+        ->when($request->input('portfolio_id'), function ($query, $portfolioId) {
+            return $query->where('portfolio_id', $portfolioId);
+        })
+        // Filter by year
+        ->when($request->input('year'), function ($query, $year) {
+            return $query->whereRaw('strftime(\'%Y\', date_of_approval) = ?', [$year]);
+        })
+        // Filter by month
+        ->when($request->input('month'), function ($query, $month) {
+            return $query->whereRaw('strftime(\'%m\', date_of_approval) = ?', [$month]);
+        })
+        ->latest()
+        ->paginate(15)
+        ->withQueryString(); // Preserve query parameters in pagination links
 
-        // Get distinct years for filter
-        $years = Appointment::orderBy('date_of_approval', 'desc')->get();
+        // Get all portfolios for the dropdown
+        $portfolios = \App\Models\Portfolio::orderBy('portfolio_name')->get();
 
-        // Get status options
+        // Extract unique years from appointment dates - SQLite compatible
+        $years = Appointment::selectRaw('strftime(\'%Y\', date_of_approval) as year')
+        ->distinct()
+        ->orderByDesc('year')
+        ->pluck('year')
+        ->toArray();
+
+        // Define status options
         $statuses = ['active', 'pending', 'rejected', 'inactive'];
 
         return view('maker.appointment.index', [
-            'appointments' => $query,
-            'years' => $years,
-            'statuses' => $statuses
+        'appointments' => $query,
+        'portfolios' => $portfolios,
+        'years' => $years,
+        'statuses' => $statuses
         ]);
     }
 

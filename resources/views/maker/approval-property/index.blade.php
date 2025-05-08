@@ -219,11 +219,6 @@
                 <!-- Pagination Links -->
                 <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
                     {{ $approvalProperties->appends(request()->except('page'))->links() }}
-                    
-                    <!-- Results count -->
-                    <div class="mt-2 text-sm text-gray-500">
-                        Showing {{ $approvalProperties->firstItem() ?? 0 }} to {{ $approvalProperties->lastItem() ?? 0 }} of {{ $approvalProperties->total() }} property approvals
-                    </div>
                 </div>
             </div>
         </div>

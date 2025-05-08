@@ -44,77 +44,126 @@
                     </div>
                 </div>
 
-                <!-- Search and Filter Section -->
-                <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <!-- Search and Filter Bar -->
+                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
                     <form method="GET" action="{{ route('appointment-m.index') }}">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <!-- Search input -->
-                            <div class="md:col-span-2">
-                                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                                <div class="relative rounded-md shadow-sm">
+                        <div class="grid grid-cols-1 gap-4">
+                            <!-- Row 1: Search (full width) -->
+                            <div class="col-span-1">
+                                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                                <div class="mt-1 flex rounded-md shadow-sm">
                                     <input type="text" name="search" id="search" value="{{ request('search') }}" 
-                                           class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-3 pr-10 py-2 sm:text-sm border-gray-300 rounded-md" 
-                                           placeholder="Search by party name or portfolio...">
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                        </svg>
+                                        placeholder="Search by party name"
+                                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                            
+                            <!-- Row 2: Portfolio and Status (2 columns) -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Portfolio Filter -->
+                                <div>
+                                    <label for="portfolio_id" class="block text-sm font-medium text-gray-700">Portfolio</label>
+                                    <select name="portfolio_id" id="portfolio_id" 
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">All Portfolios</option>
+                                        @foreach($portfolios as $portfolio)
+                                            <option value="{{ $portfolio->id }}" @selected(request('portfolio_id') == $portfolio->id)>
+                                                {{ $portfolio->portfolio_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Status Filter -->
+                                <div>
+                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                    <select name="status" id="status" 
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">All Statuses</option>
+                                        @foreach($statuses as $status)
+                                            <option value="{{ $status }}" @selected(request('status') == $status)>
+                                                {{ ucfirst($status) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Row 3: Date of Approval with single label -->
+                            <div class="grid grid-cols-1 gap-4">
+                                <label class="block text-sm font-medium text-gray-700">Date of Approval</label>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <!-- Day -->
+                                    <div>
+                                        <select name="day" id="day" 
+                                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            <option value="">All Days</option>
+                                            @for($i = 1; $i <= 31; $i++)
+                                                @php
+                                                    $formattedValue = $i < 10 ? '0'.$i : $i;
+                                                @endphp
+                                                <option value="{{ $formattedValue }}" @selected(request('day') == $formattedValue)>
+                                                    {{ $formattedValue }}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Month -->
+                                    <div>
+                                        <select name="month" id="month" 
+                                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            <option value="">All Months</option>
+                                            @foreach(['01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', 
+                                                    '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', 
+                                                    '10' => 'October', '11' => 'November', '12' => 'December'] as $value => $name)
+                                                <option value="{{ $value }}" @selected(request('month') == $value)>
+                                                    {{ $name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Year -->
+                                    <div>
+                                        <select name="year" id="year" 
+                                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            <option value="">All Years</option>
+                                            @foreach($years as $year)
+                                                <option value="{{ $year }}" @selected(request('year') == $year)>{{ $year }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Status filter -->
-                            <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                <select name="status" id="status" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                    <option value="">All Statuses</option>
-                                    @foreach($statuses as $status)
-                                        <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                            {{ ucfirst($status) }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                            <!-- Row 4: Filter Buttons -->
+                            <div class="flex justify-end space-x-2">
+                                <button type="submit" id="filter-button"
+                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                    </svg>
+                                    Filter
+                                </button>
+
+                                @if(request()->anyFilled(['portfolio_id', 'status', 'year', 'month', 'day', 'search']))
+                                    <a href="{{ route('appointment-m.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
                             </div>
-                            
-                            <!-- Year filter -->
-                            <div>
-                                <label for="year" class="block text-sm font-medium text-gray-700 mb-1">Year</label>
-                                <select name="year" id="year" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                    <option value="">All Years</option>
-                                    @foreach($years as $year)
-                                        <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
-                                            {{ $year }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <!-- Action buttons -->
-                        <div class="mt-4 flex justify-start">
-                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                                </svg>
-                                Apply Filters
-                            </button>
-                            
-                            <a href="{{ route('appointment-m.index') }}" class="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
-                                Reset
-                            </a>
                         </div>
                     </form>
                 </div>
 
                 <!-- Appointments Table -->
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto border-t border-gray-200">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Portfolio / Party</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Portfolio</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Party</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Approval</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estimated Amount (RM)</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -126,10 +175,12 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('portfolio-m.show', $appointment->portfolio) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $appointment->portfolio->portfolio_name }}
-                                            <p class="text-xs text-gray-500">{{ $appointment->party_name }}</p>
-                                        </a>
+                                        {{ $appointment->portfolio->portfolio_name }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ $appointment->party_name }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -192,36 +243,54 @@
                 <!-- Pagination Links -->
                 <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
                     {{ $appointments->appends(request()->except('page'))->links() }}
-                    
-                    <!-- Results count -->
-                    <div class="mt-2 text-sm text-gray-500">
-                        Showing {{ $appointments->firstItem() ?? 0 }} to {{ $appointments->lastItem() ?? 0 }} of {{ $appointments->total() }} appointments
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Auto-search JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Auto-submit functionality for filters
-            const autoSubmitFilters = document.querySelectorAll('#status, #year');
+            // Auto-submit on dropdown change
+            const autoSubmitFilters = document.querySelectorAll('#portfolio_id, #status, #year, #month, #day');
             
             autoSubmitFilters.forEach(filter => {
                 filter.addEventListener('change', function() {
-                    // Show a small loading indicator if needed
-                    const submitButton = this.closest('form').querySelector('button[type="submit"]');
-                    if (submitButton) {
-                        submitButton.innerHTML = '<svg class="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Applying...';
-                    }
+                    // Show loading state on the filter button
+                    const filterButton = document.getElementById('filter-button');
+                    const originalButtonHTML = filterButton.innerHTML;
+                    filterButton.innerHTML = '<svg class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Applying...';
+                    filterButton.disabled = true;
                     
-                    // Submit the form
+                    // Submit form
                     this.closest('form').submit();
                 });
             });
             
-            // Focus search input on page load if empty
+            // Debounced search for text input
             const searchInput = document.getElementById('search');
+            let searchTimeout;
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    
+                    // Only trigger search if the user has typed at least 2 characters or cleared the input
+                    if (this.value.length >= 2 || this.value.length === 0) {
+                        searchTimeout = setTimeout(() => {
+                            // Show loading state
+                            const filterButton = document.getElementById('filter-button');
+                            filterButton.innerHTML = '<svg class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Searching...';
+                            filterButton.disabled = true;
+                            
+                            // Submit form
+                            this.closest('form').submit();
+                        }, 500); // Wait 500ms after user stops typing
+                    }
+                });
+            }
+            
+            // Focus search input on page load if empty
             if (searchInput && searchInput.value === '') {
                 searchInput.focus();
             }
