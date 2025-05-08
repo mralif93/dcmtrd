@@ -95,10 +95,10 @@
                                     <select name="status" id="status" 
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">All Status</option>
+                                        <option value="active" @selected(request('status') === 'active')>Active</option>
                                         <option value="pending" @selected(request('status') === 'pending')>Pending</option>
-                                        <option value="approved" @selected(request('status') === 'approved')>Approved</option>
                                         <option value="rejected" @selected(request('status') === 'rejected')>Rejected</option>
-                                        <option value="draft" @selected(request('status') === 'draft')>Draft</option>
+                                        <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
                                     </select>
                                 </div>
                             </div>
@@ -179,10 +179,10 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ match(strtolower($approval->status)) {
-                                            'approved' => 'bg-green-100 text-green-800',
+                                            'active' => 'bg-green-100 text-green-800',
                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                             'rejected' => 'bg-red-100 text-red-800',
-                                            'draft' => 'bg-blue-100 text-blue-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
                                             default => 'bg-gray-100 text-gray-800'
                                         } }}">
                                         {{ ucfirst($approval->status) }}

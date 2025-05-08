@@ -3994,9 +3994,6 @@ class MakerController extends Controller
         // Apply Status Filter
         if ($request->filled('status')) {
             $query->where('status', $request->status);
-        } else if (!$request->anyFilled(['property_id', 'date_from', 'date_to', 'search'])) {
-            // Default filter to pending if no filters are applied
-            $query->where('status', 'pending');
         }
     
         // Get the filtered results with pagination
