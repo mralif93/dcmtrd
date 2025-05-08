@@ -92,12 +92,12 @@ class UserAdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|in:admin,user,maker,approval,approver,compliance,legal',
+            'role' => 'required|string|in:admin,user,maker,approval,approver,compliance,legal,sales',
             'job_title' => 'required|string|max:255',
             'department' => 'required|string|max:255',
             'office_location' => 'nullable|string|max:255',
             'permissions' => 'present|array',
-            'permissions.*' => 'nullable|in:dcmtrd,reits,legal,compliance',
+            'permissions.*' => 'nullable|in:dcmtrd,reits,legal,compliance,sales',
             'two_factor_enabled' => 'sometimes|boolean',
         ]);
 
@@ -176,12 +176,12 @@ class UserAdminController extends Controller
                 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
-            'role' => 'required|string|in:admin,user,maker,approval,approver,legal,compliance',
+            'role' => 'required|string|in:admin,user,maker,approval,approver,legal,compliance,sales',
             'job_title' => 'required|string|max:255',
             'department' => 'required|string|max:255',
             'office_location' => 'nullable|string|max:255',
             'permissions' => 'present|array',
-            'permissions.*' => 'nullable|in:dcmtrd,reits,legal,compliance',
+            'permissions.*' => 'nullable|in:dcmtrd,reits,legal,compliance,sales',
             'password' => 'nullable|string|min:8|confirmed',
             'two_factor_enabled' => 'sometimes|boolean',
         ]);
@@ -214,9 +214,11 @@ class UserAdminController extends Controller
         
         // Then attach the new ones
         $permissions = collect($request->permissions ?? [])->filter()->values();
+
+        // dd($permissions);
                 
         foreach ($permissions as $permissionName) {
-            $permission = Permission::where('name', strtoupper($permissionName))->first();
+            $permission = Permission::where('short_name', strtoupper($permissionName))->first();
             if ($permission) {
                 $user->permissions()->attach($permission->id);
             }

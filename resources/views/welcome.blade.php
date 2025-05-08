@@ -85,6 +85,16 @@
                 transform: translateY(-2px);
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             }
+            .pink-btn {
+                background-color: #ec4899;
+                color: white;
+                transition: all 0.3s ease;
+            }
+            .pink-btn:hover {
+                background-color: #db2777;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
             .bond-card {
                 background: linear-gradient(135deg, #dbeafe 0%, #ffffff 100%);
                 border-left: 5px solid #3b82f6;
@@ -101,6 +111,10 @@
                 background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
                 border-left: 5px solid #f59e0b;
             }
+            .sales-marketing-card {
+                background: linear-gradient(135deg, #fce7f3 0%, #ffffff 100%);
+                border-left: 5px solid #ec4899;
+            }
             .blue-icon {
                 color: #3b82f6;
             }
@@ -116,6 +130,9 @@
             .red-icon {
                 color: #ef4444;
             }
+            .pink-icon {
+                color: #ec4899;
+            }
             .blue-bg-light {
                 background-color: #dbeafe;
             }
@@ -130,6 +147,9 @@
             }
             .red-bg-light {
                 background-color: #fee2e2;
+            }
+            .pink-bg-light {
+                background-color: #fce7f3;
             }
             .cards-container {
                 display: grid;
@@ -254,6 +274,7 @@
                 if(Auth::user()->hasPermission('REITS')) $permissionCount++;
                 if(Auth::user()->hasPermission('LEGAL')) $permissionCount++;
                 if(Auth::user()->hasPermission('COMPLIANCE')) $permissionCount++;
+                if(Auth::user()->hasPermission('SALES')) $permissionCount++;
                 
                 // Set the appropriate CSS class based on the number of permissions
                 $containerClass = 'cards-container';
@@ -263,6 +284,10 @@
                     $containerClass .= ' two-cards';
                 } elseif($permissionCount == 3) {
                     $containerClass .= ' three-cards';
+                } elseif($permissionCount == 4) {
+                    $containerClass .= ' cards-container';
+                } elseif($permissionCount == 5) {
+                    $containerClass .= ' cards-container';
                 }
             @endphp
             
@@ -355,6 +380,30 @@
                     <div class="flex justify-center">
                         <span class="inline-flex items-center px-4 py-2 font-medium rounded-md yellow-btn">
                             View Dashboard <i class="ml-2 fas fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            @endif
+            
+            @if(Auth::user()->hasPermission('SALES'))
+            <!-- Card 5: Sales & Marketing Management -->
+            <a href="{{ 
+                Auth::user()->role === 'admin' ? route('admin.dashboard', ['section' => 'sales-marketing']) : 
+                (Auth::user()->role === 'maker' ? route('maker.dashboard', ['section' => 'sales-marketing']) : 
+                (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'sales-marketing']) : 
+                (Auth::user()->role === 'sales' ? route('sales.dashboard', ['section' => 'sales-marketing']) : 
+                route('dashboard', ['section' => 'sales-marketing'])))) 
+            }}" class="card sales-marketing-card shadow-lg">
+                <div class="p-8">
+                    <div class="icon-container pink-bg-light">
+                        <i class="fas fa-chart-line pink-icon fa-3x"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-center mb-4">Sales & Marketing Management</h2>
+                    <p class="text-gray-600 text-center mb-6">Analyze market trends, track sales performance, and develop marketing strategies.</p>
+                    <div class="flex justify-center">
+                        <span class="inline-flex items-center px-4 py-2 pink-btn font-medium rounded-md">
+                            View Dashboard <i class="fas fa-arrow-right ml-2"></i>
                         </span>
                     </div>
                 </div>

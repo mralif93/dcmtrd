@@ -14,6 +14,9 @@ use App\Http\Controllers\Admin\BondController;
 // User Main
 use App\Http\Controllers\Admin\AdminController;
 
+// Sales
+use App\Http\Controllers\Sales\SalesController;
+
 // Permission
 use App\Http\Controllers\Admin\ChartController;
 use App\Http\Controllers\Admin\LeaseController;
@@ -867,4 +870,10 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/approval-property/{approvalProperty}/details', [ApproverController::class, 'ApprovalPropertyDetails'])->name('approval-property-a.details')->middleware('permission:REITS');
     Route::post('approver/approval-property/{approvalProperty}/approve', [ApproverController::class, 'ApprovalPropertyApprove'])->name('approval-property-a.approve')->middleware('permission:REITS');
     Route::post('approver/approval-property/{approvalProperty}/reject', [ApproverController::class, 'ApprovalPropertyReject'])->name('approval-property-a.reject')->middleware('permission:REITS');
+});
+
+// Sales routes
+Route::middleware(['auth', 'two-factor', 'role:sales'])->group(function () {
+    // Dashboard
+    Route::get('/sales/dashboard', [SalesController::class, 'index'])->name('sales.dashboard');
 });

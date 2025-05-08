@@ -1997,8 +1997,8 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'active';
-
+        $validated['status'] = 'pending';
+        
         try {
             // Create the financial record
             $financial = Financial::create($validated);
@@ -2365,7 +2365,7 @@ class MakerController extends Controller
         $validated = $this->TenantValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'active';
+        $validated['status'] = 'pending';
 
         try {
             $tenant = Tenant::create($validated);
@@ -2869,10 +2869,10 @@ class MakerController extends Controller
         // Get site visits related to the property
         $property = $checklist->siteVisit->property;
         $siteVisits = SiteVisit::where('property_id', $property->id)
-            ->where('status', 'active')
-            ->orderBy('date_visit', 'desc')
-            ->get();
-
+                            ->where('status', 'pending')
+                            ->orderBy('date_visit', 'desc')
+                            ->get();
+        
         // Eager load the property's tenants
         $property->load(['tenants' => function ($query) {
             $query->where('status', 'active');
@@ -3968,8 +3968,7 @@ class MakerController extends Controller
     public function SiteVisitLogValidate(Request $request)
     {
         return $request->validate([
-            'site_visit_id' => 'required|exists:site_visits,id',
-            'visitation_date' => 'required|date',
+            'property_id' => 'required|exists:properties,id',
             'purpose' => 'nullable|string',
             'report_submission_date' => 'nullable|date',
             'report_attachment' => 'nullable|file|mimes:pdf|max:10240',

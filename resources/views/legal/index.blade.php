@@ -152,75 +152,40 @@
                         </form>
                     </div>
 
-                    <!-- Checklists Table -->
-                    <div class="overflow-x-auto border-t border-gray-200">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                <!-- Checklists Table -->
+                <div class="overflow-x-auto border-t border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Property</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Site Visit</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Prepared By</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse ($checklists as $checklist)
                                 <tr>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                        Property</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                        Legal Documents</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                        Status</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                        Prepared By</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">
-                                        Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse ($checklists as $checklist)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-medium text-gray-900">
-                                                {{ $checklist->siteVisit->property->name ?? 'N/A' }}</div>
-                                            <div class="text-xs text-gray-500">
-                                                {{ $checklist->siteVisit->property->address ?? 'N/A' }}</div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-500">
-                                                @if ($checklist->legalDocumentation)
-                                                    @if ($checklist->legalDocumentation->title_ref)
-                                                        <span
-                                                            class="inline-flex px-2 mr-1 text-xs font-semibold leading-5 text-blue-800 bg-blue-100 rounded-full">Title</span>
-                                                    @endif
-                                                    @if ($checklist->legalDocumentation->lease_agreement_ref)
-                                                        <span
-                                                            class="inline-flex px-2 mr-1 text-xs font-semibold leading-5 text-purple-800 bg-purple-100 rounded-full">Lease</span>
-                                                    @endif
-                                                    @if ($checklist->legalDocumentation->maintenance_agreement_ref)
-                                                        <span
-                                                            class="inline-flex px-2 text-xs font-semibold leading-5 text-indigo-800 bg-indigo-100 rounded-full">Maintenance</span>
-                                                    @endif
-                                                    @if ($checklist->legalDocumentation->trust_deed_ref)
-                                                        <span
-                                                            class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">Trust
-                                                            Deed</span>
-                                                    @endif
-                                                    @if ($checklist->legalDocumentation->sale_purchase_agreement)
-                                                        <span
-                                                            class="inline-flex px-2 text-xs font-semibold leading-5 text-red-800 bg-red-100 rounded-full">Sale
-                                                            Purchase</span>
-                                                    @endif
-                                                    @if ($checklist->legalDocumentation->development_agreement)
-                                                        <span
-                                                            class="inline-flex px-2 text-xs font-semibold leading-5 text-yellow-800 bg-yellow-100 rounded-full">Development</span>
-                                                    @endif
-                                                @else
-                                                    <span class="text-xs text-gray-500">No documents</span>
-                                                @endif
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">{{ $checklist->siteVisit->property->name ?? 'N/A' }}</div>
+                                        <div class="text-xs text-gray-500">{{ $checklist->siteVisit->property->address ?? 'N/A' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if($checklist->siteVisit)
+                                            <div class="text-sm text-gray-900">
+                                                <span class="font-medium">Date:</span> {{ $checklist->siteVisit->date_visit ? date('d M Y', strtotime($checklist->siteVisit->date_visit)) : 'N/A' }}
                                             </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                                            {{ match (strtolower($checklist->status)) {
+                                            <div class="text-xs text-gray-500">
+                                                <span class="font-medium">Time:</span> {{ $checklist->siteVisit->time_visit ? date('h:i A', strtotime($checklist->siteVisit->time_visit)) : 'N/A' }}
+                                            </div>
+                                        @else
+                                            <div class="text-sm text-gray-500">No visit scheduled</div>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ match(strtolower($checklist->status)) {
                                                 'active' => 'bg-green-100 text-green-800',
                                                 'pending' => 'bg-yellow-100 text-yellow-800',
                                                 'rejected' => 'bg-red-100 text-red-800',
