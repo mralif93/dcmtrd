@@ -3798,24 +3798,105 @@ class MakerController extends Controller
         $query = SiteVisitLog::query();
         
         // Filter by status if provided
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
         
-        // Filter by date range if provided
-        if ($request->has('start_date') && $request->has('end_date')) {
-            $query->whereBetween('visitation_date', [$request->start_date, $request->end_date]);
+        // Filter by property if provided
+        if ($request->filled('property_id')) {
+            $query->where('property_id', $request->property_id);
         }
         
-        // Order by visitation date descending by default
-        $siteVisitLogs = $query->orderBy('visitation_date', 'desc')
-                              ->paginate(10);
-
-        $siteVisits = SiteVisit::where('status', 'active')->get();
-
-        return view('maker.site-visit-log.index', compact('siteVisitLogs', 'siteVisits'));
+        // Filter by visit day if provided
+        if ($request->filled('visit_day')) {
+            $query->where('visit_day', $request->visit_day);
+        }
+        
+        // Filter by visit month if provided
+        if ($request->filled('visit_month')) {
+            $query->where('visit_month', $request->visit_month);
+        }
+        
+        // Filter by visit year if provided
+        if ($request->filled('visit_year')) {
+            $query->where('visit_year', $request->visit_year);
+        }
+        
+        // Filter by date range if all components are provided
+        if ($request->filled(['from_day', 'from_month', 'from_year', 'to_day', 'to_month', 'to_year'])) {
+            $query->where(function($q) use ($request) {
+                // Create comparable date strings (YYYYMMDD format)
+                $fromDate = $request->from_year . 
+                            str_pad($request->from_month, 2, '0', STR_PAD_LEFT) . 
+                            str_pad($request->from_day, 2, '0', STR_PAD_LEFT);
+                
+                $toDate = $request->to_year . 
+                          str_pad($request->to_month, 2, '0', STR_PAD_LEFT) . 
+                          str_pad($request->to_day, 2, '0', STR_PAD_LEFT);
+                
+                // For SQLite, we build comparable date strings in the query
+                $q->whereRaw("(visit_year || 
+                              CASE WHEN length(visit_month) = 1 THEN '0' || visit_month ELSE visit_month END || 
+                              CASE WHEN length(visit_day) = 1 THEN '0' || visit_day ELSE visit_day END) 
+                              BETWEEN ? AND ?", [$fromDate, $toDate]);
+            });
+        }
+        
+        // Search by purpose or remarks if provided
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('purpose', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('remarks', 'LIKE', "%{$searchTerm}%");
+            });
+        }
+    
+        // Sort in chronological order (newest to oldest)
+        $siteVisitLogs = $query->orderBy('visit_year', 'desc')
+                              ->orderBy('visit_month', 'desc')
+                              ->orderBy('visit_day', 'desc')
+                              ->paginate(10)
+                              ->appends($request->except('page')); // Maintain filters when paginating
+    
+        // Get data for filter dropdowns
+        $properties = Property::where('status', 'active')->get();
+        $statuses = ['pending', 'approved', 'rejected']; // Add all possible statuses
+        
+        // Get years for dropdown (current year to 10 years back)
+        $years = [];
+        for ($i = date('Y'); $i >= date('Y') - 10; $i--) {
+            $years[] = $i;
+        }
+        
+        // Get months for dropdown
+        $months = [
+            '01' => 'January',
+            '02' => 'February',
+            '03' => 'March',
+            '04' => 'April',
+            '05' => 'May',
+            '06' => 'June',
+            '07' => 'July',
+            '08' => 'August',
+            '09' => 'September',
+            '10' => 'October',
+            '11' => 'November',
+            '12' => 'December'
+        ];
+    
+        return view('maker.site-visit-log.index', compact(
+            'siteVisitLogs', 
+            'properties', 
+            'statuses', 
+            'years', 
+            'months',
+            'request' // Pass request to maintain filter values in the form
+        ));
     }
 
+    /**
+     * Show the form for creating a new site visit log.
+     */
     public function SiteVisitLogCreate()
     {
         $properties = Property::where('status', 'active')->get();
@@ -3826,32 +3907,26 @@ class MakerController extends Controller
     {
         $validated = $this->SiteVisitLogValidate($request);
 
+        // Add system fields
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
-
-        // Handle file upload if present
-        if ($request->hasFile('report_attachment')) {
-            $path = $request->file('report_attachment')->store('site-visit-logs', 'public');
-            $validated['report_attachment'] = $path;
-        }
-
-        // Handle follow-up required
-        if ($request->has('follow_up_required')) {
-            $validated['follow_up_required'] = true;
-        } else {
-            $validated['follow_up_required'] = false;
-        }
 
         try {
             SiteVisitLog::create($validated);
             
             return redirect()
                 ->route('site-visit-log-m.index')
-                ->with('success', 'Activity Diary created successfully.');
+                ->with('success', 'Site Visit Log created successfully.');
         } catch(\Exception $e) {
             return back()
-                ->with('Error creating activity diary : ' . $e->getMessage());
+                ->withInput()
+                ->with('error', 'Error creating site visit log: ' . $e->getMessage());
         }
+    }
+
+    public function SiteVisitLogShow(SiteVisitLog $siteVisitLog)
+    {
+        return view('maker.site-visit-log.show', compact('siteVisitLog'));
     }
 
     public function SiteVisitLogEdit(SiteVisitLog $siteVisitLog)
@@ -3864,47 +3939,28 @@ class MakerController extends Controller
     {
         $validated = $this->SiteVisitLogValidate($request);
 
-        // Handle file upload if present
-        if ($request->hasFile('report_attachment')) {
-            $path = $request->file('report_attachment')->store('site-visit-logs', 'public');
-            $validated['report_attachment'] = $path;
-        }
-
-        // Handle follow-up required
-        if ($request->has('follow_up_required')) {
-            $validated['follow_up_required'] = true;
-        } else {
-            $validated['follow_up_required'] = false;
-        }
-
         try {
             $siteVisitLog->update($validated);
             return redirect()
                 ->route('site-visit-log-m.index')
-                ->with('success', 'Activity Diary updated successfully.');
+                ->with('success', 'Site Visit Log updated successfully.');
         } catch(\Exception $e) {
             return back()
-                ->with('Error updating activity diary : ' . $e->getMessage());
+                ->withInput()
+                ->with('error', 'Error updating site visit log: ' . $e->getMessage());
         }
     }
 
-    public function SiteVisitLogShow(SiteVisitLog $siteVisitLog)
-    {
-        return view('maker.site-visit-log.show', compact('siteVisitLog'));
-    }
-
-    public function SiteVisitLogValidate(Request $request)
+    protected function SiteVisitLogValidate(Request $request)
     {
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
+            'visit_day' => 'required|string|size:2', // Changed from numeric
+            'visit_month' => 'required|string|size:2', // If you're applying this to month too
+            'visit_year' => 'required|string|size:4', // If you're applying this to year too
             'purpose' => 'nullable|string',
-            'report_submission_date' => 'nullable|date',
-            'report_attachment' => 'nullable|file|mimes:pdf|max:10240',
-            'follow_up_required' => 'boolean',
+            'category' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
-            'prepared_by' => 'nullable|string|max:255',
-            'verified_by' => 'nullable|string|max:255',
-            'approval_datetime' => 'nullable|date',
         ]);
     }
 

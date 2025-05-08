@@ -16,11 +16,11 @@ class SiteVisitLog extends Model
         'visit_month',
         'visit_year',
         'purpose',
-        'remarks',
         'category',
         'status',
         'prepared_by',
         'verified_by',
+        'remarks',
         'approval_datetime',
     ];
 

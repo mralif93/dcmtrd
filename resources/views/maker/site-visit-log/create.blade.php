@@ -78,26 +78,40 @@
                                 <div class="md:col-span-2">
                                     <label class="block text-sm font-medium text-gray-700">Visit Date</label>
                                     <div class="grid grid-cols-3 gap-3 mt-1">
+                                        <!-- Day Select -->
                                         <div>
                                             <select name="visit_day" id="visit_day"
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                                 <option value="">Day</option>
                                                 @for($i = 1; $i <= 31; $i++)
-                                                    <option value="{{ $i }}" @selected(old('visit_day') == $i)>{{ $i }}</option>
+                                                    @php
+                                                        $formattedValue = $i < 10 ? '0'.$i : (string)$i;
+                                                    @endphp
+                                                    <option value="{{ $formattedValue }}" @selected(old('visit_day') == $formattedValue)>
+                                                        {{ $formattedValue }}
+                                                    </option>
                                                 @endfor
                                             </select>
                                         </div>
                                         
+                                        <!-- Month Select -->
                                         <div>
                                             <select name="visit_month" id="visit_month"
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                                 <option value="">Month</option>
                                                 @foreach(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $index => $month)
-                                                    <option value="{{ $index + 1 }}" @selected(old('visit_month') == $index + 1)>{{ $month }}</option>
+                                                    @php
+                                                        $monthValue = $index + 1;
+                                                        $formattedValue = $monthValue < 10 ? '0'.$monthValue : (string)$monthValue;
+                                                    @endphp
+                                                    <option value="{{ $formattedValue }}" @selected(old('visit_month') == $formattedValue)>
+                                                        {{ $month }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         
+                                        <!-- Year Select -->
                                         <div>
                                             <select name="visit_year" id="visit_year"
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
