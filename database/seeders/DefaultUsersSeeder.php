@@ -530,11 +530,29 @@ class DefaultUsersSeeder extends Seeder
 
             // SMD
             [
-                'name' => 'SALES & MARKETING USER 1',
-                'email' => 'sales1@example.com.my',
+                'name' => 'FARAHIYAH BINTI HARUN',
+                'email' => 'farah.harun@artrustees.com.my',
+                'role' => 'sales',
+                'job_title' => 'SENIOR MANAGER',
+                'department' => 'MARKETING AND BUSINESS DEVELOPMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => $now,
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'name' => 'SHAHRUL AZMAN BIN MOKHTAR',
+                'email' => 'shahrul_azman@artrustees.com.my',
                 'role' => 'sales',
                 'job_title' => 'MANAGER',
-                'department' => 'SALES & MARKETING DEPARTMENT',
+                'department' => 'MARKETING AND BUSINESS DEVELOPMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
                 'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
@@ -548,11 +566,11 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'name' => 'SALES & MARKETING USER 2',
-                'email' => 'sales2@example.com.my',
+                'name' => 'SHAMIM HUSAINI BIN SHAHRUL ANWAR',
+                'email' => 'shamim.husaini@artrustees.com.my',
                 'role' => 'sales',
-                'job_title' => 'ASSISTANT MANAGER',
-                'department' => 'SALES & MARKETING DEPARTMENT',
+                'job_title' => 'MANAGER',
+                'department' => 'MARKETING AND BUSINESS DEVELOPMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
                 'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
@@ -566,11 +584,29 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'name' => 'SALES & MARKETING USER 3',
-                'email' => 'sales3@example.com.my',
+                'name' => 'NURUL SHADILA BINTI ABDUL MALEK',
+                'email' => 'nurul.shadila@artrustees.com.my',
                 'role' => 'sales',
-                'job_title' => 'EXECUTIVE',
-                'department' => 'SALES & MARKETING DEPARTMENT',
+                'job_title' => 'SENIOR EXECUTIVE',
+                'department' => 'MARKETING AND BUSINESS DEVELOPMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => $now,
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => false,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'name' => 'FARAH HANANI BINTI JISNIZUMI',
+                'email' => 'farahhanani@artrustees.com.my',
+                'role' => 'sales',
+                'job_title' => 'SEXECUTIVE',
+                'department' => 'MARKETING AND BUSINESS DEVELOPMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
                 'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
@@ -757,28 +793,30 @@ class DefaultUsersSeeder extends Seeder
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
-                // Add DCMTRD permission
-                $permissionUserData[] = [
-                    'user_id' => $userId,
-                    'permission_id' => $dcmtrdPermissionId,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
-                // Add REITS permission
-                $permissionUserData[] = [
-                    'user_id' => $userId,
-                    'permission_id' => $reitsPermissionId,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
+                // // Add DCMTRD permission
+                // $permissionUserData[] = [
+                //     'user_id' => $userId,
+                //     'permission_id' => $dcmtrdPermissionId,
+                //     'created_at' => $now,
+                //     'updated_at' => $now,
+                // ];
+                // // Add REITS permission
+                // $permissionUserData[] = [
+                //     'user_id' => $userId,
+                //     'permission_id' => $reitsPermissionId,
+                //     'created_at' => $now,
+                //     'updated_at' => $now,
+                // ];
             }
         }
         
         // Sales & Marketing users get SALES_MARKETING
         $salesMarketingEmails = [
-            'sales1@example.com.my',
-            'sales2@example.com.my',
-            'sales3@example.com.my'
+            'farah.harun@artrustees.com.my',
+            'shahrul_azman@artrustees.com.my',
+            'shamim.husaini@artrustees.com.my',
+            'nurul.shadila@artrustees.com.my',
+            'farahhanani@artrustees.com.my',
         ];
 
         foreach ($salesMarketingEmails as $email) {
