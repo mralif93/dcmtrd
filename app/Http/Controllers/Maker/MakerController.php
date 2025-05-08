@@ -3967,39 +3967,42 @@ class MakerController extends Controller
     // Module Approval Property
     public function ApprovalPropertyIndex(Request $request)
     {
-        $approvalProperties = ApprovalProperty::where('status', 'pending')->paginate(10);
+        $query = ApprovalProperty::query()->with('property');
+    
+        // Apply Description Search
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('description', 'like', '%' . $request->search . '%')
+                  ->orWhere('remarks', 'like', '%' . $request->search . '%');
+            });
+        }
+    
+        // Apply Property Filter
+        if ($request->filled('property_id')) {
+            $query->where('property_id', $request->property_id);
+        }
+    
+        // Apply Date Range Filter
+        if ($request->filled('date_from')) {
+            $query->whereDate('date_of_approval', '>=', $request->date_from);
+        }
+    
+        if ($request->filled('date_to')) {
+            $query->whereDate('date_of_approval', '<=', $request->date_to);
+        }
+    
+        // Apply Status Filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        } else if (!$request->anyFilled(['property_id', 'date_from', 'date_to', 'search'])) {
+            // Default filter to pending if no filters are applied
+            $query->where('status', 'pending');
+        }
+    
+        // Get the filtered results with pagination
+        $approvalProperties = $query->latest()->paginate(10);
+    
         return view('maker.approval-property.index', compact('approvalProperties'));
-    }
-
-    public function ApprovalPropertyCreate()
-    {
-        $properties = Property::where('status', 'active')->paginate(10);
-        return view('maker.approval-property.create', compact('properties'));
-    }
-
-    public function ApprovalPropertyStore(Request $request)
-    {
-        $validated = $this->ApprovalPropertyValidate($request);
-
-        $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
-        
-
-        if ($request->hasFile('attachment')) {
-            $path = $request->file('attachment')->store('approval-properties', 'public');
-            $validated['attachment'] = $path;
-        }
-
-        try {
-            ApprovalProperty::create($validated);
-
-            return redirect()
-                ->route('approval-property-m.index')
-                ->with('success', 'Property created successfully.');
-        } catch (\Exception $e) {
-            return back()
-                ->with('error', 'Error creating property: ' . $e->getMessage());
-        }
     }
 
     public function ApprovalPropertyEdit(ApprovalProperty $approvalProperty)

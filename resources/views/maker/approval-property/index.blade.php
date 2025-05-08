@@ -29,6 +29,21 @@
                     </div>
                 </div>
             @endif
+            
+            @if(session('error'))
+                <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-400">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
@@ -42,6 +57,87 @@
                             Create New Approval
                         </a>
                     </div>
+                </div>
+
+                <!-- Search and Filter Bar -->
+                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                    <form method="GET" action="{{ route('approval-property-m.index') }}">
+                        <div class="grid grid-cols-1 gap-4">
+                            <!-- Row 1: Search (full width) -->
+                            <div class="col-span-1">
+                                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                                <div class="mt-1 flex rounded-md shadow-sm">
+                                    <input type="text" name="search" id="search" value="{{ request('search') }}" 
+                                        placeholder="Search in description or remarks"
+                                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                            
+                            <!-- Row 2: Property and Status (2 columns) -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Property Filter -->
+                                <div>
+                                    <label for="property_id" class="block text-sm font-medium text-gray-700">Property</label>
+                                    <select name="property_id" id="property_id" 
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">All Properties</option>
+                                        @foreach(App\Models\Property::where('status', 'active')->get() as $property)
+                                            <option value="{{ $property->id }}" @selected(request('property_id') == $property->id)>
+                                                {{ $property->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Status Filter -->
+                                <div>
+                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                    <select name="status" id="status" 
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="">All Status</option>
+                                        <option value="pending" @selected(request('status') === 'pending')>Pending</option>
+                                        <option value="approved" @selected(request('status') === 'approved')>Approved</option>
+                                        <option value="rejected" @selected(request('status') === 'rejected')>Rejected</option>
+                                        <option value="draft" @selected(request('status') === 'draft')>Draft</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Row 3: Date Range (2 columns) -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Date From -->
+                                <div>
+                                    <label for="date_from" class="block text-sm font-medium text-gray-700">Date From</label>
+                                    <input type="date" name="date_from" id="date_from" value="{{ request('date_from') }}"
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                
+                                <!-- Date To -->
+                                <div>
+                                    <label for="date_to" class="block text-sm font-medium text-gray-700">Date To</label>
+                                    <input type="date" name="date_to" id="date_to" value="{{ request('date_to') }}"
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                            
+                            <!-- Row 4: Filter Buttons -->
+                            <div class="flex justify-end space-x-2">
+                                <button type="submit" 
+                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                    </svg>
+                                    Filter
+                                </button>
+
+                                @if(request()->anyFilled(['property_id', 'status', 'date_from', 'date_to', 'search']))
+                                    <a href="{{ route('approval-property-m.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Approvals Table -->
@@ -122,7 +218,7 @@
                 
                 <!-- Pagination Links -->
                 <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
-                    {{ $approvalProperties->links() }}
+                    {{ $approvalProperties->appends(request()->except('page'))->links() }}
                     
                     <!-- Results count -->
                     <div class="mt-2 text-sm text-gray-500">
@@ -132,11 +228,4 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add any JavaScript functionality needed for filtering or dynamic behavior
-            // Example: status filtering, date range filtering, etc.
-        });
-    </script>
 </x-app-layout>
