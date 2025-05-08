@@ -64,8 +64,8 @@
                         
                         <div class="px-4 py-5 sm:px-6">
                             <h4 class="text-sm font-medium text-gray-500 uppercase mb-2">Site Visits</h4>
-                            <p class="text-xl font-bold text-gray-800">{{ $property->siteVisits->where('status', 'scheduled')->count() }} Pending</p>
-                            <p class="text-sm text-gray-600 mt-1">Last Visit: {{ $property->siteVisits->where('status', 'completed')->sortByDesc('date_visit')->first()?->date_visit->format('d M Y') ?? 'None' }}</p>
+                            <p class="text-xl font-bold text-gray-800">{{ $property->siteVisits->where('status', 'pending')->count() }} Pending</p>
+                            <p class="text-sm text-gray-600 mt-1">Last Visit: {{ $property->siteVisits->where('status', 'active')->sortByDesc('date_visit')->first()?->date_visit->format('d M Y') ?? 'None' }}</p>
                         </div>
                     </div>
                 </div>

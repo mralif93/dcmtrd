@@ -234,7 +234,7 @@
                                     <div class="flex items-center mt-1">
                                         @if($property->master_lease_agreement)
                                             <div class="flex items-center space-x-2 mb-2">
-                                                <span class="text-sm text-gray-700">Current: {{ basename($property->master_lease_agreement) }}</span>
+                                                <span class="text-sm text-gray-700">Current: </span>
                                                 <a href="{{ asset('storage/' . $property->master_lease_agreement) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">View</a>
                                             </div>
                                         @endif
@@ -257,7 +257,7 @@
                                     <div class="flex items-center mt-1">
                                         @if($property->valuation_report)
                                             <div class="flex items-center space-x-2 mb-2">
-                                                <span class="text-sm text-gray-700">Current: {{ basename($property->valuation_report) }}</span>
+                                                <span class="text-sm text-gray-700">Current: </span>
                                                 <a href="{{ asset('storage/' . $property->valuation_report) }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">View</a>
                                             </div>
                                         @endif

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class SiteVisit extends Model
 {
@@ -24,10 +25,13 @@ class SiteVisit extends Model
         'maintenance_manager',
         'building_manager',
         'notes',
+        'submission_date',
+        'follow_up_required',
         'attachment',
         'status',
         'prepared_by',
         'verified_by',
+        'remarks',
         'approval_datetime',
     ];
 
@@ -38,7 +42,10 @@ class SiteVisit extends Model
      */
     protected $casts = [
         'date_visit' => 'date',
-        'time_visit' => 'datetime',
+        'time_visit' => 'date',
+        'submission_date' => 'date',
+        'follow_up_required' => 'boolean',
+        'approval_datetime' => 'datetime',
     ];
 
     /**
@@ -56,24 +63,17 @@ class SiteVisit extends Model
     {
         return $this->hasOne(Checklist::class);
     }
-    
-    /**
-     * Get the site visit's status badge class.
-     */
-    public function getStatusBadgeClassAttribute()
-    {
-        return match($this->status) {
-            'completed' => 'bg-green-100 text-green-800',
-            'cancelled' => 'bg-red-100 text-red-800',
-            default => 'bg-yellow-100 text-yellow-800',
-        };
-    }
-    
+
     /**
      * Get the formatted visit time.
      */
     public function getFormattedTimeAttribute()
     {
+        // Check if time_visit is already a Carbon instance after casting
+        if ($this->time_visit instanceof Carbon) {
+            return $this->time_visit->format('h:i A');
+        }
+        
         return date('h:i A', strtotime($this->time_visit));
     }
     
@@ -87,98 +87,5 @@ class SiteVisit extends Model
         }
         
         return asset('storage/' . $this->attachment);
-    }
-
-    /**
-     * Check if the site visit is scheduled.
-     */
-    public function isScheduled()
-    {
-        return $this->status === 'scheduled';
-    }
-    
-    /**
-     * Check if the site visit is completed.
-     */
-    public function isCompleted()
-    {
-        return $this->status === 'completed';
-    }
-    
-    /**
-     * Check if the site visit is cancelled.
-     */
-    public function isCancelled()
-    {
-        return $this->status === 'cancelled';
-    }
-    
-    /**
-     * Check if the site visit is in the past.
-     */
-    public function isPast()
-    {
-        return $this->date_visit->isPast();
-    }
-    
-    /**
-     * Check if the site visit is in the future.
-     */
-    public function isFuture()
-    {
-        return $this->date_visit->isFuture();
-    }
-    
-    /**
-     * Check if the site visit is today.
-     */
-    public function isToday()
-    {
-        return $this->date_visit->isToday();
-    }
-    
-    /**
-     * Scope a query to only include scheduled site visits.
-     */
-    public function scopeScheduled($query)
-    {
-        return $query->where('status', 'scheduled');
-    }
-    
-    /**
-     * Scope a query to only include completed site visits.
-     */
-    public function scopeCompleted($query)
-    {
-        return $query->where('status', 'completed');
-    }
-    
-    /**
-     * Scope a query to only include upcoming site visits.
-     */
-    public function scopeUpcoming($query)
-    {
-        return $query->where('date_visit', '>=', now()->toDateString())
-                    ->where('status', 'scheduled')
-                    ->orderBy('date_visit', 'asc');
-    }
-    
-    /**
-     * Get formatted visit date and time.
-     */
-    public function getFormattedVisitDateTimeAttribute()
-    {
-        return $this->date_visit->format('d/m/Y') . ' at ' . 
-               date('h:i A', strtotime($this->time_visit));
-    }
-
-    /**
-     * Check if this site visit has an attachment.
-     *
-     * @return bool
-     */
-    public function hasAttachment()
-    {
-        return !empty($this->attachment);
     }
 }
