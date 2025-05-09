@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Approver;
 
+use Carbon\Carbon;
 use App\Models\Bank;
+
 use App\Models\Bond;;
 
 use App\Models\Lease;
@@ -34,6 +36,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\FacilityInformation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\PlacementFundTransfer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\ListSecurityRequest;
@@ -96,6 +99,7 @@ class ApproverController extends Controller
             (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
             (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
             (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
+            (SELECT COUNT(*) FROM placement_fund_transfers) AS placement_fund_transfers_count,
 
             (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
             (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
@@ -128,6 +132,7 @@ class ApproverController extends Controller
             'approvalPropertiesCount' => $counts->approval_properties_count,
             'siteVisitLogsCount' => $counts->site_visit_logs_count,
             'listSecuritiesCount' => $counts->list_securities_count,
+            'placementFundTransfersCount' => $counts->placement_fund_transfers_count,
 
             // Add pending counts to view data
             'pendingPropertiesCount' => $counts->pending_properties_count,
@@ -2203,5 +2208,29 @@ class ApproverController extends Controller
 
         // Return success response
         return response()->json(['message' => 'Documents returned successfully.'], 200);
+    }
+
+    public function FundTransferIndex(Request $request)
+    {
+        $activeMonth = request('month') ?? null; // if no month is provided, set it to null
+
+        if ($activeMonth) {
+            $fundTransfers = PlacementFundTransfer::whereMonth('date', Carbon::parse($activeMonth)->month)
+                ->whereYear('date', Carbon::parse($activeMonth)->year)
+                ->get();
+        } else {
+            // Get all records if no month is selected
+            $fundTransfers = PlacementFundTransfer::all();
+        }
+
+        return view('approver.fund-transfer.index', compact('fundTransfers', 'activeMonth'));
+    }
+
+    public function DoneApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
+    {
+        $fundTransfer->status = 'Approved';
+        $fundTransfer->save();
+
+        return redirect()->route('fund-transfer-a.index')->with('success', 'Placement & Fund Transfer done successfully');
     }
 }

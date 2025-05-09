@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Maker;
 
+use Carbon\Carbon;
 use App\Models\Bank;
 use App\Models\Bond;
+use App\Models\User;
 use App\Models\Lease;
 use App\Models\Issuer;
 use App\Models\Tenant;
@@ -13,12 +15,12 @@ use App\Models\Checklist;
 use App\Models\Financial;
 use App\Models\Portfolio;
 use App\Models\SiteVisit;
-use App\Models\Redemption;
-use App\Models\TrusteeFee;
 
-use App\Imports\BondImport;
+use App\Models\Redemption;
 
 // Bonds
+use App\Models\TrusteeFee;
+use App\Imports\BondImport;
 use App\Models\Appointment;
 use App\Models\Announcement;
 use App\Models\ApprovalForm;
@@ -31,10 +33,10 @@ use App\Models\FinancialType;
 use App\Models\LockoutPeriod;
 use App\Models\PortfolioType;
 use App\Models\TenancyLetter;
-use App\Models\RatingMovement;
-use App\Models\ChecklistTenant;
 
 // REITs
+use App\Models\RatingMovement;
+use App\Models\ChecklistTenant;
 use App\Models\PaymentSchedule;
 use App\Models\RelatedDocument;
 use App\Models\TradingActivity;
@@ -47,20 +49,22 @@ use App\Models\FacilityInformation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\PlacementFundTransfer;
 use Illuminate\Http\RedirectResponse;
 use App\Imports\PaymentScheduleImport;
 use App\Imports\RatingMovementsImport;
 use App\Imports\TradingActivityImport;
+
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\ListSecurityRequest;
 use App\Http\Requests\User\BondFormRequest;
-
 use App\Models\ChecklistLegalDocumentation;
 use App\Http\Requests\StoreADIHolderRequest;
 use App\Models\ChecklistPropertyDevelopment;
 use App\Models\ChecklistDisposalInstallation;
 use App\Models\ChecklistExternalAreaCondition;
 use App\Models\ChecklistInternalAreaCondition;
+use App\Http\Requests\StoreFundTransferRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
 use App\Jobs\TrusteeFee\SendTrusteeFeeSubmittedEmail;
@@ -119,6 +123,7 @@ class MakerController extends Controller
                 (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
                 (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
                 (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
+                (SELECT COUNT(*) FROM placement_fund_transfers) AS placement_fund_transfers_count,
 
                 (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
                 (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
@@ -164,6 +169,7 @@ class MakerController extends Controller
             'approvalPropertiesCount' => $counts->approval_properties_count,
             'siteVisitLogsCount' => $counts->site_visit_logs_count,
             'listSecuritiesCount' => $counts->list_securities_count,
+            'placementFundTransfersCount' => $counts->placement_fund_transfers_count,
 
             // Adding pending counts
             'trusteeFeePendingCount' => $counts->trustee_fees_pending_count,
@@ -4271,5 +4277,106 @@ class MakerController extends Controller
         }
 
         return redirect()->route('facility-info-m.show', $request->facility_id)->with('success', 'ADI Holder(s) added successfully.');
+    }
+
+    public function FundTransferIndex(Request $request)
+    {
+        $activeMonth = request('month') ?? null; // if no month is provided, set it to null
+
+        if ($activeMonth) {
+            $fundTransfers = PlacementFundTransfer::whereMonth('date', Carbon::parse($activeMonth)->month)
+                ->whereYear('date', Carbon::parse($activeMonth)->year)
+                ->get();
+        } else {
+            // Get all records if no month is selected
+            $fundTransfers = PlacementFundTransfer::all();
+        }
+
+        return view('maker.fund-transfer.index', compact('fundTransfers', 'activeMonth'));
+    }
+
+
+    public function FundTransferCreate()
+    {
+        $users = User::where('department', 'DEBT CAPITAL MARKET & TRUST UNIT')
+            ->where('id', '!=', auth()->id()) // Exclude current user
+            ->where(function ($query) {
+                $query->where('role', 'approver')
+                    ->orWhere('job_title', 'SENIOR EXECUTIVE');
+            })
+            ->get();
+    
+        return view('maker.fund-transfer.create', compact('users'));
+    }
+    
+
+    public function FundTransferStore(StoreFundTransferRequest $request)
+    {
+        PlacementFundTransfer::create([
+            'date' => $request->get('date'),
+            'details' => $request->get('details'),
+            'placement_amount' => $request->get('placement_amount'),
+            'fund_transfer_amount' => $request->get('fund_transfer_amount'),
+            'prepared_by_id' => auth()->id(),
+            'reviewed_by_id' => $request->get('reviewed_by'),
+            'verified_by_id' => $request->get('verified_by'),
+            'status' => 'Draft',
+
+        ]);
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer created successfully');
+    }
+
+    public function FundTransferEdit(PlacementFundTransfer $fundTransfer)
+    {
+        $users = User::where('department', 'DEBT CAPITAL MARKET & TRUST UNIT')
+            ->where('id', '!=', auth()->id()) // Exclude current user
+            ->where(function ($query) {
+                $query->where('role', 'approver')
+                    ->orWhere('job_title', 'SENIOR EXECUTIVE');
+            })
+            ->get();
+
+        return view('maker.fund-transfer.edit', compact('fundTransfer', 'users'));
+    }
+    public function FundTransferUpdate(StoreFundTransferRequest $request, PlacementFundTransfer $fundTransfer)
+    {
+        $validated = $request->validated();
+
+        $fundTransfer->update([
+            'date' => $validated['date'],
+            'details' => $validated['details'],
+            'placement_amount' => $validated['placement_amount'],
+            'fund_transfer_amount' => $validated['fund_transfer_amount'],
+            'prepared_by_id' => auth()->id(),
+            'reviewed_by_id' => $validated['reviewed_by'],
+            'verified_by_id' => $validated['verified_by'],
+        ]);
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer updated successfully');
+    }
+
+    public function SubmitForReviewFundTransfer(PlacementFundTransfer $fundTransfer)
+    {
+        $fundTransfer->status = 'Reviewed';
+        $fundTransfer->save();
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer submitted for review successfully');
+    }
+
+    public function SubmitApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
+    {
+        $fundTransfer->status = 'In Approval';
+        $fundTransfer->save();
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer approved successfully');
+    }
+    
+    public function DoneApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
+    {
+        $fundTransfer->status = 'Approved';
+        $fundTransfer->save();
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer done successfully');
     }
 }

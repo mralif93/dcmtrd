@@ -573,6 +573,15 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/adi-holder/{adiHolderName}/edit', [MakerController::class, 'ADIHolderEdit'])->name('adi-holder-m.edit')->middleware('permission:DCMTRD');
     Route::put('maker/adi-holder/update', [MakerController::class, 'ADIHolderUpdate'])->name('adi-holder-m.update')->middleware('permission:DCMTRD');
 
+    // Fund Transfer Module
+    Route::get('maker/fund-transfer', [MakerController::class, 'FundTransferIndex'])->name('fund-transfer-m.index')->middleware('permission:DCMTRD');
+    Route::get('maker/fund-transfer/create', [MakerController::class, 'FundTransferCreate'])->name('fund-transfer-m.create')->middleware('permission:DCMTRD');
+    Route::post('maker/fund-transfer/create', [MakerController::class, 'FundTransferStore'])->name('fund-transfer-m.store')->middleware('permission:DCMTRD');
+    Route::get('maker/fund-transfer/{fundTransfer}/edit', [MakerController::class, 'FundTransferEdit'])->name('fund-transfer-m.edit')->middleware('permission:DCMTRD');
+    Route::put('maker/fund-transfer/{fundTransfer}/update', [MakerController::class, 'FundTransferUpdate'])->name('fund-transfer-m.update')->middleware('permission:DCMTRD');
+    Route::post('maker/fund-transfer/{fundTransfer}/submit-for-review', [MakerController::class, 'SubmitForReviewFundTransfer'])->name('review-fund-transfer-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/fund-transfer/{fundTransfer}/submit-for-approval', [MakerController::class, 'SubmitApprovalFundTransfer'])->name('fund-transfer-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/fund-transfer/{fundTransfer}/done-for-approval', [MakerController::class, 'DoneApprovalFundTransfer'])->name('done-fund-transfer-m.approval')->middleware('permission:DCMTRD');
     // Portfolio Module
     Route::get('maker/portfolio', [MakerController::class, 'PortfolioIndex'])->name('portfolio-m.index')->middleware('permission:REITS');
     Route::get('maker/portfolio/create', [MakerController::class, 'PortfolioCreate'])->name('portfolio-m.create')->middleware('permission:REITS');
@@ -795,6 +804,10 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/list-security/{listSecurity}/show-request', [ApproverController::class, 'ListSecurityShowRequest'])->name('list-security-a.show-request')->middleware('permission:DCMTRD');
     Route::patch('approver/list-security/{id}/send-documents', [ApproverController::class, 'SendDocumentsStatus'])->name('send-documents-a.approval')->middleware('permission:DCMTRD');
     Route::patch('approver/list-security/{id}/return-documents', [ApproverController::class, 'ReturnDocumentsStatus'])->name('return-documents-a.approval')->middleware('permission:DCMTRD');
+
+    // Fund Transfer Module
+    Route::get('approver/fund-transfer', [ApproverController::class, 'FundTransferIndex'])->name('fund-transfer-a.index')->middleware('permission:DCMTRD');
+    Route::get('approver/fund-transfer/{fundTransfer}/done-for-approval', [ApproverController::class, 'DoneApprovalFundTransfer'])->name('done-fund-transfer-a.approval')->middleware('permission:DCMTRD');
 
     // REITS Section
 

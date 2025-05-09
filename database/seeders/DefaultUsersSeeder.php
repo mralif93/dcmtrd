@@ -626,17 +626,17 @@ class DefaultUsersSeeder extends Seeder
 
         // Now we need to create the permission_users relationships
         $permissionUserData = [];
-        
+
         // Admin users get ALL permissions
         $adminEmails = [
             'ashraf_azmi@artrustees.com.my',
             'muqri.amin@artrustees.com.my',
             'nurfarzana@artrustees.com.my'
         ];
-        
+
         foreach ($adminEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
-            
+
             // Give admin users all permissions
             $permissionUserData[] = [
                 'user_id' => $userId,
@@ -644,21 +644,21 @@ class DefaultUsersSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
-            
+
             $permissionUserData[] = [
                 'user_id' => $userId,
                 'permission_id' => $reitsPermissionId,
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
-            
+
             $permissionUserData[] = [
                 'user_id' => $userId,
                 'permission_id' => $legalPermissionId,
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
-            
+
             $permissionUserData[] = [
                 'user_id' => $userId,
                 'permission_id' => $compliancePermissionId,
@@ -673,7 +673,7 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => $now,
             ];
         }
-        
+
         // DCMTRD Users
         $dcmtrdEmails = [
             'roslimsyah@artrustees.com.my',
@@ -683,7 +683,7 @@ class DefaultUsersSeeder extends Seeder
             'nursakienah@artrustees.com.my',
             'sayyidi@artrustees.com.my'
         ];
-        
+
         foreach ($dcmtrdEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
             if ($userId) {
@@ -695,7 +695,7 @@ class DefaultUsersSeeder extends Seeder
                 ];
             }
         }
-        
+
         // Special case: ROSLIM SYAH BIN IDRIS has both DCMTRD and REITS
         $roslimId = DB::table('users')->where('email', 'roslimsyah@artrustees.com.my')->value('id');
         if ($roslimId) {
@@ -706,25 +706,14 @@ class DefaultUsersSeeder extends Seeder
                 'updated_at' => $now,
             ];
         }
-        
-        // Special case: FARAEDALISMALINA BINTI ZAKARIA should have REITS permission too
-        $faraedId = DB::table('users')->where('email', 'faraedalismalina@artrustees.com.my')->value('id');
-        if ($faraedId) {
-            $permissionUserData[] = [
-                'user_id' => $faraedId,
-                'permission_id' => $reitsPermissionId,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
-        }
-        
+
         // REITS Users
         $reitsEmails = [
             'fathihah@artrustees.com.my',
             'nurul.shahidah@artrustees.com.my',
             'afis.azman@artrustees.com.my'
         ];
-        
+
         foreach ($reitsEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
             if ($userId) {
@@ -736,7 +725,7 @@ class DefaultUsersSeeder extends Seeder
                 ];
             }
         }
-        
+
         // Compliance Officers get COMPLIANCE, DCMTRD and REITS permissions
         $complianceEmails = [
             'rasidha@artrustees.com.my',
@@ -747,7 +736,7 @@ class DefaultUsersSeeder extends Seeder
             'khairunnisa_razak@artrustees.com.my',
             'nurul.syafiqah@artrustees.com.my'
         ];
-        
+
         foreach ($complianceEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
             // Add COMPLIANCE permission
@@ -757,22 +746,8 @@ class DefaultUsersSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
-            // // Add DCMTRD permission
-            // $permissionUserData[] = [
-            //     'user_id' => $userId,
-            //     'permission_id' => $dcmtrdPermissionId,
-            //     'created_at' => now(),
-            //     'updated_at' => now(),
-            // ];
-            // // Add REITS permission
-            // $permissionUserData[] = [
-            //     'user_id' => $userId,
-            //     'permission_id' => $reitsPermissionId,
-            //     'created_at' => now(),
-            //     'updated_at' => now(),
-            // ];
         }
-        
+
         // Legal users get LEGAL, DCMTRD and REITS permissions
         $legalEmails = [
             'zulhida@artrustees.com.my',
@@ -782,7 +757,7 @@ class DefaultUsersSeeder extends Seeder
             'maisarah.humaira@artrustees.com.my',
             'khariesha@artrustees.com.my'
         ];
-        
+
         foreach ($legalEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
             if ($userId) {
@@ -793,23 +768,9 @@ class DefaultUsersSeeder extends Seeder
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
-                // // Add DCMTRD permission
-                // $permissionUserData[] = [
-                //     'user_id' => $userId,
-                //     'permission_id' => $dcmtrdPermissionId,
-                //     'created_at' => $now,
-                //     'updated_at' => $now,
-                // ];
-                // // Add REITS permission
-                // $permissionUserData[] = [
-                //     'user_id' => $userId,
-                //     'permission_id' => $reitsPermissionId,
-                //     'created_at' => $now,
-                //     'updated_at' => $now,
-                // ];
             }
         }
-        
+
         // Sales & Marketing users get SALES_MARKETING
         $salesMarketingEmails = [
             'farah.harun@artrustees.com.my',
@@ -831,7 +792,7 @@ class DefaultUsersSeeder extends Seeder
                 ];
             }
         }
-        
+
         // Insert the permission relationships
         DB::table('permission_users')->insert($permissionUserData);
     }

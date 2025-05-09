@@ -149,8 +149,8 @@
                         :href="route('list-security-m.index')" color="bg-blue-100" />
 
                     <!-- Corporate Bond Listing Security -->
-                    <x-dashboard-card title="Placement & Fund Transfer" icon="shield-check" :count="$corporateBondCount ?? 0"
-                        :href="route('activity-diary-m.index')" color="bg-blue-100" />
+                    <x-dashboard-card title="Placement & Fund Transfer" icon="shield-check" :count="$placementFundTransfersCount ?? 0"
+                        :href="route('fund-transfer-m.index')" color="bg-blue-100" />
                 </div>
 
                 <!-- Issuers -->

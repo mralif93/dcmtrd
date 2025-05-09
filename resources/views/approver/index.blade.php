@@ -112,8 +112,8 @@
                         :href="route('list-security-a.index')" color="bg-blue-100" />
 
                     <!-- Corporate Bond Listing Security -->
-                    <x-dashboard-card title="Placement & Fund Transfer" icon="shield-check" :count="$corporateBondCount ?? 0"
-                        :href="route('activity-diary-a.index')" color="bg-blue-100" />
+                    <x-dashboard-card title="Placement & Fund Transfer" icon="shield-check" :count="$placementFundTransfersCount ?? 0"
+                        :href="route('fund-transfer-a.index')" color="bg-blue-100" />
 
                     <!-- Activity Diary -->
                     <x-dashboard-card title="Reports" icon="document" :count="2" :href="route('a.dcmt-reports.index')"
