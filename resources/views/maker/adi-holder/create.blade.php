@@ -56,14 +56,16 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Stock Codes & Nominal Values *</label>
+                            <label class="block text-sm font-medium text-gray-700">Stock Codes & Nominal Values
+                                *</label>
                             <div id="stock-nominal-list" class="space-y-4">
                                 <div class="flex items-center gap-4">
                                     <input type="text" name="stock_codes[]" placeholder="Stock Code" required
                                         class="w-1/2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <input type="number" name="nominal_values[]" placeholder="Nominal Value" required
                                         class="w-1/2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <button type="button" onclick="this.parentNode.remove()" class="text-sm text-red-600 hover:text-red-800">
+                                    <button type="button" onclick="this.parentNode.remove()"
+                                        class="text-sm text-red-600 hover:text-red-800">
                                         Remove
                                     </button>
                                 </div>
@@ -71,11 +73,15 @@
                             <button type="button" onclick="addStockNominalField()"
                                 class="mt-2 text-sm text-indigo-600 hover:text-indigo-900">+ Add more</button>
                         </div>
-                        
+
                     </div>
 
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 pt-6">
+                        <a href="{{ route('bond-m.details', $facilities) }}"
+                            class="inline-flex items-center px-4 py-2 font-medium text-gray-700 bg-gray-200 border border-transparent rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            Cancel
+                        </a>
                         <button type="submit"
                             class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,10 +100,10 @@
     <script>
         function addStockNominalField() {
             const container = document.getElementById('stock-nominal-list');
-    
+
             const newRow = document.createElement('div');
             newRow.className = 'flex gap-4 items-center';
-    
+
             newRow.innerHTML = `
                 <input type="text" name="stock_codes[]" placeholder="Stock Code" required
                     class="w-1/2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -107,10 +113,10 @@
                     Remove
                 </button>
             `;
-    
+
             container.appendChild(newRow);
         }
     </script>
-    
-    
+
+
 </x-app-layout>

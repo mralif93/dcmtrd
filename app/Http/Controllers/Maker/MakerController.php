@@ -4251,10 +4251,10 @@ class MakerController extends Controller
         $adiHolders = AdiHolder::where('adi_holder', $adiHolderName)->get();
 
         // You can also fetch other related data, such as facilities
-        $facility = FacilityInformation::all();
+        $facilities = FacilityInformation::all();
 
         // Pass both the adiHolders and facility data to the view
-        return view('maker.adi-holder.edit', compact('adiHolders', 'facility'));
+        return view('maker.adi-holder.edit', compact('adiHolders', 'facilities'));
     }
 
     public function ADIHolderUpdate(Request $request)
