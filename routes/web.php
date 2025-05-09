@@ -535,6 +535,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/property/{property}/edit', [MakerController::class, 'PropertyEdit'])->name('property-m.edit')->middleware('permission:REITS');
     Route::put('maker/property/{property}/update', [MakerController::class, 'PropertyUpdate'])->name('property-m.update')->middleware('permission:REITS');
     Route::get('maker/property/{property}/show', [MakerController::class, 'PropertyShow'])->name('property-m.show')->middleware('permission:REITS');
+    Route::get('maker/property/{property}/submit-for-approval', [MakerController::class, 'SubmitApprovalProperty'])->name('property-m.approval')->middleware('permission:REITS');
 
     // Tenant Module
     Route::get('maker/tenant/{property}/', [MakerController::class, 'TenantIndex'])->name('tenant-m.index')->middleware('permission:REITS');
@@ -543,6 +544,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/tenant/{tenant}/edit', [MakerController::class, 'TenantEdit'])->name('tenant-m.edit')->middleware('permission:REITS');
     Route::put('maker/tenant/{tenant}/update', [MakerController::class, 'TenantUpdate'])->name('tenant-m.update')->middleware('permission:REITS');
     Route::get('maker/tenant/{tenant}/show', [MakerController::class, 'TenantShow'])->name('tenant-m.show')->middleware('permission:REITS');
+    Route::get('maker/tenant/{tenant}/submit-for-approval', [MakerController::class, 'SubmitApprovalTenant'])->name('tenant-m.approval')->middleware('permission:REITS');
 
     // Lease Module
     Route::get('maker/lease/{property}/', [MakerController::class, 'LeaseIndex'])->name('lease-m.index')->middleware('permission:REITS');
@@ -552,6 +554,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/lease/{lease}/update', [MakerController::class, 'LeaseUpdate'])->name('lease-m.update')->middleware('permission:REITS');
     Route::get('maker/lease/{lease}/show', [MakerController::class, 'LeaseShow'])->name('lease-m.show')->middleware('permission:REITS');
     Route::get('maker/lease/{lease}/letter', [MakerController::class, 'LeaseLetter'])->name('lease-m.letter')->middleware('permission:REITS');
+    Route::get('maker/lease/{lease}/submit-for-approval', [MakerController::class, 'SubmitApprovalLease'])->name('lease-m.approval')->middleware('permission:REITS');
 
     // Tenancy Letter Module
     Route::get('maker/tenancy-letter/{lease}/', [MakerController::class, 'TenancyLetterIndex'])->name('tenancy-letter-m.index')->middleware('permission:REITS');
@@ -560,6 +563,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/tenancy-letter/{tenancyLetter}/edit', [MakerController::class, 'TenancyLetterEdit'])->name('tenancy-letter-m.edit')->middleware('permission:REITS');
     Route::put('maker/tenancy-letter/{tenancyLetter}/update', [MakerController::class, 'TenancyLetterUpdate'])->name('tenancy-letter-m.update')->middleware('permission:REITS');
     Route::get('maker/tenancy-letter/{tenancyLetter}/show', [MakerController::class, 'TenancyLetterShow'])->name('tenancy-letter-m.show')->middleware('permission:REITS');
+    Route::get('maker/tenancy-letter/{tenancyLetter}/submit-for-approval', [MakerController::class, 'SubmitApprovalTenancyLetter'])->name('tenancy-letter-m.approval')->middleware('permission:REITS');
 
     // Site Visit Module
     Route::get('maker/site-visit/{property}/', [MakerController::class, 'SiteVisitIndex'])->name('site-visit-m.index')->middleware('permission:REITS');
@@ -568,6 +572,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/site-visit/{siteVisit}/edit', [MakerController::class, 'SiteVisitEdit'])->name('site-visit-m.edit')->middleware('permission:REITS');
     Route::put('maker/site-visit/{siteVisit}/update', [MakerController::class, 'SiteVisitUpdate'])->name('site-visit-m.update')->middleware('permission:REITS');
     Route::get('maker/site-visit/{siteVisit}/show', [MakerController::class, 'SiteVisitShow'])->name('site-visit-m.show')->middleware('permission:REITS');
+    Route::get('maker/site-visit/{siteVisit}/submit-for-approval', [MakerController::class, 'SubmitApprovalSiteVisit'])->name('site-visit-m.approval')->middleware('permission:REITS');
     
     // Checklist Module
     Route::get('maker/checklist/{property}/', [MakerController::class, 'ChecklistIndex'])->name('checklist-m.index')->middleware('permission:REITS');

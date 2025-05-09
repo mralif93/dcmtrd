@@ -2239,6 +2239,15 @@ class MakerController extends Controller
         return view('maker.property.show', compact('property'));
     }
 
+    public function PropertySubmitForApproval(Property $property)
+    {
+        $property->update(['status' => 'pending']);
+
+        return redirect()
+            ->route('property-m.index', $property->portfolio)
+            ->with('success', 'Property submitted for approval successfully.');
+    }
+
     public function PropertyValidate(Request $request)
     {
         return $request->validate([
@@ -2329,6 +2338,15 @@ class MakerController extends Controller
     public function TenantShow(Tenant $tenant)
     {
         return view('maker.tenant.show', compact('tenant'));
+    }
+
+    // submit for approval
+    public function SubmitApprovalTenant(Tenant $tenant)
+    {
+        $tenant->update(['status' => 'pending']);
+        return redirect()
+            ->route('tenant-m.index', $tenant->property)
+            ->with('success', 'Tenant submitted for approval successfully.');
     }
 
     public function TenantValidate(Request $request)
