@@ -1606,7 +1606,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'draft';
+        $validated['status'] = 'Draft';
 
         $activity = ActivityDiary::create($validated);
 

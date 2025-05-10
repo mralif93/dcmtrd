@@ -5,7 +5,6 @@
                 {{ __('Placement & Fund Transfer') }}
             </h2>
 
-
             <!-- Dropdown Menu -->
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open"
@@ -56,6 +55,12 @@
                         <a href="{{ route('list-security-m.index') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Listing Security') }}
+                        </a>
+
+                        <!-- Listing Security -->
+                        <a href="{{ route('fund-transfer-m.index') }}"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Placement & Fund Transfer') }}
                         </a>
 
                         <!-- Audit Log -->
