@@ -1714,7 +1714,7 @@ class MakerController extends Controller
 
         $query = ActivityDiary::with('issuer')
             ->whereBetween('due_date', [$today, $nextWeek])
-            ->where('status', '!=', 'completed');
+            ->where('status', '!=', 'Completed');
 
         // Apply filters if provided
         if ($request->filled('issuer')) {
