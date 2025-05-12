@@ -178,10 +178,11 @@
                                         {{ $loop->iteration + ($securities->currentPage() - 1) * $securities->perPage() }}
                                     </td>
 
-                                    <!-- Issuer Short Name -->
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
-                                        {{ $security->issuer->issuer_short_name ?? '-' }}
-                                    </td>
+                                        <a href="{{ route('list-security-a.details', ['security' => $security->id]) }}" class="text-blue-600 hover:underline">
+                                            {{ $security->issuer->issuer_short_name ?? '-' }}
+                                        </a>
+                                    </td>  
 
                                     <!-- Security Code -->
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
@@ -192,20 +193,28 @@
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                                         {{ $security->asset_name_type }}
                                     </td>
-
                                     <!-- Status -->
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span
-                                            class="px-2 py-1 inline-flex text-xs font-semibold rounded-full
-                                            {{ match ($security->status) {
-                                                'Active' => 'bg-green-100 text-green-800',
-                                                'Pending' => 'bg-yellow-100 text-yellow-800',
-                                                'Rejected' => 'bg-red-100 text-red-800',
-                                                default => 'bg-gray-100 text-gray-800',
-                                            } }}">
-                                            {{ $security->status ?? 'N/A' }}
-                                        </span>
+                                        <div>
+                                            <span
+                                                class="px-2 py-1 inline-flex text-xs font-semibold rounded-full
+            {{ match ($security->status) {
+                'Active' => 'bg-green-100 text-green-800',
+                'Pending' => 'bg-yellow-100 text-yellow-800',
+                'Rejected' => 'bg-red-100 text-red-800',
+                default => 'bg-gray-100 text-gray-800',
+            } }}">
+                                                {{ $security->status ?? 'N/A' }}
+                                            </span>
+
+                                            @if ($security->status === 'Rejected' && $security->remarks)
+                                                <p class="mt-1 text-xs text-red-600">
+                                                    Reason: {{ $security->remarks }}
+                                                </p>
+                                            @endif
+                                        </div>
                                     </td>
+
 
                                     <!-- Actions (Approve/Reject) -->
                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
@@ -298,7 +307,7 @@
             const modal = document.getElementById('rejectModal');
             const form = document.getElementById('rejectForm');
 
-            form.action = `/approver/list-security/{id}/reject`; // Update to match your route
+            form.action = `/approver/list-security/${id}/reject`;
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');

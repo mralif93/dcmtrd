@@ -295,8 +295,10 @@
                                         {{ $loop->iteration + ($securities->currentPage() - 1) * $securities->perPage() }}
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
-                                        {{ $security->issuer->issuer_short_name ?? '-' }}
-                                    </td>
+                                        <a href="{{ route('list-security-m.details', ['security' => $security->id]) }}" class="text-blue-600 hover:underline">
+                                            {{ $security->issuer->issuer_short_name ?? '-' }}
+                                        </a>
+                                    </td>                                    
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                                         {{ $security->security_name }}
                                     </td>
@@ -307,16 +309,23 @@
                                         {{ $security->asset_name_type }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span
-                                            class="px-2 py-1 inline-flex text-xs font-semibold rounded-full
-                                            {{ match ($security->status) {
-                                                'Active' => 'bg-green-100 text-green-800',
-                                                'Pending' => 'bg-yellow-100 text-yellow-800',
-                                                'Rejected' => 'bg-red-100 text-red-800',
-                                                default => 'bg-gray-100 text-gray-800',
-                                            } }}">
-                                            {{ $security->status ?? 'N/A' }}
-                                        </span>
+                                        <div>
+                                            <span
+                                                class="px-2 py-1 inline-flex text-xs font-semibold rounded-full
+                                                {{ match ($security->status) {
+                                                    'Active' => 'bg-green-100 text-green-800',
+                                                    'Pending' => 'bg-yellow-100 text-yellow-800',
+                                                    'Rejected' => 'bg-red-100 text-red-800',
+                                                    default => 'bg-gray-100 text-gray-800',
+                                                } }}">
+                                                {{ $security->status ?? 'N/A' }}
+                                            </span>
+
+                                            @if ($security->status === 'Rejected' && $security->remarks)
+                                                <p class="mt-1 text-xs text-red-600">Reason: {{ $security->remarks }}
+                                                </p>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                                         @if ($security->status === 'Draft')
@@ -349,11 +358,28 @@
                                                     </button>
                                                 </form>
                                             </div>
+                                        @elseif ($security->status === 'Rejected')
+                                            <form method="POST"
+                                                action="{{ route('list-security-m.reset', $security) }}"
+                                                onsubmit="return confirm('Reset to Draft?');">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M4 4v5h.582M20 20v-5h-.581M4.582 9A7.97 7.97 0 018 4a8 8 0 018 8h4m-4 0a8 8 0 01-8 8 7.97 7.97 0 01-3.418-.732" />
+                                                    </svg>
+                                                    Reset to Draft
+                                                </button>
+
+                                            </form>
                                         @else
                                             <span class="text-xs text-gray-400">No action available</span>
-                                            {{-- No action available --}}
                                         @endif
                                     </td>
+
 
                                 </tr>
                             @empty

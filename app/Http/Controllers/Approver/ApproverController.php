@@ -2131,7 +2131,7 @@ class ApproverController extends Controller
     public function ListSecurityReject(Request $request, $id)
     {
         $request->validate([
-            'rejection_reason' => 'required|string|max:255',
+            'reason' => 'required|string|max:255',
         ]);
 
         $security = ListSecurity::findOrFail($id);
@@ -2139,10 +2139,17 @@ class ApproverController extends Controller
         // Update the security status to 'Rejected'
         $security->status = 'Rejected';
         $security->verified_by = Auth::user()->name;
-        $security->remarks = $request->input('rejection_reason');  // Storing the rejection reason
+        $security->remarks = $request->input('reason');  // Storing the rejection reason
         $security->save();
 
         return redirect()->route('list-security-a.index')->with('success', 'Security rejected successfully.');
+    }
+
+    public function ListSecurityDetails($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('approver.listing-security.details', compact('security'));
     }
 
     public function ListSecurityRequest()

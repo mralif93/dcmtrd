@@ -4159,6 +4159,23 @@ class MakerController extends Controller
         return redirect()->route('list-security-m.index')->with('success', 'Security submitted for approval.');
     }
 
+    public function resetToDraft(ListSecurity $security)
+    {
+        $security->update([
+            'status' => 'Draft',
+            'remarks' => null, // optionally clear reason
+        ]);
+
+        return redirect()->route('list-security-m.index')->with('success', 'Security reset to Draft.');
+    }
+
+    public function ListSecurityDetails($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('maker.listing-security.details', compact('security'));
+    }
+
     public function ListSecurityRequest()
     {
         $getListReq = SecurityDocRequest::with('listSecurity.issuer')
@@ -4306,10 +4323,10 @@ class MakerController extends Controller
                     ->orWhere('job_title', 'SENIOR EXECUTIVE');
             })
             ->get();
-    
+
         return view('maker.fund-transfer.create', compact('users'));
     }
-    
+
 
     public function FundTransferStore(StoreFundTransferRequest $request)
     {
@@ -4372,7 +4389,7 @@ class MakerController extends Controller
 
         return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer approved successfully');
     }
-    
+
     public function DoneApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
     {
         $fundTransfer->status = 'Approved';

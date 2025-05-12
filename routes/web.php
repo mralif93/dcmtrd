@@ -563,6 +563,8 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/list-security/{listSecurity}/show-request', [MakerController::class, 'ListSecurityShowRequest'])->name('list-security-m.show-request')->middleware('permission:DCMTRD');
     Route::patch('maker/list-security/{id}/send-documents', [MakerController::class, 'SendDocumentsStatus'])->name('send-documents-m.approval')->middleware('permission:DCMTRD');
     Route::patch('maker/list-security/{id}/return-documents', [MakerController::class, 'ReturnDocumentsStatus'])->name('return-documents-m.approval')->middleware('permission:DCMTRD');
+    Route::post('maker/list-security/{security}/reset', [MakerController::class, 'resetToDraft'])->name('list-security-m.reset')->middleware('permission:DCMTRD');
+    Route::get('maker/list-security/{security}/details', [MakerController::class, 'ListSecurityDetails'])->name('list-security-m.details')->middleware('permission:DCMTRD');
 
     // Listing Security Module
     Route::get('maker/fund-transfer', [MakerController::class, 'ListFundTransfer'])->name('fund-transfer-m.index')->middleware('permission:DCMTRD');
@@ -804,6 +806,7 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/list-security/{listSecurity}/show-request', [ApproverController::class, 'ListSecurityShowRequest'])->name('list-security-a.show-request')->middleware('permission:DCMTRD');
     Route::patch('approver/list-security/{id}/send-documents', [ApproverController::class, 'SendDocumentsStatus'])->name('send-documents-a.approval')->middleware('permission:DCMTRD');
     Route::patch('approver/list-security/{id}/return-documents', [ApproverController::class, 'ReturnDocumentsStatus'])->name('return-documents-a.approval')->middleware('permission:DCMTRD');
+    Route::get('approver/list-security/{security}/details', [ApproverController::class, 'ListSecurityDetails'])->name('list-security-a.details')->middleware('permission:DCMTRD');
 
     // Fund Transfer Module
     Route::get('approver/fund-transfer', [ApproverController::class, 'FundTransferIndex'])->name('fund-transfer-a.index')->middleware('permission:DCMTRD');
