@@ -1476,6 +1476,7 @@ class MakerController extends Controller
 
     public function ComplianceUpdate(Request $request, ComplianceCovenant $compliance)
     {
+        // dd($request->all());
         $validated = $this->validateCompliance($request);
 
         $compliance->update($validated);
