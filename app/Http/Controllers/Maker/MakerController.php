@@ -2241,11 +2241,20 @@ class MakerController extends Controller
 
     public function PropertySubmitForApproval(Property $property)
     {
-        $property->update(['status' => 'pending']);
+        try {
+            $property->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
 
-        return redirect()
-            ->route('property-m.index', $property->portfolio)
-            ->with('success', 'Property submitted for approval successfully.');
+            return redirect()
+                ->route('property-m.index', $property->portfolio)
+                ->with('success', 'Property submitted for approval successfully.');
+
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
     }
 
     public function PropertyValidate(Request $request)
@@ -2343,10 +2352,20 @@ class MakerController extends Controller
     // submit for approval
     public function SubmitApprovalTenant(Tenant $tenant)
     {
-        $tenant->update(['status' => 'pending']);
-        return redirect()
-            ->route('tenant-m.index', $tenant->property)
-            ->with('success', 'Tenant submitted for approval successfully.');
+        try {
+            $tenant->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('tenant-m.index', $tenant->property)
+                ->with('success', 'Tenant submitted for approval successfully.');
+
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
     }
 
     public function TenantValidate(Request $request)
@@ -2459,6 +2478,22 @@ class MakerController extends Controller
         return view('maker.lease.show', compact('lease'));
     }
 
+    public function LeaseSubmitForApproval(Lease $lease)
+    {
+        try {
+            $lease->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name
+            ]);
+
+            return redirect()
+                ->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease submitted for approval successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->with('error', 'Error submitting lease for approval: ' . $e->getMessage());
+        }
+    }
+
     public function LeaseValidate(Request $request)
     {
         return $request->validate([
@@ -2564,6 +2599,21 @@ class MakerController extends Controller
         return view('maker.tenancy-letter.show');
     }
 
+    // submit for approval
+    public function TenancyLetterSubmitForApproval(TenancyLetter $tenancyLetter)
+    {
+        try {
+            $tenancyLetter->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+            
+            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
+    }
+
     public function TenancyLetterValidate(Request $request)
     {
         return $request->validate([
@@ -2663,6 +2713,24 @@ class MakerController extends Controller
     public function SiteVisitShow(SiteVisit $siteVisit)
     {
         return view('maker.site-visit.show', compact('siteVisit'));
+    }
+
+    // submit site visit
+    public function SiteVisitSubmitForApproval(SiteVisit $siteVisit)
+    {
+        try {
+            $siteVisit->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('tenant-m.index', $siteVisit->property)
+                ->with('success', 'Site visit submitted for approval successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
     }
 
     public function SiteVisitValidate(Request $request)
@@ -2857,6 +2925,25 @@ class MakerController extends Controller
     public function ChecklistShow(Checklist $checklist)
     {
         return view('maker.checklist.show', compact('checklist'));
+    }
+
+    // checklist submit for approval
+    public function ChecklistSubmitForApproval(Checklist $checklist)
+    {
+        try {
+            $checklist->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklist)
+                ->with('success', 'Checklist submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting checklist for approval: ' . $e->getMessage());
+        }
     }
 
     public function ChecklistLetter(Checklist $checklist)
