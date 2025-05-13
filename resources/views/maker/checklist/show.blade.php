@@ -43,20 +43,10 @@
                     </div>
                     <span class="px-2 py-1 h-6 text-xs font-semibold rounded-full
                         {{ match(strtolower($checklist->status)) {
-                            'completed' => 'bg-green-100 text-green-800',
-                            'scheduled' => 'bg-blue-100 text-blue-800',
-                            'cancelled' => 'bg-red-100 text-red-800',
                             'pending' => 'bg-yellow-100 text-yellow-800',
                             'active' => 'bg-green-100 text-green-800',
                             'inactive' => 'bg-gray-100 text-gray-800',
                             'rejected' => 'bg-red-100 text-red-800',
-                            'draft' => 'bg-blue-100 text-blue-800',
-                            'verified' => 'bg-purple-100 text-purple-800',
-                            'in progress' => 'bg-indigo-100 text-indigo-800',
-                            'on hold' => 'bg-orange-100 text-orange-800',
-                            'reviewing' => 'bg-teal-100 text-teal-800',
-                            'approved' => 'bg-emerald-100 text-emerald-800',
-                            'expired' => 'bg-rose-100 text-rose-800',
                             default => 'bg-gray-100 text-gray-800'
                         } }}">
                         {{ ucfirst($checklist->status) }}
@@ -84,8 +74,13 @@
                             <div class="flex flex-wrap gap-1">
                                 @if($checklist->legalDocumentation)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                        {{ $checklist->legalDocumentation->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                        ($checklist->legalDocumentation->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                                        {{ match(strtolower($checklist->legalDocumentation->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         Legal: {{ ucfirst($checklist->legalDocumentation->status ?? 'N/A') }}
                                     </span>
                                 @endif
@@ -121,31 +116,64 @@
                                 
                                 @if($checklist->externalAreaCondition)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                        {{ $checklist->externalAreaCondition->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                        ($checklist->externalAreaCondition->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                                        {{ match(strtolower($checklist->externalAreaCondition->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         External: {{ ucfirst($checklist->externalAreaCondition->status ?? 'N/A') }}
                                     </span>
                                 @endif
                                 
                                 @if($checklist->internalAreaCondition)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                        {{ $checklist->internalAreaCondition->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                        ($checklist->internalAreaCondition->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                                        {{ match(strtolower($checklist->internalAreaCondition->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         Internal: {{ ucfirst($checklist->internalAreaCondition->status ?? 'N/A') }}
                                     </span>
                                 @endif
 
                                 @if($checklist->propertyDevelopment)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                        {{ $checklist->propertyDevelopment->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                        ($checklist->propertyDevelopment->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                                        {{ match(strtolower($checklist->propertyDevelopment->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         Development: {{ ucfirst($checklist->propertyDevelopment->status ?? 'N/A') }}
                                     </span>
                                 @endif
 
                                 @if($checklist->disposalInstallation)
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                        Installations: {{ ucfirst($checklist->disposalInstallation->count() ?? 'N/A') }}
+                                    @php
+                                        // Count all disposal installation items
+                                        $totalItems = $checklist->disposalInstallation->count();
+                                        
+                                        // Count completed items
+                                        $completedItems = $checklist->disposalInstallation->where('status', 'completed')->count();
+                                        
+                                        // Check if all items are completed
+                                        $allCompleted = ($totalItems > 0 && $completedItems == $totalItems);
+                                        
+                                        // Set status text
+                                        $statusText = $allCompleted ? 'Completed' : 'Pending';
+                                        
+                                        // Set appropriate color classes based on status
+                                        $bgColorClass = $allCompleted ? 'bg-green-100' : 'bg-yellow-100';
+                                        $textColorClass = $allCompleted ? 'text-green-800' : 'text-yellow-800';
+                                    @endphp
+
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $bgColorClass }} {{ $textColorClass }}">
+                                        Installations: {{ $statusText }}
                                     </span>
                                 @endif
                             </div>
@@ -199,15 +227,10 @@
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                                     {{ match(strtolower($checklist->status)) {
-                                        'completed' => 'bg-green-100 text-green-800',
-                                        'scheduled' => 'bg-blue-100 text-blue-800',
-                                        'cancelled' => 'bg-red-100 text-red-800',
                                         'pending' => 'bg-yellow-100 text-yellow-800',
                                         'active' => 'bg-green-100 text-green-800',
                                         'inactive' => 'bg-gray-100 text-gray-800',
                                         'rejected' => 'bg-red-100 text-red-800',
-                                        'draft' => 'bg-blue-100 text-blue-800',
-                                        'verified' => 'bg-purple-100 text-purple-800',
                                         default => 'bg-gray-100 text-gray-800'
                                     } }}">
                                     {{ ucfirst($checklist->status) }}
@@ -269,8 +292,13 @@
                     <h3 class="text-lg leading-6 font-medium text-gray-900">Legal Documentation</h3>
                     @if($checklist->legalDocumentation)
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ $checklist->legalDocumentation->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                               ($checklist->legalDocumentation->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                            {{ match(strtolower($checklist->legalDocumentation->status)) {
+                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                'active' => 'bg-green-100 text-green-800',
+                                'inactive' => 'bg-gray-100 text-gray-800',
+                                'rejected' => 'bg-red-100 text-red-800',
+                                default => 'bg-gray-100 text-gray-800'
+                            } }}">
                             {{ ucfirst($checklist->legalDocumentation->status ?? 'Not Started') }}
                         </span>
                     @else
@@ -479,9 +507,14 @@
                     <h3 class="text-lg leading-6 font-medium text-gray-900">External Area Conditions</h3>
                     @if($checklist->externalAreaCondition)
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ $checklist->externalAreaCondition->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                               ($checklist->externalAreaCondition->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
-                            {{ ucfirst($checklist->externalAreaCondition->status ?? 'Not Started') }}
+                            {{ match(strtolower($checklist->externalAreaCondition->status)) {
+                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                'active' => 'bg-green-100 text-green-800',
+                                'inactive' => 'bg-gray-100 text-gray-800',
+                                'rejected' => 'bg-red-100 text-red-800',
+                                default => 'bg-gray-100 text-gray-800'
+                            } }}">
+                            {{ ucfirst(str_replace('_', ' ', $checklist->externalAreaCondition->status) ?? 'Not Started') }}
                         </span>
                     @else
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
@@ -624,8 +657,13 @@
                     <h3 class="text-lg leading-6 font-medium text-gray-900">Internal Area Conditions</h3>
                     @if($checklist->internalAreaCondition)
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ $checklist->internalAreaCondition->status == 'completed' ? 'bg-green-100 text-green-800' :
-                            ($checklist->internalAreaCondition->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
+                            {{ match(strtolower($checklist->internalAreaCondition->status)) {
+                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                'active' => 'bg-green-100 text-green-800',
+                                'inactive' => 'bg-gray-100 text-gray-800',
+                                'rejected' => 'bg-red-100 text-red-800',
+                                default => 'bg-gray-100 text-gray-800'
+                            } }}">
                             {{ ucfirst($checklist->internalAreaCondition->status ?? 'Not Started') }}
                         </span>
                     @else
@@ -856,9 +894,13 @@
                     <h3 class="text-lg leading-6 font-medium text-gray-900">Property Development</h3>
                     @if($checklist->propertyDevelopment)
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ $checklist->propertyDevelopment->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                            ($checklist->propertyDevelopment->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                            ($checklist->propertyDevelopment->status == 'in_progress' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800')) }}">
+                            {{ match(strtolower($checklist->propertyDevelopment->status)) {
+                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                'active' => 'bg-green-100 text-green-800',
+                                'inactive' => 'bg-gray-100 text-gray-800',
+                                'rejected' => 'bg-red-100 text-red-800',
+                                default => 'bg-gray-100 text-gray-800'
+                            } }}">
                             {{ ucfirst($checklist->propertyDevelopment->status ?? 'Not Started') }}
                         </span>
                     @else
@@ -884,9 +926,13 @@
                                 @if(optional($checklist->propertyDevelopment)->development_status)
                                 <div class="mt-1">Status: 
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $checklist->propertyDevelopment->development_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                    ($checklist->propertyDevelopment->development_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                    ($checklist->propertyDevelopment->development_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        {{ match(strtolower($checklist->propertyDevelopment->development_status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         {{ ucfirst(str_replace('_', ' ', $checklist->propertyDevelopment->development_status)) }}
                                     </span>
                                 </div>
@@ -912,9 +958,13 @@
                                 @if(optional($checklist->propertyDevelopment)->renovation_status)
                                 <div class="mt-1">Status: 
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $checklist->propertyDevelopment->renovation_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                    ($checklist->propertyDevelopment->renovation_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                    ($checklist->propertyDevelopment->renovation_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        {{ match(strtolower($checklist->propertyDevelopment->renovation_status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         {{ ucfirst(str_replace('_', ' ', $checklist->propertyDevelopment->renovation_status)) }}
                                     </span>
                                 </div>
@@ -940,9 +990,13 @@
                                 @if(optional($checklist->propertyDevelopment)->external_repainting_status)
                                 <div class="mt-1">Status: 
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $checklist->propertyDevelopment->external_repainting_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                    ($checklist->propertyDevelopment->external_repainting_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                    ($checklist->propertyDevelopment->external_repainting_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        {{ match(strtolower($checklist->propertyDevelopment->external_repainting_status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         {{ ucfirst(str_replace('_', ' ', $checklist->propertyDevelopment->external_repainting_status)) }}
                                     </span>
                                 </div>
@@ -1069,10 +1123,14 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 @if($disposalInstallation->component_status)
                                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $disposalInstallation->component_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                                        ($disposalInstallation->component_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                                        ($disposalInstallation->component_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
-                                                            {{ ucfirst(str_replace('_', ' ', $disposalInstallation->component_status)) }}
+                                                        {{ match(strtolower($disposalInstallation->component_status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
+                                                        {{ ucfirst(str_replace('_', ' ', $disposalInstallation->component_status)) }}
                                                     </span>
                                                 @else
                                                     N/A

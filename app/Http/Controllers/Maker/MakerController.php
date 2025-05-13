@@ -3561,10 +3561,10 @@ class MakerController extends Controller
     {
         return $request->validate([
             'checklist_id' => 'required|exists:checklists,id',
-            'component_name' => 'nullable|string|max:255',
-            'component_date' => 'nullable|date',
-            'component_scope_of_work' => 'nullable|string',
-            'component_status' => 'nullable|string|max:255',
+            'component_name' => 'required|string|max:255',
+            'component_date' => 'required|date',
+            'component_scope_of_work' => 'required|string',
+            'component_status' => 'required|string|max:255',
             'status' => ['nullable', Rule::in(['active', 'inactive', 'pending', 'completed'])],
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',

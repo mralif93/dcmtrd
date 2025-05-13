@@ -117,7 +117,6 @@
                                 <option value="active" @selected(request('status') === 'active')>Active</option>
                                 <option value="rejected" @selected(request('status') === 'rejected')>Rejected</option>
                                 <option value="completed" @selected(request('status') === 'completed')>Completed</option>
-                                <option value="verified" @selected(request('status') === 'verified')>Verified</option>
                                 <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
                             </select>
                         </div>
@@ -266,20 +265,27 @@
                                             @endif
                                             
                                             @if($checklist->disposalInstallation && $checklist->disposalInstallation->count() > 0)
-                                                <div class="flex items-center">
-                                                    <span class="w-24 text-gray-600">Installation:</span>
-                                                    @php
-                                                        // Get the first disposal installation item from the collection
-                                                        $dispInstall = $checklist->disposalInstallation->first();
-                                                        $installStatus = $dispInstall ? $dispInstall->status : null;
-                                                    @endphp
-                                                    
-                                                    <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $installStatus == 'completed' ? 'bg-green-100 text-green-800' : 
-                                                        ($installStatus == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                                        ($installStatus == 'verified' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800')) }}">
-                                                        {{ ucfirst($installStatus ?? 'N/A') }}
-                                                    </span>
+                                                <div class="flex flex-col space-y-3">
+                                                    <div class="flex items-center">
+                                                        <span class="w-24 text-gray-600">Installation:</span>
+                                                        
+                                                        @php
+                                                            // Get all disposal installation items
+                                                            $dispInstallItems = $checklist->disposalInstallation;
+                                                            $totalItems = $dispInstallItems->count();
+                                                            $completedCount = $dispInstallItems->where('status', 'completed')->count();
+                                                            
+                                                            // Simple completed or not status
+                                                            $overallStatus = ($completedCount == $totalItems && $totalItems > 0) ? 'Completed' : 'Not Completed';
+                                                            $isCompleted = ($overallStatus == 'Completed');
+                                                        @endphp
+                                                        
+                                                        <!-- Overall status indicator - just completed or not -->
+                                                        <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                            {{ $isCompleted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                            {{ $overallStatus }}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </div>
