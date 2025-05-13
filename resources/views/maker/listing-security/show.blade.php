@@ -75,25 +75,6 @@
                         </div>
 
                     </dl>
-
-                    <div class="flex flex-col mt-8 space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-                        {{-- Withdraw Request --}}
-                        <button id="withdrawButton"
-                            @if ($security->status === 'Withdrawal' || $security->status !== 'Pending' || $security->status === 'Returned') disabled 
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg opacity-50 cursor-not-allowed hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500" 
-                            @else
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500" @endif>
-                            Withdraw
-                        </button>
-
-                        <button id="returnButton"
-                            @if ($security->status === 'Return' || $security->status !== 'Withdrawal') disabled 
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg opacity-50 cursor-not-allowed hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500" 
-                            @else 
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500" @endif>
-                            Return
-                        </button>
-                    </div>
                 @else
                     <div class="mt-6 text-center text-gray-500">
                         No security document request found.

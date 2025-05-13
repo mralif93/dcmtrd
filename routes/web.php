@@ -381,7 +381,12 @@ Route::middleware(['auth', 'two-factor', 'role:legal'])->group(function () {
 
     Route::get('/legal/dcmt/sec-documents', [LegalController::class, 'SecDocuments'])->name('legal.sec-documents')->middleware('permission:LEGAL');
     Route::get('/legal/dcmt/{id}/request-documents', [LegalController::class, 'RequestDocuments'])->name('legal.request-documents')->middleware('permission:LEGAL');
-    Route::post('/legal/dcmt/{id}/request-documents', [LegalController::class, 'RequestDocumentsStore'])->name('legal.request-documents.store')->middleware('permission:LEGAL');
+    Route::get('/legal/dcmt/request-documents/create', [LegalController::class, 'RequestDocumentsCreate'])->name('legal.request-documents.create')->middleware('permission:LEGAL');
+    Route::post('/legal/dcmt/request-documents', [LegalController::class, 'RequestDocumentsStore'])->name('legal.request-documents.store')->middleware('permission:LEGAL');
+    Route::get('/legal/dcmt/request-documents/{security}/edit', [LegalController::class, 'RequestDocumentsEdit'])->name('legal.request-documents.edit')->middleware('permission:LEGAL');
+    Route::patch('/legal/dcmt/request-documents/{security}/update', [LegalController::class, 'RequestDocumentsUpdate'])->name('legal.request-documents.update')->middleware('permission:LEGAL');
+    Route::get('/legal/dcmt/{security}/request-documents/history', [LegalController::class, 'RequestDocumentsHistory'])->name('legal.request-documents.history')->middleware('permission:LEGAL');
+    Route::patch('/legal/dcmt/request-documents/{id}/submit', [LegalController::class, 'submitRequest'])->name('legal.request-documents.submit')->middleware('permission:LEGAL');
 
     // Site Visit Module
     Route::get('legal/site-visit/{siteVisit}/show', [LegalController::class, 'SiteVisitShow'])->name('site-visit-l.show')->middleware('permission:LEGAL');
@@ -561,8 +566,13 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/list-security/show-request', [MakerController::class, 'ListSecurityRequest'])->name('list-security-request-m.show')->middleware('permission:DCMTRD');
     Route::get('maker/list-security/{listSecurity}/show', [MakerController::class, 'ListSecurityShow'])->name('security-details-m.show')->middleware('permission:DCMTRD');
     Route::get('maker/list-security/{listSecurity}/show-request', [MakerController::class, 'ListSecurityShowRequest'])->name('list-security-m.show-request')->middleware('permission:DCMTRD');
-    Route::patch('maker/list-security/{id}/send-documents', [MakerController::class, 'SendDocumentsStatus'])->name('send-documents-m.approval')->middleware('permission:DCMTRD');
-    Route::patch('maker/list-security/{id}/return-documents', [MakerController::class, 'ReturnDocumentsStatus'])->name('return-documents-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/list-security/{listSecurity}/create-withdrawal', [MakerController::class, 'ListSecurityCreateWithdrawal'])->name('list-security-m.create-withdrawal')->middleware('permission:DCMTRD');
+    Route::post('maker/list-security/{id}/send-documents', [MakerController::class, 'SendDocumentsStatus'])->name('send-documents-m.approval')->middleware('permission:DCMTRD');
+    Route::patch('maker/list-security/{id}/cancel-withdrawal', [MakerController::class, 'CancelWithdrawal'])->name('cancel-withdrawal-m.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/list-security/{listSecurity}/create-return', [MakerController::class, 'ListSecurityCreateReturn'])->name('list-security-m.create-return')->middleware('permission:DCMTRD');
+    Route::post('maker/list-security/{id}/return-documents', [MakerController::class, 'ReturnDocumentsStatus'])->name('return-documents-m.approval')->middleware('permission:DCMTRD');
+    Route::patch('maker/list-security/{id}/cancel-return', [MakerController::class, 'CancelReturn'])->name('cancel-return-m.approval')->middleware('permission:DCMTRD');
+    Route::patch('maker/list-security/{id}/back-to-draft', [MakerController::class, 'BackToDraft'])->name('back-to-draft-m.approval')->middleware('permission:DCMTRD');
     Route::post('maker/list-security/{security}/reset', [MakerController::class, 'resetToDraft'])->name('list-security-m.reset')->middleware('permission:DCMTRD');
     Route::get('maker/list-security/{security}/details', [MakerController::class, 'ListSecurityDetails'])->name('list-security-m.details')->middleware('permission:DCMTRD');
 
@@ -799,13 +809,18 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
 
     // Listing Security Module
     Route::get('approver/list-security', [ApproverController::class, 'ListSecurityIndex'])->name('list-security-a.index')->middleware('permission:DCMTRD');
-    Route::post('approver/list-security/{id}/approve', [ApproverController::class, 'ListSecurityApprove']) ->name('list-security-a.approve')->middleware('permission:DCMTRD');
+    Route::post('approver/list-security/{id}/approve', [ApproverController::class, 'ListSecurityApprove'])->name('list-security-a.approve')->middleware('permission:DCMTRD');
     Route::post('approver/list-security/{id}/reject', [ApproverController::class, 'ListSecurityReject'])->name('list-security-a.reject')->middleware('permission:DCMTRD');
     Route::get('approver/list-security/show-request', [ApproverController::class, 'ListSecurityRequest'])->name('list-security-request-a.show')->middleware('permission:DCMTRD');
     Route::get('approver/list-security/{listSecurity}/show', [ApproverController::class, 'ListSecurityShow'])->name('security-details-a.show')->middleware('permission:DCMTRD');
     Route::get('approver/list-security/{listSecurity}/show-request', [ApproverController::class, 'ListSecurityShowRequest'])->name('list-security-a.show-request')->middleware('permission:DCMTRD');
-    Route::patch('approver/list-security/{id}/send-documents', [ApproverController::class, 'SendDocumentsStatus'])->name('send-documents-a.approval')->middleware('permission:DCMTRD');
-    Route::patch('approver/list-security/{id}/return-documents', [ApproverController::class, 'ReturnDocumentsStatus'])->name('return-documents-a.approval')->middleware('permission:DCMTRD');
+    Route::get('maker/list-security/{listSecurity}/create-withdrawal', [ApproverController::class, 'ListSecurityCreateWithdrawal'])->name('list-security-a.create-withdrawal')->middleware('permission:DCMTRD');
+    Route::post('approver/list-security/{id}/send-documents', [ApproverController::class, 'SendDocumentsStatus'])->name('send-documents-a.approval')->middleware('permission:DCMTRD');
+    Route::patch('approver/list-security/{id}/cancel-withdrawal', [ApproverController::class, 'CancelWithdrawal'])->name('cancel-withdrawal-a.approval')->middleware('permission:DCMTRD');
+    Route::patch('approver/list-security/{id}/back-to-draft', [ApproverController::class, 'BackToDraft'])->name('back-to-draft-a.approval')->middleware('permission:DCMTRD');
+    Route::get('approver/list-security/{listSecurity}/create-return', [ApproverController::class, 'ListSecurityCreateReturn'])->name('list-security-a.create-return')->middleware('permission:DCMTRD');
+    Route::patch('approver/list-security/{id}/cancel-return', [ApproverController::class, 'CancelReturn'])->name('cancel-return-a.approval')->middleware('permission:DCMTRD');
+    Route::post('approver/list-security/{id}/return-documents', [ApproverController::class, 'ReturnDocumentsStatus'])->name('return-documents-a.approval')->middleware('permission:DCMTRD');
     Route::get('approver/list-security/{security}/details', [ApproverController::class, 'ListSecurityDetails'])->name('list-security-a.details')->middleware('permission:DCMTRD');
 
     // Fund Transfer Module

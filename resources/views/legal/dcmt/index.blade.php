@@ -27,9 +27,50 @@
             @endif
 
             <div class="overflow-hidden bg-white shadow sm:rounded-lg">
-                <div class="flex items-center justify-between px-4 py-5 sm:px-6">
-                    <h3 class="text-lg font-semibold text-gray-900">List of Security Documents Request</h3>
+                <div class="px-4 py-5 bg-white border-b border-gray-200 sm:px-6 sm:rounded-t-lg">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <!-- Left: Title -->
+                        <h3 class="text-lg font-semibold text-gray-900 whitespace-nowrap">
+                            List of Security Documents Request
+                        </h3>
+
+                        <!-- Right: Search, Reset, Create -->
+                        <div class="flex items-center gap-2">
+                            <!-- Search Form -->
+                            <form method="GET" class="flex items-center gap-2">
+                                <input type="text" name="search" value="{{ request('search') }}"
+                                    class="w-64 px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Search issuer or security...">
+                                <button type="submit"
+                                    class="px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                                    🔍 Search
+                                </button>
+
+                                <!-- Reset Button -->
+                                @if (request('search'))
+                                    <a href="{{ route('legal.sec-documents') }}"
+                                        class="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
+                                        ❌ Reset
+                                    </a>
+                                @endif
+                            </form>
+
+                            <!-- Create Button -->
+                            <a href="{{ route('legal.request-documents.create') }}"
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">
+                                <svg class="w-4 h-4 mr-2 -ml-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4" />
+                                </svg>
+                                Create
+                            </a>
+                        </div>
+                    </div>
                 </div>
+
+
+
                 <!-- List of Securities Table -->
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -51,11 +92,6 @@
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                     Asset Name Type</th>
                                 <th
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                    Withdrawal Date</th>
-                                <th
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                    Return Date</th>
                                 <th
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">
                                     Actions/Status</th>
@@ -79,85 +115,20 @@
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                                         {{ $security->asset_name_type }}
                                     </td>
-                                    @php
-                                        $latest = $security->latestDocRequest;
-                                    @endphp
+                                    <td class="px-6 py-4 space-x-2 text-sm font-medium text-right whitespace-nowrap">
+                                        <!-- History Button -->
+                                        <a href="{{ route('legal.request-documents.history', $security->id) }}"
+                                            class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 8v4l3 3M12 4a8 8 0 100 16 8 8 0 000-16z" />
+                                            </svg>
+                                            History
+                                        </a>
 
-                                    <!-- Withdrawal Date with Highlight -->
-                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
-                                        <span
-                                            class="inline-block px-3 py-1 text-xs font-medium rounded-full 
-                                        @if ($latest?->withdrawal_date) bg-yellow-100 text-yellow-800 @else bg-gray-200 text-gray-500 @endif"
-                                            data-tooltip="{{ $latest?->withdrawal_date ? \Carbon\Carbon::parse($latest->withdrawal_date)->format('Y-m-d') : 'N/A' }}">
-                                            {{ $latest?->withdrawal_date ? \Carbon\Carbon::parse($latest->withdrawal_date)->format('Y-m-d') : 'N/A' }}
-                                        </span>
+
                                     </td>
-
-                                    <!-- Withdrawal Date with Highlight -->
-                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
-                                        <span
-                                            class="inline-block px-3 py-1 text-xs font-medium rounded-full 
-                                    @if ($latest?->return_date) bg-green-100 text-green-800 @else bg-gray-200 text-gray-500 @endif"
-                                            data-tooltip="{{ $latest?->return_date ? \Carbon\Carbon::parse($latest->return_date)->format('Y-m-d') : 'N/A' }}">
-                                            {{ $latest?->return_date ? \Carbon\Carbon::parse($latest->return_date)->format('Y-m-d') : 'N/A' }}
-                                        </span>
-                                    </td>
-
-                                    <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                        @if ($security->hasPendingRequest())
-                                            <!-- Check if the request is pending -->
-                                            <span
-                                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-500 bg-gray-200 rounded cursor-not-allowed">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M9 12l2 2l4-4m1-6h-6a2 2 0 00-2 2v1H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-3V5a2 2 0 00-2-2z" />
-                                                </svg>
-                                                Request Are Pending
-                                            </span>
-                                        @elseif ($security->hasWithdrawnRequest())
-                                            <!-- Check if the request has been withdrawn -->
-                                            <span
-                                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-200 rounded cursor-not-allowed"
-                                                data-toggle="tooltip"
-                                                title="Request has been withdrawn. Contact support for more details.">
-                                                <svg class="w-4 h-4 mr-1 animate-spin" fill="none"
-                                                    stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M4 4v5h.582M20 20v-5h-.581M4.93 19.07a10 10 0 0014.14-14.14" />
-                                                </svg>
-                                                Withdrawal Are On Going
-                                            </span>
-                                        @elseif ($security->hasExistingRequest())
-                                            <!-- Check if there's any existing request -->
-                                            <span
-                                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-500 bg-blue-200 rounded cursor-not-allowed">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M9 12l2 2l4-4m1-6h-6a2 2 0 00-2 2v1H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-3V5a2 2 0 00-2-2z" />
-                                                </svg>
-                                                Request Was Done
-                                            </span>
-                                        @else
-                                            <!-- If there is no pending, withdrawn, or existing request, allow making a new request -->
-                                            <a href="{{ route('legal.request-documents', $security->id) }}"
-                                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded hover:bg-green-200">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M9 12l2 2l4-4m1-6h-6a2 2 0 00-2 2v1H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-3V5a2 2 0 00-2-2z" />
-                                                </svg>
-                                                Make Request
-                                            </a>
-                                        @endif
-                                    </td>
-
-
                                 </tr>
                             @empty
                                 <tr>
@@ -173,7 +144,7 @@
 
                 <!-- Pagination Links -->
                 <div class="px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
-                    {{ $getListReq->links() }}
+                    {{ $securities->links() }}
                 </div>
             </div>
         </div>

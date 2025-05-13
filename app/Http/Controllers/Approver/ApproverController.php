@@ -2133,7 +2133,7 @@ class ApproverController extends Controller
         $security->approval_datetime = now();
         $security->save();
 
-        dispatch(new SendListSecurityApprovedEmail ($security));
+        dispatch(new SendListSecurityApprovedEmail($security));
 
         return redirect()->route('list-security-a.index')->with('success', 'Security approved successfully.');
     }
@@ -2152,7 +2152,7 @@ class ApproverController extends Controller
         $security->remarks = $request->input('reason');  // Storing the rejection reason
         $security->save();
 
-        dispatch(new SendListSecurityRejectedEmail ($security));
+        dispatch(new SendListSecurityRejectedEmail($security));
 
         return redirect()->route('list-security-a.index')->with('success', 'Security rejected successfully.');
     }
@@ -2180,21 +2180,26 @@ class ApproverController extends Controller
 
         return view('approver.listing-security.show', compact('security'));
     }
-    public function SendDocumentsStatus($id)
+    public function ListSecurityCreateWithdrawal($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('approver.listing-security.show-approval', compact('security'));
+    }
+
+    public function ListSecurityCreateReturn($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('approver.listing-security.return', compact('security'));
+    }
+    public function SendDocumentsStatus($id, Request $request)
     {
         // Find the security document request by ID
-        $security = SecurityDocRequest::with('listSecurity.issuer')->find($id);
-
-        // Check if the record exists
-        if (!$security) {
-            return response()->json(['message' => 'Security document request not found.'], 404);
-        }
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
 
         // Validate that withdrawal date is passed with the request
-        $withdrawalDate = request('withdraw_date');
-        if (!$withdrawalDate) {
-            return response()->json(['message' => 'Withdrawal date is required'], 400); // Respond with an error if no date is provided
-        }
+        $withdrawalDate = $request->input('withdrawal_date');
 
         // Update the status and other fields
         $security->status = 'Withdrawal';
@@ -2202,31 +2207,61 @@ class ApproverController extends Controller
         $security->withdrawal_date = $withdrawalDate; // Set the withdrawal date
         $security->save(); // Save the updates to the database
 
-        // Return success response
-        return response()->json(['message' => 'Documents sent successfully.'], 200);
+        return redirect()->route('list-security-request-a.show')->with('success', 'Documents sent successfully.');
     }
 
-    public function ReturnDocumentsStatus($id)
+    public function CancelWithdrawal($id)
     {
         // Find the security document request by ID
-        $security = SecurityDocRequest::with('listSecurity.issuer')->find($id);
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
 
-        // Check if the record exists
-        if (!$security) {
-            return response()->json(['message' => 'Security document request not found.'], 404);
-        }
+        // Update the status and other fields
+        $security->status = 'Pending';
+        $security->verified_by = null;
+        $security->withdrawal_date = null; // Set the withdrawal date
+        $security->save(); // Save the updates to the database
 
-        $returnDate = request('return_date');
-        if (!$returnDate) {
-            return response()->json(['message' => 'Return date is required'], 400); // Respond with an error if no date is provided
-        }
+        return redirect()->route('list-security-request-a.show')->with('success', 'Withdrawal cancelled successfully.');
+    }
+
+    public function BackToDraft($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Draft';
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-a.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function CancelReturn($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Withdrawal';
+        $security->return_date = null;
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-a.show')->with('success', 'Return cancelled successfully.');
+    }
+
+    public function ReturnDocumentsStatus($id, Request $request)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        $returnDate = $request->input('return_date');
 
         $security->status = 'Return';
         $security->return_date = $returnDate; // Set the return date
         $security->save(); // Save the updates to the database
 
         // Return success response
-        return response()->json(['message' => 'Documents returned successfully.'], 200);
+        return redirect()->route('list-security-request-a.show')->with('success', 'Documents sent successfully.');
     }
 
     public function FundTransferIndex(Request $request)
@@ -2260,7 +2295,7 @@ class ApproverController extends Controller
         $fundTransfer = PlacementFundTransfer::findOrFail($id);
         $fundTransfer->status = 'Rejected';
         $fundTransfer->verified_by = Auth::user()->name;
-        
+
         $fundTransfer->remarks = request('reason'); // Assuming you have a reason field in your form
         $fundTransfer->save();
 

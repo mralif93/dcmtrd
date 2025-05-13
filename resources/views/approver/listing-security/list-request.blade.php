@@ -175,22 +175,84 @@
                                             {{ ucfirst($req->status) ?? 'N/A' }}
                                         </span>
                                     </td>
-                                    
+
                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                        <!-- View Button -->
-                                        <a 
-                                            href="{{ route('security-details-a.show', $req->id) }}"
-                                            class="inline-flex items-center px-2 py-1 text-xs font-medium text-indigo-700 bg-indigo-100 rounded hover:bg-indigo-200">
-                                            <!-- Eye Icon -->
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            View
-                                        </a>
+                                        <div class="flex items-center justify-end space-x-2">
+                                            @if ($req->status === 'Pending')
+                                                <!-- Approve (Withdrawal) Button -->
+                                                <form method="GET"
+                                                    action="{{ route('list-security-a.create-withdrawal', $req->id) }}"
+                                                    class="inline-block">
+                                                    <button type="submit"
+                                                        class="flex items-center px-3 py-1 text-xs font-medium text-white transition duration-150 ease-in-out bg-green-600 rounded hover:bg-green-700">
+                                                        ✅ <span class="ml-1">Withdrawal</span>
+                                                    </button>
+                                                </form>
+
+                                                <!-- Reject Button -->
+                                                <form method="POST"
+                                                    action="{{ route('back-to-draft-a.approval', $req->id) }}"
+                                                    class="inline-block">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                        class="flex items-center px-3 py-1 text-xs font-medium text-white transition duration-150 ease-in-out bg-red-600 rounded hover:bg-red-700">
+                                                        ❌ <span class="ml-1">Back To Draft</span>
+                                                    </button>
+                                                </form>
+                                            @elseif ($req->status === 'Withdrawal')
+                                                <!-- Return Button -->
+                                                <form method="GET"
+                                                    action="{{ route('list-security-a.create-return', $req->id) }}"
+                                                    class="inline-block">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="flex items-center px-3 py-1 text-xs font-medium text-white transition duration-150 ease-in-out bg-yellow-600 rounded hover:bg-yellow-700">
+                                                        🔁 <span class="ml-1">Return</span>
+                                                    </button>
+                                                </form>
+
+                                                <!-- Cancel Withdrawal Button -->
+                                                <form method="POST"
+                                                    action="{{ route('cancel-withdrawal-a.approval', $req->id) }}"
+                                                    class="inline-block">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                        class="flex items-center px-3 py-1 text-xs font-medium text-white transition duration-150 ease-in-out bg-gray-600 rounded hover:bg-gray-700">
+                                                        🚫 <span class="ml-1">Cancel Withdrawal</span>
+                                                    </button>
+                                                </form>
+                                            @elseif ($req->status === 'Return')
+                                                <!-- Cancel Return Button -->
+                                                <form method="POST"
+                                                    action="{{ route('cancel-return-a.approval', $req->id) }}"
+                                                    class="inline-block">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                        class="flex items-center px-3 py-1 text-xs font-medium text-white transition duration-150 ease-in-out bg-gray-600 rounded hover:bg-gray-700">
+                                                        🚫 <span class="ml-1">Cancel Return</span>
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            <!-- View Button (Always Visible) -->
+                                            <a href="{{ route('security-details-a.show', $req->id) }}"
+                                                class="flex items-center px-3 py-1 text-xs font-medium text-indigo-700 transition duration-150 ease-in-out bg-indigo-100 rounded hover:bg-indigo-200">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                View
+                                            </a>
+                                        </div>
                                     </td>
+
                                 </tr>
                             @empty
                                 <tr>
@@ -202,6 +264,7 @@
                         </tbody>
                     </table>
                 </div>
+
 
 
                 <!-- Pagination Links -->

@@ -48,4 +48,10 @@ class ListSecurity extends Model
     {
         return $this->hasOne(SecurityDocRequest::class, 'list_security_id')->latestOfMany();
     }
+
+    // ListSecurity.php
+    public function securityDocRequests()
+    {
+        return $this->hasMany(SecurityDocRequest::class);
+    }
 }
