@@ -909,8 +909,8 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
 Route::middleware(['auth', 'two-factor', 'role:sales'])->group(function () {
     // Dashboard
     Route::get('/sales/dashboard', [SalesController::class, 'index'])->name('sales.dashboard');
-    Route::get('/cb-reports/batches', [SalesController::class, 'viewBatches'])->name('sales.cb-reports.batches');
-    Route::get('/cb-reports/batches/{id}/download', [SalesController::class, 'downloadBatch'])->name('sales.cb-reports.download');
-    Route::get('/trustee-reports/batches', [SalesController::class, 'viewTrusteeBatches'])->name('sales.trustee-reports.batches');
-    Route::get('/trustee-reports/batches/{id}/download', [SalesController::class, 'downloadBatchTrustee'])->name('sales.trustee-reports.download');
+    Route::get('/sales/cb-reports/batches', [SalesController::class, 'viewBatches'])->name('sales.cb-reports.batches');
+    Route::get('/sales/cb-reports/batches/{id}/download', [SalesController::class, 'downloadBatch'])->name('sales.cb-reports.download');
+    Route::get('/sales/trustee-reports/batches', [SalesController::class, 'viewTrusteeBatches'])->name('sales.trustee-reports.batches');
+    Route::get('/sales/trustee-reports/batches/{id}/download', [SalesController::class, 'downloadBatchTrustee'])->name('sales.trustee-reports.download');
 });
