@@ -196,17 +196,10 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                                         {{ match(strtolower($appointment->status)) {
-                                            'completed' => 'bg-green-100 text-green-800',
                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                             'active' => 'bg-green-100 text-green-800',
                                             'inactive' => 'bg-gray-100 text-gray-800',
-                                            'expired' => 'bg-red-100 text-red-800',
-                                            'terminated' => 'bg-red-100 text-red-800',
-                                            'cancelled' => 'bg-red-100 text-red-800',
-                                            'draft' => 'bg-blue-100 text-blue-800',
-                                            'in progress' => 'bg-indigo-100 text-indigo-800',
-                                            'reviewing' => 'bg-teal-100 text-teal-800',
-                                            'approved' => 'bg-emerald-100 text-emerald-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
                                             default => 'bg-gray-100 text-gray-800'
                                         } }}">
                                         {{ ucfirst($appointment->status) }}
