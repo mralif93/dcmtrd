@@ -761,10 +761,17 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::prefix('/approver/dcmt')->name('a.dcmt-reports.')->group(function () {
         Route::get('/reports', [DcmtReportController::class, 'indexA'])->name('index');
         Route::get('/cb-reports', [DcmtReportController::class, 'cbReportsA'])->name('cb-reports.a');
+        Route::post('/cb-reports/cutoff', [DcmtReportController::class, 'cutOffA'])->name('cb-reports.cutoff.a');
+        Route::get('/cb-reports/batches', [DcmtReportController::class, 'viewBatchesA'])->name('cb-reports.batches.a');
+        Route::get('/cb-reports/batches/{id}/download', [DcmtReportController::class, 'downloadBatchA'])->name('cb-reports.download.a');
+        Route::delete('/cb-reports/batches/{id}', [DcmtReportController::class, 'deleteBatchA'])->name('cb-reports.delete.a');
         Route::get('/export-cb', function () {
             return Excel::download(new CorporateBondExport, 'corporate_bonds.xlsx');
         })->name('cb-export.a');
-        Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports.a');
+        Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReportsA'])->name('trustee-reports.a');
+        Route::get('/trustee-reports/batches', [DcmtReportController::class, 'viewTrusteeBatchesA'])->name('trustee-reports.batches.a');
+        Route::post('/trustee-reports/cutoff', [DcmtReportController::class, 'cutOffTrusteeA'])->name('trustee-reports.cutoff.a');
+        Route::get('/trustee-reports/batches/{id}/download', [DcmtReportController::class, 'downloadBatchTrusteeA'])->name('trustee-reports.download.a');
     });
 
     // Issuer Module
