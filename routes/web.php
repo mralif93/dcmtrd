@@ -821,7 +821,7 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/list-security/show-request', [ApproverController::class, 'ListSecurityRequest'])->name('list-security-request-a.show')->middleware('permission:DCMTRD');
     Route::get('approver/list-security/{listSecurity}/show', [ApproverController::class, 'ListSecurityShow'])->name('security-details-a.show')->middleware('permission:DCMTRD');
     Route::get('approver/list-security/{listSecurity}/show-request', [ApproverController::class, 'ListSecurityShowRequest'])->name('list-security-a.show-request')->middleware('permission:DCMTRD');
-    Route::get('maker/list-security/{listSecurity}/create-withdrawal', [ApproverController::class, 'ListSecurityCreateWithdrawal'])->name('list-security-a.create-withdrawal')->middleware('permission:DCMTRD');
+    Route::get('approver/list-security/{listSecurity}/create-withdrawal', [ApproverController::class, 'ListSecurityCreateWithdrawal'])->name('list-security-a.create-withdrawal')->middleware('permission:DCMTRD');
     Route::post('approver/list-security/{id}/send-documents', [ApproverController::class, 'SendDocumentsStatus'])->name('send-documents-a.approval')->middleware('permission:DCMTRD');
     Route::patch('approver/list-security/{id}/cancel-withdrawal', [ApproverController::class, 'CancelWithdrawal'])->name('cancel-withdrawal-a.approval')->middleware('permission:DCMTRD');
     Route::patch('approver/list-security/{id}/back-to-draft', [ApproverController::class, 'BackToDraft'])->name('back-to-draft-a.approval')->middleware('permission:DCMTRD');
