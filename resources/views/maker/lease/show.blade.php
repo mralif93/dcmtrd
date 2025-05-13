@@ -34,20 +34,14 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    @php
-                                    $statusColors = [
-                                        'active' => 'bg-green-100 text-green-800',
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                    {{ match(strtolower($lease->status)) {
                                         'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'active' => 'bg-green-100 text-green-800',
                                         'inactive' => 'bg-gray-100 text-gray-800',
-                                        'expired' => 'bg-red-100 text-red-800',
-                                        'terminated' => 'bg-red-100 text-red-800'
-                                    ];
-                                    
-                                    $normalizedStatus = strtolower($lease->status);
-                                    $badgeClass = $statusColors[$normalizedStatus] ?? 'bg-gray-100 text-gray-800';
-                                    @endphp
-                                    {{ $badgeClass }}">
+                                        'rejected' => 'bg-red-100 text-red-800',
+                                        default => 'bg-gray-100 text-gray-800'
+                                    } }}">
                                     {{ ucfirst($lease->status) }}
                                 </span>
                                 @if($lease->isExpiringSoon() && $lease->status === 'active')
@@ -59,6 +53,20 @@
                         </div>
                     </dl>
                 </div>
+
+                <!-- Remarks Section -->
+                @if($lease->remarks)
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Remarks</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:px-6">
+                            <p class="text-sm text-gray-900">{{ $lease->remarks }}</p>
+                        </div>
+                    </dl>
+                </div>
+                @endif
 
                 <!-- Basic Information Section -->
                 <div class="border-t border-gray-200">

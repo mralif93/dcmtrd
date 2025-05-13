@@ -36,20 +36,10 @@
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                                     {{ match(strtolower($financial->status)) {
-                                        'completed' => 'bg-green-100 text-green-800',
-                                        'scheduled' => 'bg-blue-100 text-blue-800',
-                                        'cancelled' => 'bg-red-100 text-red-800',
                                         'pending' => 'bg-yellow-100 text-yellow-800',
                                         'active' => 'bg-green-100 text-green-800',
                                         'inactive' => 'bg-gray-100 text-gray-800',
                                         'rejected' => 'bg-red-100 text-red-800',
-                                        'draft' => 'bg-blue-100 text-blue-800',
-                                        'withdrawn' => 'bg-purple-100 text-purple-800',
-                                        'in progress' => 'bg-indigo-100 text-indigo-800',
-                                        'on hold' => 'bg-orange-100 text-orange-800',
-                                        'reviewing' => 'bg-teal-100 text-teal-800',
-                                        'approved' => 'bg-emerald-100 text-emerald-800',
-                                        'expired' => 'bg-rose-100 text-rose-800',
                                         default => 'bg-gray-100 text-gray-800'
                                     } }}">
                                     {{ ucfirst($financial->status) }}
@@ -58,6 +48,20 @@
                         </div>
                     </dl>
                 </div>
+
+                <!-- Remarks Section -->
+                @if($financial->remarks)
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Remarks</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:px-6">
+                            <p class="text-sm text-gray-900">{{ $financial->remarks }}</p>
+                        </div>
+                    </dl>
+                </div>
+                @endif
 
                 <!-- Basic Information Section -->
                 <div class="border-t border-gray-200">

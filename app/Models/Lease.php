@@ -26,18 +26,21 @@ class Lease extends Model
         'end_date',
         'base_rate_year_1',
         'monthly_gsto_year_1',
+        'remarks_year_1',
         'base_rate_year_2',
         'monthly_gsto_year_2',
+        'remarks_year_2',
         'base_rate_year_3',
         'monthly_gsto_year_3',
+        'remarks_year_3',
         'space',
         'tenancy_type',
         'attachment',
         'status',
         'prepared_by',
         'verified_by',
-        'approval_datetime',
         'remarks',
+        'approval_datetime',
     ];
 
     /**
