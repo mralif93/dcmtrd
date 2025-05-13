@@ -154,6 +154,10 @@
                                 </th>
                                 <th
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Security Name
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                     Security Code
                                 </th>
                                 <th
@@ -183,6 +187,10 @@
                                             {{ $security->issuer->issuer_short_name ?? '-' }}
                                         </a>
                                     </td>  
+
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                        {{ $security->security_name }}
+                                    </td>
 
                                     <!-- Security Code -->
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">

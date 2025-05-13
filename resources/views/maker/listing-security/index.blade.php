@@ -140,89 +140,35 @@
                     </div>
                 </div>
 
-
-
-                <!-- Search and Filter Bar -->
-                {{-- <div class="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
-                    <form method="GET" action="{{ route('trustee-fee-m.index') }}">
-                        <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
-                            <!-- Issuer Search Field -->
-                            <div>
-                                <label for="issuer_id" class="block text-sm font-medium text-gray-700">Issuer</label>
-                                <select name="issuer_id" id="issuer_id"
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">All Issuers</option>
-                                    @foreach ($issuers as $issuer)
-                                        <option value="{{ $issuer->id }}" @selected(request('issuer_id') == $issuer->id)>
-                                            {{ $issuer->issuer_short_name }} - {{ $issuer->issuer_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                <!-- Simple Search Bar -->
+                <div class="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
+                    <form method="GET" action="{{ route('list-security-m.index') }}">
+                        <div class="flex flex-col items-start gap-3 mt-8 md:flex-row md:items-center md:justify-between"> <!-- Added mt-8 here to push it further down -->
+                            <!-- Text Search Input -->
+                            <div class="w-full md:w-auto">
+                                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                                <input type="text" name="search" id="search" value="{{ request('search') }}"
+                                    placeholder="Search by invoice no or keyword"
+                                    class="block w-full px-3 py-2 mt-1 border-gray-300 rounded-md shadow-sm md:w-64 focus:border-indigo-500 focus:ring-indigo-500" />
                             </div>
-
-                            <!-- Facility Filter -->
-                            <div>
-                                <label for="facility_information_id"
-                                    class="block text-sm font-medium text-gray-700">Facility</label>
-                                <select name="facility_information_id" id="facility_information_id"
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">All Facilities</option>
-                                    @foreach ($facilities as $facility)
-                                        <option value="{{ $facility->id }}" data-issuer="{{ $facility->issuer_id }}"
-                                            @selected(request('facility_information_id') == $facility->id)>
-                                            {{ $facility->facility_code }} - {{ $facility->facility_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Month Filter -->
-                            <div>
-                                <label for="month" class="block text-sm font-medium text-gray-700">Month</label>
-                                <select name="month" id="month"
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">All Months</option>
-                                    @foreach (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $month)
-                                        <option value="{{ $month }}" @selected(request('month') === $month)>
-                                            {{ $month }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Payment Status Filter -->
-                            <div>
-                                <label for="payment_status" class="block text-sm font-medium text-gray-700">Payment
-                                    Status</label>
-                                <select name="payment_status" id="payment_status"
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">All Status</option>
-                                    <option value="paid" @selected(request('payment_status') === 'paid')>Paid</option>
-                                    <option value="unpaid" @selected(request('payment_status') === 'unpaid')>Unpaid</option>
-                                </select>
-                            </div>
-
-                            <!-- Filter Button -->
-                            <div class="flex items-end">
+                
+                            <!-- Buttons -->
+                            <div class="flex items-center gap-2 mt-4 md:mt-0">
                                 <button type="submit"
                                     class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                                    </svg>
                                     Search
                                 </button>
-
-                                @if (request('issuer_id') || request('facility_information_id') || request('invoice_no') || request('month') || request('payment_status'))
-                                    <a href="{{ route('trustee-fee-m.index') }}"
-                                        class="inline-flex items-center px-4 py-2 ml-2 font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
+                
+                                @if (request('search'))
+                                    <a href="{{ route('list-security-m.index') }}"
+                                        class="inline-flex items-center px-4 py-2 font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
                                         Clear
                                     </a>
                                 @endif
                             </div>
                         </div>
                     </form>
-                </div> --}}
+                </div>
 
                 <!-- Tabs for Issuer Status -->
                 <div x-data="{ status: '{{ request('status') ?? '' }}' }" class="bg-white border-b border-gray-200">
@@ -295,10 +241,11 @@
                                         {{ $loop->iteration + ($securities->currentPage() - 1) * $securities->perPage() }}
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
-                                        <a href="{{ route('list-security-m.details', ['security' => $security->id]) }}" class="text-blue-600 hover:underline">
+                                        <a href="{{ route('list-security-m.details', ['security' => $security->id]) }}"
+                                            class="text-blue-600 hover:underline">
                                             {{ $security->issuer->issuer_short_name ?? '-' }}
                                         </a>
-                                    </td>                                    
+                                    </td>
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                                         {{ $security->security_name }}
                                     </td>

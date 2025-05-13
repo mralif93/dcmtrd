@@ -41,7 +41,7 @@ A new compliance covenant has been submitted and is pending your review.
 
 </x-mail::panel>
 
-<x-mail::button :url="route('compliance-covenant-m.show', ['compliance' => $compliance->id])">
+<x-mail::button :url="route('compliance-covenant-a.show', ['compliance' => $compliance->id])">
 View Compliance Covenant
 </x-mail::button>
 

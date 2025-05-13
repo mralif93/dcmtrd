@@ -68,6 +68,7 @@ use App\Http\Requests\StoreFundTransferRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
 use App\Jobs\TrusteeFee\SendTrusteeFeeSubmittedEmail;
+use App\Jobs\ListSecurity\SendListSecuritySubmittedEmail;
 use App\Jobs\Compliance\SendComplianceCovenantSubmittedEmail;
 
 class MakerController extends Controller
@@ -4089,10 +4090,24 @@ class MakerController extends Controller
     {
         $query = ListSecurity::with('issuer')->latest();
 
+        // Apply status filter if provided
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('security_name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('security_code', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('asset_name_type', 'like', '%' . $searchTerm . '%') // Added this line for asset_name_type
+                    ->orWhereHas('issuer', function ($query) use ($searchTerm) {
+                        $query->where('issuer_name', 'like', '%' . $searchTerm . '%'); // Replace 'issuer_name' with the actual column name in the issuer model
+                    });
+            });
+        }
+
+        // Paginate the results and keep the search parameters in the query string
         $securities = $query->paginate(10)->withQueryString();
 
         // Count totals per status
@@ -4106,6 +4121,7 @@ class MakerController extends Controller
 
         return view('maker.listing-security.index', compact('securities', 'statusCounts'));
     }
+
 
     public function ListSecurityCreate()
     {
@@ -4158,6 +4174,8 @@ class MakerController extends Controller
         $security->status = 'Pending';
         $security->prepared_by = Auth::user()->name;
         $security->save();
+
+        dispatch(new SendListSecuritySubmittedEmail($security));
 
         return redirect()->route('list-security-m.index')->with('success', 'Security submitted for approval.');
     }

@@ -45,6 +45,8 @@ use App\Jobs\Issuer\SendIssuerApprovedNotification;
 use App\Jobs\Issuer\SendIssuerRejectedNotification;
 use App\Jobs\Compliance\SendComplianceApprovalEmail;
 use App\Jobs\Compliance\SendComplianceRejectionEmail;
+use App\Jobs\ListSecurity\SendListSecurityApprovedEmail;
+use App\Jobs\ListSecurity\SendListSecurityRejectedEmail;
 use App\Jobs\TrusteeFee\SendTrusteeFeeApprovedNotification;
 use App\Jobs\TrusteeFee\SendTrusteeFeeRejectedNotification;
 
@@ -2131,6 +2133,8 @@ class ApproverController extends Controller
         $security->approval_datetime = now();
         $security->save();
 
+        dispatch(new SendListSecurityApprovedEmail ($security));
+
         return redirect()->route('list-security-a.index')->with('success', 'Security approved successfully.');
     }
 
@@ -2147,6 +2151,8 @@ class ApproverController extends Controller
         $security->verified_by = Auth::user()->name;
         $security->remarks = $request->input('reason');  // Storing the rejection reason
         $security->save();
+
+        dispatch(new SendListSecurityRejectedEmail ($security));
 
         return redirect()->route('list-security-a.index')->with('success', 'Security rejected successfully.');
     }
