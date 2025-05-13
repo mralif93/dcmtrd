@@ -43,6 +43,8 @@ use App\Http\Requests\ListSecurityRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendIssuerApprovedNotification;
 use App\Jobs\Issuer\SendIssuerRejectedNotification;
+use App\Jobs\Compliance\SendComplianceApprovalEmail;
+use App\Jobs\Compliance\SendComplianceRejectionEmail;
 use App\Jobs\TrusteeFee\SendTrusteeFeeApprovedNotification;
 use App\Jobs\TrusteeFee\SendTrusteeFeeRejectedNotification;
 
@@ -522,6 +524,8 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
 
+            dispatch(new  SendComplianceApprovalEmail($compliance));
+
             return redirect()->route('compliance-covenant-a.index')->with('success', 'Compliance Covenant approved successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error approving compliance covenant: ' . $e->getMessage());
@@ -540,6 +544,8 @@ class ApproverController extends Controller
                 'verified_by' => Auth::user()->name,
                 'remarks' => $request->input('rejection_reason'),
             ]);
+
+            dispatch(new  SendComplianceRejectionEmail($compliance));
 
             return redirect()->route('compliance-covenant-a.index')->with('success', 'Compliance Covenant rejected successfully.');
         } catch (\Exception $e) {

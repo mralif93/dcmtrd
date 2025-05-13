@@ -68,6 +68,7 @@ use App\Http\Requests\StoreFundTransferRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
 use App\Jobs\TrusteeFee\SendTrusteeFeeSubmittedEmail;
+use App\Jobs\Compliance\SendComplianceCovenantSubmittedEmail;
 
 class MakerController extends Controller
 {
@@ -1507,6 +1508,8 @@ class MakerController extends Controller
                 'status' => 'Pending',
                 'prepared_by' => Auth::user()->name,
             ]);
+
+            dispatch(new SendComplianceCovenantSubmittedEmail($compliance));
 
             return redirect()
                 ->route('compliance-covenant-m.show', $compliance)

@@ -204,7 +204,30 @@
                     </div>
                 </div>
 
-
+                <!-- Verification Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900">Verification Information</h3>
+                    </div>
+                    <dl>
+                        <div class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $compliance->prepared_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $compliance->verified_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $compliance->approval_datetime ? $compliance->approval_datetime->format('d/m/Y H:i') : 'N/A' }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
 
                 <!-- System Information Section -->
                 <div class="border-t border-gray-200">
