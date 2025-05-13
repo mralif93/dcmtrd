@@ -85,46 +85,11 @@
                             </div>
                         </div>
 
-                        <!-- Approval Information Section -->
-                        <div class="pb-6 border-b border-gray-200">
-                            <h3 class="mb-4 text-lg font-medium text-gray-900">Approval Information</h3>
-                            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-
-                                <!-- Reviewed By -->
-                                <div>
-                                    <label for="reviewed_by" class="block text-sm font-medium text-gray-700">Reviewed
-                                        By</label>
-                                    <select name="reviewed_by" id="reviewed_by"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">-- Select a Reviewed By User --</option>
-                                        @foreach ($users as $user)
-                                            <option value="{{ $user->id }}" @selected(old('reviewed_by') == $user->id)>
-                                                {{ $user->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <!-- Verified By -->
-                                <div>
-                                    <label for="verified_by" class="block text-sm font-medium text-gray-700">Verified
-                                        By</label>
-                                    <select name="verified_by" id="verified_by"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">-- Select a Verified By User --</option>
-                                        @foreach ($users as $user)
-                                            <option value="{{ $user->id }}" @selected(old('verified_by') == $user->id)>
-                                                {{ $user->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
 
                     </div>
 
                     <!-- Form Actions -->
-                    <div class="flex justify-end gap-4 pt-6 border-t border-gray-200">
+                    <div class="flex justify-end gap-4 pt-6 border-gray-200">
                         <a href="{{ route('fund-transfer-m.index') }}"
                             class="inline-flex items-center px-4 py-2 font-medium text-gray-700 bg-gray-200 border border-transparent rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel

@@ -811,7 +811,7 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     // Fund Transfer Module
     Route::get('approver/fund-transfer', [ApproverController::class, 'FundTransferIndex'])->name('fund-transfer-a.index')->middleware('permission:DCMTRD');
     Route::get('approver/fund-transfer/{fundTransfer}/done-for-approval', [ApproverController::class, 'DoneApprovalFundTransfer'])->name('done-fund-transfer-a.approval')->middleware('permission:DCMTRD');
-
+    Route::post('approver/fund-transfer/{id}/reject', [ApproverController::class, 'FundTransferReject'])->name('fund-transfer-a.reject')->middleware('permission:DCMTRD');
     // REITS Section
 
     // Portfolio Module

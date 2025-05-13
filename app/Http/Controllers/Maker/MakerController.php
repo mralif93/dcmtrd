@@ -4337,15 +4337,7 @@ class MakerController extends Controller
 
     public function FundTransferCreate()
     {
-        $users = User::where('department', 'DEBT CAPITAL MARKET & TRUST UNIT')
-            ->where('id', '!=', auth()->id()) // Exclude current user
-            ->where(function ($query) {
-                $query->where('role', 'approver')
-                    ->orWhere('job_title', 'SENIOR EXECUTIVE');
-            })
-            ->get();
-
-        return view('maker.fund-transfer.create', compact('users'));
+        return view('maker.fund-transfer.create');
     }
 
 
@@ -4356,11 +4348,8 @@ class MakerController extends Controller
             'details' => $request->get('details'),
             'placement_amount' => $request->get('placement_amount'),
             'fund_transfer_amount' => $request->get('fund_transfer_amount'),
-            'prepared_by_id' => auth()->id(),
-            'reviewed_by_id' => $request->get('reviewed_by'),
-            'verified_by_id' => $request->get('verified_by'),
+            'prepared_by' => auth()->user()->name, // since it's a string in DB
             'status' => 'Draft',
-
         ]);
 
         return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer created successfully');
@@ -4368,15 +4357,7 @@ class MakerController extends Controller
 
     public function FundTransferEdit(PlacementFundTransfer $fundTransfer)
     {
-        $users = User::where('department', 'DEBT CAPITAL MARKET & TRUST UNIT')
-            ->where('id', '!=', auth()->id()) // Exclude current user
-            ->where(function ($query) {
-                $query->where('role', 'approver')
-                    ->orWhere('job_title', 'SENIOR EXECUTIVE');
-            })
-            ->get();
-
-        return view('maker.fund-transfer.edit', compact('fundTransfer', 'users'));
+        return view('maker.fund-transfer.edit', compact('fundTransfer'));
     }
     public function FundTransferUpdate(StoreFundTransferRequest $request, PlacementFundTransfer $fundTransfer)
     {
@@ -4387,25 +4368,14 @@ class MakerController extends Controller
             'details' => $validated['details'],
             'placement_amount' => $validated['placement_amount'],
             'fund_transfer_amount' => $validated['fund_transfer_amount'],
-            'prepared_by_id' => auth()->id(),
-            'reviewed_by_id' => $validated['reviewed_by'],
-            'verified_by_id' => $validated['verified_by'],
         ]);
 
         return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer updated successfully');
     }
 
-    public function SubmitForReviewFundTransfer(PlacementFundTransfer $fundTransfer)
-    {
-        $fundTransfer->status = 'Reviewed';
-        $fundTransfer->save();
-
-        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer submitted for review successfully');
-    }
-
     public function SubmitApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
     {
-        $fundTransfer->status = 'In Approval';
+        $fundTransfer->status = 'Pending';
         $fundTransfer->save();
 
         return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer approved successfully');

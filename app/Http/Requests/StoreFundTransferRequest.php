@@ -26,8 +26,8 @@ class StoreFundTransferRequest extends FormRequest
             'details' => 'nullable|string',
             'placement_amount' => 'required|numeric|min:0',
             'fund_transfer_amount' => 'nullable|numeric|min:0',
+            // These fields are in the database as strings
             'prepared_by' => 'nullable|string|max:255',
-            'reviewed_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'status' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',

@@ -17,11 +17,12 @@ return new class extends Migration
             $table->text('details')->nullable();
             $table->decimal('placement_amount', 15, 2)->nullable();
             $table->decimal('fund_transfer_amount', 15, 2)->nullable();
-            $table->foreignId('prepared_by_id')->nullable()->constrained('users');
-            $table->foreignId('reviewed_by_id')->nullable()->constrained('users');
-            $table->foreignId('verified_by_id')->nullable()->constrained('users');
+            
             $table->string('status')->nullable();
+            $table->string('prepared_by')->nullable();
+            $table->string('verified_by')->nullable();
             $table->text('remarks')->nullable();
+            $table->dateTime('approval_datetime')->nullable();
             $table->timestamps();
         });
     }

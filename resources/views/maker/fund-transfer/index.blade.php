@@ -170,8 +170,8 @@
                                         <th class="px-6 py-3 font-medium">Placement Amount</th>
                                         <th class="px-6 py-3 font-medium">Fund Transfer Amount</th>
                                         <th class="px-6 py-3 font-medium">Prepared By</th>
-                                        <th class="px-6 py-3 font-medium">Reviewed By</th>
                                         <th class="px-6 py-3 font-medium">Verified By</th>
+                                        <th class="px-6 py-3 font-medium">Verified Date</th>
                                         <th class="px-6 py-3 font-medium">Status</th>
                                         <th class="px-6 py-3 font-medium">Actions</th>
                                     </tr>
@@ -192,79 +192,48 @@
                                             <td class="px-6 py-3 text-right">
                                                 {{ number_format($fundTransfer->fund_transfer_amount, 2) }}
                                             </td>
-                                            <td class="px-6 py-3">{{ optional($fundTransfer->user)->name }}</td>
-                                            <td class="px-6 py-3">{{ optional($fundTransfer->reviewedBy)->name }}</td>
-                                            <td class="px-6 py-3">{{ optional($fundTransfer->verifiedBy)->name }}</td>
+                                            <td class="px-6 py-3">{{ $fundTransfer->prepared_by }}</td>
+                                            <td class="px-6 py-3">{{ $fundTransfer->verified_by ?? '-' }}</td>
+                                            <td class="px-6 py-3">{{ $fundTransfer->verified_date ?? '-' }}</td>
                                             <td class="px-6 py-3">
-                                                @if ($fundTransfer->status === 'Reviewed')
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-yellow-800 bg-yellow-100 rounded-full">Review</span>
-                                                @elseif ($fundTransfer->status === 'In Approval')
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-green-800 bg-green-100 rounded-full">Waiting</span>
+                                                @if ($fundTransfer->status === 'Pending')
+                                                    <span class="px-2 py-1 text-xs text-yellow-800 bg-yellow-100 rounded-full">Pending</span>
                                                 @elseif ($fundTransfer->status === 'Approved')
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">Approved</span>
+                                                    <span class="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">Approved</span>
                                                 @elseif ($fundTransfer->status === 'Rejected')
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-red-800 bg-red-100 rounded-full">Rejected</span>
+                                                    <div class="space-y-1">
+                                                        <span class="px-2 py-1 text-xs text-red-800 bg-red-100 rounded-full">Rejected</span>
+                                                        @if ($fundTransfer->remarks)
+                                                            <p class="text-xs text-red-600">Reason: {{ $fundTransfer->remarks }}</p>
+                                                        @endif
+                                                    </div>
                                                 @elseif ($fundTransfer->status === 'Draft')
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-gray-700 bg-gray-300 rounded-full">Draft</span>
+                                                    <span class="px-2 py-1 text-xs text-gray-700 bg-gray-300 rounded-full">Draft</span>
                                                 @else
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-gray-800 bg-gray-100 rounded-full">Unknown</span>
+                                                    <span class="px-2 py-1 text-xs text-gray-800 bg-gray-100 rounded-full">Unknown</span>
                                                 @endif
                                             </td>
+                                            
 
                                             <td class="px-6 py-3 space-y-1 text-center">
-                                                {{-- Show Review buttons only if current user is the reviewer --}}
-                                                @if (optional($fundTransfer->reviewedBy)->id === auth()->id() && $fundTransfer->status === 'Reviewed')
-                                                    <a href="{{ route('fund-transfer-m.approval', $fundTransfer) }}"
-                                                        class="inline-block px-3 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700">
-                                                        Review
-                                                    </a>
-                                                    <a
-                                                        class="inline-block px-3 py-1 text-xs text-white bg-red-600 rounded hover:bg-red-700">
-                                                        Reject
-                                                    </a>
-                                                @endif
-
-                                                {{-- Show Approval buttons only if status is 'In Approval' and user is the verifier --}}
-                                                @if (optional($fundTransfer->verifiedBy)->id === auth()->id() && $fundTransfer->status === 'In Approval')
-                                                    <a href="{{ route('done-fund-transfer-m.approval', $fundTransfer) }}"
-                                                        class="inline-block px-3 py-1 mt-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700">
-                                                        Approve
-                                                    </a>
-                                                    <a
-                                                        class="inline-block px-3 py-1 mt-1 text-xs text-white bg-red-600 rounded hover:bg-red-700">
-                                                        Reject
-                                                    </a>
-                                                @endif
-
-                                                {{-- Show Edit and Submit buttons if status is Draft and current user is the creator, but not reviewer or approver --}}
                                                 @if (
-                                                    $fundTransfer->status === 'Draft' &&
-                                                        $fundTransfer->prepared_by_id === auth()->id() &&
-                                                        optional($fundTransfer->reviewedBy)->id !== auth()->id() &&
-                                                        optional($fundTransfer->verifiedBy)->id !== auth()->id())
+                                                    $fundTransfer->status === 'Draft' ||
+                                                        $fundTransfer->status === 'Rejected')
                                                     <a href="{{ route('fund-transfer-m.edit', $fundTransfer) }}"
                                                         class="inline-block px-3 py-1 mt-1 text-xs text-white bg-yellow-500 rounded hover:bg-yellow-600">
                                                         Edit
                                                     </a>
 
-                                                    <form
-                                                        action="{{ route('review-fund-transfer-m.approval', $fundTransfer) }}"
+                                                    <a
+                                                        href="{{ route('fund-transfer-m.approval', $fundTransfer) }}"
                                                         method="POST" class="inline-block">
                                                         @csrf
                                                         <button type="submit"
                                                             class="inline-block px-3 py-1 mt-1 text-xs text-white bg-indigo-600 rounded hover:bg-indigo-700">
                                                             Submit
                                                         </button>
-                                                    </form>
+                                                    </a>
                                                 @endif
-
-
                                             </td>
 
                                         </tr>

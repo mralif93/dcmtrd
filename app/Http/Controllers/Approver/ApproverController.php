@@ -2248,8 +2248,22 @@ class ApproverController extends Controller
     public function DoneApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
     {
         $fundTransfer->status = 'Approved';
+        $fundTransfer->verified_by = Auth::user()->name;
+        $fundTransfer->approval_datetime = now();
         $fundTransfer->save();
 
         return redirect()->route('fund-transfer-a.index')->with('success', 'Placement & Fund Transfer done successfully');
+    }
+
+    public function FundTransferReject($id)
+    {
+        $fundTransfer = PlacementFundTransfer::findOrFail($id);
+        $fundTransfer->status = 'Rejected';
+        $fundTransfer->verified_by = Auth::user()->name;
+        
+        $fundTransfer->remarks = request('reason'); // Assuming you have a reason field in your form
+        $fundTransfer->save();
+
+        return redirect()->route('fund-transfer-a.index')->with('success', 'Placement & Fund Transfer rejected successfully');
     }
 }

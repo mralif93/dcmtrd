@@ -161,8 +161,8 @@
                                         <th class="px-6 py-3 font-medium">Placement Amount</th>
                                         <th class="px-6 py-3 font-medium">Fund Transfer Amount</th>
                                         <th class="px-6 py-3 font-medium">Prepared By</th>
-                                        <th class="px-6 py-3 font-medium">Reviewed By</th>
                                         <th class="px-6 py-3 font-medium">Verified By</th>
+                                        <th class="px-6 py-3 font-medium">Verified Date</th>
                                         <th class="px-6 py-3 font-medium">Status</th>
                                         <th class="px-6 py-3 font-medium">Actions</th>
                                     </tr>
@@ -183,76 +183,44 @@
                                             <td class="px-6 py-3 text-right">
                                                 {{ number_format($fundTransfer->fund_transfer_amount, 2) }}
                                             </td>
-                                            <td class="px-6 py-3">{{ optional($fundTransfer->user)->name }}</td>
-                                            <td class="px-6 py-3">{{ optional($fundTransfer->reviewedBy)->name }}</td>
-                                            <td class="px-6 py-3">{{ optional($fundTransfer->verifiedBy)->name }}</td>
+                                            <td class="px-6 py-3">{{ $fundTransfer->prepared_by }}</td>
+                                            <td class="px-6 py-3">{{ $fundTransfer->verified_by ?? '-' }}</td>
+                                            <td class="px-6 py-3">{{ $fundTransfer->approval_datetime ?? '-' }}</td>
                                             <td class="px-6 py-3">
-                                                @if ($fundTransfer->status === 'Reviewed')
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-yellow-800 bg-yellow-100 rounded-full">Review</span>
-                                                @elseif ($fundTransfer->status === 'In Approval')
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-green-800 bg-green-100 rounded-full">Waiting</span>
+                                                @if ($fundTransfer->status === 'Pending')
+                                                    <span class="px-2 py-1 text-xs text-yellow-800 bg-yellow-100 rounded-full">Pending</span>
                                                 @elseif ($fundTransfer->status === 'Approved')
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">Approved</span>
+                                                    <span class="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">Approved</span>
                                                 @elseif ($fundTransfer->status === 'Rejected')
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-red-800 bg-red-100 rounded-full">Rejected</span>
+                                                    <div class="space-y-1">
+                                                        <span class="px-2 py-1 text-xs text-red-800 bg-red-100 rounded-full">Rejected</span>
+                                                        @if ($fundTransfer->remarks)
+                                                            <p class="text-xs text-red-600">Reason: {{ $fundTransfer->remarks }}</p>
+                                                        @endif
+                                                    </div>
                                                 @elseif ($fundTransfer->status === 'Draft')
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-gray-700 bg-gray-300 rounded-full">Draft</span>
+                                                    <span class="px-2 py-1 text-xs text-gray-700 bg-gray-300 rounded-full">Draft</span>
                                                 @else
-                                                    <span
-                                                        class="px-2 py-1 text-xs text-gray-800 bg-gray-100 rounded-full">Unknown</span>
+                                                    <span class="px-2 py-1 text-xs text-gray-800 bg-gray-100 rounded-full">Unknown</span>
                                                 @endif
                                             </td>
-
+                                            
                                             <td class="px-6 py-3 space-y-1 text-center">
-                                                {{-- Show Review buttons only if current user is the reviewer --}}
-                                                @if (optional($fundTransfer->reviewedBy)->id === auth()->id() && $fundTransfer->status === 'Reviewed')
-                                                    <a href="{{ route('fund-transfer-m.approval', $fundTransfer) }}"
-                                                        class="inline-block px-3 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700">
-                                                        Review
-                                                    </a>
-                                                    <a
-                                                        class="inline-block px-3 py-1 text-xs text-white bg-red-600 rounded hover:bg-red-700">
-                                                        Reject
-                                                    </a>
-                                                @endif
 
-                                                {{-- Show Approval buttons only if status is 'In Approval' and user is the verifier --}}
-                                                @if (optional($fundTransfer->verifiedBy)->id === auth()->id() && $fundTransfer->status === 'In Approval')
+                                                @if ($fundTransfer->status === 'Pending')
                                                     <a href="{{ route('done-fund-transfer-a.approval', $fundTransfer) }}"
                                                         class="inline-block px-3 py-1 mt-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700">
                                                         Approve
                                                     </a>
-                                                    <a
-                                                        class="inline-block px-3 py-1 mt-1 text-xs text-white bg-red-600 rounded hover:bg-red-700">
+                                                    <button onclick="openRejectModal({{ $fundTransfer->id }})"
+                                                        class="inline-flex items-center px-2 py-1 text-xs font-medium text-red-700 bg-red-100 rounded hover:bg-red-200">
+                                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
                                                         Reject
-                                                    </a>
-                                                @endif
-
-                                                {{-- Show Edit and Submit buttons if status is Draft and current user is the creator, but not reviewer or approver --}}
-                                                @if (
-                                                    $fundTransfer->status === 'Draft' &&
-                                                        $fundTransfer->prepared_by_id === auth()->id() &&
-                                                        optional($fundTransfer->reviewedBy)->id !== auth()->id() &&
-                                                        optional($fundTransfer->verifiedBy)->id !== auth()->id())
-                                                    <a href="{{ route('fund-transfer-m.edit', $fundTransfer) }}"
-                                                        class="inline-block px-3 py-1 mt-1 text-xs text-white bg-yellow-500 rounded hover:bg-yellow-600">
-                                                        Edit
-                                                    </a>
-
-                                                    <form
-                                                        action="{{ route('review-fund-transfer-m.approval', $fundTransfer) }}"
-                                                        method="POST" class="inline-block">
-                                                        @csrf
-                                                        <button type="submit"
-                                                            class="inline-block px-3 py-1 mt-1 text-xs text-white bg-indigo-600 rounded hover:bg-indigo-700">
-                                                            Submit
-                                                        </button>
-                                                    </form>
+                                                    </button>
                                                 @endif
 
 
@@ -270,7 +238,46 @@
                         </div>
                     </div>
                 </div>
+                <div id="rejectModal"
+                    class="fixed inset-0 z-50 items-center justify-center hidden transition duration-300 bg-black/30 backdrop-blur-sm">
+                    <div
+                        class="relative w-full max-w-md p-6 mx-auto bg-white border border-gray-100 shadow-xl rounded-2xl">
+                        <h2 class="mb-4 text-lg font-semibold text-gray-800">Reject Security</h2>
+                        <form method="POST" id="rejectForm">
+                            @csrf
+                            <label for="reason" class="block text-sm font-medium text-gray-700">Reason</label>
+                            <textarea name="reason" rows="3" required
+                                class="w-full p-2 mt-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-red-200 focus:outline-none"></textarea>
 
+                            <div class="flex justify-end mt-6 space-x-2">
+                                <button type="button" onclick="closeRejectModal()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg shadow hover:bg-red-700">
+                                    Confirm Reject
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
             </div>
+            <script>
+                function openRejectModal(id) {
+                    const modal = document.getElementById('rejectModal');
+                    const form = document.getElementById('rejectForm');
+        
+                    form.action = `/approver/fund-transfer/${id}/reject`;
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+        
+                function closeRejectModal() {
+                    const modal = document.getElementById('rejectModal');
+                    modal.classList.remove('flex');
+                    modal.classList.add('hidden');
+                }
+            </script>
 </x-app-layout>
