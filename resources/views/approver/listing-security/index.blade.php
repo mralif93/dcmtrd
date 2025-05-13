@@ -111,6 +111,38 @@
                         </a>
                     </div>
                 </div>
+
+                <!-- Simple Search Bar -->
+                <div class="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
+                    <form method="GET" action="{{ route('list-security-a.index') }}">
+                        <div
+                            class="flex flex-col items-start gap-3 mt-8 md:flex-row md:items-center md:justify-between">
+                            <!-- Added mt-8 here to push it further down -->
+                            <!-- Text Search Input -->
+                            <div class="w-full md:w-auto">
+                                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                                <input type="text" name="search" id="search" value="{{ request('search') }}"
+                                    placeholder="Search by any keyword"
+                                    class="block w-full px-3 py-2 mt-1 border-gray-300 rounded-md shadow-sm md:w-64 focus:border-indigo-500 focus:ring-indigo-500" />
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="flex items-center gap-2 mt-4 md:mt-0">
+                                <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Search
+                                </button>
+
+                                @if (request('search'))
+                                    <a href="{{ route('list-security-a.index') }}"
+                                        class="inline-flex items-center px-4 py-2 font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <!-- Tabs for Issuer Status -->
                 <div x-data="{ status: '{{ request('status') ?? '' }}' }" class="bg-white border-b border-gray-200">
                     <nav class="flex px-4 py-3 space-x-2 text-sm font-medium text-gray-500" aria-label="Tabs">
@@ -183,10 +215,11 @@
                                     </td>
 
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
-                                        <a href="{{ route('list-security-a.details', ['security' => $security->id]) }}" class="text-blue-600 hover:underline">
+                                        <a href="{{ route('list-security-a.details', ['security' => $security->id]) }}"
+                                            class="text-blue-600 hover:underline">
                                             {{ $security->issuer->issuer_short_name ?? '-' }}
                                         </a>
-                                    </td>  
+                                    </td>
 
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                                         {{ $security->security_name }}
@@ -235,8 +268,8 @@
                                                     @csrf
                                                     <button type="submit"
                                                         class="inline-flex items-center px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded hover:bg-green-200">
-                                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
-                                                            viewBox="0 0 24 24">
+                                                        <svg class="w-4 h-4 mr-1" fill="none"
+                                                            stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 stroke-width="2" d="M5 13l4 4L19 7" />
                                                         </svg>

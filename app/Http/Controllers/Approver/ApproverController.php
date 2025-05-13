@@ -2100,6 +2100,7 @@ class ApproverController extends Controller
     public function ListSecurityIndex(Request $request)
     {
         $status = $request->get('status');
+        $search = $request->get('search');
 
         // Base query
         $query = ListSecurity::with('issuer');
@@ -2107,6 +2108,18 @@ class ApproverController extends Controller
         // Apply status filter if not empty
         if (!empty($status)) {
             $query->where('status', $status);
+        }
+
+        // Apply search filter (search across multiple fields if needed)
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('security_name', 'like', '%' . $search . '%')
+                    ->orWhere('security_code', 'like', '%' . $search . '%')
+                    ->orWhere('asset_name_type', 'like', '%' . $search . '%')
+                    ->orWhereHas('issuer', function ($q2) use ($search) {
+                        $q2->where('issuer_short_name', 'like', '%' . $search . '%');
+                    });
+            });
         }
 
         // Paginated data
@@ -2123,6 +2136,7 @@ class ApproverController extends Controller
 
         return view('approver.listing-security.index', compact('securities', 'statusCounts'));
     }
+
 
 
     public function ListSecurityApprove($id)
