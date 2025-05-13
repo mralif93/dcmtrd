@@ -535,7 +535,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/property/{property}/edit', [MakerController::class, 'PropertyEdit'])->name('property-m.edit')->middleware('permission:REITS');
     Route::put('maker/property/{property}/update', [MakerController::class, 'PropertyUpdate'])->name('property-m.update')->middleware('permission:REITS');
     Route::get('maker/property/{property}/show', [MakerController::class, 'PropertyShow'])->name('property-m.show')->middleware('permission:REITS');
-    Route::get('maker/property/{property}/submit-for-approval', [MakerController::class, 'SubmitApprovalProperty'])->name('property-m.approval')->middleware('permission:REITS');
+    Route::get('maker/property/{property}/submit-for-approval', [MakerController::class, 'SubmitForApprovalProperty'])->name('property-m.approval')->middleware('permission:REITS');
 
     // Tenant Module
     Route::get('maker/tenant/{property}/', [MakerController::class, 'TenantIndex'])->name('tenant-m.index')->middleware('permission:REITS');
@@ -647,16 +647,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/appointment/{appointment}/show', [MakerController::class, 'AppointmentShow'])->name('appointment-m.show')->middleware('permission:REITS');
     Route::get('maker/appointment/{appointment}/submit-for-approval', [MakerController::class, 'SubmitApprovalAppointment'])->name('appointment-m.approval')->middleware('permission:REITS');
 
-    // Approval Form Module
-    // Route::get('maker/approval-form/', [MakerController::class, 'ApprovalFormIndex'])->name('approval-form-m.index')->middleware('permission:REITS');
-    // Route::get('maker/approval-form/create', [MakerController::class, 'ApprovalFormCreate'])->name('approval-form-m.create')->middleware('permission:REITS');
-    // Route::post('maker/approval-form/create', [MakerController::class, 'ApprovalFormStore'])->name('approval-form-m.store')->middleware('permission:REITS');
-    // Route::get('maker/approval-form/{approvalForm}/edit', [MakerController::class, 'ApprovalFormEdit'])->name('approval-form-m.edit')->middleware('permission:REITS');
-    // Route::put('maker/approval-form/{approvalForm}/update', [MakerController::class, 'ApprovalFormUpdate'])->name('approval-form-m.update')->middleware('permission:REITS');
-    // Route::get('maker/approval-form/{approvalForm}/show', [MakerController::class, 'ApprovalFormShow'])->name('approval-form-m.show')->middleware('permission:REITS');
-    // Route::get('maker/approval-form/{approvalForm}/submit-for-approval', [MakerController::class, 'SubmitApprovalForm'])->name('approval-form-m.approval')->middleware('permission:REITS');
-
-    // Approval Form Module
+    // Approval Property Module
     Route::get('maker/approval-property/', [MakerController::class, 'ApprovalPropertyIndex'])->name('approval-property-m.index')->middleware('permission:REITS');
     Route::get('maker/approval-property/create', [MakerController::class, 'ApprovalPropertyCreate'])->name('approval-property-m.create')->middleware('permission:REITS');
     Route::post('maker/approval-property/create', [MakerController::class, 'ApprovalPropertyStore'])->name('approval-property-m.store')->middleware('permission:REITS');
@@ -673,6 +664,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/site-visit-log/{siteVisitLog}/update', [MakerController::class, 'SiteVisitLogUpdate'])->name('site-visit-log-m.update')->middleware('permission:REITS');
     Route::get('maker/site-visit-log/{siteVisitLog}/show', [MakerController::class, 'SiteVisitLogShow'])->name('site-visit-log-m.show')->middleware('permission:REITS');
     Route::get('maker/site-visit-log/{siteVisitLog}/follow-up', [MakerController::class, 'SiteVisitLogFollowUp'])->name('site-visit-log-m.follow-up')->middleware('permission:REITS');
+    Route::get('maker/site-visit-log/{siteVisitLog}/submit-for-approval', [MakerController::class, 'SubmitApprovalSiteVisitLog'])->name('site-visit-log-m.approval')->middleware('permission:REITS');
 });
 
 // Approver routes

@@ -2239,7 +2239,7 @@ class MakerController extends Controller
         return view('maker.property.show', compact('property'));
     }
 
-    public function PropertySubmitForApproval(Property $property)
+    public function SubmitForApprovalProperty(Property $property)
     {
         try {
             $property->update([
@@ -3723,6 +3723,23 @@ class MakerController extends Controller
         ]);
     }
 
+    // submit for approval
+    public function SubmitApprovalAppointment(Appointment $appointment)
+    {
+        try {
+            $appointment->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name
+            ]);
+
+            return redirect()
+                ->route('appointment-m.index')
+                ->with('success', 'Appointment submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
+    }
+
     public function AppointmentValidate(Request $request, Appointment $appointment = null)
     {
         return $request->validate([
@@ -4051,11 +4068,6 @@ class MakerController extends Controller
         }
     }
 
-    public function SiteVisitLogShow(SiteVisitLog $siteVisitLog)
-    {
-        return view('maker.site-visit-log.show', compact('siteVisitLog'));
-    }
-
     public function SiteVisitLogEdit(SiteVisitLog $siteVisitLog)
     {
         $properties = Property::where('status', 'active')->get();
@@ -4075,6 +4087,30 @@ class MakerController extends Controller
             return back()
                 ->withInput()
                 ->with('error', 'Error updating site visit log: ' . $e->getMessage());
+        }
+    }
+
+    public function SiteVisitLogShow(SiteVisitLog $siteVisitLog)
+    {
+        return view('maker.site-visit-log.show', compact('siteVisitLog'));
+    }
+
+    // submit for approval
+    public function SubmitApprovalSiteVisitLog(SiteVisitLog $siteVisitLog)
+    {
+        try {
+            $siteVisitLog->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('site-visit-log-m.index')
+                ->with('success', 'Site Visit Log submitted for approval successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting site visit log for approval: ' . $e->getMessage());
         }
     }
 
@@ -4166,6 +4202,24 @@ class MakerController extends Controller
     public function ApprovalPropertyShow(ApprovalProperty $approvalProperty)
     {
         return view('maker.approval-property.show', compact('approvalProperty'));
+    }
+
+    // submit for approval
+    public function SubmitApprovalProperty(ApprovalProperty $approvalProperty)
+    {
+        try {
+            $approvalProperty->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('approval-property-m.index')
+                ->with('success', 'Approval Property submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error submitting property for approval: ' . $e->getMessage());
+        }
     }
 
     public function ApprovalPropertyValidate(Request $request)
