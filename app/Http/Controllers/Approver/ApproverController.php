@@ -45,6 +45,8 @@ use App\Jobs\Issuer\SendIssuerApprovedNotification;
 use App\Jobs\Issuer\SendIssuerRejectedNotification;
 use App\Jobs\Compliance\SendComplianceApprovalEmail;
 use App\Jobs\Compliance\SendComplianceRejectionEmail;
+use App\Jobs\FundTransfer\SendFundTransferApprovedEmail;
+use App\Jobs\FundTransfer\SendFundTransferRejectedEmail;
 use App\Jobs\ListSecurity\SendListSecurityApprovedEmail;
 use App\Jobs\ListSecurity\SendListSecurityRejectedEmail;
 use App\Jobs\TrusteeFee\SendTrusteeFeeApprovedNotification;
@@ -2287,6 +2289,8 @@ class ApproverController extends Controller
         $fundTransfer->approval_datetime = now();
         $fundTransfer->save();
 
+        dispatch(new SendFundTransferApprovedEmail($fundTransfer));
+
         return redirect()->route('fund-transfer-a.index')->with('success', 'Placement & Fund Transfer done successfully');
     }
 
@@ -2298,6 +2302,8 @@ class ApproverController extends Controller
 
         $fundTransfer->remarks = request('reason'); // Assuming you have a reason field in your form
         $fundTransfer->save();
+
+        dispatch(new SendFundTransferRejectedEmail($fundTransfer));
 
         return redirect()->route('fund-transfer-a.index')->with('success', 'Placement & Fund Transfer rejected successfully');
     }

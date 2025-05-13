@@ -68,6 +68,7 @@ use App\Http\Requests\StoreFundTransferRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
 use App\Jobs\TrusteeFee\SendTrusteeFeeSubmittedEmail;
+use App\Jobs\FundTransfer\SendFundTransferPendingEmail;
 use App\Jobs\ListSecurity\SendListSecuritySubmittedEmail;
 use App\Jobs\Compliance\SendComplianceCovenantSubmittedEmail;
 
@@ -4413,6 +4414,8 @@ class MakerController extends Controller
     {
         $fundTransfer->status = 'Pending';
         $fundTransfer->save();
+
+        dispatch(new SendFundTransferPendingEmail($fundTransfer));
 
         return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer approved successfully');
     }
