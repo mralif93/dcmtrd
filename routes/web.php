@@ -770,6 +770,54 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/checklist/{checklist}/approve', [ApproverController::class, 'ChecklistApprove'])->name('checklist-a.approve')->middleware('permission:REITS');
     Route::post('approver/checklist/{checklist}/reject', [ApproverController::class, 'ChecklistReject'])->name('checklist-a.reject')->middleware('permission:REITS');
 
+    // Checklist Legal Module
+    Route::get('approver/checklist-legal/{checklist}', [ApproverController::class, 'ChecklistLegalIndex'])->name('checklist-legal-a.index')->middleware('permission:REITS');
+    Route::get('approver/checklist-legal/{checklistLegal}/show', [ApproverController::class, 'ChecklistLegalShow'])->name('checklist-legal-a.show')->middleware('permission:REITS');
+    Route::get('approver/checklist-legal/', [ApproverController::class, 'ChecklistLegalMain'])->name('checklist-legal-a.main')->middleware('permission:REITS');
+    Route::get('approver/checklist-legal/{checklistLegal}/details', [ApproverController::class, 'ChecklistLegalDetails'])->name('checklist-legal-a.details')->middleware('permission:REITS');
+    Route::post('approver/checklist-legal/{checklistLegal}/approve', [ApproverController::class, 'ChecklistLegalApprove'])->name('checklist-legal-a.approve')->middleware('permission:REITS');
+    Route::post('approver/checklist-legal/{checklistLegal}/reject', [ApproverController::class, 'ChecklistLegalReject'])->name('checklist-legal-a.reject')->middleware('permission:REITS');
+
+    // Checklist Tenant Module
+    Route::get('approver/checklist-tenant/{checklist}', [ApproverController::class, 'ChecklistTenantIndex'])->name('checklist-tenant-a.index')->middleware('permission:REITS');
+    Route::get('approver/checklist-tenant/{checklistTenant}/show', [ApproverController::class, 'ChecklistTenantShow'])->name('checklist-tenant-a.show')->middleware('permission:REITS');
+    Route::get('approver/checklist-tenant/', [ApproverController::class, 'ChecklistTenantMain'])->name('checklist-tenant-a.main')->middleware('permission:REITS');
+    Route::get('approver/checklist-tenant/{checklistTenant}/details', [ApproverController::class, 'ChecklistTenantDetails'])->name('checklist-tenant-a.details')->middleware('permission:REITS');
+    Route::post('approver/checklist-tenant/{checklistTenant}/approve', [ApproverController::class, 'ChecklistTenantApprove'])->name('checklist-tenant-a.approve')->middleware('permission:REITS');
+    Route::post('approver/checklist-tenant/{checklistTenant}/reject', [ApproverController::class, 'ChecklistTenantReject'])->name('checklist-tenant-a.reject')->middleware('permission:REITS');
+
+    // Checklist External Area Condition Module
+    Route::get('approver/checklist-external-area-condition/{checklist}', [ApproverController::class, 'ChecklistExternalAreaConditionIndex'])->name('checklist-external-area-condition-a.index')->middleware('permission:REITS');
+    Route::get('approver/checklist-external-area-condition/{checklistExternalAreaCondition}/show', [ApproverController::class, 'ChecklistExternalAreaConditionShow'])->name('checklist-external-area-condition-a.show')->middleware('permission:REITS');
+    Route::get('approver/checklist-external-area-condition/', [ApproverController::class, 'ChecklistExternalAreaConditionMain'])->name('checklist-external-area-condition-a.main')->middleware('permission:REITS');
+    Route::get('approver/checklist-external-area-condition/{checklistExternalAreaCondition}/details', [ApproverController::class, 'ChecklistExternalAreaConditionDetails'])->name('checklist-external-area-condition-a.details')->middleware('permission:REITS');
+    Route::post('approver/checklist-external-area-condition/{checklistExternalAreaCondition}/approve', [ApproverController::class, 'ChecklistExternalAreaConditionApprove'])->name('checklist-external-area-condition-a.approve')->middleware('permission:REITS');
+    Route::post('approver/checklist-external-area-condition/{checklistExternalAreaCondition}/reject', [ApproverController::class, 'ChecklistExternalAreaConditionReject'])->name('checklist-external-area-condition-a.reject')->middleware('permission:REITS');
+
+    // Checklist Internal Area Condition Module
+    Route::get('approver/checklist-internal-area-condition/{checklist}', [ApproverController::class, 'ChecklistInternalAreaConditionIndex'])->name('checklist-internal-area-condition-a.index')->middleware('permission:REITS');
+    Route::get('approver/checklist-internal-area-condition/{checklistInternalAreaCondition}/show', [ApproverController::class, 'ChecklistInternalAreaConditionShow'])->name('checklist-internal-area-condition-a.show')->middleware('permission:REITS');
+    Route::get('approver/checklist-internal-area-condition/', [ApproverController::class, 'ChecklistInternalAreaConditionMain'])->name('checklist-internal-area-condition-a.main')->middleware('permission:REITS');
+    Route::get('approver/checklist-internal-area-condition/{checklistInternalAreaCondition}/details', [ApproverController::class, 'ChecklistInternalAreaConditionDetails'])->name('checklist-internal-area-condition-a.details')->middleware('permission:REITS');
+    Route::post('approver/checklist-internal-area-condition/{checklistInternalAreaCondition}/approve', [ApproverController::class, 'ChecklistInternalAreaConditionApprove'])->name('checklist-internal-area-condition-a.approve')->middleware('permission:REITS');
+    Route::post('approver/checklist-internal-area-condition/{checklistInternalAreaCondition}/reject', [ApproverController::class, 'ChecklistInternalAreaConditionReject'])->name('checklist-internal-area-condition-a.reject')->middleware('permission:REITS');
+
+    // Checklist Property Development Module
+    Route::get('approver/checklist-property-development/{checklist}', [ApproverController::class, 'ChecklistPropertyDevelopmentIndex'])->name('checklist-property-development-a.index')->middleware('permission:REITS');
+    Route::get('approver/checklist-property-development/{checklistPropertyDevelopment}/show', [ApproverController::class, 'ChecklistPropertyDevelopmentShow'])->name('checklist-property-development-a.show')->middleware('permission:REITS');
+    Route::get('approver/checklist-property-development/', [ApproverController::class, 'ChecklistPropertyDevelopmentMain'])->name('checklist-property-development-a.main')->middleware('permission:REITS');
+    Route::get('approver/checklist-property-development/{checklistPropertyDevelopment}/details', [ApproverController::class, 'ChecklistPropertyDevelopmentDetails'])->name('checklist-property-development-a.details')->middleware('permission:REITS');
+    Route::post('approver/checklist-property-development/{checklistPropertyDevelopment}/approve', [ApproverController::class, 'ChecklistPropertyDevelopmentApprove'])->name('checklist-property-development-a.approve')->middleware('permission:REITS');
+    Route::post('approver/checklist-property-development/{checklistPropertyDevelopment}/reject', [ApproverController::class, 'ChecklistPropertyDevelopmentReject'])->name('checklist-property-development-a.reject')->middleware('permission:REITS');
+
+    // Checklist Disposal Installation Module
+    Route::get('approver/checklist-disposal-installation/{checklist}', [ApproverController::class, 'ChecklistDisposalInstallationIndex'])->name('checklist-disposal-installation-a.index')->middleware('permission:REITS');
+    Route::get('approver/checklist-disposal-installation/{checklistDisposalInstallation}/show', [ApproverController::class, 'ChecklistDisposalInstallationShow'])->name('checklist-disposal-installation-a.show')->middleware('permission:REITS');
+    Route::get('approver/checklist-disposal-installation/', [ApproverController::class, 'ChecklistDisposalInstallationMain'])->name('checklist-disposal-installation-a.main')->middleware('permission:REITS');
+    Route::get('approver/checklist-disposal-installation/{checklistDisposalInstallation}/details', [ApproverController::class, 'ChecklistDisposalInstallationDetails'])->name('checklist-disposal-installation-a.details')->middleware('permission:REITS');
+    Route::post('approver/checklist-disposal-installation/{checklistDisposalInstallation}/approve', [ApproverController::class, 'ChecklistDisposalInstallationApprove'])->name('checklist-disposal-installation-a.approve')->middleware('permission:REITS');
+    Route::post('approver/checklist-disposal-installation/{checklistDisposalInstallation}/reject', [ApproverController::class, 'ChecklistDisposalInstallationReject'])->name('checklist-disposal-installation-a.reject')->middleware('permission:REITS');
+
     // Appointment Module
     Route::get('approver/appointment/', [ApproverController::class, 'AppointmentIndex'])->name('appointment-a.index')->middleware('permission:REITS');
     Route::get('approver/appointment/{appointment}/show', [ApproverController::class, 'AppointmentShow'])->name('appointment-a.show')->middleware('permission:REITS');
