@@ -112,7 +112,9 @@
                                 </p>
                                 <p class="flex justify-between">
                                     <strong class="text-gray-700">Maturity Date:</strong>
-                                    <span class="text-right">{{ $facility->maturity_date->format('d-M-Y') }}</span>
+                                    <span class="text-right">
+                                        {{ optional($facility->maturity_date)->format('d-M-Y') ?? '-' }}
+                                    </span>
                                 </p>
                                 <p class="flex justify-between">
                                     <strong class="text-gray-700">Instrument:</strong>
@@ -180,8 +182,9 @@
                                 </p>
                                 <p class="flex justify-between">
                                     <strong class="text-gray-700">Availability:</strong>
-                                    <span
-                                        class="text-right">{{ $facility->availability_date->format('d-M-Y') }}</span>
+                                    <span class="text-right">
+                                        {{ optional($facility->availability_date)->format('d-M-Y') ?? '-' }}
+                                    </span>
                                 </p>
                                 <p class="flex justify-between">
                                     <strong class="text-gray-700">Outstanding (RM):</strong>
