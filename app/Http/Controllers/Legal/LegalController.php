@@ -2,22 +2,27 @@
 
 namespace App\Http\Controllers\Legal;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Models\Bank;
+use App\Models\Lease;
+use App\Models\Tenant;
 
 // REITs
-use App\Models\Bank;
+use App\Models\Property;
+use App\Models\Checklist;
+use App\Models\Financial;
+use App\Models\Portfolio;
+use App\Models\SiteVisit;
+use App\Models\ListSecurity;
+use Illuminate\Http\Request;
 use App\Models\FinancialType;
 use App\Models\PortfolioType;
-use App\Models\Portfolio;
-use App\Models\Property;
-use App\Models\Tenant;
-use App\Models\Lease;
-use App\Models\Financial;
-use App\Models\Checklist;
-use App\Models\SiteVisit;
+use App\Models\SecurityDocRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\View\View;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Models\ChecklistLegalDocumentation;
+use App\Http\Requests\RequestDocumentsStoreRequest;
 
 class LegalController extends Controller
 {
@@ -48,7 +53,7 @@ class LegalController extends Controller
     public function ChecklistLegalDocumentationUpdate(Request $request, ChecklistLegalDocumentation $checklistLegalDocumentation)
     {
         $validated = $this->ChecklistLegalDocumentationValidate($request);
-    
+
         $validated['verified_by'] = Auth::user()->name;
         $validated['status'] = 'Active';
 
@@ -62,7 +67,7 @@ class LegalController extends Controller
             $checklist['status'] = 'Active';
             $checklist['approval_datetime'] = now();
             $checklist->update();
-            
+
             return redirect()->route('legal.dashboard', ['section' => 'reits'])->with('success', 'Legal documentation updated successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error updating legal documentation: ' . $e->getMessage());
@@ -95,5 +100,130 @@ class LegalController extends Controller
     public function ChecklistLegalDocumentationShow(Checklist $checklist)
     {
         return view('legal.checklist-legal-documentation.show', compact('checklist'));
+    }
+
+    public function SecDocuments(Request $request)
+    {
+        $search = $request->input('search');
+
+        $securitiesQuery = ListSecurity::with('issuer')
+            ->where('status', 'Active')
+            ->latest();
+
+        // Apply search filter if provided
+        if ($search) {
+            $securitiesQuery->where(function ($query) use ($search) {
+                $query->where('security_name', 'like', "%{$search}%")
+                    ->orWhereHas('issuer', function ($q) use ($search) {
+                        $q->where('issuer_short_name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $securities = $securitiesQuery->paginate(10)->withQueryString();
+
+        $getListReq = SecurityDocRequest::with('listSecurity.issuer')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('legal.dcmt.index', compact('getListReq', 'securities'));
+    }
+
+    public function RequestDocuments($id): View
+    {
+        $getListSec = ListSecurity::with('issuer')->findOrFail($id);
+
+        $getListReq = SecurityDocRequest::with('listSecurity.issuer')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('legal.dcmt.request', compact('getListSec', 'getListReq'));
+    }
+
+    public function RequestDocumentsCreate()
+    {
+        $user = Auth::user();
+
+        $listSecurities = ListSecurity::with('issuer')
+            ->where('status', 'Active')
+            ->latest()
+            ->get();
+
+        return view('legal.dcmt.create', compact('user', 'listSecurities'));
+    }
+
+
+    public function RequestDocumentsStore(Request $request)
+    {
+        $request->validate([
+            'security_id' => 'required|exists:list_securities,id',
+            'request_date' => 'required|date',
+            'purpose' => 'required|string',
+        ]);
+
+        SecurityDocRequest::create([
+            'list_security_id' => $request->security_id,
+            'request_date' => $request->request_date,
+            'purpose' => $request->purpose,
+            'status' => 'Draft', // or 'Draft'
+            'prepared_by' => Auth::user()->name,
+        ]);
+
+        return redirect()->route('legal.request-documents.history', $request->security_id)->with('success', 'Document request created successfully.');
+    }
+
+    public function RequestDocumentsHistory(ListSecurity $security)
+    {
+        $history = $security->securityDocRequests()->latest()->get();
+
+        return view('legal.dcmt.history', compact('security', 'history'));
+    }
+
+    public function RequestDocumentsEdit(Request $request, $id)
+    {
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $listSecurities = ListSecurity::with('issuer')
+            ->where('status', 'Active')
+            ->latest()
+            ->get();
+
+        return view('legal.dcmt.edit', compact('documentRequest', 'listSecurities'));
+    }
+
+    public function RequestDocumentsUpdate(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'security_id'  => 'required|exists:list_securities,id',
+            'request_date' => 'required|date',
+            'purpose'      => 'required|string|max:1000',
+            'prepared_by'  => 'required|string|max:255',
+        ]);
+
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $documentRequest->update([
+            'list_security_id' => $validated['security_id'],
+            'request_date'     => $validated['request_date'],
+            'purpose'          => $validated['purpose'],
+            'prepared_by'      => $validated['prepared_by'],
+        ]);
+
+        return redirect()->route('legal.request-documents.history', [
+            'security' => $documentRequest->list_security_id,
+        ])->with('success', 'Document request updated successfully!');
+    }
+
+    public function submitRequest(Request $request, $id)
+    {
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $documentRequest->update([
+            'status' => 'Pending',
+        ]);
+
+        return redirect()->back()->with('success', 'Document request submitted successfully!');
     }
 }

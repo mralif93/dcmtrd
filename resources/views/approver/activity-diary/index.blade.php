@@ -51,6 +51,18 @@
                             {{ __('Activity Diary') }}
                         </a>
 
+                        <!-- Listing Security -->
+                        <a href="{{ route('list-security-a.index') }}"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Listing Security') }}
+                        </a>
+
+                        <!-- Listing Security -->
+                        <a href="{{ route('fund-transfer-a.index') }}"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Placement & Fund Transfer') }}
+                        </a>
+
                         <!-- Audit Log -->
                         <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Audit Log') }}

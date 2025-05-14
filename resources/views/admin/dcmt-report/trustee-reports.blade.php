@@ -4,8 +4,8 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            
+        <div class="mx-auto space-y-6 max-w-7xl sm:px-6 lg:px-8">
+
             {{-- Success Message --}}
             @if (session('success'))
                 <div class="p-4 mb-6 border-l-4 border-green-500 rounded-md shadow bg-green-50">
@@ -20,19 +20,56 @@
                 </div>
             @endif
 
-            {{-- Export Button --}}
-            <div class="flex justify-end mb-4">
-                <a href="{{ route('dcmt-reports.cb-export', ['type' => 'xls']) }}"
-                   class="px-6 py-2 text-sm font-semibold text-white bg-gray-800 rounded-md shadow hover:bg-gray-900">
-                    Export XLS
-                </a>
+            {{-- Error Message --}}
+            @if (session('error'))
+                <div class="p-4 mb-6 border-l-4 border-red-500 rounded-md shadow bg-red-50">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <p class="ml-3 text-sm font-medium text-red-800">{{ session('error') }}</p>
+                    </div>
+                </div>
+            @endif
+
+            <div class="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-0">
+                <form method="GET" action="{{ route('dcmt-reports.cb-reports') }}"
+                    class="flex w-full max-w-md space-x-2">
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        class="flex-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-300"
+                        placeholder="Search by Bond Name, Facility Code, etc.">
+                    <button type="submit"
+                        class="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Search</button>
+                </form>
+
+                <div class="flex flex-wrap justify-end gap-2">
+                    <a href="{{ route('a.dcmt-reports.cb-export.a', ['type' => 'xls']) }}"
+                        class="px-6 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700">
+                        Export XLS
+                    </a>
+                    <a href="{{ route('dcmt-reports.trustee-reports.batches') }}"
+                        class="px-6 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                        View Batches
+                    </a>
+                    <form method="POST" action="{{ route('dcmt-reports.trustee-reports.cutoff') }}">
+                        @csrf
+                        <button type="submit"
+                            onclick="return confirm('Are you sure you want to cut off and save this report to a batch?')"
+                            class="px-6 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700">
+                            Cut Off (Save to Batch)
+                        </button>
+                    </form>
+
+                </div>
             </div>
 
             {{-- Data Table --}}
-            <div class="overflow-hidden bg-white rounded-lg shadow">
+            <div class="overflow-hidden bg-white rounded-lg shadow-md">
                 <div class="overflow-x-auto max-h-[500px]">
-                    <table class="min-w-full border-separate table-auto border-spacing-0">
-                        <thead class="sticky top-0 z-10 bg-gray-50">
+                    <table class="w-full text-sm text-left text-gray-700 table-auto">
+                        <thead class="sticky top-0 z-10 bg-indigo-50">
                             <tr class="text-xs font-semibold text-gray-600 uppercase">
                                 <th class="px-6 py-3 text-left">Sl No.</th>
                                 <th class="px-6 py-3 text-left">Trust</th>
@@ -45,10 +82,12 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            @foreach ($reports as $index => $item)
+                            @forelse ($reports as $index => $item)
                                 <tr class="transition-all duration-150 hover:bg-gray-100">
-                                    <td class="px-6 py-4 text-sm text-gray-900">{{ $reports->firstItem() + $index }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer_short_name ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900">{{ $reports->firstItem() + $index }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer_short_name ?? '-' }}
+                                    </td>
                                     <td class="px-6 py-4 text-sm text-gray-500">{{ $item->issuer_name ?? '-' }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500">{{ $item->debenture ?? '-' }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500">
@@ -64,7 +103,13 @@
                                         {{ number_format($item->total_trustee_fee, 2) }}
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="px-6 py-4 text-sm text-center text-gray-500">
+                                        No records found.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

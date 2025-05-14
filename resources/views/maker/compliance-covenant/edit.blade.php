@@ -64,7 +64,8 @@
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                                 <div>
-                                    <label for="letter_to_issuer" class="block text-sm font-medium text-gray-700">Letter to Issuer *</label>
+                                    <label for="letter_to_issuer" class="block text-sm font-medium text-gray-700">Letter
+                                        to Issuer *</label>
                                     <input type="date" name="letter_to_issuer" id="letter_to_issuer"
                                         value="{{ old('letter_to_issuer', optional($compliance->letter_to_issuer)->format('Y-m-d')) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
@@ -76,86 +77,159 @@
                             </div>
                         </div>
 
-                        <!-- Documents Section -->
                         <div class="pb-6 border-b border-gray-200">
                             <h3 class="mb-4 text-lg font-medium text-gray-900">Document Submissions</h3>
-                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <div>
-                                    <label for="audited_financial_statements"
-                                        class="block text-sm font-medium text-gray-700">Audited Financial
-                                        Statements</label>
-                                    <input type="text" name="audited_financial_statements"
-                                        id="audited_financial_statements"
-                                        value="{{ old('audited_financial_statements', $compliance->audited_financial_statements) }}"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <p class="mt-1 text-xs text-gray-500">Enter reference number or submission date</p>
-                                </div>
-                                <div>
-                                    <label for="audited_financial_statements"
-                                        class="block text-sm font-medium text-gray-700">Due Date</label>
-                                    <input type="text" name="audited_financial_statements"
-                                        id="audited_financial_statements"
-                                        value="{{ old('audited_financial_statements', $compliance->audited_financial_statements_due) }}"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <p class="mt-1 text-xs text-gray-500">Enter reference number or submission date</p>
-                                </div>
-                                <div>
-                                    <label for="unaudited_financial_statements"
-                                        class="block text-sm font-medium text-gray-700">Unaudited Financial
-                                        Statements</label>
-                                    <input type="text" name="unaudited_financial_statements"
-                                        id="unaudited_financial_statements"
-                                        value="{{ old('unaudited_financial_statements', $compliance->unaudited_financial_statements) }}"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <p class="mt-1 text-xs text-gray-500">Enter reference number or submission date</p>
-                                </div>
-                                <div>
-                                    <label for="unaudited_financial_statements"
-                                        class="block text-sm font-medium text-gray-700">Due Date</label>
-                                    <input type="text" name="unaudited_financial_statements"
-                                        id="unaudited_financial_statements"
-                                        value="{{ old('unaudited_financial_statements', $compliance->unaudited_financial_statements_due) }}"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <p class="mt-1 text-xs text-gray-500">Enter reference number or submission date</p>
-                                </div>
+
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                <!-- Compliance Certificate -->
                                 <div>
                                     <label for="compliance_certificate"
                                         class="block text-sm font-medium text-gray-700">Compliance Certificate</label>
-                                    <input type="text" name="compliance_certificate" id="compliance_certificate"
+                                    <input type="date" name="compliance_certificate" id="compliance_certificate"
                                         value="{{ old('compliance_certificate', $compliance->compliance_certificate) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <p class="mt-1 text-xs text-gray-500">Enter reference number or submission date</p>
+                                    <input type="hidden" name="cc_not_required" value="0">
+                                    <div class="flex items-center mt-2 space-x-2">
+                                        <input type="checkbox" id="cc_not_required" name="cc_not_required"
+                                            value="1"
+                                            {{ old('cc_not_required', $compliance->cc_not_required) ? 'checked' : '' }}
+                                            class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
+                                        <label for="cc_not_required" class="text-sm text-gray-600">Not
+                                            Applicable</label>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">Enter submission date</p>
                                 </div>
+
+                                <!-- Audited Financial Statements (AFS) -->
+                                <div>
+                                    <label for="audited_financial_statements"
+                                        class="block text-sm font-medium text-gray-700">Audited Financial Statements
+                                        (AFS)</label>
+                                    <input type="date" name="audited_financial_statements"
+                                        id="audited_financial_statements"
+                                        value="{{ old('audited_financial_statements', $compliance->audited_financial_statements) }}"
+                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="hidden" name="afs_not_required" value="0">
+                                    <div class="flex items-center mt-2 space-x-2">
+                                        <input type="checkbox" id="afs_not_required" name="afs_not_required"
+                                            value="1"
+                                            {{ old('afs_not_required', $compliance->afs_not_required) ? 'checked' : '' }}
+                                            class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
+                                        <label for="afs_not_required" class="text-sm text-gray-600">Not
+                                            Applicable</label>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">Enter submission date</p>
+                                </div>
+
+                                <!-- AFS Due Date -->
+                                <div>
+                                    <label for="audited_financial_statements_due"
+                                        class="block text-sm font-medium text-gray-700">Due Date</label>
+                                    <input type="date" name="audited_financial_statements_due"
+                                        id="audited_financial_statements_due"
+                                        value="{{ old('audited_financial_statements_due', $compliance->audited_financial_statements_due) }}"
+                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <p class="mt-1 text-xs text-gray-500">Enter due date</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2">
+                                <!-- Unaudited Financial Statements (UFS) -->
+                                <div>
+                                    <label for="unaudited_financial_statements"
+                                        class="block text-sm font-medium text-gray-700">Unaudited Financial Statements
+                                        (UFS)</label>
+                                    <input type="date" name="unaudited_financial_statements"
+                                        id="unaudited_financial_statements"
+                                        value="{{ old('unaudited_financial_statements', $compliance->unaudited_financial_statements) }}"
+                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="hidden" name="ufs_not_required" value="0">
+                                    <div class="flex items-center mt-2 space-x-2">
+                                        <input type="checkbox" id="ufs_not_required" name="ufs_not_required"
+                                            value="1"
+                                            {{ old('ufs_not_required', $compliance->ufs_not_required) ? 'checked' : '' }}
+                                            class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
+                                        <label for="ufs_not_required" class="text-sm text-gray-600">Not
+                                            Applicable</label>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">Enter submission date</p>
+                                </div>
+
+                                <!-- UFS Due Date -->
+                                <div>
+                                    <label for="unaudited_financial_statements_due"
+                                        class="block text-sm font-medium text-gray-700">Due Date</label>
+                                    <input type="date" name="unaudited_financial_statements_due"
+                                        id="unaudited_financial_statements_due"
+                                        value="{{ old('unaudited_financial_statements_due', $compliance->unaudited_financial_statements_due) }}"
+                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <p class="mt-1 text-xs text-gray-500">Enter due date</p>
+                                </div>
+
+                                <!-- FSCR -->
                                 <div>
                                     <label for="finance_service_cover_ratio"
-                                        class="block text-sm font-medium text-gray-700">Finance Service Cover
-                                        Ratio</label>
-                                    <input type="text" name="finance_service_cover_ratio"
+                                        class="block text-sm font-medium text-gray-700">Finance Service Cover Ratio
+                                        (FSCR)</label>
+                                    <input type="date" name="finance_service_cover_ratio"
                                         id="finance_service_cover_ratio"
                                         value="{{ old('finance_service_cover_ratio', $compliance->finance_service_cover_ratio) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <p class="mt-1 text-xs text-gray-500">Enter reference number or submission date</p>
+                                    <input type="hidden" name="fscr_not_required" value="0">
+                                    <div class="flex items-center mt-2 space-x-2">
+                                        <input type="checkbox" id="fscr_not_required" name="fscr_not_required"
+                                            value="1"
+                                            {{ old('fscr_not_required', $compliance->fscr_not_required) ? 'checked' : '' }}
+                                            class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
+                                        <label for="fscr_not_required" class="text-sm text-gray-600">Not
+                                            Applicable</label>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">Enter submission date</p>
                                 </div>
+
+                                <!-- Annual Budget -->
                                 <div>
                                     <label for="annual_budget" class="block text-sm font-medium text-gray-700">Annual
                                         Budget</label>
-                                    <input type="text" name="annual_budget" id="annual_budget"
+                                    <input type="date" name="annual_budget" id="annual_budget"
                                         value="{{ old('annual_budget', $compliance->annual_budget) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <p class="mt-1 text-xs text-gray-500">Enter reference number or submission date</p>
+                                    <input type="hidden" name="budget_not_required" value="0">
+                                    <div class="flex items-center mt-2 space-x-2">
+                                        <input type="checkbox" id="budget_not_required" name="budget_not_required"
+                                            value="1"
+                                            {{ old('budget_not_required', $compliance->budget_not_required) ? 'checked' : '' }}
+                                            class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
+                                        <label for="budget_not_required" class="text-sm text-gray-600">Not
+                                            Applicable</label>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">Enter submission date</p>
                                 </div>
+
+                                <!-- Computation of Finance to EBITDA -->
                                 <div>
                                     <label for="computation_of_finance_to_ebitda"
                                         class="block text-sm font-medium text-gray-700">Computation of Finance to
                                         EBITDA</label>
-                                    <input type="text" name="computation_of_finance_to_ebitda"
+                                    <input type="date" name="computation_of_finance_to_ebitda"
                                         id="computation_of_finance_to_ebitda"
                                         value="{{ old('computation_of_finance_to_ebitda', $compliance->computation_of_finance_to_ebitda) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <p class="mt-1 text-xs text-gray-500">Enter reference number or submission date</p>
+                                    <input type="hidden" name="ebitda_not_required" value="0">
+                                    <div class="flex items-center mt-2 space-x-2">
+                                        <input type="checkbox" id="ebitda_not_required" name="ebitda_not_required"
+                                            value="1"
+                                            {{ old('ebitda_not_required', $compliance->ebitda_not_required) ? 'checked' : '' }}
+                                            class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
+                                        <label for="ebitda_not_required" class="text-sm text-gray-600">Not
+                                            Applicable</label>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">Enter submission date</p>
                                 </div>
+
                             </div>
                         </div>
+
 
                         <!-- System Information -->
                         <div>

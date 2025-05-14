@@ -2,64 +2,75 @@
 
 namespace App\Http\Controllers\Maker;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
+use App\Models\Bank;
+use App\Models\Bond;
+use App\Models\User;
+use App\Models\Lease;
+use App\Models\Issuer;
+use App\Models\Tenant;
+use App\Models\Property;
+use App\Models\AdiHolder;
+use App\Models\Checklist;
+use App\Models\Financial;
+use App\Models\Portfolio;
+use App\Models\SiteVisit;
+
+use App\Models\Redemption;
+
+// Bonds
+use App\Models\TrusteeFee;
 use App\Imports\BondImport;
+use App\Models\Appointment;
+use App\Models\Announcement;
+use App\Models\ApprovalForm;
+use App\Models\CallSchedule;
+use App\Models\ListSecurity;
+use App\Models\SiteVisitLog;
+use Illuminate\Http\Request;
+use App\Models\ActivityDiary;
+use App\Models\FinancialType;
+use App\Models\LockoutPeriod;
+use App\Models\PortfolioType;
+use App\Models\TenancyLetter;
+
+// REITs
+use App\Models\RatingMovement;
+use App\Models\ChecklistTenant;
+use App\Models\PaymentSchedule;
+use App\Models\RelatedDocument;
+use App\Models\TradingActivity;
+use Illuminate\Validation\Rule;
+use App\Models\ApprovalProperty;
+use App\Models\ComplianceCovenant;
+use App\Models\SecurityDocRequest;
+use Illuminate\Support\Facades\DB;
+use App\Models\FacilityInformation;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\PlacementFundTransfer;
+use Illuminate\Http\RedirectResponse;
 use App\Imports\PaymentScheduleImport;
 use App\Imports\RatingMovementsImport;
 use App\Imports\TradingActivityImport;
 
-use App\Models\User;
-
-// Bonds
-use App\Models\Issuer;
-use App\Models\Bond;
-use App\Models\Announcement;
-use App\Models\RelatedDocument;
-use App\Models\FacilityInformation;
-use App\Models\RatingMovement;
-use App\Models\PaymentSchedule;
-use App\Models\Redemption;
-use App\Models\CallSchedule;
-use App\Models\LockoutPeriod;
-use App\Models\TradingActivity;
-use App\Models\TrusteeFee;
-use App\Models\ComplianceCovenant;
-use App\Models\ActivityDiary;
-
-// REITs
-use App\Models\Bank;
-use App\Models\FinancialType;
-use App\Models\PortfolioType;
-use App\Models\Portfolio;
-use App\Models\Property;
-use App\Models\Tenant;
-use App\Models\Lease;
-use App\Models\Financial;
-use App\Models\Checklist;
-use App\Models\SiteVisit;
-use App\Models\SiteVisitLog;
-use App\Models\Appointment;
-use App\Models\ApprovalForm;
-use App\Models\ApprovalProperty;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\ListSecurityRequest;
+use App\Http\Requests\User\BondFormRequest;
 use App\Models\ChecklistLegalDocumentation;
-use App\Models\ChecklistTenant;
-use App\Models\ChecklistExternalAreaCondition;
-use App\Models\ChecklistInternalAreaCondition;
+use App\Http\Requests\StoreADIHolderRequest;
 use App\Models\ChecklistPropertyDevelopment;
 use App\Models\ChecklistDisposalInstallation;
-use App\Models\TenancyLetter;
-
-use App\Http\Requests\User\BondFormRequest;
+use App\Models\ChecklistExternalAreaCondition;
+use App\Models\ChecklistInternalAreaCondition;
+use App\Http\Requests\StoreFundTransferRequest;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
+use App\Jobs\TrusteeFee\SendTrusteeFeeSubmittedEmail;
+use App\Jobs\FundTransfer\SendFundTransferPendingEmail;
+use App\Jobs\ListSecurity\SendListSecuritySubmittedEmail;
+use App\Jobs\Compliance\SendComplianceCovenantSubmittedEmail;
 
 class MakerController extends Controller
 {
@@ -114,6 +125,8 @@ class MakerController extends Controller
                 (SELECT COUNT(*) FROM appointments) AS appointments_count,
                 (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
                 (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
+                (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
+                (SELECT COUNT(*) FROM placement_fund_transfers) AS placement_fund_transfers_count,
 
                 (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
                 (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
@@ -158,6 +171,8 @@ class MakerController extends Controller
             'approvalFormsCount' => $counts->approval_forms_count,
             'approvalPropertiesCount' => $counts->approval_properties_count,
             'siteVisitLogsCount' => $counts->site_visit_logs_count,
+            'listSecuritiesCount' => $counts->list_securities_count,
+            'placementFundTransfersCount' => $counts->placement_fund_transfers_count,
 
             // Adding pending counts
             'trusteeFeePendingCount' => $counts->trustee_fees_pending_count,
@@ -277,11 +292,6 @@ class MakerController extends Controller
         $bonds = $issuer->bonds()
             ->paginate($perPage, ['*'], 'bondsPage');
 
-        // Announcements with empty handling
-        $announcements = $issuer->announcements()
-            ->latest()
-            ->paginate($perPage, ['*'], 'announcementsPage');
-
         // Documents with empty handling
         $documents = $issuer->documents()
             ->paginate($perPage, ['*'], 'documentsPage');
@@ -293,7 +303,6 @@ class MakerController extends Controller
         return view('maker.details', [
             'issuer' => $issuer,
             'bonds' => $bonds,
-            'announcements' => $announcements,
             'documents' => $documents,
             'facilities' => $facilities,
         ]);
@@ -463,8 +472,8 @@ class MakerController extends Controller
     public function AnnouncementCreate(Issuer $issuer)
     {
         $issuerInfo = $issuer;
-        $issuers = Issuer::all();
-        return view('maker.announcement.create', compact('issuers', 'issuerInfo'));
+        $facilities = FacilityInformation::all();
+        return view('maker.announcement.create', compact('facilities', 'issuerInfo'));
     }
 
     public function AnnouncementStore(Request $request)
@@ -484,7 +493,7 @@ class MakerController extends Controller
             $announcement = Announcement::create($validated);
 
             // Redirect to the details page of the created announcement with a success message
-            return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement created successfully');
+            return redirect()->route('facility-info-m.show', $announcement->facility)->with('success', 'Announcement created successfully');
         } catch (\Exception $e) {
             // If an error occurs, redirect back with the error message
             return back()->withErrors(['error' => 'Error creating: ' . $e->getMessage()])->withInput();
@@ -493,9 +502,9 @@ class MakerController extends Controller
 
     public function AnnouncementEdit(Announcement $announcement)
     {
-        $announcement = $announcement->load('issuer');
-        $issuers = Issuer::all();
-        return view('maker.announcement.edit', compact('announcement', 'issuers'));
+        $announcement = $announcement->load('facility');
+        $facilities = FacilityInformation::all();
+        return view('maker.announcement.edit', compact('announcement', 'facilities'));
     }
 
     public function AnnouncementUpdate(Request $request, Announcement $announcement)
@@ -521,7 +530,7 @@ class MakerController extends Controller
             $announcement->update($validated);
 
             // Redirect to the details page with a success message
-            return redirect()->route('bond-m.details', $announcement->issuer)->with('success', 'Announcement updated successfully');
+            return redirect()->route('facility-info-m.show', $announcement->facility)->with('success', 'Announcement created successfully');
         } catch (\Exception $e) {
             // If an error occurs, return to the previous page with the error message
             return back()->withErrors(['error' => 'Error updating: ' . $e->getMessage()])->withInput();
@@ -530,14 +539,14 @@ class MakerController extends Controller
 
     public function AnnouncementShow(Announcement $announcement)
     {
-        $announcement = $announcement->load('issuer');
+        $announcement = $announcement->load('facility');
         return view('maker.announcement.show', compact('announcement'));
     }
 
     protected function validateAnnouncement(Request $request)
     {
         return $request->validate([
-            'issuer_id' => 'required|exists:issuers,id',
+            'facility_id' => 'required|exists:facility_informations,id',
             'category' => 'required|string|max:50',
             'sub_category' => 'nullable|string|max:50',
             'source' => 'required|string|max:100',
@@ -578,7 +587,7 @@ class MakerController extends Controller
 
         // Find the related facility and redirect back with a success message
         $facility = FacilityInformation::findOrFail($validated['facility_id']);
-        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document created successfully');
+        return redirect()->route('facility-info-m.show', $facility)->with('success', 'Document created successfully');
     }
 
 
@@ -615,7 +624,7 @@ class MakerController extends Controller
 
         // Find the related facility and redirect back with a success message
         $facility = FacilityInformation::findOrFail($validated['facility_id']);
-        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Document updated successfully');
+        return redirect()->route('facility-info-m.show', $facility)->with('success', 'Document updated successfully');
     }
 
 
@@ -678,7 +687,9 @@ class MakerController extends Controller
 
         // Fetch bonds with pagination
         $bonds = $facility->issuer->bonds()
-            ? $facility->issuer->bonds()->paginate($perPage, ['*'], 'bondsPage')
+            ? $facility->issuer->bonds()
+            ->where('facility_code', $facility->facility_code)
+            ->paginate($perPage, ['*'], 'bondsPage')
             : collect(); // Use an empty collection instead of $emptyPaginator
 
         // Documents Pagination
@@ -686,10 +697,18 @@ class MakerController extends Controller
             ? $facility->documents()->paginate($perPage, ['*'], 'documentsPage')
             : collect(); // Use an empty collection instead of $emptyPaginator
 
+        $announcements = $facility->announcements()
+            ->latest()
+            ->paginate($perPage, ['*'], 'announcementsPage');
+
         // Load all rating movements across all bonds
         $allRatingMovements = $facility->issuer->bonds->flatMap(function ($bond) {
             return $bond->ratingMovements; // Collect rating movements from each bond
         });
+
+        $adiHoldersPaginated = $facility->adiHolders()->paginate(15);
+        $adiHoldersGrouped = $adiHoldersPaginated->getCollection()->groupBy('adi_holder');
+        $totalNominal = $adiHoldersPaginated->getCollection()->sum('nominal_value');
 
         // Paginate the rating movements
         $currentPage = request()->get('ratingMovementsPage', 1); // Get current page from request
@@ -704,7 +723,11 @@ class MakerController extends Controller
             'facility' => $facility,
             'activeBonds' => $bonds,
             'documents' => $documents,
+            'announcements' => $announcements,
             'ratingMovements' => $ratingMovements,
+            'adiHolders' => $adiHoldersGrouped,
+            'adiHoldersPaginated' => $adiHoldersPaginated,
+            'totalNominal' => $totalNominal,
         ]);
     }
 
@@ -1256,10 +1279,6 @@ class MakerController extends Controller
             });
         }
 
-        if ($request->has('invoice_no') && !empty($request->invoice_no)) {
-            $query->where('invoice_no', 'LIKE', '%' . $request->invoice_no . '%');
-        }
-
         if ($request->has('month') && !empty($request->month)) {
             $query->where('month', $request->month);
         }
@@ -1350,6 +1369,8 @@ class MakerController extends Controller
                 'prepared_by' => Auth::user()->name,
             ]);
 
+            dispatch(new SendTrusteeFeeSubmittedEmail($trusteeFee));
+
             return redirect()
                 ->route('trustee-fee-m.show', $trusteeFee)
                 ->with('success', 'Trustee Fee submitted for approval successfully.');
@@ -1367,7 +1388,6 @@ class MakerController extends Controller
             'trustee_fee_amount_2' => 'nullable|numeric',
             'start_anniversary_date' => 'required|date',
             'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
-            'invoice_no' => 'required|string|unique:trustee_fees,invoice_no,' . ($trusteeFee ? $trusteeFee->id : 'NULL'),
             'month' => 'nullable|string|max:10',
             'memo_to_fad' => 'nullable|date',
             'date_letter_to_issuer' => 'nullable|date',
@@ -1459,6 +1479,7 @@ class MakerController extends Controller
 
     public function ComplianceUpdate(Request $request, ComplianceCovenant $compliance)
     {
+        // dd($request->all());
         $validated = $this->validateCompliance($request);
 
         $compliance->update($validated);
@@ -1490,6 +1511,8 @@ class MakerController extends Controller
                 'prepared_by' => Auth::user()->name,
             ]);
 
+            dispatch(new SendComplianceCovenantSubmittedEmail($compliance));
+
             return redirect()
                 ->route('compliance-covenant-m.show', $compliance)
                 ->with('success', 'Compliance Covenant submitted for approval successfully.');
@@ -1508,15 +1531,23 @@ class MakerController extends Controller
 
             'audited_financial_statements' => 'nullable|date',
             'audited_financial_statements_due' => 'nullable|date',
+            'afs_not_required' => 'nullable|boolean',  // ensures true/false
 
             'compliance_certificate' => 'nullable|date',
+            'cc_not_required' => 'nullable|boolean',  // ensures true/false
 
             'unaudited_financial_statements' => 'nullable|date',
             'unaudited_financial_statements_due' => 'nullable|date',
+            'ufs_not_required' => 'nullable|boolean',  // ensures true/false
 
             'finance_service_cover_ratio' => 'nullable|date',
+            'fscr_not_required' => 'nullable|boolean',
+
             'annual_budget' => 'nullable|date',
+            'budget_not_required' => 'nullable|boolean',
+
             'computation_of_finance_to_ebitda' => 'nullable|date',
+            'ebitda_not_required' => 'nullable|boolean',
 
             'status' => 'nullable|in:Draft,Active,Inactive,Pending,Rejected',
             'prepared_by' => 'nullable|string|max:255',
@@ -1524,6 +1555,7 @@ class MakerController extends Controller
             'remarks' => 'nullable|string',
         ]);
     }
+
 
 
     // Activity Diary
@@ -1580,7 +1612,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'draft';
+        $validated['status'] = 'Draft';
 
         $activity = ActivityDiary::create($validated);
 
@@ -1688,7 +1720,7 @@ class MakerController extends Controller
 
         $query = ActivityDiary::with('issuer')
             ->whereBetween('due_date', [$today, $nextWeek])
-            ->where('status', '!=', 'completed');
+            ->where('status', '!=', 'Completed');
 
         // Apply filters if provided
         if ($request->filled('issuer')) {
@@ -1842,19 +1874,19 @@ class MakerController extends Controller
 
         // Handle file uploads
         if ($request->hasFile('annual_report')) {
-            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports', 'public');
         }
 
         if ($request->hasFile('trust_deed_document')) {
-            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents', 'public');
         }
 
         if ($request->hasFile('insurance_document')) {
-            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents', 'public');
         }
 
         if ($request->hasFile('valuation_report')) {
-            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports', 'public');
         }
 
         try {
@@ -1879,44 +1911,33 @@ class MakerController extends Controller
 
         // Handle file uploads
         if ($request->hasFile('annual_report')) {
-            // Remove old file if it exists
             if ($portfolio->annual_report) {
-                Storage::delete($portfolio->annual_report);
+                Storage::disk('public')->delete($portfolio->annual_report);
             }
-
-            // Store the new file and get its path
-            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports');
+            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports', 'public');
         }
 
         if ($request->hasFile('trust_deed_document')) {
-            // Remove old file if it exists
             if ($portfolio->trust_deed_document) {
-                Storage::delete($portfolio->trust_deed_document);
+                Storage::disk('public')->delete($portfolio->trust_deed_document);
             }
-
-            // Store the new file and get its path
-            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents');
+            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents', 'public');
         }
 
         if ($request->hasFile('insurance_document')) {
-            // Remove old file if it exists
             if ($portfolio->insurance_document) {
-                Storage::delete($portfolio->insurance_document);
+                Storage::disk('public')->delete($portfolio->insurance_document);
             }
-
-            // Store the new file and get its path
-            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents');
+            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents', 'public');
         }
 
         if ($request->hasFile('valuation_report')) {
-            // Remove old file if it exists
             if ($portfolio->valuation_report) {
-                Storage::delete($portfolio->valuation_report);
+                Storage::disk('public')->delete($portfolio->valuation_report);
             }
-
-            // Store the new file and get its path
-            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports');
+            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports', 'public');
         }
+
 
         try {
             $portfolio->update($validated);
@@ -1994,7 +2015,7 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'active';
+        $validated['status'] = 'pending';
 
         try {
             // Create the financial record
@@ -2362,7 +2383,7 @@ class MakerController extends Controller
         $validated = $this->TenantValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'active';
+        $validated['status'] = 'pending';
 
         try {
             $tenant = Tenant::create($validated);
@@ -2548,10 +2569,10 @@ class MakerController extends Controller
     public function TenancyLetterIndex(Property $property)
     {
         $tenancyLetters = $property->tenancyLetters()
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(10)
-                        ->withQueryString();
-                        
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('maker.tenancy-letter.index', compact('tenancyLetters', 'propertyInfo'));
     }
 
@@ -2577,7 +2598,7 @@ class MakerController extends Controller
         try {
             $tenancyLetter = TenancyLetter::create($validated);
             return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error creating tenancy letter: ' . $e->getMessage());
         }
     }
@@ -2591,21 +2612,21 @@ class MakerController extends Controller
     public function TenancyLetterUpdate(Request $request, TenancyLetter $tenancyLetter)
     {
         $validated = $this->TenancyLetterValidate($request);
-        
+
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
             // Delete old file if exists
             if ($tenancyLetter->attachment && Storage::disk('public')->exists($tenancyLetter->attachment)) {
                 Storage::disk('public')->delete($tenancyLetter->attachment);
             }
-            
+
             $validated['attachment'] = $request->file('attachment')->store('tenancy-letter-attachments', 'public');
         }
 
         try {
             $tenancyLetter->update($validated);
             return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error updating tenancy letter: ' . $e->getMessage());
         }
     }
@@ -2632,7 +2653,7 @@ class MakerController extends Controller
         try {
             $tenancyLetter->delete();
             return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter deleted successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error deleting tenancy letter: ' . $e->getMessage());
         }
     }
@@ -2866,7 +2887,7 @@ class MakerController extends Controller
         // Get site visits related to the property
         $property = $checklist->siteVisit->property;
         $siteVisits = SiteVisit::where('property_id', $property->id)
-            ->where('status', 'active')
+            ->where('status', 'pending')
             ->orderBy('date_visit', 'desc')
             ->get();
 
@@ -3558,9 +3579,9 @@ class MakerController extends Controller
             ->when($request->input('search'), function ($query, $search) {
                 return $query->where(function ($q) use ($search) {
                     $q->where('party_name', 'like', "%{$search}%")
-                    ->orWhereHas('portfolio', function($portfolio) use ($search) {
-                        $portfolio->where('portfolio_name', 'like', "%{$search}%");
-                    });
+                        ->orWhereHas('portfolio', function ($portfolio) use ($search) {
+                            $portfolio->where('portfolio_name', 'like', "%{$search}%");
+                        });
                 });
             })
             ->when($request->input('status'), function ($query, $status) {
@@ -3965,8 +3986,7 @@ class MakerController extends Controller
     public function SiteVisitLogValidate(Request $request)
     {
         return $request->validate([
-            'site_visit_id' => 'required|exists:site_visits,id',
-            'visitation_date' => 'required|date',
+            'property_id' => 'required|exists:properties,id',
             'purpose' => 'nullable|string',
             'report_submission_date' => 'nullable|date',
             'report_attachment' => 'nullable|file|mimes:pdf|max:10240',
@@ -4065,5 +4085,346 @@ class MakerController extends Controller
             'remarks' => 'nullable|string',
             'attachment' => 'nullable|file|max:10240',
         ]);
+    }
+
+    public function ListSecurityIndex(Request $request)
+    {
+        $query = ListSecurity::with('issuer')->latest();
+
+        // Apply status filter if provided
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('security_name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('security_code', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('asset_name_type', 'like', '%' . $searchTerm . '%') // Added this line for asset_name_type
+                    ->orWhereHas('issuer', function ($query) use ($searchTerm) {
+                        $query->where('issuer_name', 'like', '%' . $searchTerm . '%'); // Replace 'issuer_name' with the actual column name in the issuer model
+                    });
+            });
+        }
+
+        // Paginate the results and keep the search parameters in the query string
+        $securities = $query->paginate(10)->withQueryString();
+
+        // Count totals per status
+        $statusCounts = ListSecurity::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        // Add total count for all
+        $statusCounts[''] = ListSecurity::count();
+
+        return view('maker.listing-security.index', compact('securities', 'statusCounts'));
+    }
+
+
+    public function ListSecurityCreate()
+    {
+        $facilities = FacilityInformation::all();
+        $issuers = Issuer::all();
+
+        return view('maker.listing-security.create', compact('facilities', 'issuers'));
+    }
+
+    public function ListSecurityStore(ListSecurityRequest $req): RedirectResponse
+    {
+        $validated = $req->validated();
+
+        $validated['status'] = 'Draft';
+        $validated['prepared_by'] = Auth::user()->name;
+
+        ListSecurity::create($validated);
+
+        return redirect()
+            ->route('list-security-m.index')
+            ->with('success', 'Listing security created successfully.');
+    }
+
+    public function ListSecurityEdit($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        $issuers = Issuer::all();
+
+        return view('maker.listing-security.edit', compact('security', 'issuers'));
+    }
+
+    public function ListSecurityUpdate(ListSecurityRequest $req, $id): RedirectResponse
+    {
+        $validated = $req->validated();
+
+        $validated['status'] = 'Draft';
+        $validated['prepared_by'] = Auth::user()->name;
+
+        ListSecurity::findOrFail($id)->update($validated);
+        return redirect()
+            ->route('list-security-m.index')
+            ->with('success', 'Listing security updated successfully.');
+    }
+
+    public function SubmitApprovalListSecurity($id)
+    {
+        $security = ListSecurity::findOrFail($id);
+
+        $security->status = 'Pending';
+        $security->prepared_by = Auth::user()->name;
+        $security->save();
+
+        dispatch(new SendListSecuritySubmittedEmail($security));
+
+        return redirect()->route('list-security-m.index')->with('success', 'Security submitted for approval.');
+    }
+
+    public function resetToDraft(ListSecurity $security)
+    {
+        $security->update([
+            'status' => 'Draft',
+            'remarks' => null, // optionally clear reason
+        ]);
+
+        return redirect()->route('list-security-m.index')->with('success', 'Security reset to Draft.');
+    }
+
+    public function ListSecurityDetails($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('maker.listing-security.details', compact('security'));
+    }
+
+    public function ListSecurityRequest()
+    {
+        $getListReq = SecurityDocRequest::with('listSecurity.issuer')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        // dd($getListReq);
+        return view('maker.listing-security.list-request', compact('getListReq'));
+    }
+
+    public function ListSecurityShow($id)
+    {
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        return view('maker.listing-security.show', compact('security'));
+    }
+
+    public function ListSecurityCreateWithdrawal($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('maker.listing-security.show-approval', compact('security'));
+    }
+
+    public function ListSecurityCreateReturn($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('maker.listing-security.return', compact('security'));
+    }
+    public function SendDocumentsStatus($id, Request $request)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Validate that withdrawal date is passed with the request
+        $withdrawalDate = $request->input('withdrawal_date');
+
+        // Update the status and other fields
+        $security->status = 'Withdrawal';
+        $security->verified_by = Auth::user()->name;
+        $security->withdrawal_date = $withdrawalDate; // Set the withdrawal date
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-m.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function CancelWithdrawal($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Pending';
+        $security->verified_by = null;
+        $security->withdrawal_date = null; // Set the withdrawal date
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-m.show')->with('success', 'Withdrawal cancelled successfully.');
+    }
+
+    public function CancelReturn($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Withdrawal';
+        $security->return_date = null;
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-m.show')->with('success', 'Return cancelled successfully.');
+    }
+
+    public function BackToDraft($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Draft';
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-m.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function ReturnDocumentsStatus($id, Request $request)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        $returnDate = $request->input('return_date');
+
+        $security->status = 'Return';
+        $security->return_date = $returnDate; // Set the return date
+        $security->save(); // Save the updates to the database
+
+        // Return success response
+        return redirect()->route('list-security-request-m.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function ADIHolderCreate($id)
+    {
+        $facilities = FacilityInformation::all();
+
+        return view('maker.adi-holder.create', compact('facilities', 'id'));
+    }
+
+    public function ADIHolderStore(StoreADIHolderRequest $request, $id)
+    {
+        foreach ($request->stock_codes as $index => $stockCode) {
+            AdiHolder::create([
+                'facility_information_id' => $id,
+                'adi_holder' => $request->adi_holder,
+                'stock_code' => $stockCode,
+                'nominal_value' => $request->nominal_values[$index],
+            ]);
+        }
+
+        return redirect()->route('facility-info-m.show', $id)->with('success', 'ADI Holder(s) added successfully.');
+    }
+
+    public function ADIHolderEdit($adiHolderName)
+    {
+        // Fetch all records with the same adi_holder
+        $adiHolders = AdiHolder::where('adi_holder', $adiHolderName)->get();
+
+        // You can also fetch other related data, such as facilities
+        $facilities = FacilityInformation::all();
+
+        // Pass both the adiHolders and facility data to the view
+        return view('maker.adi-holder.edit', compact('adiHolders', 'facilities'));
+    }
+
+    public function ADIHolderUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'facility_id' => 'required|exists:facility_informations,id',
+            'adi_holder_ids' => 'required|array',
+            'adi_holder_ids.*' => 'exists:adi_holders,id',
+            'stock_codes' => 'required|array',
+            'nominal_values' => 'required|array',
+            'adi_holder_name' => 'required|string|max:255',
+        ]);
+
+        foreach ($validated['adi_holder_ids'] as $index => $id) {
+            AdiHolder::where('id', $id)->update([
+                'adi_holder' => $validated['adi_holder_name'],
+                'stock_code' => $validated['stock_codes'][$index],
+                'nominal_value' => $validated['nominal_values'][$index],
+            ]);
+        }
+
+        return redirect()->route('facility-info-m.show', $request->facility_id)->with('success', 'ADI Holder(s) added successfully.');
+    }
+
+    public function FundTransferIndex(Request $request)
+    {
+        $activeMonth = request('month') ?? null; // if no month is provided, set it to null
+
+        if ($activeMonth) {
+            $fundTransfers = PlacementFundTransfer::whereMonth('date', Carbon::parse($activeMonth)->month)
+                ->whereYear('date', Carbon::parse($activeMonth)->year)
+                ->get();
+        } else {
+            // Get all records if no month is selected
+            $fundTransfers = PlacementFundTransfer::all();
+        }
+
+        return view('maker.fund-transfer.index', compact('fundTransfers', 'activeMonth'));
+    }
+
+
+    public function FundTransferCreate()
+    {
+        return view('maker.fund-transfer.create');
+    }
+
+
+    public function FundTransferStore(StoreFundTransferRequest $request)
+    {
+        PlacementFundTransfer::create([
+            'date' => $request->get('date'),
+            'details' => $request->get('details'),
+            'placement_amount' => $request->get('placement_amount'),
+            'fund_transfer_amount' => $request->get('fund_transfer_amount'),
+            'prepared_by' => auth()->user()->name, // since it's a string in DB
+            'status' => 'Draft',
+        ]);
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer created successfully');
+    }
+
+    public function FundTransferEdit(PlacementFundTransfer $fundTransfer)
+    {
+        return view('maker.fund-transfer.edit', compact('fundTransfer'));
+    }
+    public function FundTransferUpdate(StoreFundTransferRequest $request, PlacementFundTransfer $fundTransfer)
+    {
+        $validated = $request->validated();
+
+        $fundTransfer->update([
+            'date' => $validated['date'],
+            'details' => $validated['details'],
+            'placement_amount' => $validated['placement_amount'],
+            'fund_transfer_amount' => $validated['fund_transfer_amount'],
+        ]);
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer updated successfully');
+    }
+
+    public function SubmitApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
+    {
+        $fundTransfer->status = 'Pending';
+        $fundTransfer->save();
+
+        dispatch(new SendFundTransferPendingEmail($fundTransfer));
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer approved successfully');
+    }
+
+    public function DoneApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
+    {
+        $fundTransfer->status = 'Approved';
+        $fundTransfer->save();
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer done successfully');
     }
 }

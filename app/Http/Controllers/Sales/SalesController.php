@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Controllers\Sales;
+
+use App\Models\ReportBatch;
+use Illuminate\Http\Request;
+use App\Models\ReportBatchTrustee;
+use App\Exports\TrusteeExportBatch;
+use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CorporateBondExportBatch;
+
+class SalesController extends Controller
+{
+    // Index
+    public function index()
+    {
+        return view('sales.index');
+    }
+
+    public function viewBatches()
+    {
+        $batches = ReportBatch::withCount('items')->orderByDesc('cut_off_at')->paginate(10);
+        return view('sales.view-batches', compact('batches'));
+    }
+
+    public function downloadBatch($id)
+    {
+        $batch = ReportBatch::findOrFail($id);
+
+        return Excel::download(new CorporateBondExportBatch($batch), 'corporate_bonds_' . $batch->id . '.xlsx');
+    }
+
+    public function viewTrusteeBatches()
+    {
+        $batches = ReportBatchTrustee::withCount('items')->orderByDesc('cut_off_at')->paginate(10);
+        return view('sales.view-trustee-batches', compact('batches'));
+    }
+
+    public function downloadBatchTrustee($id)
+    {
+        $batch = ReportBatchTrustee::findOrFail($id);
+
+        return Excel::download(new TrusteeExportBatch($batch), $batch->title_report . '.xlsx');
+    }
+}

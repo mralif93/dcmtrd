@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Approver;
 
+use Carbon\Carbon;
 use App\Models\Bank;
+
 use App\Models\Bond;;
 
 use App\Models\Lease;
@@ -19,6 +21,7 @@ use App\Models\Appointment;
 use App\Models\Announcement;
 use App\Models\ApprovalForm;
 use App\Models\CallSchedule;
+use App\Models\ListSecurity;
 use App\Models\SiteVisitLog;
 use Illuminate\Http\Request;
 use App\Models\ActivityDiary;
@@ -28,14 +31,26 @@ use App\Models\PortfolioType;
 use App\Models\RelatedDocument;
 use App\Models\ApprovalProperty;
 use App\Models\ComplianceCovenant;
+use App\Models\SecurityDocRequest;
 use Illuminate\Support\Facades\DB;
 use App\Models\FacilityInformation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\PlacementFundTransfer;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\ListSecurityRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendIssuerApprovedNotification;
 use App\Jobs\Issuer\SendIssuerRejectedNotification;
+use App\Jobs\Compliance\SendComplianceApprovalEmail;
+use App\Jobs\Compliance\SendComplianceRejectionEmail;
+use App\Jobs\FundTransfer\SendFundTransferApprovedEmail;
+use App\Jobs\FundTransfer\SendFundTransferRejectedEmail;
+use App\Jobs\ListSecurity\SendListSecurityApprovedEmail;
+use App\Jobs\ListSecurity\SendListSecurityRejectedEmail;
+use App\Jobs\TrusteeFee\SendTrusteeFeeApprovedNotification;
+use App\Jobs\TrusteeFee\SendTrusteeFeeRejectedNotification;
 
 class ApproverController extends Controller
 {
@@ -89,6 +104,8 @@ class ApproverController extends Controller
             (SELECT COUNT(*) FROM appointments) AS appointments_count,
             (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
             (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
+            (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
+            (SELECT COUNT(*) FROM placement_fund_transfers) AS placement_fund_transfers_count,
 
             (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
             (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
@@ -120,6 +137,8 @@ class ApproverController extends Controller
             'approvalFormsCount' => $counts->approval_forms_count,
             'approvalPropertiesCount' => $counts->approval_properties_count,
             'siteVisitLogsCount' => $counts->site_visit_logs_count,
+            'listSecuritiesCount' => $counts->list_securities_count,
+            'placementFundTransfersCount' => $counts->placement_fund_transfers_count,
 
             // Add pending counts to view data
             'pendingPropertiesCount' => $counts->pending_properties_count,
@@ -203,11 +222,6 @@ class ApproverController extends Controller
         $bonds = $issuer->bonds()
             ->paginate($perPage, ['*'], 'bondsPage');
 
-        // Announcements with empty handling
-        $announcements = $issuer->announcements()
-            ->latest()
-            ->paginate($perPage, ['*'], 'announcementsPage');
-
         // Documents with empty handling
         $documents = $issuer->documents()
             ->paginate($perPage, ['*'], 'documentsPage');
@@ -219,7 +233,7 @@ class ApproverController extends Controller
         return view('approver.details', [
             'issuer' => $issuer,
             'bonds' => $bonds,
-            'announcements' => $announcements,
+            // 'announcements' => $announcements,
             'documents' => $documents,
             'facilities' => $facilities,
         ]);
@@ -286,7 +300,7 @@ class ApproverController extends Controller
     // Announcement Module
     public function AnnouncementShow(Announcement $announcement)
     {
-        $announcement = $announcement->load('issuer');
+        $announcement = $announcement->load('facility');
         return view('approver.announcement.show', compact('announcement'));
     }
 
@@ -305,8 +319,14 @@ class ApproverController extends Controller
 
         // Fetch bonds with pagination
         $bonds = $facility->issuer->bonds()
-            ? $facility->issuer->bonds()->paginate($perPage, ['*'], 'bondsPage')
-            : collect(); // Use an empty collection instead of $emptyPaginator
+            ? $facility->issuer->bonds()
+            ->where('facility_code', $facility->facility_code)
+            ->paginate($perPage, ['*'], 'bondsPage')
+            : collect();
+
+        $announcements = $facility->announcements()
+            ->latest()
+            ->paginate($perPage, ['*'], 'announcementsPage');
 
         // Documents Pagination
         $documents = $facility->documents()
@@ -317,6 +337,10 @@ class ApproverController extends Controller
         $allRatingMovements = $facility->issuer->bonds->flatMap(function ($bond) {
             return $bond->ratingMovements; // Collect rating movements from each bond
         });
+
+        $adiHoldersPaginated = $facility->adiHolders()->paginate(15);
+        $adiHoldersGrouped = $adiHoldersPaginated->getCollection()->groupBy('adi_holder');
+        $totalNominal = $adiHoldersPaginated->getCollection()->sum('nominal_value');
 
         // Paginate the rating movements
         $currentPage = request()->get('ratingMovementsPage', 1); // Get current page from request
@@ -331,7 +355,11 @@ class ApproverController extends Controller
             'facility' => $facility,
             'activeBonds' => $bonds,
             'documents' => $documents,
+            'announcements' => $announcements,
             'ratingMovements' => $ratingMovements,
+            'adiHolders' => $adiHoldersGrouped,
+            'adiHoldersPaginated' => $adiHoldersPaginated,
+            'totalNominal' => $totalNominal,
         ]);
     }
 
@@ -399,6 +427,8 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
 
+            SendTrusteeFeeApprovedNotification::dispatch($trusteeFee);
+
             return redirect()->route('trustee-fee-a.index')->with('success', 'Trustee Fee approved successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error approving trustee fee: ' . $e->getMessage());
@@ -424,6 +454,8 @@ class ApproverController extends Controller
                 'verified_by' => Auth::user()->name,
                 'remarks' => $request->input('rejection_reason'),
             ]);
+
+            SendTrusteeFeeRejectedNotification::dispatch($trusteeFee);
 
             return redirect()->route('trustee-fee-a.index')->with('success', 'Trustee Fee rejected successfully.');
         } catch (\Exception $e) {
@@ -496,6 +528,8 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
 
+            dispatch(new  SendComplianceApprovalEmail($compliance));
+
             return redirect()->route('compliance-covenant-a.index')->with('success', 'Compliance Covenant approved successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error approving compliance covenant: ' . $e->getMessage());
@@ -514,6 +548,8 @@ class ApproverController extends Controller
                 'verified_by' => Auth::user()->name,
                 'remarks' => $request->input('rejection_reason'),
             ]);
+
+            dispatch(new  SendComplianceRejectionEmail($compliance));
 
             return redirect()->route('compliance-covenant-a.index')->with('success', 'Compliance Covenant rejected successfully.');
         } catch (\Exception $e) {
@@ -2059,5 +2095,230 @@ class ApproverController extends Controller
             return back()
                 ->with('error', 'Error rejecting site visit log: ' . $e->getMessage());
         }
+    }
+
+    public function ListSecurityIndex(Request $request)
+    {
+        $status = $request->get('status');
+        $search = $request->get('search');
+
+        // Base query
+        $query = ListSecurity::with('issuer');
+
+        // Apply status filter if not empty
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+
+        // Apply search filter (search across multiple fields if needed)
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('security_name', 'like', '%' . $search . '%')
+                    ->orWhere('security_code', 'like', '%' . $search . '%')
+                    ->orWhere('asset_name_type', 'like', '%' . $search . '%')
+                    ->orWhereHas('issuer', function ($q2) use ($search) {
+                        $q2->where('issuer_short_name', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        // Paginated data
+        $securities = $query->latest()->paginate(10)->withQueryString();
+
+        // Count for each tab (including 'All')
+        $statusCounts = [
+            '' => ListSecurity::count(),
+            'Draft' => ListSecurity::where('status', 'Draft')->count(),
+            'Active' => ListSecurity::where('status', 'Active')->count(),
+            'Pending' => ListSecurity::where('status', 'Pending')->count(),
+            'Rejected' => ListSecurity::where('status', 'Rejected')->count(),
+        ];
+
+        return view('approver.listing-security.index', compact('securities', 'statusCounts'));
+    }
+
+
+
+    public function ListSecurityApprove($id)
+    {
+        $security = ListSecurity::findOrFail($id);
+
+        // Update status
+        $security->status = 'Active';
+        $security->verified_by = Auth::user()->name;
+        $security->approval_datetime = now();
+        $security->save();
+
+        dispatch(new SendListSecurityApprovedEmail($security));
+
+        return redirect()->route('list-security-a.index')->with('success', 'Security approved successfully.');
+    }
+
+    public function ListSecurityReject(Request $request, $id)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+
+        $security = ListSecurity::findOrFail($id);
+
+        // Update the security status to 'Rejected'
+        $security->status = 'Rejected';
+        $security->verified_by = Auth::user()->name;
+        $security->remarks = $request->input('reason');  // Storing the rejection reason
+        $security->save();
+
+        dispatch(new SendListSecurityRejectedEmail($security));
+
+        return redirect()->route('list-security-a.index')->with('success', 'Security rejected successfully.');
+    }
+
+    public function ListSecurityDetails($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('approver.listing-security.details', compact('security'));
+    }
+
+    public function ListSecurityRequest()
+    {
+        $getListReq = SecurityDocRequest::with('listSecurity.issuer')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        // dd($getListReq);
+        return view('approver.listing-security.list-request', compact('getListReq'));
+    }
+    public function ListSecurityShow($id)
+    {
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        return view('approver.listing-security.show', compact('security'));
+    }
+    public function ListSecurityCreateWithdrawal($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('approver.listing-security.show-approval', compact('security'));
+    }
+
+    public function ListSecurityCreateReturn($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('approver.listing-security.return', compact('security'));
+    }
+    public function SendDocumentsStatus($id, Request $request)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Validate that withdrawal date is passed with the request
+        $withdrawalDate = $request->input('withdrawal_date');
+
+        // Update the status and other fields
+        $security->status = 'Withdrawal';
+        $security->verified_by = Auth::user()->name;
+        $security->withdrawal_date = $withdrawalDate; // Set the withdrawal date
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-a.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function CancelWithdrawal($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Pending';
+        $security->verified_by = null;
+        $security->withdrawal_date = null; // Set the withdrawal date
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-a.show')->with('success', 'Withdrawal cancelled successfully.');
+    }
+
+    public function BackToDraft($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Draft';
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-a.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function CancelReturn($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Withdrawal';
+        $security->return_date = null;
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-a.show')->with('success', 'Return cancelled successfully.');
+    }
+
+    public function ReturnDocumentsStatus($id, Request $request)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        $returnDate = $request->input('return_date');
+
+        $security->status = 'Return';
+        $security->return_date = $returnDate; // Set the return date
+        $security->save(); // Save the updates to the database
+
+        // Return success response
+        return redirect()->route('list-security-request-a.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function FundTransferIndex(Request $request)
+    {
+        $activeMonth = request('month') ?? null; // if no month is provided, set it to null
+
+        if ($activeMonth) {
+            $fundTransfers = PlacementFundTransfer::whereMonth('date', Carbon::parse($activeMonth)->month)
+                ->whereYear('date', Carbon::parse($activeMonth)->year)
+                ->get();
+        } else {
+            // Get all records if no month is selected
+            $fundTransfers = PlacementFundTransfer::all();
+        }
+
+        return view('approver.fund-transfer.index', compact('fundTransfers', 'activeMonth'));
+    }
+
+    public function DoneApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
+    {
+        $fundTransfer->status = 'Approved';
+        $fundTransfer->verified_by = Auth::user()->name;
+        $fundTransfer->approval_datetime = now();
+        $fundTransfer->save();
+
+        dispatch(new SendFundTransferApprovedEmail($fundTransfer));
+
+        return redirect()->route('fund-transfer-a.index')->with('success', 'Placement & Fund Transfer done successfully');
+    }
+
+    public function FundTransferReject($id)
+    {
+        $fundTransfer = PlacementFundTransfer::findOrFail($id);
+        $fundTransfer->status = 'Rejected';
+        $fundTransfer->verified_by = Auth::user()->name;
+
+        $fundTransfer->remarks = request('reason'); // Assuming you have a reason field in your form
+        $fundTransfer->save();
+
+        dispatch(new SendFundTransferRejectedEmail($fundTransfer));
+
+        return redirect()->route('fund-transfer-a.index')->with('success', 'Placement & Fund Transfer rejected successfully');
     }
 }

@@ -10,6 +10,9 @@ class DefaultUsersSeeder extends Seeder
 {
     public function run()
     {
+        // Store current time to ensure consistency across all records
+        $now = now();
+
         // First insert permissions
         $permissions = [
             [
@@ -17,32 +20,40 @@ class DefaultUsersSeeder extends Seeder
                 'short_name' => 'DCMTRD',
                 'full_name' => 'Debt Capital Market Trading',
                 'description' => 'Access to debt capital market trading features',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'REITS',
                 'short_name' => 'REITS',
                 'full_name' => 'Real Estate Investment Trusts',
                 'description' => 'Access to real estate investment trusts features',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'LEGAL',
                 'short_name' => 'LEGAL',
                 'full_name' => 'Legal Department',
                 'description' => 'Access to legal department features',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'COMPLIANCE',
                 'short_name' => 'COMPLIANCE',
                 'full_name' => 'Compliance Department',
                 'description' => 'Access to compliance features',
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'name' => 'SALES & MARKETING',
+                'short_name' => 'SALES',
+                'full_name' => 'Sales & Marketing Department',
+                'description' => 'Access to sales & marketing features',
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
         ];
 
@@ -53,6 +64,7 @@ class DefaultUsersSeeder extends Seeder
         $reitsPermissionId = DB::table('permissions')->where('name', 'REITS')->value('id');
         $legalPermissionId = DB::table('permissions')->where('name', 'LEGAL')->value('id');
         $compliancePermissionId = DB::table('permissions')->where('name', 'COMPLIANCE')->value('id');
+        $smdPermissionId = DB::table('permissions')->where('name', 'SALES & MARKETING')->value('id');
 
         // Sample data for users
         $usersData = [
@@ -64,16 +76,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'ASISSTANT MANAGER',
                 'department' => 'DIGITALIZATION DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'MUQRI AMIN BIN MOHD SHAMSUDDIN',
@@ -82,16 +94,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'SENIOR EXECUTIVE',
                 'department' => 'DIGITALIZATION DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'NUR FARZANA BINTI ZAIRUL AZMI',
@@ -100,16 +112,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'EXECUTIVE',
                 'department' => 'DIGITALIZATION DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
 
             // DCMT Users
@@ -120,16 +132,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'SENIOR MANAGER',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'MOHAMAD AZAHARI BIN AB AZIZ',
@@ -138,16 +150,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'ASSISTANT MANAGER',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'FARAEDALISMALINA BINTI ZAKARIA',
@@ -156,16 +168,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'SENIOR EXECUTIVE',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'NOR IZZAH BINTI MOHAMAD ARIFF',
@@ -174,16 +186,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'SENIOR EXECUTIVE',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'NUR SAKIENAH BINTI KHAIRUDDIN',
@@ -192,16 +204,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'EXECUTIVE',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'MUHAMMAD SAYYIDI BIN MOHD BASIL',
@@ -210,16 +222,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'EXECUTIVE',
                 'department' => 'DEBT CAPITAL MARKET & TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
 
             // REITS Users
@@ -230,16 +242,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'ASSISTANT MANAGER',
                 'department' => 'REAL ESTATE INVESTMENT TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'NURUL SHAHIDAH BINTI RAS TAMAJIS',
@@ -248,16 +260,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'SENIOR EXECUTIVE',
                 'department' => 'REAL ESTATE INVESTMENT TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'MUHAMMAD AFIS BIN AZMAN',
@@ -266,16 +278,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'EXECUTIVE',
                 'department' => 'REAL ESTATE INVESTMENT TRUST UNIT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
 
             // Compliance
@@ -286,16 +298,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'SENIOR MANAGER',
                 'department' => 'COMPLIANCE MONITORING DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'DALILA BINTI ZOBIR',
@@ -304,16 +316,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'MANAGER',
                 'department' => 'COMPLIANCE MONITORING DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'SHARIFAH NURAINI BINTI SYED KHALID',
@@ -322,16 +334,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'MANAGER',
                 'department' => 'COMPLIANCE MONITORING DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'DIAN NADIRAH BINTI JASRI',
@@ -340,16 +352,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'ASSISTANT MANAGER',
                 'department' => 'COMPLIANCE MONITORING DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'NUR EFFA NAJIHAH BINTI ABDUL WAHAB',
@@ -358,16 +370,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'SENIOR EXECUTIVE',
                 'department' => 'COMPLIANCE MONITORING DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'KHAIRUN NISA BINTI ABD RAZAK',
@@ -376,16 +388,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'EXECUTIVE',
                 'department' => 'COMPLIANCE MONITORING DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'NURUL SYAFIQAH BINTI ABD KADIR',
@@ -394,16 +406,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'EXECUTIVE',
                 'department' => 'COMPLIANCE MONITORING DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
 
             // Legal
@@ -414,16 +426,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'SENIOR MANAGER',
                 'department' => 'LEGAL DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'NUR FARAH BINTI MOHD KAMAL',
@@ -432,16 +444,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'ASSISTANT MANAGER',
                 'department' => 'LEGAL DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'ASMA NUR QURAISYAH BINTI YUNUS',
@@ -450,16 +462,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'SENIOR EXECUTIVE',
                 'department' => 'LEGAL DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'AMIR AMSYAR BIN MOHD NAZIR',
@@ -468,16 +480,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'SENIOR EXECUTIVE',
                 'department' => 'LEGAL DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'MAISARAH HUMAIRA BINTI MEOR YAHAYA',
@@ -486,16 +498,16 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'EXECUTIVE',
                 'department' => 'LEGAL DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'name' => 'KHARIESHA BINTI KHALID',
@@ -504,16 +516,108 @@ class DefaultUsersSeeder extends Seeder
                 'job_title' => 'EXECUTIVE',
                 'department' => 'LEGAL DEPARTMENT',
                 'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
-                'email_verified_at' => now(),
+                'email_verified_at' => $now,
                 'password' => bcrypt('Dcmtrd@2025'),
                 'two_factor_code' => null,
                 'two_factor_expires_at' => null,
                 'two_factor_verified' => false,
-                'two_factor_enabled' => false,
+                'two_factor_enabled' => true,
                 'remember_token' => null,
                 'last_login_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+
+            // SMD
+            [
+                'name' => 'FARAHIYAH BINTI HARUN',
+                'email' => 'farah.harun@artrustees.com.my',
+                'role' => 'sales',
+                'job_title' => 'SENIOR MANAGER',
+                'department' => 'MARKETING AND BUSINESS DEVELOPMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => $now,
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => true,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'name' => 'SHAHRUL AZMAN BIN MOKHTAR',
+                'email' => 'shahrul_azman@artrustees.com.my',
+                'role' => 'sales',
+                'job_title' => 'MANAGER',
+                'department' => 'MARKETING AND BUSINESS DEVELOPMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => $now,
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => true,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'name' => 'SHAMIM HUSAINI BIN SHAHRUL ANWAR',
+                'email' => 'shamim.husaini@artrustees.com.my',
+                'role' => 'sales',
+                'job_title' => 'MANAGER',
+                'department' => 'MARKETING AND BUSINESS DEVELOPMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => $now,
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => true,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'name' => 'NURUL SHADILA BINTI ABDUL MALEK',
+                'email' => 'nurul.shadila@artrustees.com.my',
+                'role' => 'sales',
+                'job_title' => 'SENIOR EXECUTIVE',
+                'department' => 'MARKETING AND BUSINESS DEVELOPMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => $now,
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => true,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'name' => 'FARAH HANANI BINTI JISNIZUMI',
+                'email' => 'farahhanani@artrustees.com.my',
+                'role' => 'sales',
+                'job_title' => 'SEXECUTIVE',
+                'department' => 'MARKETING AND BUSINESS DEVELOPMENT',
+                'office_location' => 'AMANAHRAYA TRUSTEES BERHAD',
+                'email_verified_at' => $now,
+                'password' => bcrypt('Dcmtrd@2025'),
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => true,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
         ];
 
@@ -522,47 +626,54 @@ class DefaultUsersSeeder extends Seeder
 
         // Now we need to create the permission_users relationships
         $permissionUserData = [];
-        
+
         // Admin users get ALL permissions
         $adminEmails = [
             'ashraf_azmi@artrustees.com.my',
             'muqri.amin@artrustees.com.my',
             'nurfarzana@artrustees.com.my'
         ];
-        
+
         foreach ($adminEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
-            
+
             // Give admin users all permissions
             $permissionUserData[] = [
                 'user_id' => $userId,
                 'permission_id' => $dcmtrdPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
-            
+
             $permissionUserData[] = [
                 'user_id' => $userId,
                 'permission_id' => $reitsPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
-            
+
             $permissionUserData[] = [
                 'user_id' => $userId,
                 'permission_id' => $legalPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
-            
+
             $permissionUserData[] = [
                 'user_id' => $userId,
                 'permission_id' => $compliancePermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+
+            $permissionUserData[] = [
+                'user_id' => $userId,
+                'permission_id' => $smdPermissionId,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
-        
+
         // DCMTRD Users
         $dcmtrdEmails = [
             'roslimsyah@artrustees.com.my',
@@ -572,53 +683,50 @@ class DefaultUsersSeeder extends Seeder
             'nursakienah@artrustees.com.my',
             'sayyidi@artrustees.com.my'
         ];
-        
+
         foreach ($dcmtrdEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
-            $permissionUserData[] = [
-                'user_id' => $userId,
-                'permission_id' => $dcmtrdPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
+            if ($userId) {
+                $permissionUserData[] = [
+                    'user_id' => $userId,
+                    'permission_id' => $dcmtrdPermissionId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
         }
-        
+
         // Special case: ROSLIM SYAH BIN IDRIS has both DCMTRD and REITS
         $roslimId = DB::table('users')->where('email', 'roslimsyah@artrustees.com.my')->value('id');
-        $permissionUserData[] = [
-            'user_id' => $roslimId,
-            'permission_id' => $reitsPermissionId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-        
-        // Special case: FARAEDALISMALINA BINTI ZAKARIA should have REITS permission too
-        $faraedId = DB::table('users')->where('email', 'faraedalismalina@artrustees.com.my')->value('id');
-        $permissionUserData[] = [
-            'user_id' => $faraedId,
-            'permission_id' => $reitsPermissionId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-        
+        if ($roslimId) {
+            $permissionUserData[] = [
+                'user_id' => $roslimId,
+                'permission_id' => $reitsPermissionId,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
+
         // REITS Users
         $reitsEmails = [
             'fathihah@artrustees.com.my',
             'nurul.shahidah@artrustees.com.my',
             'afis.azman@artrustees.com.my'
         ];
-        
+
         foreach ($reitsEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
-            $permissionUserData[] = [
-                'user_id' => $userId,
-                'permission_id' => $reitsPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
+            if ($userId) {
+                $permissionUserData[] = [
+                    'user_id' => $userId,
+                    'permission_id' => $reitsPermissionId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
         }
-        
-        // Compliance Officers get both DCMTRD and REITS permissions
+
+        // Compliance Officers get COMPLIANCE, DCMTRD and REITS permissions
         $complianceEmails = [
             'rasidha@artrustees.com.my',
             'dalila@artrustees.com.my',
@@ -628,7 +736,7 @@ class DefaultUsersSeeder extends Seeder
             'khairunnisa_razak@artrustees.com.my',
             'nurul.syafiqah@artrustees.com.my'
         ];
-        
+
         foreach ($complianceEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
             // Add COMPLIANCE permission
@@ -638,23 +746,9 @@ class DefaultUsersSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
-            // Add DCMTRD permission
-            $permissionUserData[] = [
-                'user_id' => $userId,
-                'permission_id' => $dcmtrdPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-            // Add REITS permission
-            $permissionUserData[] = [
-                'user_id' => $userId,
-                'permission_id' => $reitsPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
         }
-        
-        // Legal users get both DCMTRD and REITS permissions
+
+        // Legal users get LEGAL, DCMTRD and REITS permissions
         $legalEmails = [
             'zulhida@artrustees.com.my',
             'nur.farah@artrustees.com.my',
@@ -663,32 +757,42 @@ class DefaultUsersSeeder extends Seeder
             'maisarah.humaira@artrustees.com.my',
             'khariesha@artrustees.com.my'
         ];
-        
+
         foreach ($legalEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
-            // Add LEGAL permission
-            $permissionUserData[] = [
-                'user_id' => $userId,
-                'permission_id' => $legalPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-            // Add DCMTRD permission
-            $permissionUserData[] = [
-                'user_id' => $userId,
-                'permission_id' => $dcmtrdPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-            // Add REITS permission
-            $permissionUserData[] = [
-                'user_id' => $userId,
-                'permission_id' => $reitsPermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
+            if ($userId) {
+                // Add LEGAL permission
+                $permissionUserData[] = [
+                    'user_id' => $userId,
+                    'permission_id' => $legalPermissionId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
         }
-        
+
+        // Sales & Marketing users get SALES_MARKETING
+        $salesMarketingEmails = [
+            'farah.harun@artrustees.com.my',
+            'shahrul_azman@artrustees.com.my',
+            'shamim.husaini@artrustees.com.my',
+            'nurul.shadila@artrustees.com.my',
+            'farahhanani@artrustees.com.my',
+        ];
+
+        foreach ($salesMarketingEmails as $email) {
+            $userId = DB::table('users')->where('email', $email)->value('id');
+            if ($userId) {
+                // Add SALES_MARKETING permission
+                $permissionUserData[] = [
+                    'user_id' => $userId,
+                    'permission_id' => $smdPermissionId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+        }
+
         // Insert the permission relationships
         DB::table('permission_users')->insert($permissionUserData);
     }

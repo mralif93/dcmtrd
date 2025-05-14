@@ -51,9 +51,10 @@
                             {{ __('Activity Diary') }}
                         </a>
 
-                        <!-- Audit Log -->
-                        <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Audit Log') }}
+                        <!-- Listing Security -->
+                        <a href="{{ route('list-security-a.index') }}"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Listing Security') }}
                         </a>
 
                         <!-- Reports -->
@@ -88,7 +89,7 @@
 
                 <div class="pb-6">
                     <h2 class="text-xl font-bold leading-tight text-gray-800">
-                        {{ __('Debt Capital Market Trust Real Estate Department (DCMTRD)') }}
+                        {{ __('Debt Capital Market Trust (DCMT)') }}
                     </h2>
                 </div>
 
@@ -106,18 +107,17 @@
                     <x-dashboard-card title="Activity Diary" icon="calendar" :count="$activityDairyCount ?? 0" :href="route('activity-diary-a.index')"
                         color="bg-blue-100" />
 
+                    <!-- Corporate Bond Listing Security -->
+                    <x-dashboard-card title="Corporate Bond Listing Security" icon="shield-check" :count="$listSecuritiesCount ?? 0"
+                        :href="route('list-security-a.index')" color="bg-blue-100" />
+
+                    <!-- Corporate Bond Listing Security -->
+                    <x-dashboard-card title="Placement & Fund Transfer" icon="shield-check" :count="$placementFundTransfersCount ?? 0"
+                        :href="route('fund-transfer-a.index')" color="bg-blue-100" />
+
                     <!-- Activity Diary -->
                     <x-dashboard-card title="Reports" icon="document" :count="2" :href="route('a.dcmt-reports.index')"
                         color="bg-blue-100" />
-                    <div class="hidden">
-                        <!-- Audit Log -->
-                        <x-dashboard-card title="Audit Log" icon="clipboard-list" :count="$auditLogCount ?? 0" href="#"
-                            color="bg-blue-100" />
-
-                        <!-- Reports -->
-                        <x-dashboard-card title="Reports" icon="document" :count="$reportsCount ?? 0" href="#"
-                            color="bg-blue-100" />
-                    </div>
                 </div>
 
                 <!-- Table Issuer -->
@@ -167,8 +167,7 @@
 
                                 <!-- Status Filter -->
                                 <div>
-                                    <label for="status"
-                                        class="block text-sm font-medium text-gray-700">Status</label>
+                                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
                                     <select name="status" id="status"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">All Status</option>
@@ -212,6 +211,9 @@
                                 <tr>
                                     <th
                                         class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        No</th>
+                                    <th
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                         Issuer Name</th>
                                     <th
                                         class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
@@ -227,6 +229,9 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($issuers as $issuer)
                                     <tr class="transition-colors hover:bg-gray-50">
+                                        <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ $loop->iteration + ($issuers->currentPage() - 1) * $issuers->perPage() }}
+                                        </td>
                                         <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
                                             <a href="{{ route('bond-a.details', $issuer) }}"
                                                 class="text-blue-600 cursor-pointer hover:text-blue-900">

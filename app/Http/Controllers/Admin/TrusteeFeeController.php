@@ -33,11 +33,7 @@ class TrusteeFeeController extends Controller
                 $q->where('issuer_id', $request->issuer_id);
             });
         }
-
-        if ($request->has('invoice_no') && !empty($request->invoice_no)) {
-            $query->where('invoice_no', 'LIKE', '%' . $request->invoice_no . '%');
-        }
-
+        
         if ($request->has('month') && !empty($request->month)) {
             $query->where('month', $request->month);
         }
@@ -87,7 +83,6 @@ class TrusteeFeeController extends Controller
             'trustee_fee_amount_2' => 'nullable|numeric',
             'start_anniversary_date' => 'required|date',
             'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
-            'invoice_no' => 'required|string|unique:trustee_fees,invoice_no',
             'month' => 'nullable|string|max:10',
             'date' => 'nullable|integer|min:1|max:31',
             'memo_to_fad' => 'nullable|date',
@@ -158,7 +153,6 @@ class TrusteeFeeController extends Controller
             'trustee_fee_amount_2' => 'nullable|numeric',
             'start_anniversary_date' => 'required|date',
             'end_anniversary_date' => 'required|date|after_or_equal:start_anniversary_date',
-            'invoice_no' => 'required|string|unique:trustee_fees,invoice_no,' . $trusteeFee->id,
             'month' => 'nullable|string|max:10',
             'date' => 'nullable|integer|min:1|max:31',
             'memo_to_fad' => 'nullable|date',
@@ -214,10 +208,6 @@ class TrusteeFeeController extends Controller
         
         if ($request->has('facility_information_id') && !empty($request->facility_information_id)) {
             $query->where('facility_information_id', $request->facility_information_id);
-        }
-        
-        if ($request->has('invoice_no') && !empty($request->invoice_no)) {
-            $query->where('invoice_no', 'LIKE', '%' . $request->invoice_no . '%');
         }
         
         if ($request->has('month') && !empty($request->month)) {

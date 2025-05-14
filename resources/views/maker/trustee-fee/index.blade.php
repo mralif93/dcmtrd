@@ -144,16 +144,6 @@
                                 </select>
                             </div>
 
-                            <!-- Invoice Number Filter -->
-                            <div>
-                                <label for="invoice_no" class="block text-sm font-medium text-gray-700">Invoice
-                                    No</label>
-                                <input type="text" name="invoice_no" id="invoice_no"
-                                    value="{{ request('invoice_no') }}"
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                    placeholder="Invoice number...">
-                            </div>
-
                             <!-- Month Filter -->
                             <div>
                                 <label for="month" class="block text-sm font-medium text-gray-700">Month</label>
@@ -174,8 +164,9 @@
                                 <select name="payment_status" id="payment_status"
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">All Status</option>
-                                    <option value="paid" @selected(request('payment_status') === 'paid')>Paid</option>
-                                    <option value="unpaid" @selected(request('payment_status') === 'unpaid')>Unpaid</option>
+                                    <option value="Paid" @selected(request('payment_status') === 'Paid')>Paid</option>
+                                    <option value="Pending" @selected(request('payment_status') === 'Pending')>Pending</option>
+                                    <option value="Early Redemption" @selected(request('payment_status') === 'Early Redemption')>Early Redemption</option>
                                 </select>
                             </div>
 

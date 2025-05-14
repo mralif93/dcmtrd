@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\Issuer;
+use App\Models\AdiHolder;
 use App\Models\TrusteeFee;
+use App\Models\Announcement;
 use App\Models\RelatedDocument;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -73,6 +75,15 @@ class FacilityInformation extends Model implements Auditable
         return $this->hasMany(TrusteeFee::class);
     }
 
+    public function announcements()
+    {
+        return $this->hasMany(Announcement::class, 'facility_id');
+    }
+
+    public function adiHolders()
+    {
+        return $this->hasMany(AdiHolder::class);
+    }
 
     // Scopes
     public function scopeWithDocuments(Builder $query): void

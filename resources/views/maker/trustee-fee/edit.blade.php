@@ -50,7 +50,7 @@
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">-- Select Issuer --</option>
                                         @foreach ($issuers as $issuer)
-                                            <option value="{{ $issuer->id }}" @selected($trusteeFee->facility?->issuer_id == $issuer->id)>
+                                            <option value="{{ $issuer->id }}" @selected(old('issuer_filter', $trusteeFee->facility?->issuer_id) == $issuer->id)>
                                                 {{ $issuer->issuer_short_name }} - {{ $issuer->issuer_name }}
                                             </option>
                                         @endforeach
@@ -73,13 +73,6 @@
                                     </select>
                                 </div>
 
-                                <div>
-                                    <label for="invoice_no" class="block text-sm font-medium text-gray-700">Invoice
-                                        Number *</label>
-                                    <input type="text" name="invoice_no" id="invoice_no"
-                                        value="{{ old('invoice_no', $trusteeFee->invoice_no) }}" required
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
                                 <div>
                                     <label for="description" class="block text-sm font-medium text-gray-700">Description
                                         *</label>

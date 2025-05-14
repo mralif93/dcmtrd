@@ -51,6 +51,18 @@
                             {{ __('Activity Diary') }}
                         </a>
 
+                        <!-- Listing Security -->
+                        <a href="{{ route('list-security-a.index') }}"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Listing Security') }}
+                        </a>
+
+                        <!-- Listing Security -->
+                        <a href="{{ route('fund-transfer-a.index') }}"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Placement & Fund Transfer') }}
+                        </a>
+
                         <!-- Audit Log -->
                         <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Audit Log') }}
@@ -102,7 +114,7 @@
 
                 <!-- Search and Filter Bar -->
                 <div class="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
-                    <form method="GET" action="{{ route('compliance-covenant-m.index') }}">
+                    <form method="GET" action="{{ route('compliance-covenant-a.index') }}">
                         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                             <!-- Issuer Search Field -->
                             <div>
@@ -154,7 +166,7 @@
                                 </button>
 
                                 @if (request('issuer_id') || request('financial_year_end') || request('status'))
-                                    <a href="{{ route('compliance-covenant-m.index') }}"
+                                    <a href="{{ route('compliance-covenant-a.index') }}"
                                         class="inline-flex items-center px-4 py-2 ml-2 font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
                                         Clear
                                     </a>
