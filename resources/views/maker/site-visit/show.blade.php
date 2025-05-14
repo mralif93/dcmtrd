@@ -34,21 +34,42 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    {{ match(strtolower($siteVisit->status)) {
-                                        'pending' => 'bg-yellow-100 text-yellow-800',
-                                        'active' => 'bg-green-100 text-green-800',
-                                        'inactive' => 'bg-gray-100 text-gray-800',
-                                        'rejected' => 'bg-red-100 text-red-800',
-                                        default => 'bg-gray-100 text-gray-800'
-                                    } }}">
-                                    {{ ucfirst($siteVisit->status) }}
-                                </span>
-                                @if($siteVisit->follow_up_required)
-                                <span class="ml-2 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                    Follow-up Required
-                                </span>
-                                @endif
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {{ match(strtolower($siteVisit->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
+                                        {{ ucfirst($siteVisit->status) }}
+                                    </span>
+                                    @if($siteVisit->follow_up_required)
+                                    <span class="ml-2 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                        Follow-up Required
+                                    </span>
+                                    @endif
+
+                                    @if(strtolower($siteVisit->status) === 'draft' || strtolower($siteVisit->status) === 'rejected')
+                                        <form action="{{ route('site-visit-m.approval', $siteVisit) }}" class="ml-4" id="approval-form">
+                                            @csrf
+                                            <button type="button" 
+                                                    onclick="confirmApproval()"
+                                                    class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-full font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                Submit for Approval
+                                            </button>
+                                        </form>
+                                        
+                                        <script>
+                                            function confirmApproval() {
+                                                if (confirm('Are you sure you want to submit this site visit for approval?')) {
+                                                    document.getElementById('approval-form').submit();
+                                                }
+                                            }
+                                        </script>
+                                    @endif
+                                </div>
                             </dd>
                         </div>
                     </dl>

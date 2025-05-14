@@ -2034,6 +2034,24 @@ class MakerController extends Controller
         return view('maker.financial.show', compact('financial'));
     }
 
+    // submit for approval
+    public function SubmitApprovalFinancial(Financial $financial)
+    {
+        try {
+            $financial->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('property-m.index', $financial->portfolio)
+                ->with('success', 'Financial submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error submitting for approval: ' . $e->getMessage());
+        }
+    }
+
     public function FinancialValidate(Request $request) {
         return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
@@ -2478,7 +2496,7 @@ class MakerController extends Controller
         return view('maker.lease.show', compact('lease'));
     }
 
-    public function LeaseSubmitForApproval(Lease $lease)
+    public function SubmitApprovalLease(Lease $lease)
     {
         try {
             $lease->update([
@@ -2487,7 +2505,8 @@ class MakerController extends Controller
             ]);
 
             return redirect()
-                ->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease submitted for approval successfully.');
+                ->route('lease-m.index', $lease->tenant->property)
+                ->with('success', 'Lease submitted for approval successfully.');
         } catch(\Exception $e) {
             return back()
                 ->with('error', 'Error submitting lease for approval: ' . $e->getMessage());
@@ -2720,7 +2739,7 @@ class MakerController extends Controller
     }
 
     // submit site visit
-    public function SiteVisitSubmitForApproval(SiteVisit $siteVisit)
+    public function SubmitApprovalSiteVisit(SiteVisit $siteVisit)
     {
         try {
             $siteVisit->update([
@@ -3024,6 +3043,24 @@ class MakerController extends Controller
     public function ChecklistLegalDocumentationShow(Checklist $checklist, ChecklistLegalDocumentation $legalDocumentation)
     {
         return view('maker.checklist.legal-documentation.show', compact('checklist', 'legalDocumentation'));
+    }
+    
+    public function SubmitApprovalChecklistLegalDocumentation(Checklist $checklist, ChecklistLegalDocumentation $legalDocumentation)
+    {
+        try {
+            $legalDocumentation->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklist)
+                ->with('success', 'Legal documentation submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting legal documentation for approval: ' . $e->getMessage());
+        }
     }
 
     // Checklist Tenant
