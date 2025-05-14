@@ -383,10 +383,10 @@
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Remarks</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {{ $checklist->legalDocumentation->remarks ?? 'No remarks available' }}
+                                    {{ $checklist->legalDocumentation->remarks ?? 'N/A' }}
                                 </dd>
                             </div>
-                            <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Approval Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     <div>Prepared by: {{ $checklist->legalDocumentation->prepared_by ?? 'N/A' }}</div>
@@ -475,9 +475,6 @@
                                                 <div>Prepared by: {{ $tenant->pivot->prepared_by ?? 'N/A' }}</div>
                                                 <div>Verified by: {{ $tenant->pivot->verified_by ?? 'N/A' }}</div>
                                                 <div>Approval date: {{ $tenant->pivot->approval_datetime ? date('d/m/Y h:i A', strtotime($tenant->pivot->approval_datetime)) : 'N/A' }}</div>
-                                                @if($tenant->pivot->approval_datetime)
-                                                    <div>{{ date('d/m/Y', strtotime($tenant->pivot->approval_datetime)) }}</div>
-                                                @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div class="flex justify-end space-x-2">
@@ -623,19 +620,26 @@
                                     @endif
                                 </dd>
                             </div>
+
+                            <!-- External Remarks -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">External Remarks</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->externalAreaCondition->external_remarks ?? 'No remarks' }}</dd>
                             </div>
+
+                            <!-- Remarks -->
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->externalAreaCondition->remarks ?? 'No remarks' }}</dd>
+                            </div>
+
+                            <!-- Approval Information -->
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Approval Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     <div>Prepared by: {{ $checklist->externalAreaCondition->prepared_by ?? 'N/A' }}</div>
                                     <div>Verified by: {{ $checklist->externalAreaCondition->verified_by ?? 'N/A' }}</div>
                                     <div>Approved on: {{ $checklist->externalAreaCondition->approval_datetime ? date('d/m/Y h:i A', strtotime($checklist->externalAreaCondition->approval_datetime)) : 'N/A' }}</div>
-                                    @if($checklist->externalAreaCondition->approval_datetime)
-                                        <div>{{ date('d/m/Y', strtotime($checklist->externalAreaCondition->approval_datetime)) }}</div>
-                                    @endif
                                 </dd>
                             </div>
                         @else
@@ -852,28 +856,25 @@
                                 </dd>
                             </div>
 
-                            <!-- Remarks -->
+                            <!-- Internal Remarks -->
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Remarks</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->internal_remarks ?? 'No remarks' }}</dd>
                             </div>
 
-                            <!-- System Information -->
+                            <!-- Remarks -->
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->remarks ?? 'No remarks' }}</dd>
+                            </div>
+
+                            <!-- Approval Information -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">System Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     <div>Prepared by: {{ $checklist->internalAreaCondition->prepared_by ?? 'N/A' }}</div>
                                     <div>Verified by: {{ $checklist->internalAreaCondition->verified_by ?? 'N/A' }}</div>
                                     <div>Approval date: {{ $checklist->internalAreaCondition->approval_datetime ? date('d/m/Y h:i A', strtotime($checklist->internalAreaCondition->approval_datetime)) : 'N/A' }}</div>
-                                    @if($checklist->internalAreaCondition->approval_datetime)
-                                        <div>{{ date('d/m/Y', strtotime($checklist->internalAreaCondition->approval_datetime)) }}</div>
-                                    @endif
-                                    @if($checklist->internalAreaCondition->remarks)
-                                        <div class="mt-2">
-                                            <span class="text-sm font-medium text-gray-500">Remarks:</span>
-                                            <p class="mt-1">{{ $checklist->internalAreaCondition->remarks }}</p>
-                                        </div>
-                                    @endif
                                 </dd>
                             </div>
                         @else
