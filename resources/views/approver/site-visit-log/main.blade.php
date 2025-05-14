@@ -156,9 +156,7 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('site-visit-log-a.show', $log) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $log->property->name ?? 'N/A' }}
-                                        </a>
+                                        {{ $log->property->name ?? 'N/A' }}
                                     </div>
                                     <div class="text-sm text-gray-500">
                                         {{ $log->property->address ?? 'N/A' }}

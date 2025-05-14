@@ -88,4 +88,19 @@ class SiteVisit extends Model
         
         return asset('storage/' . $this->attachment);
     }
+
+    public function isToday()
+    {
+        return $this->date_visit->isToday();
+    }
+
+    public function isPast()
+    {
+        return $this->date_visit->isPast();
+    }
+
+    public function hasAttachment()
+    {
+        return $this->attachment !== null;
+    }
 }

@@ -2884,13 +2884,6 @@ class MakerController extends Controller
                 'status' => 'pending',
             ]);
 
-            // create disposal installation
-            ChecklistDisposalInstallation::create([
-                'checklist_id' => $checklist->id,
-                'prepared_by' => Auth::user()->name,
-                'status' => 'pending',
-            ]);
-
             return redirect()
                 ->route('tenant-m.index', $checklist->siteVisit->property)
                 ->with('success', 'Checklist created successfully.');
@@ -2972,8 +2965,6 @@ class MakerController extends Controller
     public function ChecklistLetter(Checklist $checklist)
     {
         $checklist = $checklist->load('siteVisit.property.tenants');
-        // dd($checklist->toArray());
-        // dd($checklist->disposalInstallation->toArray());
         return view('maker.checklist.letter', compact('checklist'));
     }
 
@@ -3025,6 +3016,9 @@ class MakerController extends Controller
         
         // Record the last update
         $validated['updated_at'] = now();
+
+        // Status
+        $validated['status'] = 'pending';
 
         try {
             // Update the legal documentation with validated data
@@ -3109,6 +3103,9 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
+        // Status
+        $validated['status'] = 'pending';
+
         try {
             $checklistTenant->update($validated);
             
@@ -3176,11 +3173,8 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Verified By
-        $validated['verified_by'] = Auth::user()->name;
-
         // Status
-        $validated['status'] = 'completed';
+        $validated['status'] = 'pending';
 
         try {
             // Update the external area condition with validated data
@@ -3252,11 +3246,8 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Verified By
-        $validated['verified_by'] = Auth::user()->name;
-
         // Status
-        $validated['status'] = 'completed';
+        $validated['status'] = 'pending';
 
         try {
             // Update the internal area condition with validated data
@@ -3326,11 +3317,8 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Verified By
-        $validated['verified_by'] = Auth::user()->name;
-
         // Status
-        $validated['status'] = 'completed';
+        $validated['status'] = 'pending';
 
         try {
             // Update the property development with validated data
@@ -3405,7 +3393,7 @@ class MakerController extends Controller
         $validated['verified_by'] = Auth::user()->name;
 
         // Status
-        $validated['status'] = 'completed';
+        $validated['status'] = 'pending';
 
         try {
             // Update the disposal installation with validated data
