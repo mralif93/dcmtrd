@@ -178,59 +178,6 @@
 
                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                                         <div class="flex items-center justify-end space-x-2">
-                                            @if ($req->status === 'Pending')
-                                                <!-- Approve (Withdrawal) Button -->
-                                                <form method="GET"
-                                                    action="{{ route('list-security-m.create-withdrawal', $req->id) }}"
-                                                    class="inline-block">
-                                                    <button type="submit"
-                                                        class="flex items-center px-3 py-1 text-xs font-medium text-white transition duration-150 ease-in-out bg-green-600 rounded hover:bg-green-700">
-                                                        ✅ <span class="ml-1">Withdrawal</span>
-                                                    </button>
-                                                </form>
-                                    
-                                                <!-- Reject Button -->
-                                                <form method="POST" action="{{ route('back-to-draft-m.approval', $req->id) }}" class="inline-block">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit"
-                                                        class="flex items-center px-3 py-1 text-xs font-medium text-white transition duration-150 ease-in-out bg-red-600 rounded hover:bg-red-700">
-                                                        ❌ <span class="ml-1">Back To Draft</span>
-                                                    </button>
-                                                </form>
-                                    
-                                            @elseif ($req->status === 'Withdrawal')
-                                                <!-- Return Button -->
-                                                <form method="GET" action="{{ route('list-security-m.create-return', $req->id) }}" class="inline-block">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="flex items-center px-3 py-1 text-xs font-medium text-white transition duration-150 ease-in-out bg-yellow-600 rounded hover:bg-yellow-700">
-                                                        🔁 <span class="ml-1">Return</span>
-                                                    </button>
-                                                </form>
-                                    
-                                                <!-- Cancel Withdrawal Button -->
-                                                <form method="POST" action="{{ route('cancel-withdrawal-m.approval', $req->id) }}" class="inline-block">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit"
-                                                        class="flex items-center px-3 py-1 text-xs font-medium text-white transition duration-150 ease-in-out bg-gray-600 rounded hover:bg-gray-700">
-                                                        🚫 <span class="ml-1">Cancel Withdrawal</span>
-                                                    </button>
-                                                </form>
-                                    
-                                            @elseif ($req->status === 'Return')
-                                                <!-- Cancel Return Button -->
-                                                <form method="POST" action="{{ route('cancel-return-m.approval', $req->id) }}" class="inline-block">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit"
-                                                        class="flex items-center px-3 py-1 text-xs font-medium text-white transition duration-150 ease-in-out bg-gray-600 rounded hover:bg-gray-700">
-                                                        🚫 <span class="ml-1">Cancel Return</span>
-                                                    </button>
-                                                </form>
-                                            @endif
-                                    
                                             <!-- View Button (Always Visible) -->
                                             <a href="{{ route('security-details-m.show', $req->id) }}"
                                                 class="flex items-center px-3 py-1 text-xs font-medium text-indigo-700 transition duration-150 ease-in-out bg-indigo-100 rounded hover:bg-indigo-200">
