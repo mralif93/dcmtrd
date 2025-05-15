@@ -2844,7 +2844,7 @@ class MakerController extends Controller
         $validated = $this->checklistValidate($request);
         
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
         
         try {
             // create checklist
@@ -2854,28 +2854,28 @@ class MakerController extends Controller
             ChecklistLegalDocumentation::create([
                 'checklist_id' => $checklist->id,
                 'prepared_by' => Auth::user()->name,
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             // create external area condition
             ChecklistExternalAreaCondition::create([
                 'checklist_id' => $checklist->id,
                 'prepared_by' => Auth::user()->name,
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             // create internal area condition
             ChecklistInternalAreaCondition::create([
                 'checklist_id' => $checklist->id,
                 'prepared_by' => Auth::user()->name,
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             // create property development
             ChecklistPropertyDevelopment::create([
                 'checklist_id' => $checklist->id,
                 'prepared_by' => Auth::user()->name,
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             return redirect()
@@ -2982,7 +2982,7 @@ class MakerController extends Controller
         $validated = $this->legalDocumentationValidate($request);
         
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
         
         try {
             // create legal documentation
@@ -3010,9 +3010,6 @@ class MakerController extends Controller
         
         // Record the last update
         $validated['updated_at'] = now();
-
-        // Status
-        $validated['status'] = 'pending';
 
         try {
             // Update the legal documentation with validated data
@@ -3042,7 +3039,7 @@ class MakerController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-m.show', $checklist)
+                ->route('checklist-m.show', $legalDocumentation->checklist)
                 ->with('success', 'Legal documentation submitted for approval successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3069,7 +3066,7 @@ class MakerController extends Controller
         $validated = $this->tenantChecklistValidate($request);
         
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         try {
             $checklistTenant = ChecklistTenant::create($validated);
@@ -3097,9 +3094,6 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Status
-        $validated['status'] = 'pending';
-
         try {
             $checklistTenant->update($validated);
             
@@ -3116,6 +3110,24 @@ class MakerController extends Controller
     public function ChecklistTenantShow(ChecklistTenant $checklistTenant)
     {
         return view('maker.checklist.tenant.show', compact('checklistTenant'));
+    }
+
+    public function SubmitApprovalChecklistTenant(ChecklistTenant $checklistTenant)
+    {
+        try {
+            $checklistTenant->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistTenant->checklist)
+                ->with('success', 'Tenant submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting tenant for approval: ' . $e->getMessage());
+        }
     }
 
     // Checklist External Area Condition
@@ -3138,7 +3150,7 @@ class MakerController extends Controller
         $validated = $this->externalAreaConditionValidate($request);
         
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
         
         try {
             // create external area condition
@@ -3167,9 +3179,6 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Status
-        $validated['status'] = 'pending';
-
         try {
             // Update the external area condition with validated data
             $checklistExternalAreaCondition->update($validated);
@@ -3187,6 +3196,24 @@ class MakerController extends Controller
     public function ChecklistExternalAreaConditionShow(Checklist $checklist, ChecklistExternalAreaCondition $externalCond)
     {
         return view('maker.checklist.external-area-condition.show', compact('checklist', 'externalCond'));
+    }
+
+    public function SubmitApprovalChecklistExternalAreaCondition(ChecklistExternalAreaCondition $checklistExternalAreaCondition)
+    {
+        try {
+            $checklistExternalAreaCondition->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistExternalAreaCondition->checklist)
+                ->with('success', 'External area condition submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting external area condition for approval: ' . $e->getMessage());
+        }
     }
 
     // Checklist Internal Area Condition
@@ -3209,7 +3236,7 @@ class MakerController extends Controller
         $validated = $this->internalAreaConditionValidate($request);
         
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
         
         try {
             // create internal area condition
@@ -3240,9 +3267,6 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Status
-        $validated['status'] = 'pending';
-
         try {
             // Update the internal area condition with validated data
             $checklistInternalAreaCondition->update($validated);
@@ -3260,6 +3284,24 @@ class MakerController extends Controller
     public function ChecklistInternalAreaConditionShow(ChecklistInternalAreaCondition $checklistInternalAreaCondition)
     {
         return view('maker.checklist.internal-area-condition.show', compact('checklistInternalAreaCondition'));
+    }
+
+    public function SubmitApprovalChecklistInternalAreaCondition(ChecklistInternalAreaCondition $checklistInternalAreaCondition)
+    {
+        try {
+            $checklistInternalAreaCondition->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistInternalAreaCondition->checklist)
+                ->with('success', 'Internal area condition submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting internal area condition for approval: ' . $e->getMessage());
+        }
     }
 
     // Checklist Property Condition
@@ -3282,7 +3324,7 @@ class MakerController extends Controller
         $validated = $this->propertyConditionValidate($request);
         
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
         
         try {
             // create property development
@@ -3311,9 +3353,6 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Status
-        $validated['status'] = 'pending';
-
         try {
             // Update the property development with validated data
             $checklistPropertyDevelopment->update($validated);
@@ -3333,6 +3372,23 @@ class MakerController extends Controller
         return view('maker.checklist.property-development.show', compact('checklistPropertyDevelopment'));
     }
 
+    public function SubmitApprovalChecklistPropertyDevelopment(ChecklistPropertyDevelopment $checklistPropertyDevelopment)
+    {
+        try {
+            $checklistPropertyDevelopment->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistPropertyDevelopment->checklist)
+                ->with('success', 'Property development submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting property development for approval: ' . $e->getMessage());
+        }
+    }
 
     // Checklist Disposal Installation
     public function ChecklistDisposalInstallationIndex(Checklist $checklist)
@@ -3354,7 +3410,7 @@ class MakerController extends Controller
         $validated = $this->disposalInstallationValidate($request);
         
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
         
         try {
             // create disposal installation
@@ -3383,12 +3439,6 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Verified By
-        $validated['verified_by'] = Auth::user()->name;
-
-        // Status
-        $validated['status'] = 'pending';
-
         try {
             // Update the disposal installation with validated data
             $checklistDisposalInstallation->update($validated);
@@ -3406,6 +3456,24 @@ class MakerController extends Controller
     public function ChecklistDisposalInstallationShow(Checklist $checklist, ChecklistDisposalInstallation $disposalInst)
     {
         return view('maker.checklist.disposal-installation.show', compact('checklist', 'disposalInst'));
+    }
+
+    public function SubmitApprovalChecklistDisposalInstallation(ChecklistDisposalInstallation $checklistDisposalInstallation)
+    {
+        try {
+            $checklistDisposalInstallation->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistDisposalInstallation->checklist)
+                ->with('success', 'Disposal installation submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting disposal installation for approval: ' . $e->getMessage());
+        }
     }
 
     /**

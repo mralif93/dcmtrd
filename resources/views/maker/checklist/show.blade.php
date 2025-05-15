@@ -447,7 +447,7 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approval Information</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -624,13 +624,13 @@
                             <!-- External Remarks -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">External Remarks</dt>
-                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->externalAreaCondition->external_remarks ?? 'No remarks' }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->externalAreaCondition->external_remarks ?? 'N/A' }}</dd>
                             </div>
 
                             <!-- Remarks -->
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Remarks</dt>
-                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->externalAreaCondition->remarks ?? 'No remarks' }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->externalAreaCondition->remarks ?? 'N/A' }}</dd>
                             </div>
 
                             <!-- Approval Information -->
@@ -858,14 +858,14 @@
 
                             <!-- Internal Remarks -->
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Remarks</dt>
-                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->internal_remarks ?? 'No remarks' }}</dd>
+                                <dt class="text-sm font-medium text-gray-500">Internal Remarks</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->internal_remarks ?? 'N/A' }}</dd>
                             </div>
 
                             <!-- Remarks -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Remarks</dt>
-                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->remarks ?? 'No remarks' }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->remarks ?? 'N/A' }}</dd>
                             </div>
 
                             <!-- Approval Information -->
@@ -1030,7 +1030,7 @@
 
                         <!-- Others/Proposals/Approvals Section -->
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Others/Proposals/Approvals</dt>
+                            <dt class="text-sm font-medium text-gray-500">5.5 Others/Proposals/Approvals</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 @if(optional($checklist->propertyDevelopment)->others_proposals_approvals_date)
                                 <div>Date: {{ date('d/m/Y', strtotime($checklist->propertyDevelopment->others_proposals_approvals_date)) }}</div>
@@ -1059,7 +1059,7 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Remarks</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ optional($checklist->propertyDevelopment)->remarks ?? 'No remarks' }}
+                                {{ optional($checklist->propertyDevelopment)->remarks ?? 'N/A' }}
                             </dd>
                         </div>
                         
@@ -1126,34 +1126,47 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component Name</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component Details</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approval Information</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($checklist->disposalInstallation as $disposalInstallation)
                                         <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $disposalInstallation->component_name }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $disposalInstallation->component_date ? $disposalInstallation->component_date->format('d/m/Y h:i A') : 'N/A' }}
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                {{ $disposalInstallation->component_name }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <div>{{ $disposalInstallation->component_date ? $disposalInstallation->component_date->format('d/m/Y h:i A') : 'N/A' }}</div>
+                                                <div>{{ ucfirst($disposalInstallation->component_status) }}</div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                @if($disposalInstallation->component_status)
+                                                @if($disposalInstallation->status)
                                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ match(strtolower($disposalInstallation->component_status)) {
+                                                        {{ match(strtolower($disposalInstallation->status)) {
                                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                                             'active' => 'bg-green-100 text-green-800',
                                                             'inactive' => 'bg-gray-100 text-gray-800',
                                                             'rejected' => 'bg-red-100 text-red-800',
                                                             default => 'bg-gray-100 text-gray-800'
                                                         } }}">
-                                                        {{ ucfirst(str_replace('_', ' ', $disposalInstallation->component_status)) }}
+                                                        {{ ucfirst(str_replace('_', ' ', $disposalInstallation->status)) }}
                                                     </span>
                                                 @else
                                                     N/A
                                                 @endif
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ $disposalInstallation->remarks ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <div>Prepared by: {{ $disposalInstallation->prepared_by ?? 'N/A' }}</div>
+                                                <div>Verified by: {{ $disposalInstallation->verified_by ?? 'N/A' }}</div>
+                                                <div>Approval date: {{ $disposalInstallation->approval_datetime ? date('d/m/Y h:i A', strtotime($disposalInstallation->approval_datetime)) : 'N/A' }}</div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div class="flex justify-end space-x-2">

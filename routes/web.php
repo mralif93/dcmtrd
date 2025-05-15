@@ -592,7 +592,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/checklist-legal-documentation/{legalDocumentation}/edit', [MakerController::class, 'ChecklistLegalDocumentationEdit'])->name('checklist-legal-documentation-m.edit')->middleware('permission:REITS');
     Route::put('maker/checklist-legal-documentation/{legalDocumentation}/update', [MakerController::class, 'ChecklistLegalDocumentationUpdate'])->name('checklist-legal-documentation-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist-legal-documentation/{legalDocumentation}/show', [MakerController::class, 'ChecklistLegalDocumentationShow'])->name('checklist-legal-documentation-m.show')->middleware('permission:REITS');
-    Route::get('maker/checklist-legal-documentation/{legalDocumentation}/submission-for-legal', [MakerController::class, 'SubmitApprovalChecklistLegalDocumentation'])->name('checklist-legal-documentation-m.submission-legal')->middleware('permission:REITS');
+    Route::get('maker/checklist-legal-documentation/{legalDocumentation}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistLegalDocumentation'])->name('checklist-legal-documentation-m.submission-legal')->middleware('permission:REITS');
     
     // Checklist Tenant Module
     Route::get('maker/checklist-tenant/{checklist}/', [MakerController::class, 'ChecklistTenantIndex'])->name('checklist-tenant-m.index')->middleware('permission:REITS');
