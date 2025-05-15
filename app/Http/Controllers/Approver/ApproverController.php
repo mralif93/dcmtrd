@@ -1125,17 +1125,12 @@ class ApproverController extends Controller
         
         $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)
             ->count();
-        
-        $totalActiveRental = Lease::whereIn('tenant_id', $tenantIds)
-            ->where('status', 'active')
-            ->sum('rental_amount');
 
         return view('approver.lease.index', compact(
             'property',
             'leases',
             'activeLeaseCount',
             'totalLeaseCount',
-            'totalActiveRental'
         ));
     }
 
@@ -1379,10 +1374,8 @@ class ApproverController extends Controller
                 
         // Filter by property if provided
         if ($property->exists) {
-            $query->where('site_visit_id', function ($subquery) use ($property) {
-                $subquery->select('id')
-                    ->from('site_visits')
-                    ->where('property_id', $property->id);
+            $query->whereHas('siteVisit', function ($query) use ($property) {
+                $query->where('property_id', $property->id);
             });
         }
 

@@ -263,7 +263,14 @@
                                                     {{ $tenant->expiry_date ? date('d/m/Y', strtotime($tenant->expiry_date)) : 'N/A' }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $tenant->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                        {{ match(strtolower($tenant->status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($tenant->status) }}
                                                     </span>
                                                 </td>
@@ -335,18 +342,13 @@
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        @if($visit->status === 'active')
-                                                            bg-green-100 text-green-800
-                                                        @elseif($visit->status === 'pending')
-                                                            bg-yellow-100 text-yellow-800
-                                                        @elseif($visit->status === 'rejected')
-                                                            bg-red-100 text-red-800
-                                                        @elseif($visit->status === 'inactive')
-                                                            bg-gray-100 text-gray-800
-                                                        @else
-                                                            bg-blue-100 text-blue-800
-                                                        @endif
-                                                    ">
+                                                        {{ match(strtolower($visit->status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($visit->status) }}
                                                     </span>
                                                 </td>

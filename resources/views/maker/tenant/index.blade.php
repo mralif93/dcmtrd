@@ -188,7 +188,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No tenants found {{ request('search') ? 'matching your search' : '' }}</td>
+                                    <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No tenants found {{ request('search') ? 'matching your search' : '' }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -263,20 +263,10 @@
                                 <td class="px-6 py-4">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                         {{ match(strtolower($visit->status)) {
-                                            'completed' => 'bg-green-100 text-green-800',
-                                            'scheduled' => 'bg-blue-100 text-blue-800',
-                                            'cancelled' => 'bg-red-100 text-red-800',
                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                             'active' => 'bg-green-100 text-green-800',
                                             'inactive' => 'bg-gray-100 text-gray-800',
                                             'rejected' => 'bg-red-100 text-red-800',
-                                            'draft' => 'bg-blue-100 text-blue-800',
-                                            'withdrawn' => 'bg-purple-100 text-purple-800',
-                                            'in progress' => 'bg-indigo-100 text-indigo-800',
-                                            'on hold' => 'bg-orange-100 text-orange-800',
-                                            'reviewing' => 'bg-teal-100 text-teal-800',
-                                            'approved' => 'bg-emerald-100 text-emerald-800',
-                                            'expired' => 'bg-rose-100 text-rose-800',
                                             default => 'bg-gray-100 text-gray-800'
                                         } }}">
                                         {{ ucfirst($visit->status) }}

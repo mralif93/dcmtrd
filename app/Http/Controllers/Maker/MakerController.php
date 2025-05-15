@@ -2421,18 +2421,12 @@ class MakerController extends Controller
         
         $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)->count();
         
-        // Calculate total rental for active leases using base rate year 1
-        $totalActiveRental = Lease::whereIn('tenant_id', $tenantIds)
-            ->where('status', 'active')
-            ->sum('base_rate_year_1');
-        
         // Pass calculated metrics to view
         return view('maker.lease.index', compact(
             'property',
             'leases',
             'activeLeaseCount',
             'totalLeaseCount',
-            'totalActiveRental'
         ));
     }
 
@@ -2788,10 +2782,6 @@ class MakerController extends Controller
             $query->whereHas('siteVisit', function ($query) use ($property) {
                 $query->where('property_id', $property->id);
             });
-            
-            // For statistics, we need to get counts from the entire dataset
-            $pendingCount = (clone $query)->where('status', 'pending')->count();
-            $completedCount = (clone $query)->where('status', 'completed')->count();
         }
         
         // Handle search functionality
@@ -2816,6 +2806,10 @@ class MakerController extends Controller
         
         // If we're viewing a specific property, include the statistics
         if ($property->exists) {
+            // You might want to add additional statistics here if needed
+            $pendingCount = $checklists->where('status', 'pending')->count();
+            $completedCount = $checklists->where('status', 'completed')->count();
+            
             return view('maker.checklist.index', compact(
                 'property', 
                 'checklists',
