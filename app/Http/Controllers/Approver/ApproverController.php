@@ -1540,41 +1540,43 @@ class ApproverController extends Controller
     }
 
     // Checklist Legal Documentation Module
-    public function ChecklistLegalDocumentationApprove(Checklist $checklist)
+    public function ChecklistLegalDocumentationApprove(ChecklistLegalDocumentation $checklistLegalDocumentation)
     {
         try {
-            $checklist->update([
+            $checklistLegalDocumentation->update([
                 'status' => 'active',
                 'verified_by' => Auth::user()->name,
                 'approval_datetime' => now(),
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklist)
-                ->with('success', 'Legal Documentation approved successfully.');
+                ->route('checklist-a.show', $checklistLegalDocumentation->checklist)
+                ->with('success', 'Checklist Legal Documentation approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving legal documentation: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error approving legal documentation: ' . $e->getMessage());
         }
     }
 
-    public function ChecklistLegalDocumentationReject(Request $request, Checklist $checklist)
+    public function ChecklistLegalDocumentationReject(Request $request, ChecklistLegalDocumentation $checklistLegalDocumentation)
     {
         $request->validate([
             'rejection_reason' => 'required|string|max:255',
         ]);
 
         try {
-            $checklist->update([
+            $checklistLegalDocumentation->update([
                 'status' => 'rejected',
                 'verified_by' => Auth::user()->name,
                 'remarks' => $request->input('rejection_reason'),
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklist)
-                ->with('success', 'Legal Documentation rejected successfully.');
+                ->route('checklist-a.show', $checklistLegalDocumentation->checklist)
+                ->with('success', 'Checklist Legal Documentation rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting legal documentation: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error rejecting legal documentation: ' . $e->getMessage());
         }
     }
 
@@ -1590,9 +1592,10 @@ class ApproverController extends Controller
 
             return redirect()
                 ->route('checklist-a.show', $checklistTenant->checklist)
-                ->with('success', 'Tenant checklist approved successfully.');
+                ->with('success', 'Checklist Tenant approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving tenant checklist: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error approving tenant checklist: ' . $e->getMessage());
         }
     }
 
@@ -1611,99 +1614,115 @@ class ApproverController extends Controller
 
             return redirect()
                 ->route('checklist-a.show', $checklistTenant->checklist)
-                ->with('success', 'Tenant checklist rejected successfully.');
+                ->with('success', 'ChecklistTenant rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting tenant checklist: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error rejecting tenant checklist: ' . $e->getMessage());
         }
     }
 
     // Checklist External Area Condition Module
-    public function ChecklistExternalAreaConditionApprove(Checklist $checklist)
+    public function ChecklistExternalAreaConditionApprove(ChecklistExternalAreaCondition $checklistExternalAreaCondition)
     {
         try {
-            $checklist->update([
+            $checklistExternalAreaCondition->update([
                 'status' => 'active',
                 'verified_by' => Auth::user()->name,
                 'approval_datetime' => now(),
             ]);
 
-            return back()->with('success', 'External Area Condition approved successfully.');
+            return redirect()
+                ->route('checklist-a.show', $checklistExternalAreaCondition->checklist)
+                ->with('success', 'Checklist External Area Condition approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving external area condition: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error approving external area condition: ' . $e->getMessage());
         }
     }
 
-    public function ChecklistExternalAreaConditionReject(Request $request, Checklist $checklist)
+    public function ChecklistExternalAreaConditionReject(Request $request, ChecklistExternalAreaCondition $checklistExternalAreaCondition)
     {
         $request->validate([
             'rejection_reason' => 'required|string|max:255',
         ]);
 
         try {
-            $checklist->update([
+            $checklistExternalAreaCondition->update([
                 'status' => 'rejected',
                 'verified_by' => Auth::user()->name,
                 'remarks' => $request->input('rejection_reason'),
             ]);
 
-            return back()->with('success', 'External Area Condition rejected successfully.');
+            return redirect()
+                ->route('checklist-a.show', $checklistExternalAreaCondition->checklist)
+                ->with('success', 'Checklist External Area Condition rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting external area condition: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error rejecting external area condition: ' . $e->getMessage());
         }
     }
 
     // Checklist Internal Area Condition Module
-    public function ChecklistInternalAreaConditionApprove(Checklist $checklist)
+    public function ChecklistInternalAreaConditionApprove(ChecklistInternalAreaCondition $checklistInternalAreaCondition)
     {
         try {
-            $checklist->update([
+            $checklistInternalAreaCondition->update([
                 'status' => 'active',
                 'verified_by' => Auth::user()->name,
                 'approval_datetime' => now(),
             ]);
 
-            return back()->with('success', 'Internal Area Condition approved successfully.');
+            return redirect()
+                ->route('checklist-a.show', $checklistInternalAreaCondition->checklist)
+                ->with('success', 'Checklist Internal Area Condition approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving internal area condition: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error approving internal area condition: ' . $e->getMessage());
         }
     }
 
-    public function ChecklistInternalAreaConditionReject(Request $request, Checklist $checklist)
+    public function ChecklistInternalAreaConditionReject(Request $request, ChecklistInternalAreaCondition $checklistInternalAreaCondition)
     {
         $request->validate([
             'rejection_reason' => 'required|string|max:255',
         ]);
 
         try {
-            $checklist->update([
+            $checklistInternalAreaCondition->update([
                 'status' => 'rejected',
                 'verified_by' => Auth::user()->name,
                 'remarks' => $request->input('rejection_reason'),
             ]);
 
-            return back()->with('success', 'Internal Area Condition rejected successfully.');
+            return redirect()
+                ->route('checklist-a.show', $checklistInternalAreaCondition->checklist)
+                ->with('success', 'Checklist Internal Area Condition rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting internal area condition: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error rejecting internal area condition: ' . $e->getMessage());
         }
     }
 
     // Checklist Property Development Module
-    public function ChecklistPropertyDevelopmentApprove(Checklist $checklist)
+    public function ChecklistPropertyDevelopmentApprove(ChecklistPropertyDevelopment $checklistPropertyDevelopment)
     {
         try {
-            $checklist->update([
+            $checklistPropertyDevelopment->update([
                 'status' => 'active',
                 'verified_by' => Auth::user()->name,
                 'approval_datetime' => now(),
             ]);
 
-            return back()->with('success', 'Property Development approved successfully.');
+            return back()
+                ->route('checklist-a.show', $checklistPropertyDevelopment->checklist)
+                ->with('success', 'Property Development approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving property development: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error approving property development: ' . $e->getMessage());
         }
     }
 
-    public function ChecklistPropertyDevelopmentReject(Request $request, Checklist $checklist)
+    public function ChecklistPropertyDevelopmentReject(Request $request, ChecklistPropertyDevelopment $checklistPropertyDevelopment)
     {
         $request->validate([
             'rejection_reason' => 'required|string|max:255',
@@ -1716,44 +1735,53 @@ class ApproverController extends Controller
                 'remarks' => $request->input('rejection_reason'),
             ]);
 
-            return back()->with('success', 'Property Development rejected successfully.');
+            return redirect()
+                ->route('checklist-a.show', $checklistPropertyDevelopment->checklist)
+                ->with('success', 'Property Development rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting property development: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error rejecting property development: ' . $e->getMessage());
         }
     }
 
     // Checklist Disposal/Installation/Replacement Module
-    public function ChecklistDisposalInstallationReplacementApprove(Checklist $checklist)
+    public function ChecklistDisposalInstallationApprove(ChecklistDisposalInstallation $checklistDisposalInstallation)
     {
         try {
-            $checklist->update([
+            $checklistDisposalInstallation->update([
                 'status' => 'active',
                 'verified_by' => Auth::user()->name,
                 'approval_datetime' => now(),
             ]);
 
-            return back()->with('success', 'Disposal/Installation/Replacement approved successfully.');
+            return redirect()
+                ->route('checklist-a.show', $checklistDisposalInstallation->checklist)
+                ->with('success', 'Disposal/Installation/Replacement approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving disposal/installation/replacement: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error approving disposal/installation/replacement: ' . $e->getMessage());
         }
     }
 
-    public function ChecklistDisposalInstallationReplacementReject(Request $request, Checklist $checklist)
+    public function ChecklistDisposalInstallationReject(Request $request, ChecklistDisposalInstallation $checklistDisposalInstallation)
     {
         $request->validate([
             'rejection_reason' => 'required|string|max:255',
         ]);
 
         try {
-            $checklist->update([
+            $checklistDisposalInstallation->update([
                 'status' => 'rejected',
                 'verified_by' => Auth::user()->name,
                 'remarks' => $request->input('rejection_reason'),
             ]);
 
-            return back()->with('success', 'Disposal/Installation/Replacement rejected successfully.');
+            return redirect()
+                ->route('checklist-a.show', $checklistDisposalInstallation->checklist)
+                ->with('success', 'Disposal/Installation/Replacement rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting disposal/installation/replacement: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error rejecting disposal/installation/replacement: ' . $e->getMessage());
         }
     }
 
