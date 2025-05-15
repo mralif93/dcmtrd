@@ -583,7 +583,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/checklist/{checklist}/update', [MakerController::class, 'ChecklistUpdate'])->name('checklist-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist/{checklist}/show', [MakerController::class, 'ChecklistShow'])->name('checklist-m.show')->middleware('permission:REITS');
     Route::get('maker/checklist/{checklist}/letter', [MakerController::class, 'ChecklistLetter'])->name('checklist-m.letter')->middleware('permission:REITS');
-    Route::get('maker/checklist/{checklist}/submit-for-approval', [MakerController::class, 'SubmitApprovalChecklist'])->name('checklist-m.approval')->middleware('permission:REITS');
+    Route::post('maker/checklist/{checklist}/submit-for-approval', [MakerController::class, 'SubmitApprovalChecklist'])->name('checklist-m.approval')->middleware('permission:REITS');
 
     // Checklist Legal Documentation Module
     Route::get('maker/checklist-legal-documentation/{checklist}/', [MakerController::class, 'ChecklistLegalDocumentationIndex'])->name('checklist-legal-documentation-m.index')->middleware('permission:REITS');
@@ -592,7 +592,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/checklist-legal-documentation/{legalDocumentation}/edit', [MakerController::class, 'ChecklistLegalDocumentationEdit'])->name('checklist-legal-documentation-m.edit')->middleware('permission:REITS');
     Route::put('maker/checklist-legal-documentation/{legalDocumentation}/update', [MakerController::class, 'ChecklistLegalDocumentationUpdate'])->name('checklist-legal-documentation-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist-legal-documentation/{legalDocumentation}/show', [MakerController::class, 'ChecklistLegalDocumentationShow'])->name('checklist-legal-documentation-m.show')->middleware('permission:REITS');
-    Route::get('maker/checklist-legal-documentation/{legalDocumentation}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistLegalDocumentation'])->name('checklist-legal-documentation-m.submission-legal')->middleware('permission:REITS');
+    Route::post('maker/checklist-legal-documentation/{legalDocumentation}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistLegalDocumentation'])->name('checklist-legal-documentation-m.approval')->middleware('permission:REITS');
     
     // Checklist Tenant Module
     Route::get('maker/checklist-tenant/{checklist}/', [MakerController::class, 'ChecklistTenantIndex'])->name('checklist-tenant-m.index')->middleware('permission:REITS');
@@ -601,7 +601,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/checklist-tenant/{checklistTenant}/edit', [MakerController::class, 'ChecklistTenantEdit'])->name('checklist-tenant-m.edit')->middleware('permission:REITS');
     Route::put('maker/checklist-tenant/{checklistTenant}/update', [MakerController::class, 'ChecklistTenantUpdate'])->name('checklist-tenant-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist-tenant/{checklistTenant}/show', [MakerController::class, 'ChecklistTenantShow'])->name('checklist-tenant-m.show')->middleware('permission:REITS');
-    Route::get('maker/checklist-tenant/{checklistTenant}/submit-for-approval', [MakerController::class, 'SubmitApprovalChecklistTenant'])->name('checklist-tenant-m.submission-legal')->middleware('permission:REITS');
+    Route::post('maker/checklist-tenant/{checklistTenant}/submit-for-approval', [MakerController::class, 'SubmitApprovalChecklistTenant'])->name('checklist-tenant-m.approval')->middleware('permission:REITS');
 
     // Checklist External Area Condition Module
     Route::get('maker/checklist-external-area-condition/{checklist}/', [MakerController::class, 'ChecklistExternalAreaConditionIndex'])->name('checklist-external-area-condition-m.index')->middleware('permission:REITS');
@@ -610,7 +610,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/checklist-external-area-condition/{checklistExternalAreaCondition}/edit', [MakerController::class, 'ChecklistExternalAreaConditionEdit'])->name('checklist-external-area-condition-m.edit')->middleware('permission:REITS');
     Route::put('maker/checklist-external-area-condition/{checklistExternalAreaCondition}/update', [MakerController::class, 'ChecklistExternalAreaConditionUpdate'])->name('checklist-external-area-condition-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist-external-area-condition/{checklistExternalAreaCondition}/show', [MakerController::class, 'ChecklistExternalAreaConditionShow'])->name('checklist-external-area-condition-m.show')->middleware('permission:REITS');
-    Route::get('maker/checklist-external-area-condition/{checklistExternalAreaCondition}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistExternalAreaCondition'])->name('checklist-external-area-condition-m.submission-legal')->middleware('permission:REITS');
+    Route::post('maker/checklist-external-area-condition/{checklistExternalAreaCondition}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistExternalAreaCondition'])->name('checklist-external-area-condition-m.approval')->middleware('permission:REITS');
 
     // Checklist Internal Area Condition Module
     Route::get('maker/checklist-internal-area-condition/{checklist}/', [MakerController::class, 'ChecklistInternalAreaConditionIndex'])->name('checklist-internal-area-condition-m.index')->middleware('permission:REITS');
@@ -619,7 +619,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/checklist-internal-area-condition/{checklistInternalAreaCondition}/edit', [MakerController::class, 'ChecklistInternalAreaConditionEdit'])->name('checklist-internal-area-condition-m.edit')->middleware('permission:REITS');
     Route::put('maker/checklist-internal-area-condition/{checklistInternalAreaCondition}/update', [MakerController::class, 'ChecklistInternalAreaConditionUpdate'])->name('checklist-internal-area-condition-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist-internal-area-condition/{checklistInternalAreaCondition}/show', [MakerController::class, 'ChecklistInternalAreaConditionShow'])->name('checklist-internal-area-condition-m.show')->middleware('permission:REITS');
-    Route::get('maker/checklist-internal-area-condition/{checklistInternalAreaCondition}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistInternalAreaCondition'])->name('checklist-internal-area-condition-m.submission-legal')->middleware('permission:REITS');
+    Route::post('maker/checklist-internal-area-condition/{checklistInternalAreaCondition}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistInternalAreaCondition'])->name('checklist-internal-area-condition-m.approval')->middleware('permission:REITS');
 
     // Checklist Property Development Module
     Route::get('maker/checklist-property-development/{checklist}/', [MakerController::class, 'ChecklistPropertyDevelopmentIndex'])->name('checklist-property-development-m.index')->middleware('permission:REITS');
@@ -628,7 +628,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/checklist-property-development/{checklistPropertyDevelopment}/edit', [MakerController::class, 'ChecklistPropertyDevelopmentEdit'])->name('checklist-property-development-m.edit')->middleware('permission:REITS');
     Route::put('maker/checklist-property-development/{checklistPropertyDevelopment}/update', [MakerController::class, 'ChecklistPropertyDevelopmentUpdate'])->name('checklist-property-development-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist-property-development/{checklistPropertyDevelopment}/show', [MakerController::class, 'ChecklistPropertyDevelopmentShow'])->name('checklist-property-development-m.show')->middleware('permission:REITS');
-    Route::get('maker/checklist-property-development/{checklistPropertyDevelopment}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistPropertyDevelopment'])->name('checklist-property-development-m.submission-legal')->middleware('permission:REITS');
+    Route::post('maker/checklist-property-development/{checklistPropertyDevelopment}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistPropertyDevelopment'])->name('checklist-property-development-m.approval')->middleware('permission:REITS');
 
     // Checklist Disposal Installation
     Route::get('maker/checklist-disposal-installation/{checklist}/', [MakerController::class, 'ChecklistDisposalInstallationIndex'])->name('checklist-disposal-installation-m.index')->middleware('permission:REITS');
@@ -637,7 +637,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::get('maker/checklist-disposal-installation/{checklistDisposalInstallation}/edit', [MakerController::class, 'ChecklistDisposalInstallationEdit'])->name('checklist-disposal-installation-m.edit')->middleware('permission:REITS');
     Route::put('maker/checklist-disposal-installation/{checklistDisposalInstallation}/update', [MakerController::class, 'ChecklistDisposalInstallationUpdate'])->name('checklist-disposal-installation-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist-disposal-installation/{checklistDisposalInstallation}/show', [MakerController::class, 'ChecklistDisposalInstallationShow'])->name('checklist-disposal-installation-m.show')->middleware('permission:REITS');
-    Route::get('maker/checklist-disposal-installation/{checklistDisposalInstallation}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistDisposalInstallation'])->name('checklist-disposal-installation-m.submission-legal')->middleware('permission:REITS');
+    Route::post('maker/checklist-disposal-installation/{checklistDisposalInstallation}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistDisposalInstallation'])->name('checklist-disposal-installation-m.approval')->middleware('permission:REITS');
     
     // Appointment Module
     Route::get('maker/appointment/', [MakerController::class, 'AppointmentIndex'])->name('appointment-m.index')->middleware('permission:REITS');
@@ -772,11 +772,11 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
 
     // Checklist Legal Module
     Route::get('approver/checklist-legal/{checklist}', [ApproverController::class, 'ChecklistLegalIndex'])->name('checklist-legal-a.index')->middleware('permission:REITS');
-    Route::get('approver/checklist-legal/{checklistLegal}/show', [ApproverController::class, 'ChecklistLegalShow'])->name('checklist-legal-a.show')->middleware('permission:REITS');
+    Route::get('approver/checklist-legal/{checklistLegalDocumentation}/show', [ApproverController::class, 'ChecklistLegalShow'])->name('checklist-legal-a.show')->middleware('permission:REITS');
     Route::get('approver/checklist-legal/', [ApproverController::class, 'ChecklistLegalMain'])->name('checklist-legal-a.main')->middleware('permission:REITS');
-    Route::get('approver/checklist-legal/{checklistLegal}/details', [ApproverController::class, 'ChecklistLegalDetails'])->name('checklist-legal-a.details')->middleware('permission:REITS');
-    Route::post('approver/checklist-legal/{checklistLegal}/approve', [ApproverController::class, 'ChecklistLegalApprove'])->name('checklist-legal-a.approve')->middleware('permission:REITS');
-    Route::post('approver/checklist-legal/{checklistLegal}/reject', [ApproverController::class, 'ChecklistLegalReject'])->name('checklist-legal-a.reject')->middleware('permission:REITS');
+    Route::get('approver/checklist-legal/{checklistLegalDocumentation}/details', [ApproverController::class, 'ChecklistLegalDetails'])->name('checklist-legal-a.details')->middleware('permission:REITS');
+    Route::post('approver/checklist-legal/{checklistLegalDocumentation}/approve', [ApproverController::class, 'ChecklistLegalDocumentationApprove'])->name('checklist-legal-a.approve')->middleware('permission:REITS');
+    Route::post('approver/checklist-legal/{checklistLegalDocumentation}/reject', [ApproverController::class, 'ChecklistLegalDocumentationReject'])->name('checklist-legal-a.reject')->middleware('permission:REITS');
 
     // Checklist Tenant Module
     Route::get('approver/checklist-tenant/{checklist}', [ApproverController::class, 'ChecklistTenantIndex'])->name('checklist-tenant-a.index')->middleware('permission:REITS');

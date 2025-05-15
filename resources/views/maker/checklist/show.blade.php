@@ -220,17 +220,30 @@
                     <dl>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex items-center justify-between">
                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                                     {{ match(strtolower($checklist->status)) {
                                         'pending' => 'bg-yellow-100 text-yellow-800',
                                         'active' => 'bg-green-100 text-green-800',
                                         'inactive' => 'bg-gray-100 text-gray-800',
                                         'rejected' => 'bg-red-100 text-red-800',
+                                        'draft' => 'bg-gray-100 text-gray-800',
                                         default => 'bg-gray-100 text-gray-800'
                                     } }}">
                                     {{ ucfirst($checklist->status) }}
                                 </span>
+                                
+                                <!-- Submit for Approval Button - Only shown for draft or rejected status -->
+                                @if(strtolower($checklist->status) === 'draft' || strtolower($checklist->status) === 'rejected')
+                                    <button type="button" 
+                                        onclick="openApprovalModal('checklist', {{ $checklist->id }}, '{{ $checklist->siteVisit->property->name ?? "Main Checklist" }}', '{{ route('checklist-m.approval', $checklist) }}')"
+                                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition ease-in-out duration-150">
+                                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Submit for Approval
+                                    </button>
+                                @endif
                             </dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -286,22 +299,38 @@
                 <!-- Legal Documentation Header -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg leading-6 font-medium text-gray-900">1.0 Legal Documentation</h3>
-                    @if($checklist->legalDocumentation)
-                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ match(strtolower($checklist->legalDocumentation->status)) {
-                                'pending' => 'bg-yellow-100 text-yellow-800',
-                                'active' => 'bg-green-100 text-green-800',
-                                'inactive' => 'bg-gray-100 text-gray-800',
-                                'rejected' => 'bg-red-100 text-red-800',
-                                default => 'bg-gray-100 text-gray-800'
-                            } }}">
-                            {{ ucfirst($checklist->legalDocumentation->status ?? 'Not Started') }}
-                        </span>
-                    @else
-                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                            Not Started
-                        </span>
-                    @endif
+                    
+                    <div class="flex items-center space-x-4">
+                        @if($checklist->legalDocumentation)
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                {{ match(strtolower($checklist->legalDocumentation->status)) {
+                                    'pending' => 'bg-yellow-100 text-yellow-800',
+                                    'active' => 'bg-green-100 text-green-800',
+                                    'inactive' => 'bg-gray-100 text-gray-800',
+                                    'rejected' => 'bg-red-100 text-red-800',
+                                    'draft' => 'bg-gray-100 text-gray-800',
+                                    default => 'bg-gray-100 text-gray-800'
+                                } }}">
+                                {{ ucfirst($checklist->legalDocumentation->status ?? 'Not Started') }}
+                            </span>
+                        @else
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                Not Started
+                            </span>
+                        @endif
+
+                        <!-- Submit for Approval Button - Only shown for draft or rejected status -->
+                        @if($checklist->legalDocumentation && (strtolower($checklist->legalDocumentation->status) === 'draft' || strtolower($checklist->legalDocumentation->status) === 'rejected'))
+                            <button type="button" 
+                                onclick="openApprovalModal('legal', {{ $checklist->legalDocumentation->id }}, 'Legal Documentation for {{ $checklist->siteVisit->property->name ?? "Property" }}', '{{ route('checklist-legal-documentation-m.approval', $checklist->legalDocumentation) }}')"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition ease-in-out duration-150">
+                                <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Submit for Approval
+                            </button>
+                        @endif
+                    </div>
                 </div>
 
                 <!-- Legal Documentation Details -->
@@ -478,6 +507,16 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div class="flex justify-end space-x-2">
+                                                    @if(strtolower($tenant->pivot->status) === 'draft' || strtolower($tenant->pivot->status) === 'rejected')
+                                                        <button type="button" 
+                                                            onclick="openApprovalModal('tenant', {{ $tenant->pivot->id }}, '{{ $tenant->name }}', '{{ route('checklist-tenant-m.approval', $tenant->pivot->id) }}')"
+                                                            class="text-green-600 hover:text-green-900">
+                                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                        </button>
+                                                    @endif
+
                                                     <a href="{{ route('checklist-tenant-m.edit', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900">
                                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -514,22 +553,38 @@
                 <!-- External Area Conditions Header -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg leading-6 font-medium text-gray-900">3.0 External Area Conditions</h3>
-                    @if($checklist->externalAreaCondition)
-                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ match(strtolower($checklist->externalAreaCondition->status)) {
-                                'pending' => 'bg-yellow-100 text-yellow-800',
-                                'active' => 'bg-green-100 text-green-800',
-                                'inactive' => 'bg-gray-100 text-gray-800',
-                                'rejected' => 'bg-red-100 text-red-800',
-                                default => 'bg-gray-100 text-gray-800'
-                            } }}">
-                            {{ ucfirst(str_replace('_', ' ', $checklist->externalAreaCondition->status) ?? 'Not Started') }}
-                        </span>
-                    @else
-                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                            Not Started
-                        </span>
-                    @endif
+                    
+                    <div class="flex items-center space-x-4">
+                        @if($checklist->externalAreaCondition)
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                {{ match(strtolower($checklist->externalAreaCondition->status)) {
+                                    'pending' => 'bg-yellow-100 text-yellow-800',
+                                    'active' => 'bg-green-100 text-green-800',
+                                    'inactive' => 'bg-gray-100 text-gray-800',
+                                    'rejected' => 'bg-red-100 text-red-800',
+                                    'draft' => 'bg-gray-100 text-gray-800',
+                                    default => 'bg-gray-100 text-gray-800'
+                                } }}">
+                                {{ ucfirst(str_replace('_', ' ', $checklist->externalAreaCondition->status) ?? 'Not Started') }}
+                            </span>
+                        @else
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                Not Started
+                            </span>
+                        @endif
+
+                        <!-- For External Area Condition -->
+                        @if($checklist->externalAreaCondition && (strtolower($checklist->externalAreaCondition->status) === 'draft' || strtolower($checklist->externalAreaCondition->status) === 'rejected'))
+                            <button type="button" 
+                                onclick="openApprovalModal('external', {{ $checklist->externalAreaCondition->id }}, 'External Area Condition for {{ $checklist->siteVisit->property->name ?? "Property" }}', '{{ route('checklist-external-area-condition-m.approval', $checklist->externalAreaCondition) }}')"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition ease-in-out duration-150">
+                                <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Submit for Approval
+                            </button>
+                        @endif
+                    </div>
                 </div>
 
                 <!-- External Area Conditions Details -->
@@ -674,22 +729,38 @@
                 <!-- Internal Area Conditions Header -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg leading-6 font-medium text-gray-900">4.0 Internal Area Conditions</h3>
-                    @if($checklist->internalAreaCondition)
-                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ match(strtolower($checklist->internalAreaCondition->status)) {
-                                'pending' => 'bg-yellow-100 text-yellow-800',
-                                'active' => 'bg-green-100 text-green-800',
-                                'inactive' => 'bg-gray-100 text-gray-800',
-                                'rejected' => 'bg-red-100 text-red-800',
-                                default => 'bg-gray-100 text-gray-800'
-                            } }}">
-                            {{ ucfirst($checklist->internalAreaCondition->status ?? 'Not Started') }}
-                        </span>
-                    @else
-                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                            Not Started
-                        </span>
-                    @endif
+                    
+                    <div class="flex items-center space-x-4">
+                        @if($checklist->internalAreaCondition)
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                {{ match(strtolower($checklist->internalAreaCondition->status)) {
+                                    'pending' => 'bg-yellow-100 text-yellow-800',
+                                    'active' => 'bg-green-100 text-green-800',
+                                    'inactive' => 'bg-gray-100 text-gray-800',
+                                    'rejected' => 'bg-red-100 text-red-800',
+                                    'draft' => 'bg-gray-100 text-gray-800',
+                                    default => 'bg-gray-100 text-gray-800'
+                                } }}">
+                                {{ ucfirst($checklist->internalAreaCondition->status ?? 'Not Started') }}
+                            </span>
+                        @else
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                Not Started
+                            </span>
+                        @endif
+
+                        <!-- For Internal Area Condition -->
+                        @if($checklist->internalAreaCondition && (strtolower($checklist->internalAreaCondition->status) === 'draft' || strtolower($checklist->internalAreaCondition->status) === 'rejected'))
+                            <button type="button" 
+                                onclick="openApprovalModal('internal', {{ $checklist->internalAreaCondition->id }}, 'Internal Area Condition for {{ $checklist->siteVisit->property->name ?? "Property" }}', '{{ route('checklist-internal-area-condition-m.approval', $checklist->internalAreaCondition) }}')"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition ease-in-out duration-150">
+                                <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Submit for Approval
+                            </button>
+                        @endif
+                    </div>
                 </div>
 
                 <!-- Internal Area Conditions Details -->
@@ -911,22 +982,38 @@
                 <!-- Property Development Header -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg leading-6 font-medium text-gray-900">5.0 Property Development</h3>
-                    @if($checklist->propertyDevelopment)
-                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ match(strtolower($checklist->propertyDevelopment->status)) {
-                                'pending' => 'bg-yellow-100 text-yellow-800',
-                                'active' => 'bg-green-100 text-green-800',
-                                'inactive' => 'bg-gray-100 text-gray-800',
-                                'rejected' => 'bg-red-100 text-red-800',
-                                default => 'bg-gray-100 text-gray-800'
-                            } }}">
-                            {{ ucfirst($checklist->propertyDevelopment->status ?? 'Not Started') }}
-                        </span>
-                    @else
-                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                            Not Started
-                        </span>
-                    @endif
+                    
+                    <div class="flex items-center space-x-4">
+                        @if($checklist->propertyDevelopment)
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                {{ match(strtolower($checklist->propertyDevelopment->status)) {
+                                    'pending' => 'bg-yellow-100 text-yellow-800',
+                                    'active' => 'bg-green-100 text-green-800',
+                                    'inactive' => 'bg-gray-100 text-gray-800',
+                                    'rejected' => 'bg-red-100 text-red-800',
+                                    'draft' => 'bg-gray-100 text-gray-800',
+                                    default => 'bg-gray-100 text-gray-800'
+                                } }}">
+                                {{ ucfirst($checklist->propertyDevelopment->status ?? 'Not Started') }}
+                            </span>
+                        @else
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                Not Started
+                            </span>
+                        @endif
+
+                        <!-- For Property Development -->
+                        @if($checklist->propertyDevelopment && (strtolower($checklist->propertyDevelopment->status) === 'draft' || strtolower($checklist->propertyDevelopment->status) === 'rejected'))
+                            <button type="button" 
+                                onclick="openApprovalModal('development', {{ $checklist->propertyDevelopment->id }}, 'Property Development for {{ $checklist->siteVisit->property->name ?? "Property" }}', '{{ route('checklist-property-development-m.approval', $checklist->propertyDevelopment) }}')"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition ease-in-out duration-150">
+                                <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Submit for Approval
+                            </button>
+                        @endif
+                    </div>
                 </div>
                 
                 <!-- Property Development Details -->
@@ -1170,6 +1257,16 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div class="flex justify-end space-x-2">
+                                                    @if(strtolower($disposalInstallation->status) === 'draft' || strtolower($disposalInstallation->status) === 'rejected')
+                                                        <button type="button" 
+                                                            onclick="openApprovalModal('installation', {{ $disposalInstallation->id }}, '{{ $disposalInstallation->component_name }}', '{{ route('checklist-disposal-installation-m.approval', $disposalInstallation) }}')"
+                                                            class="text-green-600 hover:text-green-900">
+                                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                        </button>
+                                                    @endif
+
                                                     <a href="{{ route('checklist-disposal-installation-m.edit', $disposalInstallation) }}" class="text-indigo-600 hover:text-indigo-900">
                                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -1202,6 +1299,100 @@
             </div>
         </div>
     </div>
+
+    <!-- Universal Submit for Approval Modal -->
+    <div id="approvalModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Confirm Submission</h3>
+                <button type="button" onclick="closeApprovalModal()" class="text-gray-400 hover:text-gray-500">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <p class="mb-2 text-sm text-gray-500">You are about to submit for approval: <span id="approvalItemType" class="font-medium text-gray-700"></span></p>
+            <p class="mb-4 text-sm font-medium text-gray-900" id="approvalItemName"></p>
+            
+            <form id="approvalForm" action="" method="POST">
+                @csrf
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeApprovalModal()" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        Confirm Submission
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript for Universal Approval Modal -->
+    <script>
+        // Function to open the approval modal for any item type
+        function openApprovalModal(itemType, itemId, itemName, formAction) {
+            // Set the modal content based on item type
+            let typeDisplay = '';
+            switch(itemType) {
+                case 'tenant':
+                    typeDisplay = 'Tenant Record';
+                    break;
+                case 'checklist':
+                    typeDisplay = 'Checklist';
+                    break;
+                case 'legal':
+                    typeDisplay = 'Legal Documentation';
+                    break;
+                case 'external':
+                    typeDisplay = 'External Area Condition';
+                    break;
+                case 'internal':
+                    typeDisplay = 'Internal Area Condition';
+                    break;
+                case 'development':
+                    typeDisplay = 'Property Development';
+                    break;
+                case 'installation':
+                    typeDisplay = 'Installation/Disposal Item';
+                    break;
+                default:
+                    typeDisplay = 'Item';
+            }
+            
+            // Update the modal content
+            document.getElementById('approvalItemType').textContent = typeDisplay;
+            document.getElementById('approvalItemName').textContent = itemName;
+            document.getElementById('approvalForm').action = formAction;
+            
+            // Show the modal
+            document.getElementById('approvalModal').classList.remove('hidden');
+        }
+        
+        // Function to close the modal
+        function closeApprovalModal() {
+            document.getElementById('approvalModal').classList.add('hidden');
+            document.getElementById('submission_notes').value = '';
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('approvalModal');
+            const modalContent = document.querySelector('#approvalModal > div');
+            
+            if (modal && !modal.classList.contains('hidden') && event.target === modal) {
+                closeApprovalModal();
+            }
+        });
+        
+        // Close modal on Escape key press
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeApprovalModal();
+            }
+        });
+    </script>
 
     <!-- Tab Switching JavaScript -->
     <script>

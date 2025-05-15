@@ -2879,7 +2879,7 @@ class MakerController extends Controller
             ]);
 
             return redirect()
-                ->route('tenant-m.index', $checklist->siteVisit->property)
+                ->route('checklist-m.index', $checklist->siteVisit->property)
                 ->with('success', 'Checklist created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2938,7 +2938,7 @@ class MakerController extends Controller
     }
 
     // checklist submit for approval
-    public function ChecklistSubmitForApproval(Checklist $checklist)
+    public function SubmitApprovalChecklist(Checklist $checklist)
     {
         try {
             $checklist->update([

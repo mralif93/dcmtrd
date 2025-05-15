@@ -1502,7 +1502,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.main', ['tab' => 'pending'])
+                ->route('checklist-a.show', $checklist)
                 ->with('success', 'Checklist approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1524,7 +1524,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.main', ['tab' => 'pending'])
+                ->route('checklist-a.show', $checklist)
                 ->with('success', 'Checklist rejected successfully.');
         } catch (\Exception $e) {
             return back()

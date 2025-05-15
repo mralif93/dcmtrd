@@ -387,8 +387,8 @@
 
                 <!-- Action Buttons for Legal Documentation Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->status) === 'pending')
-                    <form action="{{ route('checklist-legal-a.approve', $checklist->id) }}" method="POST" class="inline">
+                    @if(strtolower($checklist->legalDocumentation->status) === 'pending')
+                    <form action="{{ route('checklist-legal-a.approve', $checklist->legalDocumentation) }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -915,7 +915,7 @@
 
                 <!-- Action Buttons for Internal Areas Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->status) === 'pending')
+                    @if(strtolower($checklist->internalAreaCondition->status) === 'pending')
                     <form action="{{ route('checklist-internal-area-condition-a.approve', $checklist->internalAreaCondition) }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
@@ -1098,8 +1098,8 @@
 
                 <!-- Action Buttons for Development Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->status) === 'pending')
-                    <form action="{{ route('checklist-property-development-a.approve', $checklist->id) }}" method="POST" class="inline">
+                    @if(strtolower($checklist->propertyDevelopment->status) === 'pending')
+                    <form action="{{ route('checklist-property-development-a.approve', $checklist->propertyDevelopment) }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
