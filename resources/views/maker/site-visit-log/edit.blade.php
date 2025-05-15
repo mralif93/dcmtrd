@@ -79,26 +79,50 @@
                                 <div class="md:col-span-2">
                                     <label class="block text-sm font-medium text-gray-700">Visit Date</label>
                                     <div class="grid grid-cols-3 gap-3 mt-1">
+                                        <!-- Day Select -->
                                         <div>
                                             <select name="visit_day" id="visit_day"
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                                 <option value="">Day</option>
                                                 @for($i = 1; $i <= 31; $i++)
-                                                    <option value="{{ $i }}" @selected(old('visit_day', $siteVisitLog->visit_day) == $i)>{{ $i }}</option>
+                                                    @php
+                                                        $formattedValue = $i < 10 ? '0'.$i : (string)$i;
+                                                        $currentValue = $siteVisitLog->visit_day;
+                                                        // If the stored value is numeric, convert for comparison
+                                                        if (is_numeric($currentValue) && $currentValue < 10) {
+                                                            $currentValue = '0' . $currentValue;
+                                                        }
+                                                    @endphp
+                                                    <option value="{{ $formattedValue }}" @selected(old('visit_day', $currentValue) == $formattedValue)>
+                                                        {{ $formattedValue }}
+                                                    </option>
                                                 @endfor
                                             </select>
                                         </div>
                                         
+                                        <!-- Month Select -->
                                         <div>
                                             <select name="visit_month" id="visit_month"
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                                 <option value="">Month</option>
                                                 @foreach(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $index => $month)
-                                                    <option value="{{ $index + 1 }}" @selected(old('visit_month', $siteVisitLog->visit_month) == $index + 1)>{{ $month }}</option>
+                                                    @php
+                                                        $monthValue = $index + 1;
+                                                        $formattedValue = $monthValue < 10 ? '0'.$monthValue : (string)$monthValue;
+                                                        $currentValue = $siteVisitLog->visit_month;
+                                                        // If the stored value is numeric, convert for comparison
+                                                        if (is_numeric($currentValue) && $currentValue < 10) {
+                                                            $currentValue = '0' . $currentValue;
+                                                        }
+                                                    @endphp
+                                                    <option value="{{ $formattedValue }}" @selected(old('visit_month', $currentValue) == $formattedValue)>
+                                                        {{ $month }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         
+                                        <!-- Year Select -->
                                         <div>
                                             <select name="visit_year" id="visit_year"
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -116,18 +140,6 @@
                                     <label for="purpose" class="block text-sm font-medium text-gray-700">Purpose of Visit</label>
                                     <textarea name="purpose" id="purpose" rows="3"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('purpose', $siteVisitLog->purpose) }}</textarea>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Additional Information Section -->
-                        <div class="border-b border-gray-200 pb-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="md:col-span-2">
-                                    <label for="remarks" class="block text-sm font-medium text-gray-700">Remarks</label>
-                                    <textarea name="remarks" id="remarks" rows="3"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks', $siteVisitLog->remarks) }}</textarea>
                                 </div>
                             </div>
                         </div>

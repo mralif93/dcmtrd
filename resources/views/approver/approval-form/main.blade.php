@@ -141,9 +141,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('approval-form-a.show', $form) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $form->category }}
-                                        </a>
+                                        {{ $form->category }}
                                     </div>
                                     <div class="text-sm text-gray-600">
                                         {{ Str::limit($form->details, 100) }}

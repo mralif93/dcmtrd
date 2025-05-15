@@ -131,20 +131,14 @@
                                         <div class="text-xs text-gray-500">GSTO: RM {{ number_format($lease->monthly_gsto_year_1, 2) }}/mo</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            @php
-                                            $statusColors = [
-                                                'active' => 'bg-green-100 text-green-800',
+                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ match(strtolower($lease->status)) {
                                                 'pending' => 'bg-yellow-100 text-yellow-800',
+                                                'active' => 'bg-green-100 text-green-800',
                                                 'inactive' => 'bg-gray-100 text-gray-800',
-                                                'expired' => 'bg-red-100 text-red-800',
-                                                'terminated' => 'bg-red-100 text-red-800'
-                                            ];
-                                            
-                                            $normalizedStatus = strtolower($lease->status);
-                                            $badgeClass = $statusColors[$normalizedStatus] ?? 'bg-gray-100 text-gray-800';
-                                            @endphp
-                                            {{ $badgeClass }}">
+                                                'rejected' => 'bg-red-100 text-red-800',
+                                                default => 'bg-gray-100 text-gray-800'
+                                            } }}">
                                             {{ ucfirst($lease->status) }}
                                         </span>
                                     </td>

@@ -120,9 +120,7 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('lease-a.show', $lease) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $lease->tenant->name ?? 'N/A' }}
-                                        </a>
+                                        {{ $lease->tenant->name ?? 'N/A' }}
                                     </div>
                                     <div class="text-sm text-gray-500">
                                         {{ $lease->lease_name }}
@@ -150,10 +148,11 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ match(strtolower($lease->status)) {
-                                            'active' => 'bg-green-100 text-green-800',
                                             'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
                                             'rejected' => 'bg-red-100 text-red-800',
-                                            default => 'bg-blue-100 text-blue-800'
+                                            default => 'bg-gray-100 text-gray-800'
                                         } }}">
                                         {{ ucfirst($lease->status) }}
                                     </span>

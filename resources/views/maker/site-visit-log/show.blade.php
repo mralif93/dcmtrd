@@ -36,12 +36,37 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $siteVisitLog->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                       ($siteVisitLog->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                       'bg-gray-100 text-gray-800') }}">
-                                    {{ ucfirst($siteVisitLog->status) }}
-                                </span>
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {{ match(strtolower($siteVisitLog->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
+                                        {{ ucfirst($siteVisitLog->status) }}
+                                    </span>
+
+                                    @if(strtolower($siteVisitLog->status) === 'draft' || strtolower($siteVisitLog->status) === 'rejected')
+                                        <form action="{{ route('site-visit-log-m.approval', $siteVisitLog) }}" class="ml-4" id="approval-form">
+                                            @csrf
+                                            <button type="button" 
+                                                    onclick="confirmApproval()"
+                                                    class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-full font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                Submit for Approval
+                                            </button>
+                                        </form>
+                                        
+                                        <script>
+                                            function confirmApproval() {
+                                                if (confirm('Are you sure you want to submit this activity diary for approval?')) {
+                                                    document.getElementById('approval-form').submit();
+                                                }
+                                            }
+                                        </script>
+                                    @endif
+                                </div>
                             </dd>
                         </div>
 
@@ -96,6 +121,29 @@
                     </dl>
                 </div>
 
+                <!-- Administrative Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Administrative Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisitLog->prepared_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisitLog->verified_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $siteVisitLog->approval_datetime ? date('d/m/Y h:i A', strtotime($siteVisitLog->approval_datetime)) : 'Not yet approved' }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
                 <!-- System Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
@@ -103,33 +151,17 @@
                     </div>
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisitLog->prepared_by ?? 'Not specified' }}</dd>
-                        </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisitLog->verified_by ?? 'Not verified yet' }}</dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisitLog->created_at->format('d/m/Y H:i') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $siteVisitLog->created_at->format('d/m/Y h:i A') }}
+                            </dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisitLog->updated_at->format('d/m/Y H:i') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $siteVisitLog->updated_at->format('d/m/Y h:i A') }}
+                            </dd>
                         </div>
-                        @if($siteVisitLog->approval_datetime)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Approval Date/Time</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ \Carbon\Carbon::parse($siteVisitLog->approval_datetime)->format('d/m/Y H:i') }}</dd>
-                        </div>
-                        @endif
-                        @if($siteVisitLog->deleted_at)
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Deleted At</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisitLog->deleted_at->format('d/m/Y H:i') }}</dd>
-                        </div>
-                        @endif
                     </dl>
                 </div>
 

@@ -43,20 +43,10 @@
                     </div>
                     <span class="px-2 py-1 h-6 text-xs font-semibold rounded-full
                         {{ match(strtolower($checklist->status)) {
-                            'completed' => 'bg-green-100 text-green-800',
-                            'scheduled' => 'bg-blue-100 text-blue-800',
-                            'cancelled' => 'bg-red-100 text-red-800',
                             'pending' => 'bg-yellow-100 text-yellow-800',
                             'active' => 'bg-green-100 text-green-800',
                             'inactive' => 'bg-gray-100 text-gray-800',
                             'rejected' => 'bg-red-100 text-red-800',
-                            'draft' => 'bg-blue-100 text-blue-800',
-                            'verified' => 'bg-purple-100 text-purple-800',
-                            'in progress' => 'bg-indigo-100 text-indigo-800',
-                            'on hold' => 'bg-orange-100 text-orange-800',
-                            'reviewing' => 'bg-teal-100 text-teal-800',
-                            'approved' => 'bg-emerald-100 text-emerald-800',
-                            'expired' => 'bg-rose-100 text-rose-800',
                             default => 'bg-gray-100 text-gray-800'
                         } }}">
                         {{ ucfirst($checklist->status) }}
@@ -84,8 +74,13 @@
                             <div class="flex flex-wrap gap-1">
                                 @if($checklist->legalDocumentation)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                        {{ $checklist->legalDocumentation->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                        ($checklist->legalDocumentation->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                                        {{ match(strtolower($checklist->legalDocumentation->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         Legal: {{ ucfirst($checklist->legalDocumentation->status ?? 'N/A') }}
                                     </span>
                                 @endif
@@ -121,31 +116,64 @@
                                 
                                 @if($checklist->externalAreaCondition)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                        {{ $checklist->externalAreaCondition->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                        ($checklist->externalAreaCondition->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                                        {{ match(strtolower($checklist->externalAreaCondition->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         External: {{ ucfirst($checklist->externalAreaCondition->status ?? 'N/A') }}
                                     </span>
                                 @endif
                                 
                                 @if($checklist->internalAreaCondition)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                        {{ $checklist->internalAreaCondition->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                        ($checklist->internalAreaCondition->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                                        {{ match(strtolower($checklist->internalAreaCondition->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         Internal: {{ ucfirst($checklist->internalAreaCondition->status ?? 'N/A') }}
                                     </span>
                                 @endif
 
                                 @if($checklist->propertyDevelopment)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                        {{ $checklist->propertyDevelopment->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                        ($checklist->propertyDevelopment->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                                        {{ match(strtolower($checklist->propertyDevelopment->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         Development: {{ ucfirst($checklist->propertyDevelopment->status ?? 'N/A') }}
                                     </span>
                                 @endif
 
                                 @if($checklist->disposalInstallation)
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                        Installations: {{ ucfirst($checklist->disposalInstallation->count() ?? 'N/A') }}
+                                    @php
+                                        // Count all disposal installation items
+                                        $totalItems = $checklist->disposalInstallation->count();
+                                        
+                                        // Count completed items
+                                        $completedItems = $checklist->disposalInstallation->where('status', 'completed')->count();
+                                        
+                                        // Check if all items are completed
+                                        $allCompleted = ($totalItems > 0 && $completedItems == $totalItems);
+                                        
+                                        // Set status text
+                                        $statusText = $allCompleted ? 'Completed' : 'Pending';
+                                        
+                                        // Set appropriate color classes based on status
+                                        $bgColorClass = $allCompleted ? 'bg-green-100' : 'bg-yellow-100';
+                                        $textColorClass = $allCompleted ? 'text-green-800' : 'text-yellow-800';
+                                    @endphp
+
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $bgColorClass }} {{ $textColorClass }}">
+                                        Installations: {{ $statusText }}
                                     </span>
                                 @endif
                             </div>
@@ -190,24 +218,15 @@
                 </div>
                 <div class="border-t border-gray-200">
                     <dl>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Checklist ID</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->id }}</dd>
-                        </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                                     {{ match(strtolower($checklist->status)) {
-                                        'completed' => 'bg-green-100 text-green-800',
-                                        'scheduled' => 'bg-blue-100 text-blue-800',
-                                        'cancelled' => 'bg-red-100 text-red-800',
                                         'pending' => 'bg-yellow-100 text-yellow-800',
                                         'active' => 'bg-green-100 text-green-800',
                                         'inactive' => 'bg-gray-100 text-gray-800',
                                         'rejected' => 'bg-red-100 text-red-800',
-                                        'draft' => 'bg-blue-100 text-blue-800',
-                                        'verified' => 'bg-purple-100 text-purple-800',
                                         default => 'bg-gray-100 text-gray-800'
                                     } }}">
                                     {{ ucfirst($checklist->status) }}
@@ -266,11 +285,16 @@
             <div id="content-legal" class="tab-content hidden bg-white shadow overflow-hidden sm:rounded-lg">
                 <!-- Legal Documentation Header -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Legal Documentation</h3>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">1.0 Legal Documentation</h3>
                     @if($checklist->legalDocumentation)
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ $checklist->legalDocumentation->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                               ($checklist->legalDocumentation->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                            {{ match(strtolower($checklist->legalDocumentation->status)) {
+                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                'active' => 'bg-green-100 text-green-800',
+                                'inactive' => 'bg-gray-100 text-gray-800',
+                                'rejected' => 'bg-red-100 text-red-800',
+                                default => 'bg-gray-100 text-gray-800'
+                            } }}">
                             {{ ucfirst($checklist->legalDocumentation->status ?? 'Not Started') }}
                         </span>
                     @else
@@ -359,10 +383,10 @@
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Remarks</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {{ $checklist->legalDocumentation->remarks ?? 'No remarks available' }}
+                                    {{ $checklist->legalDocumentation->remarks ?? 'N/A' }}
                                 </dd>
                             </div>
-                            <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Approval Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     <div>Prepared by: {{ $checklist->legalDocumentation->prepared_by ?? 'N/A' }}</div>
@@ -401,7 +425,7 @@
             <div id="content-tenants" class="tab-content hidden bg-white shadow overflow-hidden sm:rounded-lg">
                 <!-- Tenants Header -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Tenants</h3>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">2.0 Tenants</h3>
                     <a href="{{ route('checklist-tenant-m.create', $checklist) }}" 
                         class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -421,7 +445,8 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenant Name</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approval</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remarks</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approval Information</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
@@ -441,14 +466,15 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">{{ $tenant->pivot->notes ?? 'No notes available' }}</div>
+                                                <div class="text-sm text-gray-900">{{ $tenant->pivot->notes ?? 'N/A' }}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900">{{ $tenant->pivot->remarks ?? 'N/A' }}</div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 <div>Prepared by: {{ $tenant->pivot->prepared_by ?? 'N/A' }}</div>
                                                 <div>Verified by: {{ $tenant->pivot->verified_by ?? 'N/A' }}</div>
-                                                @if($tenant->pivot->approval_datetime)
-                                                    <div>{{ date('d/m/Y', strtotime($tenant->pivot->approval_datetime)) }}</div>
-                                                @endif
+                                                <div>Approval date: {{ $tenant->pivot->approval_datetime ? date('d/m/Y h:i A', strtotime($tenant->pivot->approval_datetime)) : 'N/A' }}</div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div class="flex justify-end space-x-2">
@@ -470,18 +496,34 @@
                         </div>
                     @endif
                 </div>
+
+                <!-- Action Buttons -->
+                <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
+                    <a href="{{ route('checklist-m.index', $checklist->siteVisit->property) }}" 
+                        class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
+                        </svg>
+                        Back to List
+                    </a>
+                </div>
             </div>
 
             <!-- External Areas Tab Content -->
             <div id="content-external" class="tab-content hidden bg-white shadow overflow-hidden sm:rounded-lg">
                 <!-- External Area Conditions Header -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">External Area Conditions</h3>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">3.0 External Area Conditions</h3>
                     @if($checklist->externalAreaCondition)
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ $checklist->externalAreaCondition->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                               ($checklist->externalAreaCondition->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
-                            {{ ucfirst($checklist->externalAreaCondition->status ?? 'Not Started') }}
+                            {{ match(strtolower($checklist->externalAreaCondition->status)) {
+                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                'active' => 'bg-green-100 text-green-800',
+                                'inactive' => 'bg-gray-100 text-gray-800',
+                                'rejected' => 'bg-red-100 text-red-800',
+                                default => 'bg-gray-100 text-gray-800'
+                            } }}">
+                            {{ ucfirst(str_replace('_', ' ', $checklist->externalAreaCondition->status) ?? 'Not Started') }}
                         </span>
                     @else
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
@@ -495,7 +537,7 @@
                     <dl>
                         @if($checklist->externalAreaCondition)
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">General Cleanliness</dt>
+                                <dt class="text-sm font-medium text-gray-500">3.1 General Cleanliness</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $checklist->externalAreaCondition->is_general_cleanliness_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -507,7 +549,7 @@
                                 </dd>
                             </div>
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Fencing & Main Gate</dt>
+                                <dt class="text-sm font-medium text-gray-500">3.2 Fencing & Main Gate</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $checklist->externalAreaCondition->is_fencing_gate_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -519,7 +561,7 @@
                                 </dd>
                             </div>
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">External Facade</dt>
+                                <dt class="text-sm font-medium text-gray-500">3.3 External Facade</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $checklist->externalAreaCondition->is_external_facade_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -531,7 +573,7 @@
                                 </dd>
                             </div>
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Car Park</dt>
+                                <dt class="text-sm font-medium text-gray-500">3.4 Car Park</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $checklist->externalAreaCondition->is_car_park_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -543,7 +585,7 @@
                                 </dd>
                             </div>
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Land Settlement</dt>
+                                <dt class="text-sm font-medium text-gray-500">3.5 Land Settlement</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $checklist->externalAreaCondition->is_land_settlement_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -555,7 +597,7 @@
                                 </dd>
                             </div>
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Rooftop</dt>
+                                <dt class="text-sm font-medium text-gray-500">3.6 Rooftop</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $checklist->externalAreaCondition->is_rooftop_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -567,7 +609,7 @@
                                 </dd>
                             </div>
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Drainage</dt>
+                                <dt class="text-sm font-medium text-gray-500">3.7 Drainage</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $checklist->externalAreaCondition->is_drainage_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -578,11 +620,21 @@
                                     @endif
                                 </dd>
                             </div>
+
+                            <!-- External Remarks -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">External Remarks</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->externalAreaCondition->external_remarks ?? 'No remarks' }}</dd>
                             </div>
+
+                            <!-- Remarks -->
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->externalAreaCondition->remarks ?? 'No remarks' }}</dd>
+                            </div>
+
+                            <!-- Approval Information -->
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Approval Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     <div>Prepared by: {{ $checklist->externalAreaCondition->prepared_by ?? 'N/A' }}</div>
@@ -621,11 +673,16 @@
             <div id="content-internal" class="tab-content hidden bg-white shadow overflow-hidden sm:rounded-lg">
                 <!-- Internal Area Conditions Header -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Internal Area Conditions</h3>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">4.0 Internal Area Conditions</h3>
                     @if($checklist->internalAreaCondition)
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ $checklist->internalAreaCondition->status == 'completed' ? 'bg-green-100 text-green-800' :
-                            ($checklist->internalAreaCondition->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
+                            {{ match(strtolower($checklist->internalAreaCondition->status)) {
+                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                'active' => 'bg-green-100 text-green-800',
+                                'inactive' => 'bg-gray-100 text-gray-800',
+                                'rejected' => 'bg-red-100 text-red-800',
+                                default => 'bg-gray-100 text-gray-800'
+                            } }}">
                             {{ ucfirst($checklist->internalAreaCondition->status ?? 'Not Started') }}
                         </span>
                     @else
@@ -641,7 +698,7 @@
                         @if($checklist->internalAreaCondition)
                             <!-- Door & Window -->
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Door & Window</dt>
+                                <dt class="text-sm font-medium text-gray-500">4.1 Door & Window</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     @if($checklist->internalAreaCondition->is_door_window_satisfied !== null)
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -661,7 +718,7 @@
 
                             <!-- Staircase -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Staircase</dt>
+                                <dt class="text-sm font-medium text-gray-500">4.2 Staircase</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     @if($checklist->internalAreaCondition->is_staircase_satisfied !== null)
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -681,7 +738,7 @@
 
                             <!-- Toilet -->
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Toilet</dt>
+                                <dt class="text-sm font-medium text-gray-500">4.3 Toilet</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     @if($checklist->internalAreaCondition->is_toilet_satisfied !== null)
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -701,7 +758,7 @@
 
                             <!-- Ceiling -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Ceiling</dt>
+                                <dt class="text-sm font-medium text-gray-500">4.4 Ceiling</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     @if($checklist->internalAreaCondition->is_ceiling_satisfied !== null)
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -721,7 +778,7 @@
 
                             <!-- Wall -->
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Wall</dt>
+                                <dt class="text-sm font-medium text-gray-500">4.5 Wall</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     @if($checklist->internalAreaCondition->is_wall_satisfied !== null)
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -741,7 +798,7 @@
 
                             <!-- Water Seeping/Leaking -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Water Seeping/Leaking</dt>
+                                <dt class="text-sm font-medium text-gray-500">4.6 Water Seeping/Leaking</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     @if($checklist->internalAreaCondition->is_water_seeping_satisfied !== null)
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -761,7 +818,7 @@
 
                             <!-- Loading Bay -->
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Loading Bay</dt>
+                                <dt class="text-sm font-medium text-gray-500">4.7 Loading Bay</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     @if($checklist->internalAreaCondition->is_loading_bay_satisfied !== null)
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -781,7 +838,7 @@
 
                             <!-- Basement Car Park -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Basement Car Park</dt>
+                                <dt class="text-sm font-medium text-gray-500">4.8 Basement Car Park</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     @if($checklist->internalAreaCondition->is_basement_car_park_satisfied !== null)
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -799,25 +856,25 @@
                                 </dd>
                             </div>
 
-                            <!-- Additional Internal Remarks -->
+                            <!-- Internal Remarks -->
                             <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Additional Internal Remarks</dt>
-                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->internal_remarks ?? 'No additional remarks' }}</dd>
+                                <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->internal_remarks ?? 'No remarks' }}</dd>
                             </div>
 
-                            <!-- System Information -->
+                            <!-- Remarks -->
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->remarks ?? 'No remarks' }}</dd>
+                            </div>
+
+                            <!-- Approval Information -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">System Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     <div>Prepared by: {{ $checklist->internalAreaCondition->prepared_by ?? 'N/A' }}</div>
                                     <div>Verified by: {{ $checklist->internalAreaCondition->verified_by ?? 'N/A' }}</div>
                                     <div>Approval date: {{ $checklist->internalAreaCondition->approval_datetime ? date('d/m/Y h:i A', strtotime($checklist->internalAreaCondition->approval_datetime)) : 'N/A' }}</div>
-                                    @if($checklist->internalAreaCondition->remarks)
-                                        <div class="mt-2">
-                                            <span class="text-sm font-medium text-gray-500">Remarks:</span>
-                                            <p class="mt-1">{{ $checklist->internalAreaCondition->remarks }}</p>
-                                        </div>
-                                    @endif
                                 </dd>
                             </div>
                         @else
@@ -853,12 +910,16 @@
             <div id="content-development" class="tab-content hidden bg-white shadow overflow-hidden sm:rounded-lg">
                 <!-- Property Development Header -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Property Development</h3>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">5.0 Property Development</h3>
                     @if($checklist->propertyDevelopment)
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {{ $checklist->propertyDevelopment->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                            ($checklist->propertyDevelopment->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                            ($checklist->propertyDevelopment->status == 'in_progress' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800')) }}">
+                            {{ match(strtolower($checklist->propertyDevelopment->status)) {
+                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                'active' => 'bg-green-100 text-green-800',
+                                'inactive' => 'bg-gray-100 text-gray-800',
+                                'rejected' => 'bg-red-100 text-red-800',
+                                default => 'bg-gray-100 text-gray-800'
+                            } }}">
                             {{ ucfirst($checklist->propertyDevelopment->status ?? 'Not Started') }}
                         </span>
                     @else
@@ -873,7 +934,7 @@
                     <dl>
                         <!-- Development/Expansion Section -->
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Development/Expansion</dt>
+                            <dt class="text-sm font-medium text-gray-500">5.1 Development/Expansion</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 @if(optional($checklist->propertyDevelopment)->development_date)
                                 <div>Date: {{ date('d/m/Y', strtotime($checklist->propertyDevelopment->development_date)) }}</div>
@@ -884,9 +945,13 @@
                                 @if(optional($checklist->propertyDevelopment)->development_status)
                                 <div class="mt-1">Status: 
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $checklist->propertyDevelopment->development_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                    ($checklist->propertyDevelopment->development_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                    ($checklist->propertyDevelopment->development_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        {{ match(strtolower($checklist->propertyDevelopment->development_status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         {{ ucfirst(str_replace('_', ' ', $checklist->propertyDevelopment->development_status)) }}
                                     </span>
                                 </div>
@@ -901,7 +966,7 @@
                         
                         <!-- Renovation Section -->
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Renovation</dt>
+                            <dt class="text-sm font-medium text-gray-500">5.2 Renovation</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 @if(optional($checklist->propertyDevelopment)->renovation_date)
                                 <div>Date: {{ date('d/m/Y', strtotime($checklist->propertyDevelopment->renovation_date)) }}</div>
@@ -912,9 +977,13 @@
                                 @if(optional($checklist->propertyDevelopment)->renovation_status)
                                 <div class="mt-1">Status: 
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $checklist->propertyDevelopment->renovation_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                    ($checklist->propertyDevelopment->renovation_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                    ($checklist->propertyDevelopment->renovation_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        {{ match(strtolower($checklist->propertyDevelopment->renovation_status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         {{ ucfirst(str_replace('_', ' ', $checklist->propertyDevelopment->renovation_status)) }}
                                     </span>
                                 </div>
@@ -929,7 +998,7 @@
                         
                         <!-- External Repainting Section -->
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">External Repainting</dt>
+                            <dt class="text-sm font-medium text-gray-500">5.3 External Repainting</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 @if(optional($checklist->propertyDevelopment)->external_repainting_date)
                                 <div>Date: {{ date('d/m/Y', strtotime($checklist->propertyDevelopment->external_repainting_date)) }}</div>
@@ -940,9 +1009,13 @@
                                 @if(optional($checklist->propertyDevelopment)->external_repainting_status)
                                 <div class="mt-1">Status: 
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $checklist->propertyDevelopment->external_repainting_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                    ($checklist->propertyDevelopment->external_repainting_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                    ($checklist->propertyDevelopment->external_repainting_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        {{ match(strtolower($checklist->propertyDevelopment->external_repainting_status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         {{ ucfirst(str_replace('_', ' ', $checklist->propertyDevelopment->external_repainting_status)) }}
                                     </span>
                                 </div>
@@ -1035,7 +1108,7 @@
             <div id="content-installations" class="tab-content hidden bg-white shadow overflow-hidden sm:rounded-lg">
                 <!-- Disposal/Installation Header -->
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">Disposal/Installation</h3>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">5.4 Disposal/Installation/Replacement</h3>
                     <!-- Button Add -->
                     <a href="{{ route('checklist-disposal-installation-m.create', $checklist) }}"
                         class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -1048,7 +1121,7 @@
 
                 <!-- Disposal/Installation Details -->
                 <div class="border-t border-gray-200">
-                    @if($checklist->disposalInstallation)
+                    @if($checklist->disposalInstallation && $checklist->disposalInstallation->count() > 0)
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -1069,10 +1142,14 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 @if($disposalInstallation->component_status)
                                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $disposalInstallation->component_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                                        ($disposalInstallation->component_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                                        ($disposalInstallation->component_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
-                                                            {{ ucfirst(str_replace('_', ' ', $disposalInstallation->component_status)) }}
+                                                        {{ match(strtolower($disposalInstallation->component_status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
+                                                        {{ ucfirst(str_replace('_', ' ', $disposalInstallation->component_status)) }}
                                                     </span>
                                                 @else
                                                     N/A
@@ -1108,15 +1185,6 @@
                         </svg>
                         Back to List
                     </a>
-                    @if($checklist->disposalInstallation)
-                    <a href="{{ route('checklist-disposal-installation-m.edit', $checklist->disposalInstallation) }}" 
-                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
-                        Edit Disposal/Installation
-                    </a>
-                    @endif
                 </div>
             </div>
         </div>
