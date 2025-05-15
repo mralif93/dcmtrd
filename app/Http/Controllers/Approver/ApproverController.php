@@ -726,12 +726,8 @@ class ApproverController extends Controller
         // Start with a base query, including relevant relationships
         $query = Property::with([
             'portfolio',
-            'tenants' => function($q) {
-                $q->where('status', 'active');
-            },
-            'siteVisits' => function($q) {
-                $q->where('status', 'scheduled');
-            }
+            'tenants',
+            'siteVisits',
         ]);
 
         // Filter by portfolio if provided
@@ -887,6 +883,14 @@ class ApproverController extends Controller
     }
 
     // Financial Module
+    public function FinancialIndex(Request $request) {
+        return view('approver.financial.index');
+    }
+
+    public function FinancialShow(Financial $financial) {
+        return view('approver.financial.show', compact('financial'));
+    }
+
     public function FinancialMain(Request $request)
     {
         // Get current tab or default to 'all'

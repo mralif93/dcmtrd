@@ -2092,12 +2092,8 @@ class MakerController extends Controller
         // Start with a base query, including relevant relationships
         $query = Property::with([
             'portfolio',
-            'tenants' => function($q) {
-                $q->where('status', 'active');
-            },
-            'siteVisits' => function($q) {
-                $q->where('status', 'scheduled');
-            }
+            'tenants',
+            'siteVisits'
         ]);
         
         // Filter by portfolio if provided
