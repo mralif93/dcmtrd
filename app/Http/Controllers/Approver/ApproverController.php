@@ -37,6 +37,12 @@ use App\Models\Tenant;
 use App\Models\Lease;
 use App\Models\Financial;
 use App\Models\Checklist;
+use App\Models\ChecklistLegalDocumentation;
+use App\Models\ChecklistTenant;
+use App\Models\ChecklistExternalAreaCondition;
+use App\Models\ChecklistInternalAreaCondition;
+use App\Models\ChecklistPropertyDevelopment;
+use App\Models\ChecklistDisposalInstallation;
 use App\Models\SiteVisit;
 use App\Models\SiteVisitLog;
 use App\Models\Appointment;
@@ -1423,70 +1429,70 @@ class ApproverController extends Controller
     }
 
     public function checklistMain(Request $request)
-{
-    // Get current tab or default to 'all'
-    $activeTab = $request->query('tab', 'all');
-    
-    // Base query with necessary relationships
-    $query = Checklist::with(['siteVisit', 'siteVisit.property']);
-    
-    // Apply status filter based on tab
-    if ($activeTab !== 'all') {
-        $query->where('status', $activeTab);
+    {
+        // Get current tab or default to 'all'
+        $activeTab = $request->query('tab', 'all');
+        
+        // Base query with necessary relationships
+        $query = Checklist::with(['siteVisit', 'siteVisit.property']);
+        
+        // Apply status filter based on tab
+        if ($activeTab !== 'all') {
+            $query->where('status', $activeTab);
+        }
+        
+        // Apply search filter if provided
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('prepared_by', 'like', "%{$search}%")
+                ->orWhere('verified_by', 'like', "%{$search}%")
+                ->orWhereHas('siteVisit.property', function($propertyQuery) use ($search) {
+                    $propertyQuery->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+        
+        // Apply property filter if provided
+        if ($request->filled('property_id')) {
+            $query->whereHas('siteVisit', function($q) use ($request) {
+                $q->where('property_id', $request->input('property_id'));
+            });
+        }
+        
+        // Apply site visit filter if provided
+        if ($request->filled('site_visit_id')) {
+            $query->where('site_visit_id', $request->input('site_visit_id'));
+        }
+        
+        // Fetch checklists with pagination
+        $checklists = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        
+        // Fetch all site visits for the dropdown
+        $siteVisits = SiteVisit::with('property')
+                    ->orderBy('date_visit', 'desc')
+                    ->get();
+        
+        // Fetch available properties for filter dropdown
+        $properties = Property::orderBy('name')->get();
+        
+        // Count records for each tab
+        $tabCounts = [
+            'all' => Checklist::count(),
+            'active' => Checklist::where('status', 'active')->count(),
+            'pending' => Checklist::where('status', 'pending')->count(),
+            'rejected' => Checklist::where('status', 'rejected')->count(),
+            'inactive' => Checklist::where('status', 'inactive')->count(),
+        ];
+        
+        return view('approver.checklist.main', compact(
+            'checklists', 
+            'siteVisits', 
+            'properties', 
+            'activeTab', 
+            'tabCounts'
+        ));
     }
-    
-    // Apply search filter if provided
-    if ($request->filled('search')) {
-        $search = $request->input('search');
-        $query->where(function($q) use ($search) {
-            $q->where('prepared_by', 'like', "%{$search}%")
-              ->orWhere('verified_by', 'like', "%{$search}%")
-              ->orWhereHas('siteVisit.property', function($propertyQuery) use ($search) {
-                  $propertyQuery->where('name', 'like', "%{$search}%");
-              });
-        });
-    }
-    
-    // Apply property filter if provided
-    if ($request->filled('property_id')) {
-        $query->whereHas('siteVisit', function($q) use ($request) {
-            $q->where('property_id', $request->input('property_id'));
-        });
-    }
-    
-    // Apply site visit filter if provided
-    if ($request->filled('site_visit_id')) {
-        $query->where('site_visit_id', $request->input('site_visit_id'));
-    }
-    
-    // Fetch checklists with pagination
-    $checklists = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
-    
-    // Fetch all site visits for the dropdown
-    $siteVisits = SiteVisit::with('property')
-                  ->orderBy('date_visit', 'desc')
-                  ->get();
-    
-    // Fetch available properties for filter dropdown
-    $properties = Property::orderBy('name')->get();
-    
-    // Count records for each tab
-    $tabCounts = [
-        'all' => Checklist::count(),
-        'active' => Checklist::where('status', 'active')->count(),
-        'pending' => Checklist::where('status', 'pending')->count(),
-        'rejected' => Checklist::where('status', 'rejected')->count(),
-        'inactive' => Checklist::where('status', 'inactive')->count(),
-    ];
-    
-    return view('approver.checklist.main', compact(
-        'checklists', 
-        'siteVisits', 
-        'properties', 
-        'activeTab', 
-        'tabCounts'
-    ));
-}
 
     public function ChecklistDetails(Checklist $checklist)
     {
@@ -1530,6 +1536,224 @@ class ApproverController extends Controller
         } catch (\Exception $e) {
             return back()
                 ->with('error', 'Error rejecting checklist: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist Legal Documentation Module
+    public function ChecklistLegalDocumentationApprove(Checklist $checklist)
+    {
+        try {
+            $checklist->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklist)
+                ->with('success', 'Legal Documentation approved successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error approving legal documentation: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistLegalDocumentationReject(Request $request, Checklist $checklist)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklist->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklist)
+                ->with('success', 'Legal Documentation rejected successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error rejecting legal documentation: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist Tenant Module
+    public function ChecklistTenantApprove(ChecklistTenant $checklistTenant)
+    {
+        try {
+            $checklistTenant->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistTenant->checklist)
+                ->with('success', 'Tenant checklist approved successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error approving tenant checklist: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistTenantReject(Request $request, ChecklistTenant $checklistTenant)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklistTenant->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistTenant->checklist)
+                ->with('success', 'Tenant checklist rejected successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error rejecting tenant checklist: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist External Area Condition Module
+    public function ChecklistExternalAreaConditionApprove(Checklist $checklist)
+    {
+        try {
+            $checklist->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return back()->with('success', 'External Area Condition approved successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error approving external area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistExternalAreaConditionReject(Request $request, Checklist $checklist)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklist->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return back()->with('success', 'External Area Condition rejected successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error rejecting external area condition: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist Internal Area Condition Module
+    public function ChecklistInternalAreaConditionApprove(Checklist $checklist)
+    {
+        try {
+            $checklist->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return back()->with('success', 'Internal Area Condition approved successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error approving internal area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistInternalAreaConditionReject(Request $request, Checklist $checklist)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklist->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return back()->with('success', 'Internal Area Condition rejected successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error rejecting internal area condition: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist Property Development Module
+    public function ChecklistPropertyDevelopmentApprove(Checklist $checklist)
+    {
+        try {
+            $checklist->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return back()->with('success', 'Property Development approved successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error approving property development: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistPropertyDevelopmentReject(Request $request, Checklist $checklist)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklist->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return back()->with('success', 'Property Development rejected successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error rejecting property development: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist Disposal/Installation/Replacement Module
+    public function ChecklistDisposalInstallationReplacementApprove(Checklist $checklist)
+    {
+        try {
+            $checklist->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return back()->with('success', 'Disposal/Installation/Replacement approved successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error approving disposal/installation/replacement: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistDisposalInstallationReplacementReject(Request $request, Checklist $checklist)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklist->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return back()->with('success', 'Disposal/Installation/Replacement rejected successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error rejecting disposal/installation/replacement: ' . $e->getMessage());
         }
     }
 

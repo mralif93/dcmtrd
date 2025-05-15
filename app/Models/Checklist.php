@@ -88,7 +88,7 @@ class Checklist extends Model
     public function tenants()
     {
         return $this->belongsToMany(Tenant::class, 'checklist_tenant')
-            ->withPivot('id', 'notes', 'status', 'prepared_by', 'verified_by', 'approval_datetime')
+            ->withPivot('id', 'notes', 'status', 'prepared_by', 'verified_by', 'remarks', 'approval_datetime')
             ->withTimestamps();
     }
 }

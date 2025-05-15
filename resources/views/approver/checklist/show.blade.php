@@ -446,9 +446,13 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                    {{ $tenant->pivot->status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                                    ($tenant->pivot->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                                    ($tenant->pivot->status === 'verified' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800')) }}">
+                                                    {{ match(strtolower($tenant->pivot->status)) {
+                                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                                        'active' => 'bg-green-100 text-green-800',
+                                                        'inactive' => 'bg-gray-100 text-gray-800',
+                                                        'rejected' => 'bg-red-100 text-red-800',
+                                                        default => 'bg-gray-100 text-gray-800'
+                                                    } }}">
                                                     {{ ucfirst($tenant->pivot->status ?? 'N/A') }}
                                                 </span>
                                             </td>
@@ -463,13 +467,41 @@
                                                 <div>Verified by: {{ $tenant->pivot->verified_by ?? 'N/A' }}</div>
                                                 <div>Approval date: {{ $tenant->pivot->approval_datetime ? date('d/m/Y h:i A', strtotime($tenant->pivot->approval_datetime)) : 'N/A' }}</div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div class="flex justify-end space-x-2">
-                                                    <a href="{{ route('tenant-a.show', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                                        </svg>
-                                                    </a>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <div class="flex justify-between items-center w-24">
+                                                    @if($tenant->pivot->status === 'pending')
+                                                        <form action="{{ route('checklist-tenant-a.approve', $tenant->pivot->id) }}" method="POST">
+                                                            @csrf
+                                                            <button type="submit" class="text-green-600 hover:text-green-900 p-1" title="Approve">
+                                                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                </svg>
+                                                            </button>
+                                                        </form>
+                                                        <button type="button" 
+                                                            onclick="openRejectModal('tenant', '{{ $tenant->pivot->id }}', '{{ $tenant->name }}', '{{ route('checklist-tenant-a.reject', $tenant->pivot->id) }}')" 
+                                                            class="text-red-600 hover:text-red-900 p-2 rounded-full hover:bg-red-100" 
+                                                            title="Reject">
+                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                            </svg>
+                                                        </button>
+                                                        <a href="{{ route('tenant-a.show', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900 p-1" title="View">
+                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                            </svg>
+                                                        </a>
+                                                    @else
+                                                        <div></div>
+                                                        <div></div>
+                                                        <a href="{{ route('tenant-a.show', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900 p-1" title="View">
+                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                            </svg>
+                                                        </a>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>
@@ -1211,5 +1243,104 @@
             document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500');
             document.getElementById('tab-' + tabName).classList.add('border-indigo-500', 'text-indigo-600');
         }
+    </script>
+
+    <!-- Universal Rejection Modal -->
+    <div id="rejectModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Confirm Rejection</h3>
+                <button type="button" onclick="closeRejectModal()" class="text-gray-400 hover:text-gray-500">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <p class="mb-2 text-sm text-gray-500">You are about to reject: <span id="rejectItemType" class="font-medium text-gray-700"></span></p>
+            <p class="mb-4 text-sm font-medium text-gray-900" id="rejectItemName"></p>
+            
+            <form id="rejectForm" action="" method="POST">
+                @csrf
+                <div class="mb-4">
+                    <label for="rejection_reason" class="block text-sm font-medium text-gray-700 mb-1">Rejection Reason</label>
+                    <textarea id="rejection_reason" name="rejection_reason" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Please provide a reason for rejection" required></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeRejectModal()" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Confirm Rejection
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript for Universal Rejection Modal -->
+    <script>
+        // Function to open the rejection modal for any item type
+        function openRejectModal(itemType, itemId, itemName, formAction) {
+            // Set the modal content based on item type
+            let typeDisplay = '';
+            switch(itemType) {
+                case 'tenant':
+                    typeDisplay = 'Tenant Record';
+                    break;
+                case 'checklist':
+                    typeDisplay = 'Checklist';
+                    break;
+                case 'legal':
+                    typeDisplay = 'Legal Documentation';
+                    break;
+                case 'external':
+                    typeDisplay = 'External Area Condition';
+                    break;
+                case 'internal':
+                    typeDisplay = 'Internal Area Condition';
+                    break;
+                case 'development':
+                    typeDisplay = 'Property Development';
+                    break;
+                case 'installation':
+                    typeDisplay = 'Installation/Disposal Item';
+                    break;
+                default:
+                    typeDisplay = 'Item';
+            }
+            
+            // Update the modal content
+            document.getElementById('rejectItemType').textContent = typeDisplay;
+            document.getElementById('rejectItemName').textContent = itemName;
+            document.getElementById('rejectForm').action = formAction;
+            
+            // Show the modal
+            document.getElementById('rejectModal').classList.remove('hidden');
+        }
+        
+        // Function to close the modal
+        function closeRejectModal() {
+            document.getElementById('rejectModal').classList.add('hidden');
+            document.getElementById('rejection_reason').value = '';
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('rejectModal');
+            const modalContent = document.querySelector('#rejectModal > div');
+            
+            if (modal && !modal.classList.contains('hidden') && event.target === modal) {
+                closeRejectModal();
+            }
+        });
+        
+        // Close modal on Escape key press
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeRejectModal();
+            }
+        });
     </script>
 </x-app-layout>
