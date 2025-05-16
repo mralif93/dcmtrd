@@ -313,7 +313,7 @@
                 <x-dashboard-card
                     title="Lease"
                     icon="document-duplicate"
-                    :count="$leaseCount ?? 0"
+                    :count="$leasesCount ?? 0"
                     :pendingCount="$pendingLeaseCount ?? 0"
                     :href="route('lease-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
@@ -323,7 +323,7 @@
                 <x-dashboard-card
                     title="Site Visit"
                     icon="location-marker"
-                    :count="$siteVisitCount ?? 0"
+                    :count="$siteVisitsCount ?? 0"
                     :pendingCount="$pendingSiteVisitCount ?? 0"
                     :href="route('site-visit-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
@@ -333,7 +333,7 @@
                 <x-dashboard-card
                     title="Checklist"
                     icon="clipboard-check"
-                    :count="$checklistCount ?? 0"
+                    :count="$checklistsCount ?? 0"
                     :pendingCount="$pendingChecklistCount ?? 0"
                     :href="route('checklist-a.main', ['tab' => 'all'])"
                     color="bg-green-100"
