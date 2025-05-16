@@ -1864,7 +1864,13 @@ class MakerController extends Controller
 
     public function PortfolioShow(Portfolio $portfolio)
     {
-        return view('maker.portfolio.show', compact('portfolio'));
+        // Get paginated properties with a unique page name
+        $properties = $portfolio->properties()->paginate(10, ['*'], 'properties_page');
+        
+        // Get paginated financials with a different page name
+        $financials = $portfolio->financials()->paginate(10, ['*'], 'financials_page');
+        
+        return view('maker.portfolio.show', compact('portfolio', 'properties', 'financials'));
     }
 
     public function SubmitApprovalPortfolio(Portfolio $portfolio)
