@@ -379,6 +379,8 @@ Route::middleware(['auth', 'two-factor', 'role:legal'])->group(function () {
     // Dashboard
     Route::get('/legal/dashboard', [LegalController::class, 'index'])->name('legal.dashboard')->middleware('permission:LEGAL');
 
+    Route::get('/legal/main', [LegalController::class, 'indexMain'])->name('legal.dashboard.main')->middleware('permission:LEGAL');
+
     Route::get('/legal/dcmt/sec-documents', [LegalController::class, 'SecDocuments'])->name('legal.sec-documents')->middleware('permission:LEGAL');
     Route::get('/legal/dcmt/{id}/request-documents', [LegalController::class, 'RequestDocuments'])->name('legal.request-documents')->middleware('permission:LEGAL');
     Route::get('/legal/dcmt/request-documents/create', [LegalController::class, 'RequestDocumentsCreate'])->name('legal.request-documents.create')->middleware('permission:LEGAL');

@@ -25,7 +25,17 @@ use App\Models\ChecklistLegalDocumentation;
 use App\Http\Requests\RequestDocumentsStoreRequest;
 
 class LegalController extends Controller
-{
+{  
+    public function indexMain(Request $request)
+    {
+        // Start with the Checklist query
+        $query = Checklist::with(['siteVisit.property', 'legalDocumentation']);
+
+        // Get checklists with related data
+        $checklists = $query->latest()->paginate(10)->withQueryString();
+
+        return view('legal.checklist.index', compact('checklists'));
+    }
     public function index(Request $request)
     {
         // Start with the Checklist query
