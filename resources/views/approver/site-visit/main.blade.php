@@ -217,15 +217,6 @@
                                                 </svg>
                                             </button>
                                         @endif
-
-                                        @if($siteVisit->status == 'scheduled' && !$siteVisit->checklist)
-                                            <!-- Create Checklist Button -->
-                                            <a href="{{ route('checklist-a.create', ['site_visit_id' => $siteVisit->id]) }}" class="text-blue-600 hover:text-blue-900" title="Create Checklist">
-                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                                </svg>
-                                            </a>
-                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -270,8 +261,8 @@
                 <form id="cancelForm" method="POST" action="">
                     @csrf
                     <div class="mt-4">
-                        <label for="notes" class="block text-sm font-medium text-gray-700">Cancellation Reason</label>
-                        <textarea id="notes" name="notes" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
+                        <label for="rejection_reason" class="block text-sm font-medium text-gray-700">Cancellation Reason</label>
+                        <textarea id="rejection_reason" name="rejection_reason" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
                     </div>
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
@@ -292,7 +283,7 @@
         });
         
         function openCancelModal(siteVisitId) {
-            document.getElementById('cancelForm').action = `/approver/site-visit/${siteVisitId}/cancel`;
+            document.getElementById('cancelForm').action = `/approver/site-visit/${siteVisitId}/reject`;
             document.getElementById('cancelModal').classList.remove('hidden');
         }
         

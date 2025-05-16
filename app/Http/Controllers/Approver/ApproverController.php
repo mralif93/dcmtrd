@@ -1224,7 +1224,6 @@ class ApproverController extends Controller
             'rejection_reason' => 'required|string|max:255',
         ]);
 
-
         try {
             $lease->update([
                 'status' => 'rejected',
@@ -1268,7 +1267,13 @@ class ApproverController extends Controller
         // Apply status filter based on tab
         if ($activeTab !== 'all') {
             if ($activeTab === 'active') {
-                $query->where('status', 'scheduled');
+                $query->where('status', 'active');
+            } elseif ($activeTab === 'pending') {
+                $query->where('status', 'pending');
+            } elseif ($activeTab === 'rejected') {
+                $query->where('status', 'rejected');
+            } elseif ($activeTab === 'inactive') {
+                $query->where('status', 'inactive');
             } else {
                 $query->where('status', $activeTab);
             }
@@ -1325,10 +1330,10 @@ class ApproverController extends Controller
         // Count records for each tab
         $tabCounts = [
             'all' => SiteVisit::count(),
-            'active' => SiteVisit::where('status', 'scheduled')->count(),
+            'active' => SiteVisit::where('status', 'active')->count(),
             'pending' => SiteVisit::where('status', 'pending')->count(),
-            'rejected' => SiteVisit::where('status', 'cancelled')->count(), // mapping 'rejected' to 'cancelled'
-            'inactive' => SiteVisit::whereIn('status', ['completed', 'inactive'])->count(),
+            'rejected' => SiteVisit::where('status', 'rejected')->count(),
+            'inactive' => SiteVisit::where('status', 'inactive')->count(),
         ];
         
         return view('approver.site-visit.main', compact('siteVisits', 'properties', 'activeTab', 'tabCounts'));
@@ -1359,6 +1364,7 @@ class ApproverController extends Controller
 
     public function SiteVisitReject(Request $request, SiteVisit $siteVisit)
     {
+        // Validate the rejection reason
         $request->validate([
             'rejection_reason' => 'required|string|max:255',
         ]);
