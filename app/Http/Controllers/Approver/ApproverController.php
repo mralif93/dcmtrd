@@ -883,8 +883,11 @@ class ApproverController extends Controller
     }
 
     // Financial Module
-    public function FinancialIndex(Request $request) {
-        return view('approver.financial.index');
+    public function FinancialIndex(Portfolio $portfolio, Request $request)
+    {
+        $query = Financial::with(['bank', 'financialType', 'properties'])->orderBy('bank_id')->get();
+        $financials = $query->where('portfolio_id', $portfolio->id);
+        return view('approver.financial.index', compact('financials', 'portfolio'));
     }
 
     public function FinancialShow(Financial $financial) {

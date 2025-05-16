@@ -37,7 +37,14 @@
                         <h3 class="text-lg font-medium text-gray-900">{{ $property->name }}</h3>
                         <p class="text-sm text-gray-600">{{ $property->category }} - {{ $property->city }}, {{ $property->state }}</p>
                     </div>
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                        {{ match(strtolower($property->status)) {
+                            'pending' => 'bg-yellow-100 text-yellow-800',
+                            'active' => 'bg-green-100 text-green-800',
+                            'inactive' => 'bg-gray-100 text-gray-800',
+                            'rejected' => 'bg-red-100 text-red-800',
+                            default => 'bg-gray-100 text-gray-800'
+                        } }}">
                         {{ ucfirst($property->status) }}
                     </span>
                 </div>
@@ -65,7 +72,7 @@
                         <div class="px-4 py-5 sm:px-6">
                             <h4 class="text-sm font-medium text-gray-500 uppercase mb-2">Site Visits</h4>
                             <p class="text-xl font-bold text-gray-800">{{ $property->siteVisits->where('status', 'pending')->count() }} Pending</p>
-                            <p class="text-sm text-gray-600 mt-1">Last Visit: {{ $property->siteVisits->where('status', 'active')->sortByDesc('date_visit')->first()?->date_visit->format('d M Y') ?? 'None' }}</p>
+                            <p class="text-sm text-gray-600 mt-1">Last Visit: {{ $property->siteVisits->where('status', 'active')->sortByDesc('date_visit')->first()?->date_visit->format('d M Y') ?? 'N/A' }}</p>
                         </div>
                     </div>
                 </div>

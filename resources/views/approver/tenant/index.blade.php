@@ -37,7 +37,14 @@
                         <h3 class="text-lg font-medium text-gray-900">{{ $property->name }}</h3>
                         <p class="text-sm text-gray-600">{{ $property->category }} - {{ $property->city }}, {{ $property->state }}</p>
                     </div>
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                        {{ match(strtolower($property->status)) {
+                            'pending' => 'bg-yellow-100 text-yellow-800',
+                            'active' => 'bg-green-100 text-green-800',
+                            'inactive' => 'bg-gray-100 text-gray-800',
+                            'rejected' => 'bg-red-100 text-red-800',
+                            default => 'bg-gray-100 text-gray-800'
+                        } }}">
                         {{ ucfirst($property->status) }}
                     </span>
                 </div>
@@ -64,8 +71,8 @@
                         
                         <div class="px-4 py-5 sm:px-6">
                             <h4 class="text-sm font-medium text-gray-500 uppercase mb-2">Site Visits</h4>
-                            <p class="text-xl font-bold text-gray-800">{{ $property->siteVisits->where('status', 'scheduled')->count() }} Pending</p>
-                            <p class="text-sm text-gray-600 mt-1">Last Visit: {{ $property->siteVisits->where('status', 'completed')->sortByDesc('date_visit')->first()?->date_visit->format('d M Y') ?? 'None' }}</p>
+                            <p class="text-xl font-bold text-gray-800">{{ $property->siteVisits->where('status', 'pending')->count() }} Pending</p>
+                            <p class="text-sm text-gray-600 mt-1">Last Visit: {{ $property->siteVisits->where('status', 'active')->sortByDesc('date_visit')->first()?->date_visit->format('d M Y') ?? 'N/A' }}</p>
                         </div>
                     </div>
                 </div>
@@ -261,6 +268,13 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
                                         </a>
+                                        @if($visit->checklist)
+                                            <a href="{{ route('checklist-a.show', $visit->checklist) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                                </svg>
+                                            </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
