@@ -309,7 +309,6 @@ class MakerController extends Controller
     {
         $validated = $request->validated();
         
-        // Add prepared_by from authenticated user and set status to pending
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'Pending';
 
@@ -1470,11 +1469,6 @@ class MakerController extends Controller
     }
 
     // Activity Diary
-    /**
-     * Display a listing of activity diaries.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityIndex(Request $request)
     {
         $query = ActivityDiary::with('issuer');
@@ -1500,23 +1494,12 @@ class MakerController extends Controller
         return view('maker.activity-diary.index', compact('activities', 'issuers'));
     }
 
-    /**
-     * Show the form for creating a new activity diary.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityCreate()
     {
         $issuers = Issuer::all();
         return view('maker.activity-diary.create', compact('issuers'));
     }
 
-    /**
-     * Store a newly created activity diary in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityStore(Request $request)
     {
         $validated = $this->validateActivity($request);
@@ -1532,37 +1515,18 @@ class MakerController extends Controller
             ->with('success', 'Activity diary created successfully');
     }
 
-    /**
-     * Display the specified activity diary.
-     *
-     * @param  \App\Models\ActivityDiary  $activity
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityShow(ActivityDiary $activity)
     {
         $activity->load('issuer');
         return view('maker.activity-diary.show', compact('activity'));
     }
 
-    /**
-     * Show the form for editing the specified activity diary.
-     *
-     * @param  \App\Models\ActivityDiary  $activity
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityEdit(ActivityDiary $activity)
     {
         $issuers = Issuer::all();
         return view('maker.activity-diary.edit', compact('activity', 'issuers'));
     }
 
-    /**
-     * Update the specified activity diary in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ActivityDiary  $activity
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityUpdate(Request $request, ActivityDiary $activity)
     {
         $validated = $this->validateActivity($request);
@@ -1579,12 +1543,6 @@ class MakerController extends Controller
             ->with('success', 'Activity diary updated successfully');
     }
 
-    /**
-     * Remove the specified activity diary from storage.
-     *
-     * @param  \App\Models\ActivityDiary  $activity
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityDestroy(ActivityDiary $activity)
     {
         $activity->delete();
@@ -1594,12 +1552,6 @@ class MakerController extends Controller
             ->with('success', 'Activity diary deleted successfully');
     }
 
-    /**
-     * Display a listing of activity diaries by issuer ID.
-     *
-     * @param  int  $issuerId
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityGetByIssuer($issuerId, Request $request)
     {
         $issuer = Issuer::findOrFail($issuerId);
@@ -1619,11 +1571,6 @@ class MakerController extends Controller
         return view('maker.activity-diary.by-issuer', compact('activities', 'issuer'));
     }
 
-    /**
-     * Display a listing of upcoming due activity diaries.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityUpcoming(Request $request)
     {
         $today = now()->format('Y-m-d');
@@ -1650,13 +1597,6 @@ class MakerController extends Controller
         return view('maker.activity-diary.upcoming', compact('activities'));
     }
 
-    /**
-     * Update the status of the activity diary.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ActivityDiary  $activity
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityUpdateStatus(Request $request, ActivityDiary $activity)
     {
         $validated = $request->validate([
@@ -1676,11 +1616,6 @@ class MakerController extends Controller
         return redirect()->back()->with('success', 'Activity diary status updated successfully');
     }
 
-    /**
-     * Export activities to CSV.
-     *
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
-     */
     public function ActivityExportActivities()
     {
         $activities = ActivityDiary::with('issuer')->get();
@@ -1933,7 +1868,7 @@ class MakerController extends Controller
     
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
         
         try {
             // Create the financial record
@@ -2175,8 +2110,10 @@ class MakerController extends Controller
 
     public function PropertyStore(Request $request)
     {
-        // Validate all form inputs
         $validated = $this->PropertyValidate($request);
+
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'draft';
         
         // Check if a master lease agreement file was uploaded
         if ($request->hasFile('master_lease_agreement')) {
@@ -2195,15 +2132,15 @@ class MakerController extends Controller
             // Save the file path to the database
             $validated['valuation_report'] = $filePath;
         }
-        
-        // Create the property with all data
-        
+
         try {
             $property = Property::create($validated);
-            return redirect()->route('property-m.index', $property->portfolio)
+            return redirect()
+                ->route('property-m.index', $property->portfolio)
                 ->with('success', 'Property created successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()
+            return back()
+                ->withInput()
                 ->with('error', 'Error creating property: ' . $e->getMessage());
         }
     }
@@ -2331,7 +2268,7 @@ class MakerController extends Controller
         $validated = $this->TenantValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         try {
             $tenant = Tenant::create($validated);
@@ -2444,7 +2381,7 @@ class MakerController extends Controller
 
         // Set default values
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
         
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
@@ -2570,7 +2507,7 @@ class MakerController extends Controller
         $validated = $this->TenancyLetterValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
@@ -2678,7 +2615,7 @@ class MakerController extends Controller
         $validated = $this->SiteVisitValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
@@ -2843,7 +2780,7 @@ class MakerController extends Controller
     public function ChecklistStore(Request $request)
     {
         // Get the validated data from the separate validation methods
-        $validated = $this->checklistValidate($request);
+        $validated = $this->ChecklistValidate($request);
         
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
@@ -3485,7 +3422,7 @@ class MakerController extends Controller
      * @param Checklist|null $checklist
      * @return array
      */
-    public function checklistValidate(Request $request, Checklist $checklist = null)
+    public function ChecklistValidate(Request $request, Checklist $checklist = null)
     {
         return $request->validate([
             'site_visit_id' => 'required|exists:site_visits,id',
@@ -3745,7 +3682,7 @@ class MakerController extends Controller
         $validated = $this->AppointmentValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('appointments', 'public');
@@ -3903,12 +3840,10 @@ class MakerController extends Controller
 
     public function ApprovalFormStore(Request $request)
     {
-        // Validate the request
         $validated = $this->ApprovalFormValidate($request);
 
-        // Set default status and prepared_by
-        $validated['status'] = 'pending';
         $validated['prepared_by'] = Auth::user()->name;
+                $validated['status'] = 'draft';
 
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
@@ -4142,7 +4077,7 @@ class MakerController extends Controller
 
         // Add system fields
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         try {
             SiteVisitLog::create($validated);

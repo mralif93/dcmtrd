@@ -45,11 +45,6 @@
                                         } }}">
                                         {{ ucfirst($siteVisit->status) }}
                                     </span>
-                                    @if($siteVisit->follow_up_required)
-                                    <span class="ml-2 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                        Follow-up Required
-                                    </span>
-                                    @endif
 
                                     @if(strtolower($siteVisit->status) === 'draft' || strtolower($siteVisit->status) === 'rejected')
                                         <form action="{{ route('site-visit-m.approval', $siteVisit) }}" class="ml-4" id="approval-form">
@@ -89,7 +84,7 @@
                 </div>
                 @endif
 
-                <!-- Property Information Section (Combined) -->
+                <!-- Property Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
                         <h3 class="text-lg leading-6 font-medium text-gray-900">Property Information</h3>
