@@ -1508,6 +1508,17 @@ class ApproverController extends Controller
 
     public function ChecklistDetails(Checklist $checklist)
     {
+        
+        // Load the checklist with its relationships
+        $checklist->load([
+            'siteVisit',
+            'siteVisit.property',
+            'siteVisit.property.portfolio',
+            'siteVisit.property.tenants',
+            'siteVisit.property.tenants.leases',
+            'siteVisit.property.financials',
+            'siteVisit.property.siteVisits',
+        ]);
         return view('approver.checklist.details', compact('checklist'));
     }
 
