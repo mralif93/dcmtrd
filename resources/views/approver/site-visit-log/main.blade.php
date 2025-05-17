@@ -118,10 +118,13 @@
                         <div>
                             <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
                             <select id="category" name="category" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="">All Categories</option>
                                 @foreach($categories as $category)
-                                    <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
-                                        {{ $category }}
-                                    </option>
+                                    @if(!empty($category)) <!-- Skip the empty value we added -->
+                                        <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
+                                            {{ $category }}
+                                        </option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
