@@ -892,7 +892,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('property-a.main', ['tab' => 'pending'])
+                ->route('property-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Property rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1003,7 +1003,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('financial-a.main', ['tab' => 'pending'])
+                ->route('financial-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Financial rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1119,7 +1119,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('tenant-a.main', ['tab' => 'pending'])
+                ->route('tenant-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Tenant rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1244,7 +1244,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('lease-a.main', ['tab' => 'pending'])
+                ->route('lease-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Lease rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1389,7 +1389,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('site-visit-a.main', ['tab' => 'pending'])
+                ->route('site-visit-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Site Visit rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1907,7 +1907,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('appointment-a.main', ['status' => 'pending'])
+                ->route('appointment-a.main', ['status' => 'active'])
                 ->with('success', 'Appointment approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1929,7 +1929,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('appointment-a.main', ['status' => 'pending'])
+                ->route('appointment-a.main', ['status' => 'rejected'])
                 ->with('success', 'Appointment rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2053,7 +2053,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('approval-form-a.main', ['status' => 'pending'])
+                ->route('approval-form-a.main', ['status' => 'active'])
                 ->with('success', 'Approval Form approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2075,7 +2075,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('approval-form-a.main', ['status' => 'pending'])
+                ->route('approval-form-a.main', ['status' => 'rejected'])
                 ->with('success', 'Approval Form rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2192,7 +2192,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('approval-property-a.main', ['tab' => 'pending'])
+                ->route('approval-property-a.main', ['tab' => 'active'])
                 ->with('success', 'Approval Property approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2433,7 +2433,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('site-visit-log-a.main', ['tab' => 'pending'])
+                ->route('site-visit-log-a.main', ['tab' => 'active'])
                 ->with('success', 'Site Visit Log approved successfully.');
         } catch (\Exception $e) {
             return back()
