@@ -2895,9 +2895,20 @@ class MakerController extends Controller
         }
     }
 
-    public function ChecklistLetter(Checklist $checklist)
+    public function checklistLetter(Checklist $checklist)
     {
-        $checklist = $checklist->load('siteVisit.property.tenants');
+        $checklist = $checklist->load([
+            'siteVisit.property.tenants',
+            'legalDocumentation',
+            'externalAreaCondition',
+            'internalAreaCondition',
+            'propertyDevelopment',
+            'disposalInstallation',
+            'tenants'
+        ]);
+
+        // dd($checklist->tenants->toArray());
+        
         return view('maker.checklist.letter', compact('checklist'));
     }
 
