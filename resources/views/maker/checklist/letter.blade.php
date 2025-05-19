@@ -203,7 +203,7 @@
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">3.1</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px;">General Cleanliness</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">General Cleanliness {{ $checklist->general_cleanliness }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->general_cleanliness ? 'Yes' : 'No' }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->general_cleanliness ? 'No' : 'Yes' }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->general_cleanliness_remarks ?? 'N/A' }}</td>
