@@ -37,7 +37,14 @@
                         <h3 class="text-lg font-medium text-gray-900">{{ $property->name }}</h3>
                         <p class="text-sm text-gray-600">{{ $property->category }} - {{ $property->city }}, {{ $property->state }}</p>
                     </div>
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                        {{ match(strtolower($property->status)) {
+                            'pending' => 'bg-yellow-100 text-yellow-800',
+                            'active' => 'bg-green-100 text-green-800',
+                            'inactive' => 'bg-gray-100 text-gray-800',
+                            'rejected' => 'bg-red-100 text-red-800',
+                            default => 'bg-gray-100 text-gray-800'
+                        } }}">
                         {{ ucfirst($property->status) }}
                     </span>
                 </div>
@@ -65,7 +72,7 @@
                         <div class="px-4 py-5 sm:px-6">
                             <h4 class="text-sm font-medium text-gray-500 uppercase mb-2">Site Visits</h4>
                             <p class="text-xl font-bold text-gray-800">{{ $property->siteVisits->where('status', 'pending')->count() }} Pending</p>
-                            <p class="text-sm text-gray-600 mt-1">Last Visit: {{ $property->siteVisits->where('status', 'active')->sortByDesc('date_visit')->first()?->date_visit->format('d M Y') ?? 'None' }}</p>
+                            <p class="text-sm text-gray-600 mt-1">Last Visit: {{ $property->siteVisits->where('status', 'active')->sortByDesc('date_visit')->first()?->date_visit->format('d M Y') ?? 'N/A' }}</p>
                         </div>
                     </div>
                 </div>
@@ -188,7 +195,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No tenants found {{ request('search') ? 'matching your search' : '' }}</td>
+                                    <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No tenants found {{ request('search') ? 'matching your search' : '' }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -263,20 +270,10 @@
                                 <td class="px-6 py-4">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                         {{ match(strtolower($visit->status)) {
-                                            'completed' => 'bg-green-100 text-green-800',
-                                            'scheduled' => 'bg-blue-100 text-blue-800',
-                                            'cancelled' => 'bg-red-100 text-red-800',
                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                             'active' => 'bg-green-100 text-green-800',
                                             'inactive' => 'bg-gray-100 text-gray-800',
                                             'rejected' => 'bg-red-100 text-red-800',
-                                            'draft' => 'bg-blue-100 text-blue-800',
-                                            'withdrawn' => 'bg-purple-100 text-purple-800',
-                                            'in progress' => 'bg-indigo-100 text-indigo-800',
-                                            'on hold' => 'bg-orange-100 text-orange-800',
-                                            'reviewing' => 'bg-teal-100 text-teal-800',
-                                            'approved' => 'bg-emerald-100 text-emerald-800',
-                                            'expired' => 'bg-rose-100 text-rose-800',
                                             default => 'bg-gray-100 text-gray-800'
                                         } }}">
                                         {{ ucfirst($visit->status) }}

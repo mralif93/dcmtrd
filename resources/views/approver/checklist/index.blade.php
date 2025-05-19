@@ -159,9 +159,13 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            {{ $checklist->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                               ($checklist->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                               ($checklist->status == 'verified' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800')) }}">
+                                            {{ match(strtolower($checklist->status)) {
+                                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                                'active' => 'bg-green-100 text-green-800',
+                                                'inactive' => 'bg-gray-100 text-gray-800',
+                                                'rejected' => 'bg-red-100 text-red-800',
+                                                default => 'bg-gray-100 text-gray-800'
+                                            } }}">
                                             {{ ucfirst($checklist->status ?? 'N/A') }}
                                         </span>
                                         @if($checklist->approval_datetime)
@@ -181,9 +185,13 @@
                                                 <div class="flex items-center">
                                                     <span class="w-24 text-gray-600">Legal Docs:</span>
                                                     <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $checklist->legalDocumentation->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                                           ($checklist->legalDocumentation->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                                           ($checklist->legalDocumentation->status == 'verified' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800')) }}">
+                                                        {{ match(strtolower($checklist->legalDocumentation->status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($checklist->legalDocumentation->status ?? 'N/A') }}
                                                     </span>
                                                 </div>
@@ -191,30 +199,28 @@
 
                                             @if($checklist->tenants->count() > 0)
                                                 <div class="flex items-center">
-                                                    <span class="w-24 text-gray-600">Tenants ({{ $checklist->tenants->count() }}):</span>
+                                                    <span class="w-24 text-gray-600">Tenants:</span>
                                                     @php
-                                                        $pendingCount = $checklist->tenants->where('pivot.status', 'pending')->count();
-                                                        $completedCount = $checklist->tenants->where('pivot.status', 'completed')->count();
-                                                        $verifiedCount = $checklist->tenants->where('pivot.status', 'verified')->count();
+                                                        $totalTenants = $checklist->tenants->count();
+                                                        // Count tenants with specifically 'active' status
+                                                        $activeCount = $checklist->tenants->where('pivot.status', 'active')->count();
+                                                        // Set status based on whether all tenants are active
+                                                        $isActive = ($activeCount == $totalTenants && $totalTenants > 0);
+                                                        $status = $isActive ? 'active' : 'pending';
+                                                        $statusText = $isActive ? 'Active' : 'Pending';
                                                     @endphp
                                                     
-                                                    @if($completedCount > 0)
-                                                        <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                            {{ $completedCount }} Complete
-                                                        </span>
-                                                    @endif
-                                                    
-                                                    @if($pendingCount > 0)
-                                                        <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                            {{ $pendingCount }} Pending
-                                                        </span>
-                                                    @endif
-                                                    
-                                                    @if($verifiedCount > 0)
-                                                        <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                                            {{ $verifiedCount }} Verified
-                                                        </span>
-                                                    @endif
+                                                    <!-- Overall status indicator -->
+                                                    <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                        {{ match(strtolower($status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
+                                                        {{ $statusText }}
+                                                    </span>
                                                 </div>
                                             @endif
                                             
@@ -222,9 +228,13 @@
                                                 <div class="flex items-center">
                                                     <span class="w-24 text-gray-600">External:</span>
                                                     <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $checklist->externalAreaCondition->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                                           ($checklist->externalAreaCondition->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                                           ($checklist->externalAreaCondition->status == 'verified' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800')) }}">
+                                                        {{ match(strtolower($checklist->externalAreaCondition->status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($checklist->externalAreaCondition->status ?? 'N/A') }}
                                                     </span>
                                                 </div>
@@ -234,9 +244,13 @@
                                                 <div class="flex items-center">
                                                     <span class="w-24 text-gray-600">Internal:</span>
                                                     <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $checklist->internalAreaCondition->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                                           ($checklist->internalAreaCondition->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                                           ($checklist->internalAreaCondition->status == 'verified' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800')) }}">
+                                                        {{ match(strtolower($checklist->internalAreaCondition->status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($checklist->internalAreaCondition->status ?? 'N/A') }}
                                                     </span>
                                                 </div>
@@ -246,9 +260,13 @@
                                                 <div class="flex items-center">
                                                     <span class="w-24 text-gray-600">Development:</span>
                                                     <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $checklist->propertyDevelopment->status == 'completed' ? 'bg-green-100 text-green-800' : 
-                                                           ($checklist->propertyDevelopment->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                                           ($checklist->propertyDevelopment->status == 'verified' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800')) }}">
+                                                        {{ match(strtolower($checklist->propertyDevelopment->status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($checklist->propertyDevelopment->status ?? 'N/A') }}
                                                     </span>
                                                 </div>
@@ -257,22 +275,30 @@
                                             @if($checklist->disposalInstallation && $checklist->disposalInstallation->count() > 0)
                                                 <div class="flex flex-col space-y-3">
                                                     <div class="flex items-center">
-                                                        <span class="w-24 text-gray-600">Installation:</span>
-                                                        
+                                                        <span class="w-24 text-gray-600">Disposal:</span>
                                                         @php
                                                             // Get all disposal installation items
                                                             $dispInstallItems = $checklist->disposalInstallation;
                                                             $totalItems = $dispInstallItems->count();
-                                                            $completedCount = $dispInstallItems->where('status', 'completed')->count();
+                                                            $completedCount = $dispInstallItems->where('status', 'active')->count();
                                                             
-                                                            // Simple completed or not status
-                                                            $overallStatus = ($completedCount == $totalItems && $totalItems > 0) ? 'Completed' : 'Not Completed';
-                                                            $isCompleted = ($overallStatus == 'Completed');
+                                                            // Check if all items are completed
+                                                            $allCompleted = ($completedCount == $totalItems && $totalItems > 0);
+                                                            // Overall status is either "Completed" or "Pending"
+                                                            $overallStatus = $allCompleted ? 'Active' : 'Pending';
+                                                            // Status for color styling
+                                                            $statusClass = $allCompleted ? 'active' : 'pending';
                                                         @endphp
                                                         
-                                                        <!-- Overall status indicator - just completed or not -->
+                                                        <!-- Overall status indicator -->
                                                         <span class="px-2 py-1 ml-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                            {{ $isCompleted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                            {{ match(strtolower($statusClass)) {
+                                                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                                                'active' => 'bg-green-100 text-green-800',
+                                                                'inactive' => 'bg-gray-100 text-gray-800',
+                                                                'rejected' => 'bg-red-100 text-red-800',
+                                                                default => 'bg-gray-100 text-gray-800'
+                                                            } }}">
                                                             {{ $overallStatus }}
                                                         </span>
                                                     </div>

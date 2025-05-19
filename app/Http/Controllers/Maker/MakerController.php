@@ -319,8 +319,7 @@ class MakerController extends Controller
     public function BondStore(BondFormRequest $request, Bond $bond)
     {
         $validated = $request->validated();
-
-        // Add prepared_by from authenticated user and set status to pending
+        
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'Pending';
 
@@ -1559,11 +1558,6 @@ class MakerController extends Controller
 
 
     // Activity Diary
-    /**
-     * Display a listing of activity diaries.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityIndex(Request $request)
     {
         $query = ActivityDiary::with('issuer');
@@ -1589,23 +1583,12 @@ class MakerController extends Controller
         return view('maker.activity-diary.index', compact('activities', 'issuers'));
     }
 
-    /**
-     * Show the form for creating a new activity diary.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityCreate()
     {
         $issuers = Issuer::all();
         return view('maker.activity-diary.create', compact('issuers'));
     }
 
-    /**
-     * Store a newly created activity diary in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityStore(Request $request)
     {
         $validated = $this->validateActivity($request);
@@ -1621,37 +1604,18 @@ class MakerController extends Controller
             ->with('success', 'Activity diary created successfully');
     }
 
-    /**
-     * Display the specified activity diary.
-     *
-     * @param  \App\Models\ActivityDiary  $activity
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityShow(ActivityDiary $activity)
     {
         $activity->load('issuer');
         return view('maker.activity-diary.show', compact('activity'));
     }
 
-    /**
-     * Show the form for editing the specified activity diary.
-     *
-     * @param  \App\Models\ActivityDiary  $activity
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityEdit(ActivityDiary $activity)
     {
         $issuers = Issuer::all();
         return view('maker.activity-diary.edit', compact('activity', 'issuers'));
     }
 
-    /**
-     * Update the specified activity diary in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ActivityDiary  $activity
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityUpdate(Request $request, ActivityDiary $activity)
     {
         $validated = $this->validateActivity($request);
@@ -1668,12 +1632,6 @@ class MakerController extends Controller
             ->with('success', 'Activity diary updated successfully');
     }
 
-    /**
-     * Remove the specified activity diary from storage.
-     *
-     * @param  \App\Models\ActivityDiary  $activity
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityDestroy(ActivityDiary $activity)
     {
         $activity->delete();
@@ -1683,12 +1641,6 @@ class MakerController extends Controller
             ->with('success', 'Activity diary deleted successfully');
     }
 
-    /**
-     * Display a listing of activity diaries by issuer ID.
-     *
-     * @param  int  $issuerId
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityGetByIssuer($issuerId, Request $request)
     {
         $issuer = Issuer::findOrFail($issuerId);
@@ -1708,11 +1660,6 @@ class MakerController extends Controller
         return view('maker.activity-diary.by-issuer', compact('activities', 'issuer'));
     }
 
-    /**
-     * Display a listing of upcoming due activity diaries.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityUpcoming(Request $request)
     {
         $today = now()->format('Y-m-d');
@@ -1739,13 +1686,6 @@ class MakerController extends Controller
         return view('maker.activity-diary.upcoming', compact('activities'));
     }
 
-    /**
-     * Update the status of the activity diary.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ActivityDiary  $activity
-     * @return \Illuminate\Http\Response
-     */
     public function ActivityUpdateStatus(Request $request, ActivityDiary $activity)
     {
         $validated = $request->validate([
@@ -1765,11 +1705,6 @@ class MakerController extends Controller
         return redirect()->back()->with('success', 'Activity diary status updated successfully');
     }
 
-    /**
-     * Export activities to CSV.
-     *
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
-     */
     public function ActivityExportActivities()
     {
         $activities = ActivityDiary::with('issuer')->get();
@@ -1952,7 +1887,13 @@ class MakerController extends Controller
 
     public function PortfolioShow(Portfolio $portfolio)
     {
-        return view('maker.portfolio.show', compact('portfolio'));
+        // Get paginated properties with a unique page name
+        $properties = $portfolio->properties()->paginate(10, ['*'], 'properties_page');
+        
+        // Get paginated financials with a different page name
+        $financials = $portfolio->financials()->paginate(10, ['*'], 'financials_page');
+        
+        return view('maker.portfolio.show', compact('portfolio', 'properties', 'financials'));
     }
 
     public function SubmitApprovalPortfolio(Portfolio $portfolio)
@@ -2015,8 +1956,8 @@ class MakerController extends Controller
 
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
-
+        $validated['status'] = 'draft';
+        
         try {
             // Create the financial record
             $financial = Financial::create($validated);
@@ -2180,12 +2121,8 @@ class MakerController extends Controller
         // Start with a base query, including relevant relationships
         $query = Property::with([
             'portfolio',
-            'tenants' => function ($q) {
-                $q->where('status', 'active');
-            },
-            'siteVisits' => function ($q) {
-                $q->where('status', 'scheduled');
-            }
+            'tenants',
+            'siteVisits'
         ]);
 
         // Filter by portfolio if provided
@@ -2261,9 +2198,11 @@ class MakerController extends Controller
 
     public function PropertyStore(Request $request)
     {
-        // Validate all form inputs
         $validated = $this->PropertyValidate($request);
 
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'draft';
+        
         // Check if a master lease agreement file was uploaded
         if ($request->hasFile('master_lease_agreement')) {
             // Store the file and get its path
@@ -2282,14 +2221,14 @@ class MakerController extends Controller
             $validated['valuation_report'] = $filePath;
         }
 
-        // Create the property with all data
-
         try {
             $property = Property::create($validated);
-            return redirect()->route('property-m.index', $property->portfolio)
+            return redirect()
+                ->route('property-m.index', $property->portfolio)
                 ->with('success', 'Property created successfully.');
         } catch (\Exception $e) {
-            return back()->withInput()
+            return back()
+                ->withInput()
                 ->with('error', 'Error creating property: ' . $e->getMessage());
         }
     }
@@ -2417,7 +2356,7 @@ class MakerController extends Controller
         $validated = $this->TenantValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         try {
             $tenant = Tenant::create($validated);
@@ -2508,19 +2447,13 @@ class MakerController extends Controller
             ->count();
 
         $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)->count();
-
-        // Calculate total rental for active leases using base rate year 1
-        $totalActiveRental = Lease::whereIn('tenant_id', $tenantIds)
-            ->where('status', 'active')
-            ->sum('base_rate_year_1');
-
+        
         // Pass calculated metrics to view
         return view('maker.lease.index', compact(
             'property',
             'leases',
             'activeLeaseCount',
             'totalLeaseCount',
-            'totalActiveRental'
         ));
     }
 
@@ -2536,8 +2469,8 @@ class MakerController extends Controller
 
         // Set default values
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
-
+        $validated['status'] = 'draft';
+        
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('lease-attachments', 'public');
@@ -2662,7 +2595,7 @@ class MakerController extends Controller
         $validated = $this->TenancyLetterValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
@@ -2770,7 +2703,7 @@ class MakerController extends Controller
         $validated = $this->SiteVisitValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
@@ -2876,10 +2809,6 @@ class MakerController extends Controller
             $query->whereHas('siteVisit', function ($query) use ($property) {
                 $query->where('property_id', $property->id);
             });
-
-            // For statistics, we need to get counts from the entire dataset
-            $pendingCount = (clone $query)->where('status', 'pending')->count();
-            $completedCount = (clone $query)->where('status', 'completed')->count();
         }
 
         // Handle search functionality
@@ -2904,6 +2833,10 @@ class MakerController extends Controller
 
         // If we're viewing a specific property, include the statistics
         if ($property->exists) {
+            // You might want to add additional statistics here if needed
+            $pendingCount = $checklists->where('status', 'pending')->count();
+            $completedCount = $checklists->where('status', 'completed')->count();
+            
             return view('maker.checklist.index', compact(
                 'property',
                 'checklists',
@@ -2935,11 +2868,11 @@ class MakerController extends Controller
     public function ChecklistStore(Request $request)
     {
         // Get the validated data from the separate validation methods
-        $validated = $this->checklistValidate($request);
-
+        $validated = $this->ChecklistValidate($request);
+        
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
-
+        $validated['status'] = 'draft';
+        
         try {
             // create checklist
             $checklist = Checklist::create($validated);
@@ -2948,32 +2881,32 @@ class MakerController extends Controller
             ChecklistLegalDocumentation::create([
                 'checklist_id' => $checklist->id,
                 'prepared_by' => Auth::user()->name,
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             // create external area condition
             ChecklistExternalAreaCondition::create([
                 'checklist_id' => $checklist->id,
                 'prepared_by' => Auth::user()->name,
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             // create internal area condition
             ChecklistInternalAreaCondition::create([
                 'checklist_id' => $checklist->id,
                 'prepared_by' => Auth::user()->name,
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             // create property development
             ChecklistPropertyDevelopment::create([
                 'checklist_id' => $checklist->id,
                 'prepared_by' => Auth::user()->name,
-                'status' => 'pending',
+                'status' => 'draft',
             ]);
 
             return redirect()
-                ->route('tenant-m.index', $checklist->siteVisit->property)
+                ->route('checklist-m.index', $checklist->siteVisit->property)
                 ->with('success', 'Checklist created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3032,7 +2965,7 @@ class MakerController extends Controller
     }
 
     // checklist submit for approval
-    public function ChecklistSubmitForApproval(Checklist $checklist)
+    public function SubmitApprovalChecklist(Checklist $checklist)
     {
         try {
             $checklist->update([
@@ -3076,8 +3009,8 @@ class MakerController extends Controller
         $validated = $this->legalDocumentationValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
-
+        $validated['status'] = 'draft';
+        
         try {
             // create legal documentation
             ChecklistLegalDocumentation::create($validated);
@@ -3104,9 +3037,6 @@ class MakerController extends Controller
 
         // Record the last update
         $validated['updated_at'] = now();
-
-        // Status
-        $validated['status'] = 'pending';
 
         try {
             // Update the legal documentation with validated data
@@ -3136,7 +3066,7 @@ class MakerController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-m.show', $checklist)
+                ->route('checklist-m.show', $legalDocumentation->checklist)
                 ->with('success', 'Legal documentation submitted for approval successfully.');
         } catch (\Exception $e) {
             return back()
@@ -3163,7 +3093,7 @@ class MakerController extends Controller
         $validated = $this->tenantChecklistValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         try {
             $checklistTenant = ChecklistTenant::create($validated);
@@ -3191,9 +3121,6 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Status
-        $validated['status'] = 'pending';
-
         try {
             $checklistTenant->update($validated);
 
@@ -3210,6 +3137,24 @@ class MakerController extends Controller
     public function ChecklistTenantShow(ChecklistTenant $checklistTenant)
     {
         return view('maker.checklist.tenant.show', compact('checklistTenant'));
+    }
+
+    public function SubmitApprovalChecklistTenant(ChecklistTenant $checklistTenant)
+    {
+        try {
+            $checklistTenant->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistTenant->checklist)
+                ->with('success', 'Tenant submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting tenant for approval: ' . $e->getMessage());
+        }
     }
 
     // Checklist External Area Condition
@@ -3232,8 +3177,8 @@ class MakerController extends Controller
         $validated = $this->externalAreaConditionValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
-
+        $validated['status'] = 'draft';
+        
         try {
             // create external area condition
             ChecklistExternalAreaCondition::create($validated);
@@ -3261,9 +3206,6 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Status
-        $validated['status'] = 'pending';
-
         try {
             // Update the external area condition with validated data
             $checklistExternalAreaCondition->update($validated);
@@ -3281,6 +3223,24 @@ class MakerController extends Controller
     public function ChecklistExternalAreaConditionShow(Checklist $checklist, ChecklistExternalAreaCondition $externalCond)
     {
         return view('maker.checklist.external-area-condition.show', compact('checklist', 'externalCond'));
+    }
+
+    public function SubmitApprovalChecklistExternalAreaCondition(ChecklistExternalAreaCondition $checklistExternalAreaCondition)
+    {
+        try {
+            $checklistExternalAreaCondition->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistExternalAreaCondition->checklist)
+                ->with('success', 'External area condition submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting external area condition for approval: ' . $e->getMessage());
+        }
     }
 
     // Checklist Internal Area Condition
@@ -3303,8 +3263,8 @@ class MakerController extends Controller
         $validated = $this->internalAreaConditionValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
-
+        $validated['status'] = 'draft';
+        
         try {
             // create internal area condition
             ChecklistInternalAreaCondition::create($validated);
@@ -3334,9 +3294,6 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Status
-        $validated['status'] = 'pending';
-
         try {
             // Update the internal area condition with validated data
             $checklistInternalAreaCondition->update($validated);
@@ -3354,6 +3311,24 @@ class MakerController extends Controller
     public function ChecklistInternalAreaConditionShow(ChecklistInternalAreaCondition $checklistInternalAreaCondition)
     {
         return view('maker.checklist.internal-area-condition.show', compact('checklistInternalAreaCondition'));
+    }
+
+    public function SubmitApprovalChecklistInternalAreaCondition(ChecklistInternalAreaCondition $checklistInternalAreaCondition)
+    {
+        try {
+            $checklistInternalAreaCondition->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistInternalAreaCondition->checklist)
+                ->with('success', 'Internal area condition submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting internal area condition for approval: ' . $e->getMessage());
+        }
     }
 
     // Checklist Property Condition
@@ -3376,8 +3351,8 @@ class MakerController extends Controller
         $validated = $this->propertyConditionValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
-
+        $validated['status'] = 'draft';
+        
         try {
             // create property development
             ChecklistPropertyDevelopment::create($validated);
@@ -3405,9 +3380,6 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Status
-        $validated['status'] = 'pending';
-
         try {
             // Update the property development with validated data
             $checklistPropertyDevelopment->update($validated);
@@ -3427,6 +3399,23 @@ class MakerController extends Controller
         return view('maker.checklist.property-development.show', compact('checklistPropertyDevelopment'));
     }
 
+    public function SubmitApprovalChecklistPropertyDevelopment(ChecklistPropertyDevelopment $checklistPropertyDevelopment)
+    {
+        try {
+            $checklistPropertyDevelopment->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistPropertyDevelopment->checklist)
+                ->with('success', 'Property development submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting property development for approval: ' . $e->getMessage());
+        }
+    }
 
     // Checklist Disposal Installation
     public function ChecklistDisposalInstallationIndex(Checklist $checklist)
@@ -3448,8 +3437,8 @@ class MakerController extends Controller
         $validated = $this->disposalInstallationValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
-
+        $validated['status'] = 'draft';
+        
         try {
             // create disposal installation
             $checklistDisposalInstallation = ChecklistDisposalInstallation::create($validated);
@@ -3477,12 +3466,6 @@ class MakerController extends Controller
         // Record the last update
         $validated['updated_at'] = now();
 
-        // Verified By
-        $validated['verified_by'] = Auth::user()->name;
-
-        // Status
-        $validated['status'] = 'pending';
-
         try {
             // Update the disposal installation with validated data
             $checklistDisposalInstallation->update($validated);
@@ -3502,6 +3485,24 @@ class MakerController extends Controller
         return view('maker.checklist.disposal-installation.show', compact('checklist', 'disposalInst'));
     }
 
+    public function SubmitApprovalChecklistDisposalInstallation(ChecklistDisposalInstallation $checklistDisposalInstallation)
+    {
+        try {
+            $checklistDisposalInstallation->update([
+                'status' => 'pending',
+                'prepared_by' => Auth::user()->name,
+            ]);
+
+            return redirect()
+                ->route('checklist-m.show', $checklistDisposalInstallation->checklist)
+                ->with('success', 'Disposal installation submitted for approval successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting disposal installation for approval: ' . $e->getMessage());
+        }
+    }
+
     /**
      * Validate main checklist data
      *
@@ -3509,7 +3510,7 @@ class MakerController extends Controller
      * @param Checklist|null $checklist
      * @return array
      */
-    public function checklistValidate(Request $request, Checklist $checklist = null)
+    public function ChecklistValidate(Request $request, Checklist $checklist = null)
     {
         return $request->validate([
             'site_visit_id' => 'required|exists:site_visits,id',
@@ -3769,7 +3770,7 @@ class MakerController extends Controller
         $validated = $this->AppointmentValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('appointments', 'public');
@@ -3927,12 +3928,10 @@ class MakerController extends Controller
 
     public function ApprovalFormStore(Request $request)
     {
-        // Validate the request
         $validated = $this->ApprovalFormValidate($request);
 
-        // Set default status and prepared_by
-        $validated['status'] = 'pending';
         $validated['prepared_by'] = Auth::user()->name;
+                $validated['status'] = 'draft';
 
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
@@ -4166,7 +4165,7 @@ class MakerController extends Controller
 
         // Add system fields
         $validated['prepared_by'] = Auth::user()->name;
-        $validated['status'] = 'pending';
+        $validated['status'] = 'draft';
 
         try {
             SiteVisitLog::create($validated);
