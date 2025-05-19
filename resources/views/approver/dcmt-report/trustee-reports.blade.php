@@ -45,10 +45,10 @@
                 </form>
 
                 <div class="flex flex-wrap justify-end gap-2">
-                    <a href="{{ route('a.dcmt-reports.cb-export.a', ['type' => 'xls']) }}"
+                    {{-- <a href="{{ route('a.dcmt-reports.cb-export.a', ['type' => 'xls']) }}"
                         class="px-6 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700">
                         Export XLS
-                    </a>
+                    </a> --}}
                     <a href="{{ route('a.dcmt-reports.trustee-reports.batches.a') }}"
                         class="px-6 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">
                         View Batches
