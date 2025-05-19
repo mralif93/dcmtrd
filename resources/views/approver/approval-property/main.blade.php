@@ -135,9 +135,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('approval-property-a.details', $approvalProperty) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $approvalProperty->property ? $approvalProperty->property->name : 'N/A' }}
-                                        </a>
+                                        {{ $approvalProperty->property ? $approvalProperty->property->name : 'N/A' }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -148,11 +146,12 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ match(strtolower($approvalProperty->status)) {
-                                            'active' => 'bg-green-100 text-green-800',
                                             'pending' => 'bg-yellow-100 text-yellow-800',
-                                            'inactive' => 'bg-red-100 text-red-800',
-                                            'rejected' => 'bg-gray-100 text-gray-800',
-                                            default => 'bg-blue-100 text-blue-800'
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            'draft' => 'bg-gray-100 text-gray-800',
+                                            default => 'bg-gray-100 text-gray-800'
                                         } }}">
                                         {{ ucfirst($approvalProperty->status) }}
                                     </span>

@@ -530,9 +530,12 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
             
-            return redirect()->route('compliance-covenant-a.index')->with('success', 'Compliance Covenant approved successfully.');
+            return redirect()
+                ->route('compliance-covenant-a.index')
+                ->with('success', 'Compliance Covenant approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving compliance covenant: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error approving compliance covenant: ' . $e->getMessage());
         }
     }
 
@@ -549,9 +552,12 @@ class ApproverController extends Controller
                 'remarks' => $request->input('rejection_reason'),
             ]);
             
-            return redirect()->route('compliance-covenant-a.index')->with('success', 'Compliance Covenant rejected successfully.');
+            return redirect()
+                ->route('compliance-covenant-a.index')
+                ->with('success', 'Compliance Covenant rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting compliance covenant: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error rejecting compliance covenant: ' . $e->getMessage());
         }
     }
 
@@ -701,9 +707,12 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
 
-            return redirect()->route('approver.dashboard', ['section' => 'reits'])->with('success', 'Portfolio approved successfully.');
+            return redirect()
+                ->route('approver.dashboard', ['section' => 'reits'])
+                ->with('success', 'Portfolio approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving activity diary: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error approving activity diary: ' . $e->getMessage());
         }
     }
         
@@ -720,9 +729,12 @@ class ApproverController extends Controller
                 'remarks' => $request->input('rejection_reason'),
             ]);
 
-            return redirect()->route('approver.dashboard', ['section' => 'reits'])->with('success', 'Portfolio rejected successfully.');
+            return redirect()
+                ->route('approver.dashboard', ['section' => 'reits'])
+                ->with('success', 'Portfolio rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
         }
     }
 
@@ -2180,7 +2192,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('approval-property-a.index', ['status' => 'pending'])
+                ->route('approval-property-a.main', ['tab' => 'pending'])
                 ->with('success', 'Approval Property approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2202,7 +2214,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('approval-property-a.index', ['status' => 'pending'])
+                ->route('approval-property-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Approval Property rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2421,7 +2433,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('site-visit-log-a.main', ['status' => 'pending'])
+                ->route('site-visit-log-a.main', ['tab' => 'pending'])
                 ->with('success', 'Site Visit Log approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2443,7 +2455,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('site-visit-log-a.main', ['status' => 'rejected'])
+                ->route('site-visit-log-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Site Visit Log rejected successfully.');
         } catch (\Exception $e) {
             return back()
