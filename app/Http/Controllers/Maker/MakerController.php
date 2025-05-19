@@ -2906,8 +2906,6 @@ class MakerController extends Controller
             'disposalInstallation',
             'tenants'
         ]);
-
-        // dd($checklist->tenants->toArray());
         
         return view('maker.checklist.letter', compact('checklist'));
     }
