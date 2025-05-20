@@ -26,21 +26,21 @@ class CorporateBondExportBatch implements FromCollection, WithHeadings, ShouldAu
         // Detail Rows
         foreach ($items as $item) {
             $rows->push([
-                $item->bond_name,
-                $item->facility_code,
-                $item->issuer_short_name,
-                $item->issuer_name,
-                $item->facility_name,
-                $item->debenture_or_loan,
-                $item->trustee_role_1,
-                $item->trustee_role_2,
-                (float) $item->nominal_value,
-                (float) $item->outstanding_size,
-                (float) $item->trustee_fee_1,
-                (float) $item->trustee_fee_2,
-                optional($item->trust_deed_date)?->format('d/m/Y'),
-                optional($item->issue_date)?->format('d/m/Y'),
-                optional($item->maturity_date)?->format('d/m/Y'),
+                $item->bond_name ?? 'N/A',
+                $item->facility_code ?? 'N/A',
+                $item->issuer_short_name ?? 'N/A',
+                $item->issuer_name ?? 'N/A',
+                $item->facility_name ?? 'N/A',
+                $item->debenture_or_loan ?? 'N/A',
+                $item->trustee_role_1 ?? 'N/A',
+                $item->trustee_role_2 ?? 'N/A',
+                isset($item->nominal_value) ? (float) $item->nominal_value : 'N/A',
+                isset($item->outstanding_size) ? (float) $item->outstanding_size : 'N/A',
+                isset($item->trustee_fee_1) ? (float) $item->trustee_fee_1 : 'N/A',
+                isset($item->trustee_fee_2) ? (float) $item->trustee_fee_2 : 'N/A',
+                $item->trust_deed_date ? $item->trust_deed_date->format('d/m/Y') : 'N/A',
+                $item->issue_date ? $item->issue_date->format('d/m/Y') : 'N/A',
+                $item->maturity_date ? $item->maturity_date->format('d/m/Y') : 'N/A',
             ]);
         }
 

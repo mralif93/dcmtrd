@@ -82,50 +82,50 @@
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.1</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Title</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->title_ref ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->title_location ?? 'N/A'}}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->title_ref ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->title_location ?? 'N/A'}}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.2</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Trust Deed/ Restated Trust Deed/Deed</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->trust_deed ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->trust_deed_location ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->trust_deed_ref ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->trust_deed_location ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.3</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Sale and Purchase Agreement</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->sale_and_purchase_agreement ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->sale_and_purchase_agreement_location ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->sale_purchase_agreement ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->sale_purchase_agreement_location ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.4</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Lease Agreement</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->lease_agreement ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->lease_agreement_location ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->lease_agreement_ref ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->lease_agreement_location ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.5</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Agreement to Lease</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->agreement_to_lease ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->agreement_to_lease_location ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->agreement_to_lease ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->agreement_to_lease_location ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.6</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Maintenance Manager Agreement/Property Maintenance Agreement (Fire Injection Maintenance Management Agreement)</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->maintenance_manager_agreement ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->maintenance_manager_agreement_location ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->maintenance_agreement_ref ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->maintenance_agreement_location ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.7</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Development Agreement</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->development_agreement ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->development_agreement_location ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->development_agreement ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->development_agreement_location ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.8</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Others</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->others ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->siteVisit->legalDocumentation->others_location ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->other_legal_docs ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->other_legal_docs_location ?? 'N/A' }}</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -146,15 +146,15 @@
                                             <th style="border: 1px solid #ccc; padding: 5px; text-align: center; background-color: #f2f2f2; width: 20%;">Commencement Tenancy</th>
                                             <th style="border: 1px solid #ccc; padding: 5px; text-align: center; background-color: #f2f2f2; width: 15%;">Expiry</th>
                                         </tr>
-                                        @if ($checklist->siteVisit->property->tenants)
+                                        @if ($checklist->tenants->count() > 0)
                                             <!-- Tenants -->
-                                            @foreach ($checklist->siteVisit->property->tenants as $tenant)
+                                            @foreach ($checklist->tenants as $tenant)
                                                 <tr>
                                                     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $loop->iteration }}.</td>
-                                                    <td style="border: 1px solid #ccc; padding: 5px;">{{ $tenant->name }} ({{ $tenant->property->name }})</td>
-                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $tenant->date_of_approval ?? 'N/A' }}</td>
-                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $tenant->commencement_tenancy ?? 'N/A' }}</td>
-                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $tenant->expiry ?? 'N/A' }}</td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px;">{{ $tenant->name }} ({{ $tenant->property->name ?? 'N/A' }})</td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $tenant->approval_date ? $tenant->approval_date->format('d/m/Y') : 'N/A' }}</td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $tenant->commencement_date ? $tenant->commencement_date->format('d/m/Y') : 'N/A' }}</td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $tenant->expiry_date ? $tenant->expiry_date->format('d/m/Y') : 'N/A' }}</td>
                                                 </tr>
                                             @endforeach
                                         @else
@@ -204,114 +204,114 @@
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">3.1</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">General Cleanliness</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->general_cleanliness ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->general_cleanliness ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->general_cleanliness_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_general_cleanliness_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_general_cleanliness_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->externalAreaCondition->general_cleanliness_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">3.2</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Fencing & Main Gate</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->fencing_main_gate ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->fencing_main_gate ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->fencing_main_gate_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_fencing_gate_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_fencing_gate_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->externalAreaCondition->fencing_gate_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">3.3</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">External Facade</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->external_facade ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->external_facade ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->external_facade_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_external_facade_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_external_facade_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->externalAreaCondition->external_facade_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">3.4</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Car park</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->car_park ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->car_park ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->car_park_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_car_park_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_car_park_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->externalAreaCondition->car_park_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">3.5</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Land settlement</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->land_settlement ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->land_settlement ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->land_settlement_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_land_settlement_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_land_settlement_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->externalAreaCondition->land_settlement_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">3.6</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Rooftop</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->rooftop ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->rooftop ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->rooftop_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_rooftop_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_rooftop_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->externalAreaCondition->rooftop_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">3.7</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Drainage</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->drainage ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->drainage ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->drainage_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_drainage_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->externalAreaCondition->is_drainage_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->externalAreaCondition->drainage_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center; font-weight: bold;">4.0</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; font-weight: bold;">Internal Area</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internal_area ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internal_area ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internal_area_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->internal_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">4.1</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Door & window</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->door_window ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->door_window ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->door_window_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_door_window_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_door_window_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->internalAreaCondition->door_window_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">4.2</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Staircase</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->staircase ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->staircase ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->staircase_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_staircase_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_staircase_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->internalAreaCondition->staircase_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">4.3</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Toilet</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->toilet ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->toilet ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->toilet_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_toilet_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_toilet_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->internalAreaCondition->toilet_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">4.4</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Ceiling</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->ceiling ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->ceiling ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->ceiling_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_ceiling_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_ceiling_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->internalAreaCondition->ceiling_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">4.5</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Wall</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->wall ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->wall ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->wall_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_wall_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_wall_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->internalAreaCondition->wall_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">4.6</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Water Seeping/Leaking</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->water_seeping_leaking ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->water_seeping_leaking ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->water_seeping_leaking_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_water_seeping_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_water_seeping_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->internalAreaCondition->water_seeping_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">4.7</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Loading Bay</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->loading_bay ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->loading_bay ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->loading_bay_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_loading_bay_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_loading_bay_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->internalAreaCondition->loading_bay_remarks ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">4.8</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Basement Car Park</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->basement_car_park ? 'Yes' : 'No' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->basement_car_park ? 'No' : 'Yes' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->basement_car_park_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_basement_car_park_satisfied ? '/' : '' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->is_basement_car_park_satisfied ? '' : '/' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;">{{ $checklist->internalAreaCondition->basement_car_park_remarks ?? 'N/A' }}</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -338,32 +338,32 @@
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">5.1</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Development/Expansion</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->development_expansion_date ? date('d/m/Y', strtotime($checklist->development_expansion_date)) : 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->development_expansion ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->development_expansion_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->development_date ? $checklist->propertyDevelopment->development_date->format('d/m/Y') : 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->development_scope_of_work ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->development_status ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">5.2</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Renovation</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->renovation_date ? date('d/m/Y', strtotime($checklist->renovation_date)) : 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->renovation ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->renovation_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->renovation_date ? $checklist->propertyDevelopment->renovation_date->format('d/m/Y') : 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->renovation_scope_of_work ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->renovation_status ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">5.3</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">External Repainting</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->external_repainting_date ? date('d/m/Y', strtotime($checklist->external_repainting_date)) : 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->external_repainting_scope_of_work ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->external_repainting_status ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->external_repainting_date ? $checklist->propertyDevelopment->external_repainting_date->format('d/m/Y') : 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->external_repainting_scope_of_work ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->external_repainting_status ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center; rowspan="5">5.4</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">5.4</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Disposal/Installation/Replacement:</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;"></td>
                                             <td style="border: 1px solid #ccc; padding: 5px;"></td>
                                             <td style="border: 1px solid #ccc; padding: 5px;"></td>
                                         </tr>
-                                        @if ($checklist->disposalInstallation)
+                                        @if ($checklist->disposalInstallation->count() > 0)
                                             @foreach ($checklist->disposalInstallation as $key => $disposal)
                                                 <tr>
                                                     <td style="border: 1px solid #ccc; padding: 5px;"></td>
@@ -385,7 +385,7 @@
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">5.5</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Other proposals/approvals</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;" colspan="3">{{ $checklist->other_proposals ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;" colspan="3">{{ $checklist->propertyDevelopment->others_proposals_approvals_scope_of_work ?? 'N/A' }}</td>
                                         </tr>
                                     </table>
                                 </td>

@@ -57,7 +57,7 @@
                                 <!-- Component Name -->
                                 <div class="col-span-2">
                                     <label for="component_name" class="block text-sm font-medium text-gray-500">Component Name</label>
-                                    <input id="component_name" type="text" name="component_name" value="{{ old('component_name') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input id="component_name" type="text" name="component_name" value="{{ old('component_name') }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('component_name')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -66,7 +66,7 @@
                                 <!-- Component Date -->
                                 <div>
                                     <label for="component_date" class="block text-sm font-medium text-gray-500">Component Date</label>
-                                    <input id="component_date" type="date" name="component_date" value="{{ old('component_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input id="component_date" type="date" name="component_date" value="{{ old('component_date') }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('component_date')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -75,7 +75,7 @@
                                 <!-- Component Status -->
                                 <div>
                                     <label for="component_status" class="block text-sm font-medium text-gray-500">Component Status</label>
-                                    <select id="component_status" name="component_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <select id="component_status" name="component_status" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">Select status</option>
                                         <option value="active" {{ old('component_status') == 'active' ? 'selected' : '' }}>Active</option>
                                         <option value="inactive" {{ old('component_status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
@@ -90,7 +90,7 @@
                                 <!-- Component Scope of Work -->
                                 <div class="col-span-2">
                                     <label for="component_scope_of_work" class="block text-sm font-medium text-gray-500">Component Scope of Work</label>
-                                    <textarea id="component_scope_of_work" name="component_scope_of_work" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('component_scope_of_work') }}</textarea>
+                                    <textarea id="component_scope_of_work" name="component_scope_of_work" rows="3" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('component_scope_of_work') }}</textarea>
                                     @error('component_scope_of_work')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror

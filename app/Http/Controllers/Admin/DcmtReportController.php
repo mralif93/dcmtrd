@@ -211,7 +211,7 @@ class DcmtReportController extends Controller
 
         foreach ($reports as $bond) {
             $batch->items()->create([
-                'bond_name' => $bond->bonk_sukuk_name,
+                'bond_name' => $bond->facility->issuer_short_name,
                 'facility_code' => $bond->facility_code,
                 'issuer_short_name' => $bond->issuer->issuer_short_name ?? null,
                 'issuer_name' => $bond->issuer->issuer_short_name ?? null,
@@ -266,7 +266,7 @@ class DcmtReportController extends Controller
 
         foreach ($reports as $bond) {
             $batch->items()->create([
-                'bond_name' => $bond->bonk_sukuk_name,
+                'bond_name' => $bond->facility->issuer_short_name,
                 'facility_code' => $bond->facility_code,
                 'issuer_short_name' => $bond->issuer->issuer_short_name ?? null,
                 'issuer_name' => $bond->issuer->issuer_short_name ?? null,

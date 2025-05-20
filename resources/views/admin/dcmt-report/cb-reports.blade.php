@@ -98,7 +98,7 @@
                             @forelse ($reports as $bond)
                                 <tr class="hover:bg-gray-50 even:bg-gray-50">
                                     <td class="px-6 py-4">{{ $index++ }}</td>
-                                    <td class="px-6 py-4">{{ $bond->issuer->issuer_short_name ?? '-' }}</td>
+                                    <td class="px-6 py-4">{{ $bond->facility->issuer_short_name ?? '-' }}</td>
                                     <td class="px-6 py-4 text-gray-500">{{ $bond->facility_code ?? '-' }}</td>
                                     <td class="px-6 py-4 text-gray-500">{{ $bond->bonk_sukuk_name ?? '-' }}</td>
                                     <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->issuer_short_name ?? '-' }}

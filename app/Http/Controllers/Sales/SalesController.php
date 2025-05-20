@@ -28,7 +28,7 @@ class SalesController extends Controller
     {
         $batch = ReportBatch::findOrFail($id);
 
-        return Excel::download(new CorporateBondExportBatch($batch), 'corporate_bonds_' . $batch->id . '.xlsx');
+        return Excel::download(new CorporateBondExportBatch($batch), $batch->title_report . $batch->id . '.xlsx');
     }
 
     public function viewTrusteeBatches()

@@ -34,15 +34,40 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <div class="flex items-center justify-between">
                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                     {{ match(strtolower($property->status)) {
-                                        'active' => 'bg-green-100 text-green-800',
                                         'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'active' => 'bg-green-100 text-green-800',
+                                        'inactive' => 'bg-gray-100 text-gray-800',
                                         'rejected' => 'bg-red-100 text-red-800',
                                         default => 'bg-gray-100 text-gray-800'
                                     } }}">
                                     {{ ucfirst($property->status) }}
                                 </span>
+                                
+                                <!-- Add approval and rejection buttons in the status row -->
+                                @if($property->status == 'pending')
+                                    <div class="flex space-x-2">
+                                        <form method="POST" action="{{ route('property-a.approve', $property) }}" class="inline">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-full font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                Approve
+                                            </button>
+                                        </form>
+                                        
+                                        <button onclick="openRejectModal('{{ $property->id }}')" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-full font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                            <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            Reject
+                                        </button>
+                                    </div>
+                                @endif
+                                </div>
                             </dd>
                         </div>
                     </dl>
@@ -255,6 +280,29 @@
                     </div>
                 </div>
 
+                <!-- Administrative Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Administrative Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->prepared_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->verified_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $property->approval_datetime ? date('d/m/Y h:i A', strtotime($property->approval_datetime)) : 'Not yet approved' }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
                 <!-- System Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
@@ -269,57 +317,13 @@
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->updated_at->format('d/m/Y h:i A') }}</dd>
                         </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->prepared_by ?? 'N/A' }}</dd>
-                        </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->verified_by ?? 'N/A' }}</dd>
-                        </div>
-                        @if($property->approval_datetime)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ \Carbon\Carbon::parse($property->approval_datetime)->format('d/m/Y H:i') }}</dd>
-                        </div>
-                        @endif
-                        @if(isset($property->rejection_reason) && $property->status == 'rejected')
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Rejection Reason</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->rejection_reason }}</dd>
-                        </div>
-                        @endif
-                        @if($property->remarks)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Remarks</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->remarks }}</dd>
-                        </div>
-                        @endif
                     </dl>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
                     <div class="flex justify-end gap-x-4">
-                        @if($property->status == 'pending')
-                            <form method="POST" action="{{ route('property-a.approve', $property) }}" class="inline">
-                                @csrf
-                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Approve
-                                </button>
-                            </form>
-                            
-                            <button onclick="openRejectModal('{{ $property->id }}')" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                Reject
-                            </button>
-                        @endif
-                        
+                        <!-- Removed approve and reject buttons from here since they're now in the status row -->
                         <a href="{{ route('property-a.main', ['tab' => $property->status]) }}" 
                             class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

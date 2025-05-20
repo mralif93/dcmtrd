@@ -43,7 +43,7 @@
                 </div>
                 
                 <div class="border-t border-gray-200">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-0 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-gray-200">
                         <div class="px-4 py-5 sm:px-6">
                             <h4 class="text-sm font-medium text-gray-500 uppercase mb-2">Portfolio</h4>
                             <p class="text-xl font-bold text-gray-800">{{ $property->portfolio->portfolio_name }}</p>
@@ -60,12 +60,6 @@
                             <h4 class="text-sm font-medium text-gray-500 uppercase mb-2">Leases</h4>
                             <p class="text-xl font-bold text-gray-800">{{ $activeLeaseCount }} Active</p>
                             <p class="text-sm text-gray-600 mt-1">Total: {{ $totalLeaseCount }}</p>
-                        </div>
-                        
-                        <div class="px-4 py-5 sm:px-6">
-                            <h4 class="text-sm font-medium text-gray-500 uppercase mb-2">Revenue</h4>
-                            <p class="text-xl font-bold text-gray-800">RM{{ number_format($totalActiveRental, 2) }}</p>
-                            <p class="text-sm text-gray-600 mt-1">{{ $activeLeaseCount }} active leases</p>
                         </div>
                     </div>
                 </div>
@@ -95,8 +89,6 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenant</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Space</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Base Rate (Y1)</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -106,7 +98,6 @@
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">{{ $lease->lease_name }}</div>
-                                        <div class="text-xs text-gray-500">ID: {{ $lease->id }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $lease->tenant->name }}</div>
@@ -118,33 +109,18 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-500">
-                                            {{ $lease->start_date ? date('d/m/Y', strtotime($lease->start_date)) : 'N/A' }} to {{ $lease->end_date ? date('d/m/Y', strtotime($lease->end_date)) : 'N/A' }}
+                                            {{ date('d/m/Y', strtotime($lease->start_date)) }} to {{ date('d/m/Y', strtotime($lease->end_date)) }}
                                         </div>
-                                        <div class="text-xs text-gray-500">{{ $lease->term_years ?? 'N/A' }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ number_format($lease->space, 2) }} sqm</div>
-                                        <div class="text-xs text-gray-500">{{ $lease->tenancy_type ?? 'N/A' }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">RM {{ number_format($lease->base_rate_year_1, 2) }}</div>
-                                        <div class="text-xs text-gray-500">GSTO: RM {{ number_format($lease->monthly_gsto_year_1, 2) }}/mo</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            @php
-                                            $statusColors = [
-                                                'active' => 'bg-green-100 text-green-800',
+                                            {{ match(strtolower($lease->status)) {
                                                 'pending' => 'bg-yellow-100 text-yellow-800',
+                                                'active' => 'bg-green-100 text-green-800',
                                                 'inactive' => 'bg-gray-100 text-gray-800',
-                                                'expired' => 'bg-red-100 text-red-800',
-                                                'terminated' => 'bg-red-100 text-red-800'
-                                            ];
-                                            
-                                            $normalizedStatus = strtolower($lease->status);
-                                            $badgeClass = $statusColors[$normalizedStatus] ?? 'bg-gray-100 text-gray-800';
-                                            @endphp
-                                            {{ $badgeClass }}">
+                                                'rejected' => 'bg-red-100 text-red-800',
+                                                default => 'bg-gray-100 text-gray-800'
+                                            } }}">
                                             {{ ucfirst($lease->status) }}
                                         </span>
                                     </td>

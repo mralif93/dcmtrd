@@ -183,6 +183,7 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Info</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -222,7 +223,7 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                 </svg>
-                                                {{ $property->siteVisits->where('status', 'scheduled')->count() }} Pending Visits
+                                                {{ $property->siteVisits->where('status', 'pending')->count() }} Pending Visits
                                             </div>
                                         </div>
                                     </td>
@@ -235,6 +236,18 @@
                                                 {{ number_format($property->land_size, 2) }} sqm
                                             </div>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ match(strtolower($property->status)) {
+                                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                                'active' => 'bg-green-100 text-green-800',
+                                                'inactive' => 'bg-gray-100 text-gray-800',
+                                                'rejected' => 'bg-red-100 text-red-800',
+                                                default => 'bg-gray-100 text-gray-800'
+                                            } }}">
+                                            {{ ucfirst($property->status) }}
+                                        </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end space-x-2">
@@ -301,6 +314,7 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amounts</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rate</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -338,7 +352,19 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                            {{ $financial->profit_rate }}%
+                                            {{ number_format($financial->profit_rate, 2) }}%
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ match(strtolower($financial->status)) {
+                                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                                'active' => 'bg-green-100 text-green-800',
+                                                'inactive' => 'bg-gray-100 text-gray-800',
+                                                'rejected' => 'bg-red-100 text-red-800',
+                                                default => 'bg-gray-100 text-gray-800'
+                                            } }}">
+                                            {{ ucfirst($financial->status) }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
