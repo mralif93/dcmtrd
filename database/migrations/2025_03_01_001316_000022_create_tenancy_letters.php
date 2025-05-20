@@ -36,11 +36,12 @@ return new class extends Migration
             $table->string('attention_to_position')->nullable();
 
             // Description
-            $table->text('description')->nullable();
+            $table->text('description_1')->nullable();
+            $table->text('description_2')->nullable();
+            $table->text('description_3')->nullable();
 
-            // Letter Offer Date & Supplementary Letter Date
+            // Letter Offer Date
             $table->date('letter_offer_date')->nullable();
-            $table->date('supplementary_letter_date')->nullable();
             
             // Approver information
             $table->string('trustee_name')->nullable();

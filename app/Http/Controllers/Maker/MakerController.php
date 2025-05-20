@@ -2573,21 +2573,28 @@ class MakerController extends Controller
     }
 
     // Tenancy Letter Module
-    public function TenancyLetterIndex(Property $property)
+    public function TenancyLetterIndex(Lease $lease)
     {
-        $tenancyLetters = $property->tenancyLetters()
+        // Get all tenancy letters for this lease
+        $tenancyLetters = $lease->tenancyLetters()
+            ->with(['lease', 'lease.tenant'])
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
 
-        return view('maker.tenancy-letter.index', compact('tenancyLetters', 'propertyInfo'));
+        // Load the lease with its relationships
+        $lease->load(['tenant', 'tenant.property.portfolio']);
+
+        return view('maker.tenancy-letter.index', compact('tenancyLetters', 'lease'));
     }
 
-    public function TenancyLetterCreate(Property $property)
+    public function TenancyLetterCreate(Lease $lease)
     {
-        $propertyInfo = $property;
-        $properties = Property::orderBy('name')->get();
-        return view('maker.tenancy-letter.create', compact('properties', 'propertyInfo'));
+        // get all leases for this property
+        $leases = Lease::where('property_id', $lease->tenant->property_id)
+            ->orderBy('start_date')
+            ->get();
+        return view('maker.tenancy-letter.create', compact('lease', 'leases'));
     }
 
     public function TenancyLetterStore(Request $request)
@@ -2596,11 +2603,6 @@ class MakerController extends Controller
 
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
-
-        // Handle file upload if present
-        if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('tenancy-letter-attachments', 'public');
-        }
 
         try {
             $tenancyLetter = TenancyLetter::create($validated);
@@ -2620,15 +2622,6 @@ class MakerController extends Controller
     {
         $validated = $this->TenancyLetterValidate($request);
 
-        // Handle file upload if present
-        if ($request->hasFile('attachment')) {
-            // Delete old file if exists
-            if ($tenancyLetter->attachment && Storage::disk('public')->exists($tenancyLetter->attachment)) {
-                Storage::disk('public')->delete($tenancyLetter->attachment);
-            }
-
-            $validated['attachment'] = $request->file('attachment')->store('tenancy-letter-attachments', 'public');
-        }
 
         try {
             $tenancyLetter->update($validated);
@@ -2983,9 +2976,18 @@ class MakerController extends Controller
         }
     }
 
-    public function ChecklistLetter(Checklist $checklist)
+    public function checklistLetter(Checklist $checklist)
     {
-        $checklist = $checklist->load('siteVisit.property.tenants');
+        $checklist = $checklist->load([
+            'siteVisit.property.tenants',
+            'legalDocumentation',
+            'externalAreaCondition',
+            'internalAreaCondition',
+            'propertyDevelopment',
+            'disposalInstallation',
+            'tenants'
+        ]);
+        
         return view('maker.checklist.letter', compact('checklist'));
     }
 
