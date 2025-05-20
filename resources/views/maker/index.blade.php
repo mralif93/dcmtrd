@@ -137,7 +137,7 @@
                         :href="route('compliance-covenant-m.index')" color="bg-blue-100" />
 
                     <!-- Activity Dairy -->
-                    <x-dashboard-card title="Activity Daily" icon="calendar" :count="$activityDairyCount ?? 0" :href="route('activity-diary-m.index')"
+                    <x-dashboard-card title="Activity Diary" icon="calendar" :count="$activityDairyCount ?? 0" :href="route('activity-diary-m.index')"
                         color="bg-blue-100" />
 
                     <!-- Reports -->
