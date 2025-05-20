@@ -2785,7 +2785,7 @@ class MakerController extends Controller
     {
         // Get only active site visits related to the current property
         $siteVisits = SiteVisit::where('property_id', $property->id)
-                            ->where('status', 'pending')
+                            ->where('status', 'active')
                             ->orderBy('date_visit', 'desc')
                             ->get();
         
