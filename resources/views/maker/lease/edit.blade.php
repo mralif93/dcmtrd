@@ -161,7 +161,7 @@
                                 <!-- Year 1 -->
                                 <div>
                                     <label for="base_rate_year_1" class="block text-sm font-medium text-gray-500">Base Rate Year 1 (RM)</label>
-                                    <input id="base_rate_year_1" type="number" step="0.01" min="0" name="base_rate_year_1" value="{{ old('base_rate_year_1', $lease->base_rate_year_1) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="base_rate_year_1" type="number" step="0.01" min="0" name="base_rate_year_1" value="{{ old('base_rate_year_1', $lease->base_rate_year_1) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('base_rate_year_1')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -169,7 +169,7 @@
                                 
                                 <div>
                                     <label for="monthly_gsto_year_1" class="block text-sm font-medium text-gray-500">Monthly GSTO Year 1 (%)</label>
-                                    <input id="monthly_gsto_year_1" type="number" step="0.01" min="0" name="monthly_gsto_year_1" value="{{ old('monthly_gsto_year_1', $lease->monthly_gsto_year_1) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="monthly_gsto_year_1" type="number" step="0.01" min="0" name="monthly_gsto_year_1" value="{{ old('monthly_gsto_year_1', $lease->monthly_gsto_year_1) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('monthly_gsto_year_1')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -186,7 +186,7 @@
                                 <!-- Year 2 -->
                                 <div>
                                     <label for="base_rate_year_2" class="block text-sm font-medium text-gray-500">Base Rate Year 2 (RM)</label>
-                                    <input id="base_rate_year_2" type="number" step="0.01" min="0" name="base_rate_year_2" value="{{ old('base_rate_year_2', $lease->base_rate_year_2) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="base_rate_year_2" type="number" step="0.01" min="0" name="base_rate_year_2" value="{{ old('base_rate_year_2', $lease->base_rate_year_2) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('base_rate_year_2')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -194,7 +194,7 @@
                                 
                                 <div>
                                     <label for="monthly_gsto_year_2" class="block text-sm font-medium text-gray-500">Monthly GSTO Year 2 (%)</label>
-                                    <input id="monthly_gsto_year_2" type="number" step="0.01" min="0" name="monthly_gsto_year_2" value="{{ old('monthly_gsto_year_2', $lease->monthly_gsto_year_2) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="monthly_gsto_year_2" type="number" step="0.01" min="0" name="monthly_gsto_year_2" value="{{ old('monthly_gsto_year_2', $lease->monthly_gsto_year_2) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('monthly_gsto_year_2')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
