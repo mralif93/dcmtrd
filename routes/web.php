@@ -62,7 +62,6 @@ use App\Http\Controllers\Admin\LockoutPeriodController;
 use App\Http\Controllers\Admin\PortfolioTypeController;
 use App\Http\Controllers\User\UserRedemptionController;
 use App\Http\Controllers\User\UserTrusteeFeeController;
-use App\Http\Controllers\Admin\PermissionUserController;
 use App\Http\Controllers\Admin\RatingMovementController;
 use App\Http\Controllers\Admin\PaymentScheduleController;
 use App\Http\Controllers\Admin\RelatedDocumentController;
