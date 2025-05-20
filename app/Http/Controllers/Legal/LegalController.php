@@ -23,9 +23,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ChecklistLegalDocumentation;
 use App\Http\Requests\RequestDocumentsStoreRequest;
+use App\Jobs\ListSecurity\SendListSecurityRequestEmail;
 
 class LegalController extends Controller
-{  
+{
     public function indexMain(Request $request)
     {
         // Start with the Checklist query
@@ -233,6 +234,8 @@ class LegalController extends Controller
         $documentRequest->update([
             'status' => 'Pending',
         ]);
+
+        dispatch(new SendListSecurityRequestEmail($documentRequest));
 
         return redirect()->back()->with('success', 'Document request submitted successfully!');
     }

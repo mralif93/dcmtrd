@@ -8,7 +8,6 @@
     @if (Auth::user()->hasPermission('LEGAL'))
         <div class="py-12 bg-gray-50 dashboard-section" id="legal-section" data-section="legal">
             <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <h2 class="mb-6 text-2xl font-semibold text-gray-800">Legal Dashboard</h2>
 
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <!-- Card 1 -->
@@ -35,7 +34,7 @@
                     </a>
 
                     <!-- Card 2 -->
-                    <a href="{{ route('legal.dashboard.main') }}"
+                    {{-- <a href="{{ route('legal.dashboard.main') }}"
                         class="p-6 transition transform bg-white border border-gray-200 shadow group rounded-2xl hover:shadow-lg hover:-translate-y-1">
                         <div class="flex items-center space-x-4">
                             <div
@@ -56,7 +55,7 @@
                                     documents.</p>
                             </div>
                         </div>
-                    </a>
+                    </a> --}}
                 </div>
             </div>
         </div>

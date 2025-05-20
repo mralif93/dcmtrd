@@ -51,10 +51,12 @@ use App\Jobs\Issuer\SendIssuerApprovedNotification;
 use App\Jobs\Issuer\SendIssuerRejectedNotification;
 use App\Jobs\Compliance\SendComplianceApprovalEmail;
 use App\Jobs\Compliance\SendComplianceRejectionEmail;
+use App\Jobs\ListSecurity\SendListSecurityReturnEmail;
 use App\Jobs\FundTransfer\SendFundTransferApprovedEmail;
 use App\Jobs\FundTransfer\SendFundTransferRejectedEmail;
 use App\Jobs\ListSecurity\SendListSecurityApprovedEmail;
 use App\Jobs\ListSecurity\SendListSecurityRejectedEmail;
+use App\Jobs\ListSecurity\SendListSecurityWithdrawalEmail;
 use App\Jobs\TrusteeFee\SendTrusteeFeeApprovedNotification;
 use App\Jobs\TrusteeFee\SendTrusteeFeeRejectedNotification;
 
@@ -2570,14 +2572,14 @@ class ApproverController extends Controller
     }
     public function ListSecurityCreateWithdrawal($id)
     {
-        $security = ListSecurity::with('issuer')->findOrFail($id);
+        $security = SecurityDocRequest::with('listSecurity')->findOrFail($id);
 
         return view('approver.listing-security.show-approval', compact('security'));
     }
 
     public function ListSecurityCreateReturn($id)
     {
-        $security = ListSecurity::with('issuer')->findOrFail($id);
+        $security = SecurityDocRequest::with('listSecurity')->findOrFail($id);
 
         return view('approver.listing-security.return', compact('security'));
     }
@@ -2594,6 +2596,9 @@ class ApproverController extends Controller
         $security->verified_by = Auth::user()->name;
         $security->withdrawal_date = $withdrawalDate; // Set the withdrawal date
         $security->save(); // Save the updates to the database
+
+        // Send email notification
+        dispatch(new SendListSecurityWithdrawalEmail($security));
 
         return redirect()->route('list-security-request-a.show')->with('success', 'Documents sent successfully.');
     }
@@ -2647,6 +2652,8 @@ class ApproverController extends Controller
         $security->status = 'Return';
         $security->return_date = $returnDate; // Set the return date
         $security->save(); // Save the updates to the database
+
+        dispatch(new SendListSecurityReturnEmail($security));
 
         // Return success response
         return redirect()->route('list-security-request-a.show')->with('success', 'Documents sent successfully.');
