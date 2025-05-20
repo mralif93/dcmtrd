@@ -63,6 +63,30 @@ class Lease extends Model
     }
 
     /**
+     * Get the lease's attachment URL.
+     *
+     * @return string
+     */
+    public function getAttachmentUrlAttribute()
+    {
+        return $this->attachment ? asset('storage/' . $this->attachment) : null;
+    }
+
+    /**
+     * Get the tenancy letters associated with the lease.
+     */
+    public function tenancyLetters()
+    {
+        return $this->hasMany(TenancyLetter::class);
+    }
+
+    // check is tenancy letter under lease id already created or not
+    public function hasTenancyLetter()
+    {
+        return $this->tenancyLetters()->exists();
+    }
+
+    /**
      * Check if the lease is expired.
      *
      * @return bool

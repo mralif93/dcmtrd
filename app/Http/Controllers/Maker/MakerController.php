@@ -2489,23 +2489,20 @@ class MakerController extends Controller
     {
         // Get all tenancy letters for this lease
         $tenancyLetters = $lease->tenancyLetters()
-            ->with(['lease', 'lease.tenant'])
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
-
-        // Load the lease with its relationships
-        $lease->load(['tenant', 'tenant.property.portfolio']);
 
         return view('maker.tenancy-letter.index', compact('tenancyLetters', 'lease'));
     }
 
     public function TenancyLetterCreate(Lease $lease)
     {
-        // get all leases for this property
-        $leases = Lease::where('property_id', $lease->tenant->property_id)
-            ->orderBy('start_date')
+        // get all lease which status is active
+        $leases = Lease::where('status', 'active')
+            ->orderBy('created_at', 'desc')
             ->get();
+
         return view('maker.tenancy-letter.create', compact('lease', 'leases'));
     }
 
@@ -2518,22 +2515,29 @@ class MakerController extends Controller
 
         try {
             $tenancyLetter = TenancyLetter::create($validated);
-            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter created successfully.');
+            return redirect()
+                ->route('lease-m.show', $tenancyLetter->lease)
+                ->with('success', 'Tenancy Letter created successfully.');
         } catch(\Exception $e) {
-            return back()->with('error', 'Error creating tenancy letter: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating tenancy letter: ' . $e->getMessage());
         }
     }
 
     public function TenancyLetterEdit(TenancyLetter $tenancyLetter)
     {
-        $properties = Property::orderBy('name')->get();
-        return view('maker.tenancy-letter.edit', compact('properties', 'tenancyLetter'));
+         // get all lease which status is active
+        $leases = Lease::where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('maker.tenancy-letter.edit', compact('leases', 'tenancyLetter'));
     }
 
     public function TenancyLetterUpdate(Request $request, TenancyLetter $tenancyLetter)
     {
         $validated = $this->TenancyLetterValidate($request);
-
 
         try {
             $tenancyLetter->update($validated);
@@ -2543,9 +2547,12 @@ class MakerController extends Controller
         }
     }
 
-    public function TenancyLetterShow()
+    public function TenancyLetterShow(TenancyLetter $tenancyLetter)
     {
-        return view('maker.tenancy-letter.show');
+        // Load the lease and property relationships
+        $tenancyLetter->load(['lease', 'lease.tenant', 'lease.tenant.property']);
+
+        return view('maker.tenancy-letter.show', compact('tenancyLetter'));
     }
 
     // submit for approval
@@ -2566,12 +2573,33 @@ class MakerController extends Controller
     public function TenancyLetterValidate(Request $request)
     {
         return $request->validate([
-            'property_id' => 'required|exists:properties,id',
-            'tenant_id' => 'required|exists:tenants,id',
             'lease_id' => 'required|exists:leases,id',
-            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
-            'prepared_by' => 'nullable|string|max:255',
+            'your_reference' => 'nullable|string|max:255',
+            'our_reference' => 'required|string|max:255',
+            'letter_date' => 'required|date',
+            'recipient_company' => 'required|string|max:255',
+            'recipient_address_line_1' => 'required|string|max:255',
+            'recipient_address_line_2' => 'nullable|string|max:255',
+            'recipient_address_line_3' => 'nullable|string|max:255',
+            'recipient_address_postcode' => 'required|string|max:255',
+            'recipient_address_city' => 'required|string|max:255',
+            'recipient_address_state' => 'required|string|max:255',
+            'recipient_address_country' => 'required|string|max:255',
+            'attention_to_name' => 'nullable|string|max:255',
+            'attention_to_position' => 'nullable|string|max:255',
+            'description_1' => 'required|string',
+            'description_2' => 'nullable|string',
+            'description_3' => 'nullable|string',
+            'letter_offer_date' => 'nullable|date',
+            'trustee_name' => 'nullable|string|max:255',
+            'approver_name' => 'required|string|max:255',
+            'approver_position' => 'required|string|max:255',
+            'approver_department' => 'required|string|max:255',
             'status' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
         ]);
     }
 
