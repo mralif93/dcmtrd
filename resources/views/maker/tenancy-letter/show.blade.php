@@ -3,8 +3,14 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <!-- Print Button -->
-                    <div class="print-controls mb-4 flex justify-end">
+                    <!-- Buttons (Back, Edit and Print in one line) -->
+                    <div class="print-controls mb-4 flex justify-end space-x-4">
+                        <a href="{{ route('lease-m.show', $tenancyLetter->lease) }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                            <i class="fa fa-arrow-left mr-2"></i> Back to Lease
+                        </a>
+                        <a href="{{ route('tenancy-letter-m.edit', $tenancyLetter) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <i class="fa fa-edit mr-2"></i> Edit Document
+                        </a>
                         <button id="printButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             <i class="fa fa-print mr-2"></i> Print Document
                         </button>
@@ -130,14 +136,27 @@
                                             <th style="border: 1px solid #ccc; padding: 8px; text-align: center; width: 20%; background-color: #f2f2f2;">Year</th>
                                             <th style="border: 1px solid #ccc; padding: 8px; text-align: center; width: 80%; background-color: #f2f2f2;">Total Monthly Rental</th>
                                         </tr>
+                                        @if($tenancyLetter->lease->monthly_gsto_year_1)
+                                        <!-- lease base rate year 1 -->
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">1</td>
-                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">7% of Monthly Gross Sales Turnover</td>
+                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{{ $tenancyLetter->lease->monthly_gsto_year_1 ?? 'N/A' }}% of Monthly Gross Sales Turnover</td>
                                         </tr>
+                                        @endif
+                                        @if($tenancyLetter->lease->monthly_gsto_year_2)
+                                        <!-- lease base rate year 2 -->
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">2</td>
-                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">7% of Monthly Gross Sales Turnover</td>
+                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{{ $tenancyLetter->lease->monthly_gsto_year_2 ?? 'N/A' }}% of Monthly Gross Sales Turnover</td>
                                         </tr>
+                                        @endif
+                                        @if($tenancyLetter->lease->monthly_gsto_year_3)
+                                        <!-- lease base rate year 3 -->
+                                        <tr>
+                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">3</td>
+                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{{ $tenancyLetter->lease->monthly_gsto_year_3 ?? 'N/A' }}% of Monthly Gross Sales Turnover</td>
+                                        </tr>
+                                        @endif
                                     </table>
                                 </td>
                             </tr>
@@ -233,7 +252,7 @@
         }
     </style>
     
-    <!-- Add Font Awesome for the print icon -->
+    <!-- Add Font Awesome for the icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <!-- Print JavaScript Function -->

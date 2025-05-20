@@ -2318,9 +2318,9 @@ class MakerController extends Controller
             return redirect()
                 ->route('tenant-m.index', $tenant->property)
                 ->with('success', 'Tenant submitted for approval successfully.');
-
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
     }
@@ -2390,9 +2390,13 @@ class MakerController extends Controller
 
         try {
             $lease = Lease::create($validated);
-            return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease created successfully.');
+            return redirect()
+                ->route('lease-m.index', $lease->tenant->property)
+                ->with('success', 'Lease created successfully.');
         } catch(\Exception $e) {
-            return back()->with('error', 'Error creating lease: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating lease: ' . $e->getMessage());
         }
     }
 
@@ -2418,9 +2422,13 @@ class MakerController extends Controller
 
         try {
             $lease->update($validated);
-            return redirect()->route('lease-m.show', $lease)->with('success', 'Lease updated successfully.');
+            return redirect()
+                ->route('lease-m.show', $lease)
+                ->with('success', 'Lease updated successfully.');
         } catch(\Exception $e) {
-            return back()->with('error', 'Error updating lease: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating lease: ' . $e->getMessage());
         }
     }
 
@@ -2442,6 +2450,7 @@ class MakerController extends Controller
                 ->with('success', 'Lease submitted for approval successfully.');
         } catch(\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error submitting lease for approval: ' . $e->getMessage());
         }
     }
@@ -2541,7 +2550,9 @@ class MakerController extends Controller
 
         try {
             $tenancyLetter->update($validated);
-            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter updated successfully.');
+            return redirect()
+                ->route('tenancy-letter-m.show', $tenancyLetter)
+                ->with('success', 'Tenancy Letter updated successfully.');
         } catch(\Exception $e) {
             return back()->with('error', 'Error updating tenancy letter: ' . $e->getMessage());
         }
@@ -2564,9 +2575,13 @@ class MakerController extends Controller
                 'prepared_by' => Auth::user()->name,
             ]);
             
-            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter submitted for approval successfully.');
+            return redirect()
+                ->route('tenancy-letter-m.index', $tenancyLetter->property)
+                ->with('success', 'Tenancy Letter submitted for approval successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
     }
 
@@ -2607,9 +2622,13 @@ class MakerController extends Controller
     {
         try {
             $tenancyLetter->delete();
-            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter deleted successfully.');
+            return redirect()
+                ->route('tenancy-letter-m.index', $tenancyLetter->property)
+                ->with('success', 'Tenancy Letter deleted successfully.');
         } catch(\Exception $e) {
-            return back()->with('error', 'Error deleting tenancy letter: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error deleting tenancy letter: ' . $e->getMessage());
         }
     }
 
@@ -2649,9 +2668,13 @@ class MakerController extends Controller
 
         try {
             $siteVisit = SiteVisit::create($validated);
-            return redirect()->route('tenant-m.index', $siteVisit->property)->with('success', 'Site visit created successfully.');
+            return redirect()
+                ->route('tenant-m.index', $siteVisit->property)
+                ->with('success', 'Site visit created successfully.');
         } catch(\Exception $e) {
-            return back()->with('error', 'Error creating site visit: ' . $e->getMEssage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating site visit: ' . $e->getMEssage());
         }
     }
 
@@ -2681,9 +2704,13 @@ class MakerController extends Controller
 
         try {
             $siteVisit->update($validated);
-            return redirect()->route('tenant-m.index', $siteVisit->property)->with('success', 'Site visit updated successfully.');
+            return redirect()
+                ->route('tenant-m.index', $siteVisit->property)
+                    ->with('success', 'Site visit updated successfully.');
         } catch(\Exception $e) {
-            return back()->with('error', 'Error updating site visit: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating site visit: ' . $e->getMessage());
         }
     }
 
@@ -2706,6 +2733,7 @@ class MakerController extends Controller
                 ->with('success', 'Site visit submitted for approval successfully.');
         } catch(\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
     }
