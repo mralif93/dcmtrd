@@ -4247,6 +4247,12 @@ class MakerController extends Controller
         return view('maker.approval-property.index', compact('approvalProperties'));
     }
 
+    public function ApprovalPropertyCreate()
+    {
+        $properties = Property::where('status', 'active')->get();
+        return view('maker.approval-property.create', compact('properties'));
+    }
+
     public function ApprovalPropertyEdit(ApprovalProperty $approvalProperty)
     {
         $properties = Property::where('status', 'active')->paginate(10);
