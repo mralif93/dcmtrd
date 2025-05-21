@@ -49,9 +49,11 @@
                                         <tr>
                                             <td>{{ $tenancyLetter->recipient_address_line_2 ?? 'N/A' }}</td>
                                         </tr>
+                                        @if($tenancyLetter->recipient_address_line_3)
                                         <tr>
                                             <td>{{ $tenancyLetter->recipient_address_line_3 ?? 'N/A' }}</td>
                                         </tr>
+                                        @endif
                                         <tr>
                                             <td>{{ $tenancyLetter->recipient_address_postcode ?? 'N/A' }} {{ $tenancyLetter->recipient_address_city ?? 'N/A' }}</td>
                                         </tr>
