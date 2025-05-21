@@ -29,6 +29,7 @@ class ChecklistTenant extends Model
         'status',
         'prepared_by',
         'verified_by',
+        'remarks',
         'approval_datetime',
     ];
 

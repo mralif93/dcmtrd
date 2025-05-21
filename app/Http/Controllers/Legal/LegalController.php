@@ -18,13 +18,25 @@ use App\Models\FinancialType;
 use App\Models\PortfolioType;
 use App\Models\SecurityDocRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ChecklistLegalDocumentation;
 use App\Http\Requests\RequestDocumentsStoreRequest;
+use App\Jobs\ListSecurity\SendListSecurityRequestEmail;
 
 class LegalController extends Controller
 {
+    public function indexMain(Request $request)
+    {
+        // Start with the Checklist query
+        $query = Checklist::with(['siteVisit.property', 'legalDocumentation']);
+
+        // Get checklists with related data
+        $checklists = $query->latest()->paginate(10)->withQueryString();
+
+        return view('legal.checklist.index', compact('checklists'));
+    }
     public function index(Request $request)
     {
         // Start with the Checklist query
@@ -103,17 +115,33 @@ class LegalController extends Controller
 
     public function SecDocuments(Request $request)
     {
+        $search = $request->input('search');
+
+        $securitiesQuery = ListSecurity::with('issuer')
+            ->where('status', 'Active')
+            ->latest();
+
+        // Apply search filter if provided
+        if ($search) {
+            $securitiesQuery->where(function ($query) use ($search) {
+                $query->where('security_name', 'like', "%{$search}%")
+                    ->orWhereHas('issuer', function ($q) use ($search) {
+                        $q->where('issuer_short_name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $securities = $securitiesQuery->paginate(10)->withQueryString();
+
         $getListReq = SecurityDocRequest::with('listSecurity.issuer')
             ->latest()
             ->paginate(10)
             ->withQueryString();
 
-        $securities = ListSecurity::with('issuer')->latest()->where('status', 'Active')->paginate(10)->withQueryString();
-
         return view('legal.dcmt.index', compact('getListReq', 'securities'));
     }
 
-    public function RequestDocuments($id)
+    public function RequestDocuments($id): View
     {
         $getListSec = ListSecurity::with('issuer')->findOrFail($id);
 
@@ -125,22 +153,90 @@ class LegalController extends Controller
         return view('legal.dcmt.request', compact('getListSec', 'getListReq'));
     }
 
-    public function RequestDocumentsStore(RequestDocumentsStoreRequest $request, $id)
+    public function RequestDocumentsCreate()
     {
-        // Add the list_security_id to the validated data
-        $validated = $request->validated();
-        $validated['list_security_id'] = $id;  // This will add the list_security_id
+        $user = Auth::user();
 
-        // Add extra fields
-        $validated['prepared_by'] = Auth::user()->name;
+        $listSecurities = ListSecurity::with('issuer')
+            ->where('status', 'Active')
+            ->latest()
+            ->get();
 
-        // Set the status to 'Pending' by default
-        $validated['status'] = 'Pending';
-        $validated['request_date'] = now(); // Set the request date to the current date
+        return view('legal.dcmt.create', compact('user', 'listSecurities'));
+    }
 
-        // Create the document request
-        SecurityDocRequest::create($validated);
 
-        return redirect()->route('legal.sec-documents')->with('success', 'Document request created successfully.');
+    public function RequestDocumentsStore(Request $request)
+    {
+        $request->validate([
+            'security_id' => 'required|exists:list_securities,id',
+            'request_date' => 'required|date',
+            'purpose' => 'required|string',
+        ]);
+
+        SecurityDocRequest::create([
+            'list_security_id' => $request->security_id,
+            'request_date' => $request->request_date,
+            'purpose' => $request->purpose,
+            'status' => 'Draft', // or 'Draft'
+            'prepared_by' => Auth::user()->name,
+        ]);
+
+        return redirect()->route('legal.request-documents.history', $request->security_id)->with('success', 'Document request created successfully.');
+    }
+
+    public function RequestDocumentsHistory(ListSecurity $security)
+    {
+        $history = $security->securityDocRequests()->latest()->get();
+
+        return view('legal.dcmt.history', compact('security', 'history'));
+    }
+
+    public function RequestDocumentsEdit(Request $request, $id)
+    {
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $listSecurities = ListSecurity::with('issuer')
+            ->where('status', 'Active')
+            ->latest()
+            ->get();
+
+        return view('legal.dcmt.edit', compact('documentRequest', 'listSecurities'));
+    }
+
+    public function RequestDocumentsUpdate(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'security_id'  => 'required|exists:list_securities,id',
+            'request_date' => 'required|date',
+            'purpose'      => 'required|string|max:1000',
+            'prepared_by'  => 'required|string|max:255',
+        ]);
+
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $documentRequest->update([
+            'list_security_id' => $validated['security_id'],
+            'request_date'     => $validated['request_date'],
+            'purpose'          => $validated['purpose'],
+            'prepared_by'      => $validated['prepared_by'],
+        ]);
+
+        return redirect()->route('legal.request-documents.history', [
+            'security' => $documentRequest->list_security_id,
+        ])->with('success', 'Document request updated successfully!');
+    }
+
+    public function submitRequest(Request $request, $id)
+    {
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $documentRequest->update([
+            'status' => 'Pending',
+        ]);
+
+        dispatch(new SendListSecurityRequestEmail($documentRequest));
+
+        return redirect()->back()->with('success', 'Document request submitted successfully!');
     }
 }

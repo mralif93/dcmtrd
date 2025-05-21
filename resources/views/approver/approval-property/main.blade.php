@@ -135,9 +135,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('approval-property-a.details', $approvalProperty) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $approvalProperty->property ? $approvalProperty->property->name : 'N/A' }}
-                                        </a>
+                                        {{ $approvalProperty->property ? $approvalProperty->property->name : 'N/A' }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -148,24 +146,18 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ match(strtolower($approvalProperty->status)) {
-                                            'active' => 'bg-green-100 text-green-800',
                                             'pending' => 'bg-yellow-100 text-yellow-800',
-                                            'inactive' => 'bg-red-100 text-red-800',
-                                            'rejected' => 'bg-gray-100 text-gray-800',
-                                            default => 'bg-blue-100 text-blue-800'
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            'draft' => 'bg-gray-100 text-gray-800',
+                                            default => 'bg-gray-100 text-gray-800'
                                         } }}">
                                         {{ ucfirst($approvalProperty->status) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        <a href="{{ route('approval-property-a.details', $approvalProperty) }}" class="text-indigo-600 hover:text-indigo-900" title="View Details">
-                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                            </svg>
-                                        </a>
-                                        
                                         @if($approvalProperty->status == 'pending')
                                             <!-- Approve Button -->
                                             <form method="POST" action="{{ route('approval-property-a.approve', $approvalProperty) }}" class="inline">
@@ -184,6 +176,13 @@
                                                 </svg>
                                             </button>
                                         @endif
+
+                                        <a href="{{ route('approval-property-a.details', $approvalProperty) }}" class="text-indigo-600 hover:text-indigo-900" title="View Details">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

@@ -135,9 +135,7 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('site-visit-a.show', $siteVisit) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            {{ $siteVisit->property->name ?? 'N/A' }}
-                                        </a>
+                                        {{ $siteVisit->property->name ?? 'N/A' }}
                                     </div>
                                     <div class="text-sm text-gray-500">
                                         {{ $siteVisit->property->address ?? 'N/A' }}
@@ -174,7 +172,14 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $siteVisit->getStatusBadgeClassAttribute() }}">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {{ match(strtolower($siteVisit->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         {{ ucfirst($siteVisit->status) }}
                                     </span>
                                     @if($siteVisit->hasAttachment())
@@ -187,13 +192,6 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        <a href="{{ route('site-visit-a.show', $siteVisit) }}" class="text-indigo-600 hover:text-indigo-900" title="View Details">
-                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                            </svg>
-                                        </a>
-                                        
                                         @if($siteVisit->status == 'pending')
                                             <!-- Approve Button -->
                                             <form method="POST" action="{{ route('site-visit-a.approve', $siteVisit) }}" class="inline">
@@ -212,15 +210,12 @@
                                                 </svg>
                                             </button>
                                         @endif
-
-                                        @if($siteVisit->status == 'scheduled' && !$siteVisit->checklist)
-                                            <!-- Create Checklist Button -->
-                                            <a href="{{ route('checklist-a.create', ['site_visit_id' => $siteVisit->id]) }}" class="text-blue-600 hover:text-blue-900" title="Create Checklist">
-                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                                </svg>
-                                            </a>
-                                        @endif
+                                        <a href="{{ route('site-visit-a.details', $siteVisit) }}" class="text-indigo-600 hover:text-indigo-900" title="View Details">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -265,8 +260,8 @@
                 <form id="cancelForm" method="POST" action="">
                     @csrf
                     <div class="mt-4">
-                        <label for="notes" class="block text-sm font-medium text-gray-700">Cancellation Reason</label>
-                        <textarea id="notes" name="notes" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
+                        <label for="rejection_reason" class="block text-sm font-medium text-gray-700">Cancellation Reason</label>
+                        <textarea id="rejection_reason" name="rejection_reason" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
                     </div>
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
@@ -287,7 +282,7 @@
         });
         
         function openCancelModal(siteVisitId) {
-            document.getElementById('cancelForm').action = `/approver/site-visit/${siteVisitId}/cancel`;
+            document.getElementById('cancelForm').action = `/approver/site-visit/${siteVisitId}/reject`;
             document.getElementById('cancelModal').classList.remove('hidden');
         }
         

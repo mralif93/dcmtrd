@@ -88,11 +88,11 @@
                                     <input type="date" name="compliance_certificate" id="compliance_certificate"
                                         value="{{ old('compliance_certificate', $compliance->compliance_certificate) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="hidden" name="cc_not_required" value="0">
                                     <div class="flex items-center mt-2 space-x-2">
                                         <input type="checkbox" id="cc_not_required" name="cc_not_required"
                                             value="1"
                                             {{ old('cc_not_required', $compliance->cc_not_required) ? 'checked' : '' }}
-                                            onclick="toggleDueDate('cc_not_required', 'compliance_certificate_due')"
                                             class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
                                         <label for="cc_not_required" class="text-sm text-gray-600">Not
                                             Applicable</label>
@@ -109,11 +109,11 @@
                                         id="audited_financial_statements"
                                         value="{{ old('audited_financial_statements', $compliance->audited_financial_statements) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="hidden" name="afs_not_required" value="0">
                                     <div class="flex items-center mt-2 space-x-2">
                                         <input type="checkbox" id="afs_not_required" name="afs_not_required"
                                             value="1"
                                             {{ old('afs_not_required', $compliance->afs_not_required) ? 'checked' : '' }}
-                                            onclick="toggleDueDate('afs_not_required', 'audited_financial_statements_due')"
                                             class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
                                         <label for="afs_not_required" class="text-sm text-gray-600">Not
                                             Applicable</label>
@@ -143,11 +143,11 @@
                                         id="unaudited_financial_statements"
                                         value="{{ old('unaudited_financial_statements', $compliance->unaudited_financial_statements) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="hidden" name="ufs_not_required" value="0">
                                     <div class="flex items-center mt-2 space-x-2">
                                         <input type="checkbox" id="ufs_not_required" name="ufs_not_required"
                                             value="1"
                                             {{ old('ufs_not_required', $compliance->ufs_not_required) ? 'checked' : '' }}
-                                            onclick="toggleDueDate('ufs_not_required', 'unaudited_financial_statements_due')"
                                             class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
                                         <label for="ufs_not_required" class="text-sm text-gray-600">Not
                                             Applicable</label>
@@ -175,11 +175,11 @@
                                         id="finance_service_cover_ratio"
                                         value="{{ old('finance_service_cover_ratio', $compliance->finance_service_cover_ratio) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="hidden" name="fscr_not_required" value="0">
                                     <div class="flex items-center mt-2 space-x-2">
                                         <input type="checkbox" id="fscr_not_required" name="fscr_not_required"
                                             value="1"
                                             {{ old('fscr_not_required', $compliance->fscr_not_required) ? 'checked' : '' }}
-                                            onclick="toggleDueDate('fscr_not_required', 'fscr_due')"
                                             class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
                                         <label for="fscr_not_required" class="text-sm text-gray-600">Not
                                             Applicable</label>
@@ -194,11 +194,11 @@
                                     <input type="date" name="annual_budget" id="annual_budget"
                                         value="{{ old('annual_budget', $compliance->annual_budget) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="hidden" name="budget_not_required" value="0">
                                     <div class="flex items-center mt-2 space-x-2">
                                         <input type="checkbox" id="budget_not_required" name="budget_not_required"
                                             value="1"
                                             {{ old('budget_not_required', $compliance->budget_not_required) ? 'checked' : '' }}
-                                            onclick="toggleDueDate('budget_not_required', 'annual_budget_due')"
                                             class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
                                         <label for="budget_not_required" class="text-sm text-gray-600">Not
                                             Applicable</label>
@@ -215,11 +215,11 @@
                                         id="computation_of_finance_to_ebitda"
                                         value="{{ old('computation_of_finance_to_ebitda', $compliance->computation_of_finance_to_ebitda) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="hidden" name="ebitda_not_required" value="0">
                                     <div class="flex items-center mt-2 space-x-2">
                                         <input type="checkbox" id="ebitda_not_required" name="ebitda_not_required"
                                             value="1"
                                             {{ old('ebitda_not_required', $compliance->ebitda_not_required) ? 'checked' : '' }}
-                                            onclick="toggleDueDate('ebitda_not_required', 'ebitda_due')"
                                             class="w-4 h-4 text-indigo-600 transition duration-150 ease-in-out bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
                                         <label for="ebitda_not_required" class="text-sm text-gray-600">Not
                                             Applicable</label>
@@ -304,24 +304,4 @@
             </div>
         </div>
     </div>
-    <script>
-        function toggleDueDate(checkboxId, dueDateId) {
-            var checkbox = document.getElementById(checkboxId);
-            var dueDateInput = document.getElementById(dueDateId);
-
-            if (checkbox.checked) {
-                dueDateInput.disabled = true; // Disable the due date input if "Not Applicable" is checked
-            } else {
-                dueDateInput.disabled = false; // Enable the due date input if unchecked
-            }
-        }
-
-        // Initial state for due dates
-        window.onload = function() {
-            ['cc_not_required', 'afs_not_required', 'ufs_not_required', 'fscr_not_required'].forEach(function(
-                checkboxId) {
-                toggleDueDate(checkboxId, checkboxId.replace('_not_required', '_due'));
-            });
-        }
-    </script>
 </x-app-layout>

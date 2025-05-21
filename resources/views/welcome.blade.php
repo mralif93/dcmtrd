@@ -304,7 +304,7 @@
                     <div class="icon-container blue-bg-light">
                         <i class="fas fa-building blue-icon fa-3x"></i>
                     </div>
-                    <h2 class="mb-4 text-2xl font-bold text-center">Bond Monitoring (DCMT)</h2>
+                    <h2 class="mb-4 text-2xl font-bold text-center">Debt Capital Market & Trust (DCMT)</h2>
                     <p class="mb-6 text-center text-gray-600">Track bond performance, market trends, and explore issuers available in the market.</p>
                     <div class="flex justify-center">
                         <span class="inline-flex items-center px-4 py-2 font-medium rounded-md blue-btn">
@@ -394,16 +394,16 @@
                 (Auth::user()->role === 'approver' ? route('approver.dashboard', ['section' => 'sales-marketing']) : 
                 (Auth::user()->role === 'sales' ? route('sales.dashboard', ['section' => 'sales-marketing']) : 
                 route('dashboard', ['section' => 'sales-marketing'])))) 
-            }}" class="card sales-marketing-card shadow-lg">
+            }}" class="shadow-lg card sales-marketing-card">
                 <div class="p-8">
                     <div class="icon-container pink-bg-light">
                         <i class="fas fa-chart-line pink-icon fa-3x"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-center mb-4">Sales & Marketing Management</h2>
-                    <p class="text-gray-600 text-center mb-6">Analyze market trends, track sales performance, and develop marketing strategies.</p>
+                    <h2 class="mb-4 text-2xl font-bold text-center">Sales & Marketing Management</h2>
+                    <p class="mb-6 text-center text-gray-600">Analyze market trends, track sales performance, and develop marketing strategies.</p>
                     <div class="flex justify-center">
-                        <span class="inline-flex items-center px-4 py-2 pink-btn font-medium rounded-md">
-                            View Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                        <span class="inline-flex items-center px-4 py-2 font-medium rounded-md pink-btn">
+                            View Dashboard <i class="ml-2 fas fa-arrow-right"></i>
                         </span>
                     </div>
                 </div>

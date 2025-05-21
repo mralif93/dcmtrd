@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <a href="{{ url()->previous() }}"
+            <a href="{{ route('list-security-m.index') }}"
                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 ← Back
             </a>
@@ -164,30 +164,34 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
                                             class="px-2 py-1 inline-flex text-xs font-semibold rounded-full
-                        {{ match ($req->status) {
-                            'Active' => 'bg-green-100 text-green-800',
-                            'Pending' => 'bg-yellow-100 text-yellow-800',
-                            'Rejected' => 'bg-red-100 text-red-800',
-                            default => 'bg-gray-100 text-gray-800',
-                        } }}">
-                                            {{ $req->status ?? 'N/A' }}
+                                                {{ match ($req->status) {
+                                                    'Approved' => 'bg-green-100 text-green-800',
+                                                    'Pending' => 'bg-yellow-100 text-yellow-800',
+                                                    'Withdrawal' => 'bg-orange-100 text-orange-800',
+                                                    'Return' => 'bg-purple-100 text-purple-800',
+                                                    'Cancelled' => 'bg-gray-300 text-gray-800',
+                                                    default => 'bg-gray-100 text-gray-800',
+                                                } }}">
+                                            {{ ucfirst($req->status) ?? 'N/A' }}
                                         </span>
                                     </td>
+
                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                        <!-- View Button -->
-                                        <a 
-                                            href="{{ route('security-details-m.show', $req->id) }}"
-                                            class="inline-flex items-center px-2 py-1 text-xs font-medium text-indigo-700 bg-indigo-100 rounded hover:bg-indigo-200">
-                                            <!-- Eye Icon -->
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            View
-                                        </a>
+                                        <div class="flex items-center justify-end space-x-2">
+                                            <!-- View Button (Always Visible) -->
+                                            <a href="{{ route('security-details-m.show', $req->id) }}"
+                                                class="flex items-center px-3 py-1 text-xs font-medium text-indigo-700 transition duration-150 ease-in-out bg-indigo-100 rounded hover:bg-indigo-200">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                View
+                                            </a>
+                                        </div>
                                     </td>
+                                    
                                 </tr>
                             @empty
                                 <tr>

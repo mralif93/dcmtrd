@@ -36,7 +36,7 @@ A trustee fee has been submitted and is pending your review.
 
 </x-mail::panel>
 
-<x-mail::button :url="route('trustee-fee-m.show', ['trusteeFee' => $trusteeFee->id])">
+<x-mail::button :url="route('trustee-fee-a.show', ['trusteeFee' => $trusteeFee->id])">
 View Trustee Fee
 </x-mail::button>
 

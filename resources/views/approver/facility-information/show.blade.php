@@ -415,6 +415,86 @@
                         @endif
                     </div>
                 </div>
+
+                  <!-- ADI Holder Accordion -->
+                  <div class="mt-6 bg-white shadow-sm sm:rounded-lg">
+                    <button @click="openSection = openSection === 'ADI' ? null : 'ADI'"
+                        class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-semibold">
+                                Authorized Depository Institution (ADI) Holder
+                                <span class="ml-2 text-sm font-normal text-gray-600">
+                                    (Total Outstanding Amount: RM {{ number_format($totalNominal, 2) }})
+                                </span>
+                            </h3>
+
+                            <svg class="w-6 h-6 transition-transform transform"
+                                :class="{ 'rotate-180': openSection === 'ADI' }" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </button>
+
+                    <div x-show="openSection === 'ADI'" x-collapse class="border-t border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">ADI
+                                        Holder</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Stock
+                                        Code</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">(RM)
+                                        Nominal
+                                        Value</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse ($adiHolders as $holderName => $records)
+                                    <tr class="bg-gray-100">
+                                        <td colspan="2" class="px-6 py-3 font-semibold text-gray-700">
+                                            {{ $holderName }}
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            
+                                        </td>
+
+                                    </tr>
+                                    @foreach ($records as $record)
+                                        <tr>
+                                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap"></td>
+                                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                                {{ $record->stock_code }}
+                                            </td>
+                                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                                {{ number_format($record->nominal_value, 2) }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    <tr class="text-sm font-semibold text-gray-900 bg-gray-50">
+                                        <td class="px-6 py-3 text-right" colspan="2">Total Nominal Value: (RM)</td>
+                                        <td class="px-6 py-3">
+                                            {{ number_format($records->sum('nominal_value'), 2) }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-4 text-center text-gray-500">
+                                            No ADI Holder records found.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+
+                        @if ($adiHoldersPaginated->hasPages())
+                            <div class="p-6 border-t">
+                                {{ $adiHoldersPaginated->links() }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
     </div>

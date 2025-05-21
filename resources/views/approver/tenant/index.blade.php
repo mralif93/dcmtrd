@@ -37,7 +37,14 @@
                         <h3 class="text-lg font-medium text-gray-900">{{ $property->name }}</h3>
                         <p class="text-sm text-gray-600">{{ $property->category }} - {{ $property->city }}, {{ $property->state }}</p>
                     </div>
-                    <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                        {{ match(strtolower($property->status)) {
+                            'pending' => 'bg-yellow-100 text-yellow-800',
+                            'active' => 'bg-green-100 text-green-800',
+                            'inactive' => 'bg-gray-100 text-gray-800',
+                            'rejected' => 'bg-red-100 text-red-800',
+                            default => 'bg-gray-100 text-gray-800'
+                        } }}">
                         {{ ucfirst($property->status) }}
                     </span>
                 </div>
@@ -64,8 +71,8 @@
                         
                         <div class="px-4 py-5 sm:px-6">
                             <h4 class="text-sm font-medium text-gray-500 uppercase mb-2">Site Visits</h4>
-                            <p class="text-xl font-bold text-gray-800">{{ $property->siteVisits->where('status', 'scheduled')->count() }} Pending</p>
-                            <p class="text-sm text-gray-600 mt-1">Last Visit: {{ $property->siteVisits->where('status', 'completed')->sortByDesc('date_visit')->first()?->date_visit->format('d M Y') ?? 'None' }}</p>
+                            <p class="text-xl font-bold text-gray-800">{{ $property->siteVisits->where('status', 'pending')->count() }} Pending</p>
+                            <p class="text-sm text-gray-600 mt-1">Last Visit: {{ $property->siteVisits->where('status', 'active')->sortByDesc('date_visit')->first()?->date_visit->format('d M Y') ?? 'N/A' }}</p>
                         </div>
                     </div>
                 </div>
@@ -134,8 +141,7 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Person</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lease Period</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -148,31 +154,21 @@
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">{{ $tenant->name }}</div>
-                                        <div class="text-xs text-gray-500">{{ $tenant->email ?? 'No email' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $tenant->contact_person ?? 'N/A' }}</div>
-                                        <div class="text-xs text-gray-500">{{ $tenant->phone ?? 'No phone' }}</div>
+                                        <div class="text-sm text-gray-500">{{ $tenant->email ?? 'No email' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-500">
-                                            {{ $tenant->commencement_date->format('d/m/Y') }} to {{ $tenant->expiry_date->format('d/m/Y') }}
-                                        </div>
-                                        @if($tenant->leases->isNotEmpty())
-                                            <div class="text-xs text-gray-500">
-                                                {{ $tenant->leases->first()->lease_name }}
-                                            </div>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $tenant->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ match(strtolower($tenant->status)) {
+                                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                                'active' => 'bg-green-100 text-green-800',
+                                                'inactive' => 'bg-gray-100 text-gray-800',
+                                                'rejected' => 'bg-red-100 text-red-800',
+                                                default => 'bg-gray-100 text-gray-800'
+                                            } }}">
                                             {{ ucfirst($tenant->status) }}
                                         </span>
-                                        <!-- @if($isExpiringSoon)
-                                            <span class="ml-1 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                Expiring Soon
-                                            </span>
-                                        @endif -->
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end space-x-2">
@@ -182,19 +178,12 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                                 </svg>
                                             </a>
-                                            @if($tenant->leases->isNotEmpty())
-                                                <a href="{{ route('lease-a.show', $tenant->leases->first()) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m-6-8h6M9 20h12a2 2 0 002-2V6a2 2 0 00-2-2H9a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                                    </svg>
-                                                </a>
-                                            @endif
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No tenants found {{ request('search') ? 'matching your search' : '' }}</td>
+                                    <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No tenants found {{ request('search') ? 'matching your search' : '' }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -227,9 +216,10 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inspector</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsible Parties</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -239,7 +229,7 @@
                             <tr>
                                 <td class="px-6 py-4 font-medium text-gray-900">
                                     <div class="text-sm text-gray-900">
-                                        {{ $visit->inspector_name ?? 'Not assigned' }}
+                                        {{ $visit->property->name ?? 'Unknown Property' }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
@@ -253,7 +243,20 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $visit->status_badge_class }}">
+                                    <div class="text-sm text-gray-500">
+                                        <div>Trustee: {{ $visit->trustee ?? 'Not assigned' }}</div>
+                                        <div>Manager: {{ $visit->manager ?? 'Not assigned' }}</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {{ match(strtolower($visit->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         {{ ucfirst($visit->status) }}
                                     </span>
                                 </td>
@@ -265,6 +268,13 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
                                         </a>
+                                        @if($visit->checklist)
+                                            <a href="{{ route('checklist-a.show', $visit->checklist) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                                </svg>
+                                            </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

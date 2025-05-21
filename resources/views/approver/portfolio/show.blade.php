@@ -175,8 +175,8 @@
                     <div class="px-4 py-5 sm:px-6">
                         <h3 class="text-lg leading-6 font-medium text-gray-900">Properties</h3>
                     </div>
-                    <div class="border-t border-gray-200">
-                        @if ($portfolio->properties->count() > 0)
+                    <div class="px-4 py-5 sm:px-6">
+                        @if ($properties->count() > 0)
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
@@ -196,7 +196,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach ($portfolio->properties as $property)
+                                        @foreach ($properties as $property)
                                             <tr>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                     {{ $property->name }}
@@ -209,7 +209,13 @@
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                                        {{ match(strtolower($property->status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($property->status) }}
                                                     </span>
                                                 </td>
@@ -217,6 +223,9 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+                                {{ $properties->appends(['financials_page' => request()->input('financials_page')])->links() }}
                             </div>
                         @else
                             <div class="bg-gray-50 px-4 py-5 sm:px-6">
@@ -231,8 +240,8 @@
                     <div class="px-4 py-5 sm:px-6">
                         <h3 class="text-lg leading-6 font-medium text-gray-900">Financial Information</h3>
                     </div>
-                    <div class="border-t border-gray-200">
-                        @if ($portfolio->financials->count() > 0)
+                    <div class="px-4 py-5 sm:px-6">
+                        @if ($financials->count() > 0)
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
@@ -255,7 +264,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach ($portfolio->financials as $financial)
+                                        @foreach ($financials as $financial)
                                             <tr>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                     {{ $financial->bank->name ?? 'N/A' }}
@@ -271,7 +280,13 @@
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $financial->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                                        {{ match(strtolower($financial->status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($financial->status) }}
                                                     </span>
                                                 </td>
@@ -280,12 +295,38 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+                                {{ $financials->appends(['properties_page' => request()->input('properties_page')])->links() }}
+                            </div>
                         @else
                             <div class="bg-gray-50 px-4 py-5 sm:px-6">
                                 <p class="text-sm text-gray-500">No financial records associated with this portfolio.</p>
                             </div>
                         @endif
                     </div>
+                </div>
+
+                <!-- Administrative Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Administrative Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $portfolio->prepared_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $portfolio->verified_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $portfolio->approval_datetime ? date('d/m/Y h:i A', strtotime($portfolio->approval_datetime)) : 'Not yet approved' }}
+                            </dd>
+                        </div>
+                    </dl>
                 </div>
 
                 <!-- System Information Section -->

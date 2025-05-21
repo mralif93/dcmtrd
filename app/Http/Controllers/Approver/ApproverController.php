@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Approver;
 
+use Carbon\Carbon;
 use App\Models\Bank;
+
 use App\Models\Bond;;
 
 use App\Models\Lease;
@@ -26,17 +28,35 @@ use App\Models\ActivityDiary;
 use App\Models\FinancialType;
 use App\Models\LockoutPeriod;
 use App\Models\PortfolioType;
+use App\Models\ChecklistTenant;
 use App\Models\RelatedDocument;
 use App\Models\ApprovalProperty;
 use App\Models\ComplianceCovenant;
+use App\Models\SecurityDocRequest;
 use Illuminate\Support\Facades\DB;
 use App\Models\FacilityInformation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\PlacementFundTransfer;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\ListSecurityRequest;
+use App\Models\ChecklistLegalDocumentation;
+use App\Models\ChecklistPropertyDevelopment;
+use App\Models\ChecklistDisposalInstallation;
+use App\Models\ChecklistExternalAreaCondition;
+use App\Models\ChecklistInternalAreaCondition;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendIssuerApprovedNotification;
 use App\Jobs\Issuer\SendIssuerRejectedNotification;
+use App\Jobs\Compliance\SendComplianceApprovalEmail;
+use App\Jobs\Compliance\SendComplianceRejectionEmail;
+use App\Jobs\ListSecurity\SendListSecurityReturnEmail;
+use App\Jobs\FundTransfer\SendFundTransferApprovedEmail;
+use App\Jobs\FundTransfer\SendFundTransferRejectedEmail;
+use App\Jobs\ListSecurity\SendListSecurityApprovedEmail;
+use App\Jobs\ListSecurity\SendListSecurityRejectedEmail;
+use App\Jobs\ListSecurity\SendListSecurityWithdrawalEmail;
 use App\Jobs\TrusteeFee\SendTrusteeFeeApprovedNotification;
 use App\Jobs\TrusteeFee\SendTrusteeFeeRejectedNotification;
 
@@ -93,6 +113,7 @@ class ApproverController extends Controller
             (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
             (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
             (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
+            (SELECT COUNT(*) FROM placement_fund_transfers) AS placement_fund_transfers_count,
 
             (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
             (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
@@ -125,6 +146,7 @@ class ApproverController extends Controller
             'approvalPropertiesCount' => $counts->approval_properties_count,
             'siteVisitLogsCount' => $counts->site_visit_logs_count,
             'listSecuritiesCount' => $counts->list_securities_count,
+            'placementFundTransfersCount' => $counts->placement_fund_transfers_count,
 
             // Add pending counts to view data
             'pendingPropertiesCount' => $counts->pending_properties_count,
@@ -324,6 +346,10 @@ class ApproverController extends Controller
             return $bond->ratingMovements; // Collect rating movements from each bond
         });
 
+        $adiHoldersPaginated = $facility->adiHolders()->paginate(15);
+        $adiHoldersGrouped = $adiHoldersPaginated->getCollection()->groupBy('adi_holder');
+        $totalNominal = $adiHoldersPaginated->getCollection()->sum('nominal_value');
+
         // Paginate the rating movements
         $currentPage = request()->get('ratingMovementsPage', 1); // Get current page from request
         $currentPageItems = $allRatingMovements->slice(($currentPage - 1) * $perPage, $perPage)->all(); // Slice the collection
@@ -339,6 +365,9 @@ class ApproverController extends Controller
             'documents' => $documents,
             'announcements' => $announcements,
             'ratingMovements' => $ratingMovements,
+            'adiHolders' => $adiHoldersGrouped,
+            'adiHoldersPaginated' => $adiHoldersPaginated,
+            'totalNominal' => $totalNominal,
         ]);
     }
 
@@ -507,9 +536,12 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
 
+            dispatch(new  SendComplianceApprovalEmail($compliance));
+
             return redirect()->route('compliance-covenant-a.index')->with('success', 'Compliance Covenant approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving compliance covenant: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error approving compliance covenant: ' . $e->getMessage());
         }
     }
 
@@ -526,9 +558,12 @@ class ApproverController extends Controller
                 'remarks' => $request->input('rejection_reason'),
             ]);
 
+            dispatch(new  SendComplianceRejectionEmail($compliance));
+
             return redirect()->route('compliance-covenant-a.index')->with('success', 'Compliance Covenant rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting compliance covenant: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error rejecting compliance covenant: ' . $e->getMessage());
         }
     }
 
@@ -660,7 +695,13 @@ class ApproverController extends Controller
 
     public function PortfolioShow(Portfolio $portfolio)
     {
-        return view('approver.portfolio.show', compact('portfolio'));
+        // Get paginated properties with a unique page name
+        $properties = $portfolio->properties()->paginate(10, ['*'], 'properties_page');
+        
+        // Get paginated financials with a different page name
+        $financials = $portfolio->financials()->paginate(10, ['*'], 'financials_page');
+        
+        return view('approver.portfolio.show', compact('portfolio', 'properties', 'financials'));
     }
 
     public function PortfolioApprove(Portfolio $portfolio)
@@ -672,9 +713,12 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
 
-            return redirect()->route('approver.dashboard', ['section' => 'reits'])->with('success', 'Portfolio approved successfully.');
+            return redirect()
+                ->route('approver.dashboard', ['section' => 'reits'])
+                ->with('success', 'Portfolio approved successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error approving activity diary: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error approving activity diary: ' . $e->getMessage());
         }
     }
 
@@ -691,9 +735,12 @@ class ApproverController extends Controller
                 'remarks' => $request->input('rejection_reason'),
             ]);
 
-            return redirect()->route('approver.dashboard', ['section' => 'reits'])->with('success', 'Portfolio rejected successfully.');
+            return redirect()
+                ->route('approver.dashboard', ['section' => 'reits'])
+                ->with('success', 'Portfolio rejected successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
+            return back()
+                ->with('error', 'Error rejecting activity diary: ' . $e->getMessage());
         }
     }
 
@@ -703,12 +750,8 @@ class ApproverController extends Controller
         // Start with a base query, including relevant relationships
         $query = Property::with([
             'portfolio',
-            'tenants' => function ($q) {
-                $q->where('status', 'active');
-            },
-            'siteVisits' => function ($q) {
-                $q->where('status', 'scheduled');
-            }
+            'tenants',
+            'siteVisits',
         ]);
 
         // Filter by portfolio if provided
@@ -857,7 +900,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('property-a.main', ['tab' => 'pending'])
+                ->route('property-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Property rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -866,6 +909,17 @@ class ApproverController extends Controller
     }
 
     // Financial Module
+    public function FinancialIndex(Portfolio $portfolio, Request $request)
+    {
+        $query = Financial::with(['bank', 'financialType', 'properties'])->orderBy('bank_id')->get();
+        $financials = $query->where('portfolio_id', $portfolio->id);
+        return view('approver.financial.index', compact('financials', 'portfolio'));
+    }
+
+    public function FinancialShow(Financial $financial) {
+        return view('approver.financial.show', compact('financial'));
+    }
+
     public function FinancialMain(Request $request)
     {
         // Get current tab or default to 'all'
@@ -957,7 +1011,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('financial-a.main', ['tab' => 'pending'])
+                ->route('financial-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Financial rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1073,7 +1127,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('tenant-a.main', ['tab' => 'pending'])
+                ->route('tenant-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Tenant rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1101,18 +1155,15 @@ class ApproverController extends Controller
         $activeLeaseCount = Lease::whereIn('tenant_id', $tenantIds)
             ->where('status', 'active')
             ->count();
-
-        $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)->count();
-
-        $totalActiveRental = Lease::whereIn('tenant_id', $tenantIds)
-            ->where('status', 'active');
+        
+        $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)
+            ->count();
 
         return view('approver.lease.index', compact(
             'property',
             'leases',
             'activeLeaseCount',
             'totalLeaseCount',
-            'totalActiveRental'
         ));
     }
 
@@ -1193,7 +1244,6 @@ class ApproverController extends Controller
             'rejection_reason' => 'required|string|max:255',
         ]);
 
-
         try {
             $lease->update([
                 'status' => 'rejected',
@@ -1202,7 +1252,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('lease-a.main', ['tab' => 'pending'])
+                ->route('lease-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Lease rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1237,7 +1287,13 @@ class ApproverController extends Controller
         // Apply status filter based on tab
         if ($activeTab !== 'all') {
             if ($activeTab === 'active') {
-                $query->where('status', 'scheduled');
+                $query->where('status', 'active');
+            } elseif ($activeTab === 'pending') {
+                $query->where('status', 'pending');
+            } elseif ($activeTab === 'rejected') {
+                $query->where('status', 'rejected');
+            } elseif ($activeTab === 'inactive') {
+                $query->where('status', 'inactive');
             } else {
                 $query->where('status', $activeTab);
             }
@@ -1294,10 +1350,10 @@ class ApproverController extends Controller
         // Count records for each tab
         $tabCounts = [
             'all' => SiteVisit::count(),
-            'active' => SiteVisit::where('status', 'scheduled')->count(),
+            'active' => SiteVisit::where('status', 'active')->count(),
             'pending' => SiteVisit::where('status', 'pending')->count(),
-            'rejected' => SiteVisit::where('status', 'cancelled')->count(), // mapping 'rejected' to 'cancelled'
-            'inactive' => SiteVisit::whereIn('status', ['completed', 'inactive'])->count(),
+            'rejected' => SiteVisit::where('status', 'rejected')->count(),
+            'inactive' => SiteVisit::where('status', 'inactive')->count(),
         ];
 
         return view('approver.site-visit.main', compact('siteVisits', 'properties', 'activeTab', 'tabCounts'));
@@ -1328,6 +1384,7 @@ class ApproverController extends Controller
 
     public function SiteVisitReject(Request $request, SiteVisit $siteVisit)
     {
+        // Validate the rejection reason
         $request->validate([
             'rejection_reason' => 'required|string|max:255',
         ]);
@@ -1340,7 +1397,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('site-visit-a.main', ['tab' => 'pending'])
+                ->route('site-visit-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Site Visit rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1356,10 +1413,8 @@ class ApproverController extends Controller
 
         // Filter by property if provided
         if ($property->exists) {
-            $query->where('site_visit_id', function ($subquery) use ($property) {
-                $subquery->select('id')
-                    ->from('site_visits')
-                    ->where('property_id', $property->id);
+            $query->whereHas('siteVisit', function ($query) use ($property) {
+                $query->where('property_id', $property->id);
             });
         }
 
@@ -1409,50 +1464,50 @@ class ApproverController extends Controller
     {
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
-
+        
         // Base query with necessary relationships
         $query = Checklist::with(['siteVisit', 'siteVisit.property']);
-
+        
         // Apply status filter based on tab
         if ($activeTab !== 'all') {
             $query->where('status', $activeTab);
         }
-
+        
         // Apply search filter if provided
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
+            $query->where(function($q) use ($search) {
                 $q->where('prepared_by', 'like', "%{$search}%")
-                    ->orWhere('verified_by', 'like', "%{$search}%")
-                    ->orWhereHas('siteVisit.property', function ($propertyQuery) use ($search) {
-                        $propertyQuery->where('name', 'like', "%{$search}%");
-                    });
+                ->orWhere('verified_by', 'like', "%{$search}%")
+                ->orWhereHas('siteVisit.property', function($propertyQuery) use ($search) {
+                    $propertyQuery->where('name', 'like', "%{$search}%");
+                });
             });
         }
-
+        
         // Apply property filter if provided
         if ($request->filled('property_id')) {
-            $query->whereHas('siteVisit', function ($q) use ($request) {
+            $query->whereHas('siteVisit', function($q) use ($request) {
                 $q->where('property_id', $request->input('property_id'));
             });
         }
-
+        
         // Apply site visit filter if provided
         if ($request->filled('site_visit_id')) {
             $query->where('site_visit_id', $request->input('site_visit_id'));
         }
-
+        
         // Fetch checklists with pagination
         $checklists = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
-
+        
         // Fetch all site visits for the dropdown
         $siteVisits = SiteVisit::with('property')
-            ->orderBy('date_visit', 'desc')
-            ->get();
-
+                    ->orderBy('date_visit', 'desc')
+                    ->get();
+        
         // Fetch available properties for filter dropdown
         $properties = Property::orderBy('name')->get();
-
+        
         // Count records for each tab
         $tabCounts = [
             'all' => Checklist::count(),
@@ -1461,18 +1516,29 @@ class ApproverController extends Controller
             'rejected' => Checklist::where('status', 'rejected')->count(),
             'inactive' => Checklist::where('status', 'inactive')->count(),
         ];
-
+        
         return view('approver.checklist.main', compact(
-            'checklists',
-            'siteVisits',
-            'properties',
-            'activeTab',
+            'checklists', 
+            'siteVisits', 
+            'properties', 
+            'activeTab', 
             'tabCounts'
         ));
     }
 
     public function ChecklistDetails(Checklist $checklist)
     {
+        
+        // Load the checklist with its relationships
+        $checklist->load([
+            'siteVisit',
+            'siteVisit.property',
+            'siteVisit.property.portfolio',
+            'siteVisit.property.tenants',
+            'siteVisit.property.tenants.leases',
+            'siteVisit.property.financials',
+            'siteVisit.property.siteVisits',
+        ]);
         return view('approver.checklist.details', compact('checklist'));
     }
 
@@ -1486,7 +1552,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.main', ['tab' => 'pending'])
+                ->route('checklist-a.show', $checklist)
                 ->with('success', 'Checklist approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1508,11 +1574,257 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.main', ['tab' => 'pending'])
+                ->route('checklist-a.show', $checklist)
                 ->with('success', 'Checklist rejected successfully.');
         } catch (\Exception $e) {
             return back()
                 ->with('error', 'Error rejecting checklist: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist Legal Documentation Module
+    public function ChecklistLegalDocumentationApprove(ChecklistLegalDocumentation $checklistLegalDocumentation)
+    {
+        try {
+            $checklistLegalDocumentation->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistLegalDocumentation->checklist)
+                ->with('success', 'Checklist Legal Documentation approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving legal documentation: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistLegalDocumentationReject(Request $request, ChecklistLegalDocumentation $checklistLegalDocumentation)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklistLegalDocumentation->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistLegalDocumentation->checklist)
+                ->with('success', 'Checklist Legal Documentation rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting legal documentation: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist Tenant Module
+    public function ChecklistTenantApprove(ChecklistTenant $checklistTenant)
+    {
+        try {
+            $checklistTenant->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistTenant->checklist)
+                ->with('success', 'Checklist Tenant approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving tenant checklist: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistTenantReject(Request $request, ChecklistTenant $checklistTenant)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklistTenant->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistTenant->checklist)
+                ->with('success', 'ChecklistTenant rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting tenant checklist: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist External Area Condition Module
+    public function ChecklistExternalAreaConditionApprove(ChecklistExternalAreaCondition $checklistExternalAreaCondition)
+    {
+        try {
+            $checklistExternalAreaCondition->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistExternalAreaCondition->checklist)
+                ->with('success', 'Checklist External Area Condition approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving external area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistExternalAreaConditionReject(Request $request, ChecklistExternalAreaCondition $checklistExternalAreaCondition)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklistExternalAreaCondition->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistExternalAreaCondition->checklist)
+                ->with('success', 'Checklist External Area Condition rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting external area condition: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist Internal Area Condition Module
+    public function ChecklistInternalAreaConditionApprove(ChecklistInternalAreaCondition $checklistInternalAreaCondition)
+    {
+        try {
+            $checklistInternalAreaCondition->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistInternalAreaCondition->checklist)
+                ->with('success', 'Checklist Internal Area Condition approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving internal area condition: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistInternalAreaConditionReject(Request $request, ChecklistInternalAreaCondition $checklistInternalAreaCondition)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklistInternalAreaCondition->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistInternalAreaCondition->checklist)
+                ->with('success', 'Checklist Internal Area Condition rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting internal area condition: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist Property Development Module
+    public function ChecklistPropertyDevelopmentApprove(ChecklistPropertyDevelopment $checklistPropertyDevelopment)
+    {
+        try {
+            $checklistPropertyDevelopment->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return back()
+                ->route('checklist-a.show', $checklistPropertyDevelopment->checklist)
+                ->with('success', 'Property Development approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving property development: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistPropertyDevelopmentReject(Request $request, ChecklistPropertyDevelopment $checklistPropertyDevelopment)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklist->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistPropertyDevelopment->checklist)
+                ->with('success', 'Property Development rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting property development: ' . $e->getMessage());
+        }
+    }
+
+    // Checklist Disposal/Installation/Replacement Module
+    public function ChecklistDisposalInstallationApprove(ChecklistDisposalInstallation $checklistDisposalInstallation)
+    {
+        try {
+            $checklistDisposalInstallation->update([
+                'status' => 'active',
+                'verified_by' => Auth::user()->name,
+                'approval_datetime' => now(),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistDisposalInstallation->checklist)
+                ->with('success', 'Disposal/Installation/Replacement approved successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error approving disposal/installation/replacement: ' . $e->getMessage());
+        }
+    }
+
+    public function ChecklistDisposalInstallationReject(Request $request, ChecklistDisposalInstallation $checklistDisposalInstallation)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:255',
+        ]);
+
+        try {
+            $checklistDisposalInstallation->update([
+                'status' => 'rejected',
+                'verified_by' => Auth::user()->name,
+                'remarks' => $request->input('rejection_reason'),
+            ]);
+
+            return redirect()
+                ->route('checklist-a.show', $checklistDisposalInstallation->checklist)
+                ->with('success', 'Disposal/Installation/Replacement rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error rejecting disposal/installation/replacement: ' . $e->getMessage());
         }
     }
 
@@ -1603,7 +1915,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('appointment-a.main', ['status' => 'pending'])
+                ->route('appointment-a.main', ['status' => 'active'])
                 ->with('success', 'Appointment approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1625,7 +1937,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('appointment-a.main', ['status' => 'pending'])
+                ->route('appointment-a.main', ['status' => 'rejected'])
                 ->with('success', 'Appointment rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1749,7 +2061,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('approval-form-a.main', ['status' => 'pending'])
+                ->route('approval-form-a.main', ['status' => 'active'])
                 ->with('success', 'Approval Form approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1771,7 +2083,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('approval-form-a.main', ['status' => 'pending'])
+                ->route('approval-form-a.main', ['status' => 'rejected'])
                 ->with('success', 'Approval Form rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1888,7 +2200,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('approval-property-a.index', ['status' => 'pending'])
+                ->route('approval-property-a.main', ['tab' => 'active'])
                 ->with('success', 'Approval Property approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1910,7 +2222,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('approval-property-a.index', ['status' => 'pending'])
+                ->route('approval-property-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Approval Property rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1930,101 +2242,188 @@ class ApproverController extends Controller
         return view('approver.site-visit-log.show', compact('siteVisitLog'));
     }
 
+    /**
+     * Display the Site Visit Logs main page with filtering capabilities
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
     public function SiteVisitLogMain(Request $request)
     {
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
-
-        // Initialize the query with relationships
-        $query = SiteVisitLog::with(['property', 'property.portfolio']);
-
+        
+        // Initialize the base query with necessary relationships
+        $query = SiteVisitLog::with(['property.portfolio']);
+        
         // Apply status filter based on tab
         if ($activeTab !== 'all') {
             $query->where('status', $activeTab);
         }
+        
+        // Apply filters using a more concise approach
+        $this->applySearchFilter($query, $request);
+        $this->applyCategoryFilter($query, $request);
+        $this->applyPortfolioFilter($query, $request);
+        $this->applyPropertyFilter($query, $request);
 
-        // Apply search filter if provided
-        if ($request->has('search') && !empty($request->search)) {
+        // Fetch site visit logs with pagination
+        $siteVisitLogs = $query->latest()->paginate(10)->withQueryString();
+        
+        // Get data for dropdown filters
+        $portfolios = $this->getFilteredPortfolios($request, $siteVisitLogs);
+        $properties = $this->getFilteredProperties($request, $portfolios);
+        $categories = $this->getFilteredCategories($request, $siteVisitLogs);
+        
+        // Get tab counts in a more efficient way
+        $tabCounts = $this->getTabCounts();
+
+        return view('approver.site-visit-log.main', compact(
+            'siteVisitLogs', 
+            'activeTab', 
+            'portfolios', 
+            'properties', 
+            'categories', 
+            'tabCounts'
+        ));
+    }
+
+    /**
+     * Apply search filter to query
+     */
+    private function applySearchFilter($query, $request)
+    {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('purpose', 'like', "%{$search}%")
-                    ->orWhereHas('property', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%")
-                            ->orWhere('address', 'like', "%{$search}%");
-                    });
+                ->orWhereHas('property', function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('address', 'like', "%{$search}%");
+                });
             });
         }
+    }
 
-        // Apply category filter if provided
-        if ($request->has('category') && !empty($request->category)) {
+    /**
+     * Apply category filter to query
+     */
+    private function applyCategoryFilter($query, $request)
+    {
+        if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
+    }
 
-        // Apply portfolio filter if provided
-        if ($request->has('portfolio_id') && !empty($request->portfolio_id)) {
-            $query->whereHas('property', function ($q) use ($request) {
+    /**
+     * Apply portfolio filter to query
+     */
+    private function applyPortfolioFilter($query, $request)
+    {
+        if ($request->filled('portfolio_id')) {
+            $query->whereHas('property', function($q) use ($request) {
                 $q->where('portfolio_id', $request->portfolio_id);
             });
         }
+    }
 
-        // Apply property filter if provided
-        if ($request->has('property_id') && !empty($request->property_id)) {
+    /**
+     * Apply property filter to query
+     */
+    private function applyPropertyFilter($query, $request)
+    {
+        if ($request->filled('property_id')) {
             $query->where('property_id', $request->property_id);
         }
+    }
 
-        // Fetch site visit logs
-        $siteVisitLogs = $query->latest()->paginate(10)->withQueryString();
-
-        // Get all property IDs referenced in the current filtered records
-        $filteredPropertyIds = $siteVisitLogs->pluck('property_id')->unique();
-
-        // Include the currently selected property even if it's not in the result set
-        if ($request->has('property_id') && !empty($request->property_id)) {
-            $filteredPropertyIds->push($request->property_id);
+    /**
+     * Get portfolios for dropdown, ensuring selected portfolio is included
+     */
+    private function getFilteredPortfolios($request, $siteVisitLogs)
+    {
+        // Get portfolio IDs from visit logs
+        $portfolioIds = collect();
+        
+        // Extract unique portfolio IDs from the site visit logs
+        $siteVisitLogs->each(function($log) use (&$portfolioIds) {
+            if ($log->property && $log->property->portfolio_id) {
+                $portfolioIds->push($log->property->portfolio_id);
+            }
+        });
+        
+        // Include currently selected portfolio ID if it exists
+        if ($request->filled('portfolio_id')) {
+            $portfolioIds->push($request->portfolio_id);
         }
+        
+        // Get unique portfolio IDs
+        $portfolioIds = $portfolioIds->unique();
+        
+        // Query portfolios with those IDs
+        return Portfolio::whereIn('id', $portfolioIds)
+            ->orderBy('portfolio_name')
+            ->get();
+    }
 
-        // Get properties for the dropdown based on current query results
-        $properties = Property::whereIn('id', $filteredPropertyIds)->orderBy('name')->get();
-
-        // Get all portfolio IDs from the filtered properties
-        $filteredPortfolioIds = $properties->pluck('portfolio_id')->unique();
-
-        // Include the currently selected portfolio even if it's not in the result set
-        if ($request->has('portfolio_id') && !empty($request->portfolio_id)) {
-            $filteredPortfolioIds->push($request->portfolio_id);
+    /**
+     * Get properties for dropdown, ensuring selected property is included
+     */
+    private function getFilteredProperties($request, $portfolios)
+    {
+        $query = Property::query();
+        
+        // If portfolios are filtered, only show properties from those portfolios
+        if ($portfolios->isNotEmpty()) {
+            $portfolioIds = $portfolios->pluck('id')->toArray();
+            $query->whereIn('portfolio_id', $portfolioIds);
         }
-
-        // Get portfolios for the dropdown based on current query results
-        $portfolios = Portfolio::whereIn('id', $filteredPortfolioIds)->orderBy('name')->get();
-
-        // Get all category values from the current query results
-        $filteredCategories = $siteVisitLogs->pluck('category')->unique()->filter();
-
-        // Include the currently selected category even if it's not in the result set
-        if ($request->has('category') && !empty($request->category)) {
-            $filteredCategories->push($request->category);
+        
+        // Include the currently selected property even if it's filtered out
+        if ($request->filled('property_id')) {
+            $query->orWhere('id', $request->property_id);
         }
+        
+        return $query->orderBy('name')->get();
+    }
 
-        // Get categories for the dropdown
-        $categories = $filteredCategories;
+    /**
+     * Get categories for dropdown, ensuring selected category is included
+     * and adding an "All Categories" option
+     */
+    private function getFilteredCategories($request, $siteVisitLogs)
+    {
+        // Start with an empty collection and add "All Categories" option
+        $categories = collect(['']);
+        
+        // Add categories from the current result set
+        $categories = $categories->concat($siteVisitLogs->pluck('category')->unique()->filter());
+        
+        // Include the currently selected category even if it's not in the results
+        if ($request->filled('category') && !$categories->contains($request->category)) {
+            $categories->push($request->category);
+        }
+        
+        return $categories->sort();
+    }
 
-        // Count records for each tab
-        $tabCounts = [
-            'all' => SiteVisitLog::count(),
-            'active' => SiteVisitLog::where('status', 'active')->count(),
-            'pending' => SiteVisitLog::where('status', 'pending')->count(),
-            'rejected' => SiteVisitLog::where('status', 'rejected')->count(),
-            'inactive' => SiteVisitLog::where('status', 'inactive')->count(),
-        ];
-
-        return view('approver.site-visit-log.main', compact(
-            'siteVisitLogs',
-            'activeTab',
-            'portfolios',
-            'properties',
-            'categories',
-            'tabCounts'
-        ));
+    /**
+     * Get counts for each status tab
+     */
+    private function getTabCounts()
+    {
+        $statuses = ['all', 'active', 'pending', 'rejected', 'inactive'];
+        $counts = [];
+        
+        foreach ($statuses as $status) {
+            $query = SiteVisitLog::query();
+            if ($status !== 'all') {
+                $query->where('status', $status);
+            }
+            $counts[$status] = $query->count();
+        }
+        
+        return $counts;
     }
 
     public function SiteVisitLogDetails(SiteVisitLog $siteVisitLog)
@@ -2042,7 +2441,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('site-visit-log-a.main', ['status' => 'pending'])
+                ->route('site-visit-log-a.main', ['tab' => 'active'])
                 ->with('success', 'Site Visit Log approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2064,7 +2463,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('site-visit-log-a.main', ['status' => 'pending'])
+                ->route('site-visit-log-a.main', ['tab' => 'rejected'])
                 ->with('success', 'Site Visit Log rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2075,6 +2474,7 @@ class ApproverController extends Controller
     public function ListSecurityIndex(Request $request)
     {
         $status = $request->get('status');
+        $search = $request->get('search');
 
         // Base query
         $query = ListSecurity::with('issuer');
@@ -2082,6 +2482,18 @@ class ApproverController extends Controller
         // Apply status filter if not empty
         if (!empty($status)) {
             $query->where('status', $status);
+        }
+
+        // Apply search filter (search across multiple fields if needed)
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('security_name', 'like', '%' . $search . '%')
+                    ->orWhere('security_code', 'like', '%' . $search . '%')
+                    ->orWhere('asset_name_type', 'like', '%' . $search . '%')
+                    ->orWhereHas('issuer', function ($q2) use ($search) {
+                        $q2->where('issuer_short_name', 'like', '%' . $search . '%');
+                    });
+            });
         }
 
         // Paginated data
@@ -2100,6 +2512,7 @@ class ApproverController extends Controller
     }
 
 
+
     public function ListSecurityApprove($id)
     {
         $security = ListSecurity::findOrFail($id);
@@ -2110,13 +2523,15 @@ class ApproverController extends Controller
         $security->approval_datetime = now();
         $security->save();
 
+        dispatch(new SendListSecurityApprovedEmail($security));
+
         return redirect()->route('list-security-a.index')->with('success', 'Security approved successfully.');
     }
 
     public function ListSecurityReject(Request $request, $id)
     {
         $request->validate([
-            'rejection_reason' => 'required|string|max:255',
+            'reason' => 'required|string|max:255',
         ]);
 
         $security = ListSecurity::findOrFail($id);
@@ -2124,9 +2539,165 @@ class ApproverController extends Controller
         // Update the security status to 'Rejected'
         $security->status = 'Rejected';
         $security->verified_by = Auth::user()->name;
-        $security->remarks = $request->input('rejection_reason');  // Storing the rejection reason
+        $security->remarks = $request->input('reason');  // Storing the rejection reason
         $security->save();
 
+        dispatch(new SendListSecurityRejectedEmail($security));
+
         return redirect()->route('list-security-a.index')->with('success', 'Security rejected successfully.');
+    }
+
+    public function ListSecurityDetails($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('approver.listing-security.details', compact('security'));
+    }
+
+    public function ListSecurityRequest()
+    {
+        $getListReq = SecurityDocRequest::with('listSecurity.issuer')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        // dd($getListReq);
+        return view('approver.listing-security.list-request', compact('getListReq'));
+    }
+    public function ListSecurityShow($id)
+    {
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        return view('approver.listing-security.show', compact('security'));
+    }
+    public function ListSecurityCreateWithdrawal($id)
+    {
+        $security = SecurityDocRequest::with('listSecurity')->findOrFail($id);
+
+        return view('approver.listing-security.show-approval', compact('security'));
+    }
+
+    public function ListSecurityCreateReturn($id)
+    {
+        $security = SecurityDocRequest::with('listSecurity')->findOrFail($id);
+
+        return view('approver.listing-security.return', compact('security'));
+    }
+    public function SendDocumentsStatus($id, Request $request)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Validate that withdrawal date is passed with the request
+        $withdrawalDate = $request->input('withdrawal_date');
+
+        // Update the status and other fields
+        $security->status = 'Withdrawal';
+        $security->verified_by = Auth::user()->name;
+        $security->withdrawal_date = $withdrawalDate; // Set the withdrawal date
+        $security->save(); // Save the updates to the database
+
+        // Send email notification
+        dispatch(new SendListSecurityWithdrawalEmail($security));
+
+        return redirect()->route('list-security-request-a.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function CancelWithdrawal($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Pending';
+        $security->verified_by = null;
+        $security->withdrawal_date = null; // Set the withdrawal date
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-a.show')->with('success', 'Withdrawal cancelled successfully.');
+    }
+
+    public function BackToDraft($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Draft';
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-a.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function CancelReturn($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Withdrawal';
+        $security->return_date = null;
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-a.show')->with('success', 'Return cancelled successfully.');
+    }
+
+    public function ReturnDocumentsStatus($id, Request $request)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        $returnDate = $request->input('return_date');
+
+        $security->status = 'Return';
+        $security->return_date = $returnDate; // Set the return date
+        $security->save(); // Save the updates to the database
+
+        dispatch(new SendListSecurityReturnEmail($security));
+
+        // Return success response
+        return redirect()->route('list-security-request-a.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function FundTransferIndex(Request $request)
+    {
+        $activeMonth = request('month') ?? null; // if no month is provided, set it to null
+
+        if ($activeMonth) {
+            $fundTransfers = PlacementFundTransfer::whereMonth('date', Carbon::parse($activeMonth)->month)
+                ->whereYear('date', Carbon::parse($activeMonth)->year)
+                ->get();
+        } else {
+            // Get all records if no month is selected
+            $fundTransfers = PlacementFundTransfer::all();
+        }
+
+        return view('approver.fund-transfer.index', compact('fundTransfers', 'activeMonth'));
+    }
+
+    public function DoneApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
+    {
+        $fundTransfer->status = 'Approved';
+        $fundTransfer->verified_by = Auth::user()->name;
+        $fundTransfer->approval_datetime = now();
+        $fundTransfer->save();
+
+        dispatch(new SendFundTransferApprovedEmail($fundTransfer));
+
+        return redirect()->route('fund-transfer-a.index')->with('success', 'Placement & Fund Transfer done successfully');
+    }
+
+    public function FundTransferReject($id)
+    {
+        $fundTransfer = PlacementFundTransfer::findOrFail($id);
+        $fundTransfer->status = 'Rejected';
+        $fundTransfer->verified_by = Auth::user()->name;
+
+        $fundTransfer->remarks = request('reason'); // Assuming you have a reason field in your form
+        $fundTransfer->save();
+
+        dispatch(new SendFundTransferRejectedEmail($fundTransfer));
+
+        return redirect()->route('fund-transfer-a.index')->with('success', 'Placement & Fund Transfer rejected successfully');
     }
 }

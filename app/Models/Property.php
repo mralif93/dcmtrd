@@ -72,14 +72,6 @@ class Property extends Model implements Auditable
     }
 
     /**
-     * Get the checklists for the property.
-     */
-    public function checklists()
-    {
-        return $this->hasMany(Checklist::class);
-    }
-
-    /**
      * Get the site visits for the property.
      */
     public function siteVisits()
@@ -126,6 +118,22 @@ class Property extends Model implements Auditable
     public function getFullAddressAttribute()
     {
         return "{$this->address}, {$this->city}, {$this->state}, {$this->country}, {$this->postal_code}";
+    }
+
+    /**
+     * Get total pending site visits.
+     */
+    public function totalPendingSiteVisits()
+    {
+        return $this->siteVisits()->where('status', 'pending')->count();
+    }
+
+    /**
+     * Get total active tenants.
+     */
+    public function totalActiveTenant()
+    {
+        return $this->tenants()->where('status', 'active')->count();
     }
     
     /**

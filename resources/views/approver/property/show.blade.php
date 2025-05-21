@@ -35,13 +35,33 @@
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $property->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                    {{ match(strtolower($property->status)) {
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'active' => 'bg-green-100 text-green-800',
+                                        'inactive' => 'bg-gray-100 text-gray-800',
+                                        'rejected' => 'bg-red-100 text-red-800',
+                                        default => 'bg-gray-100 text-gray-800'
+                                    } }}">
                                     {{ ucfirst($property->status) }}
                                 </span>
                             </dd>
                         </div>
                     </dl>
                 </div>
+
+                <!-- Remarks Section -->
+                @if($property->remarks)
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Remarks</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:px-6">
+                            <p class="text-sm text-gray-900">{{ $property->remarks }}</p>
+                        </div>
+                    </dl>
+                </div>
+                @endif
 
                 <!-- Basic Information Section -->
                 <div class="border-t border-gray-200">
@@ -179,7 +199,14 @@
                                                     {{ $tenant->expiry_date ? date('d/m/Y', strtotime($tenant->expiry_date)) : 'N/A' }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $tenant->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                        {{ match(strtolower($tenant->status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($tenant->status) }}
                                                     </span>
                                                 </td>
@@ -226,16 +253,38 @@
                                                     {{ date('d/m/Y', strtotime($visit->date_visit)) }}<br>
                                                     {{ date('h:i A', strtotime($visit->time_visit)) }}
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {{ $visit->inspector_name ?? 'N/A' }}
+                                                <td class="px-6 py-4 text-sm text-gray-500">
+                                                    @if($visit->trustee || $visit->manager || $visit->maintenance_manager || $visit->building_manager)
+                                                        <ul class="list-disc pl-4">
+                                                            @if($visit->trustee)
+                                                                <li>Trustee: {{ $visit->trustee }}</li>
+                                                            @endif
+                                                            @if($visit->manager)
+                                                                <li>Manager: {{ $visit->manager }}</li>
+                                                            @endif
+                                                            @if($visit->maintenance_manager)
+                                                                <li>Maintenance: {{ $visit->maintenance_manager }}</li>
+                                                            @endif
+                                                            @if($visit->building_manager)
+                                                                <li>Building: {{ $visit->building_manager }}</li>
+                                                            @endif
+                                                        </ul>
+                                                    @else
+                                                        <span>No personnel recorded</span>
+                                                    @endif
                                                 </td>
                                                 <td class="px-6 py-4 text-sm text-gray-500">
                                                     {{ $visit->notes ?? 'No notes' }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $visit->status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                                        ($visit->status === 'scheduled' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800') }}">
+                                                        {{ match(strtolower($visit->status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($visit->status) }}
                                                     </span>
                                                 </td>
@@ -250,6 +299,29 @@
                     </div>
                 </div>
 
+                <!-- Administrative Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Administrative Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->prepared_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->verified_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $property->approval_datetime ? date('d/m/Y h:i A', strtotime($property->approval_datetime)) : 'Not yet approved' }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
                 <!-- System Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
@@ -258,11 +330,11 @@
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->created_at->format('d/m/Y H:i') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->created_at->format('d/m/Y h:i A') }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->updated_at->format('d/m/Y H:i') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $property->updated_at->format('d/m/Y h:i A') }}</dd>
                         </div>
                     </dl>
                 </div>
@@ -276,13 +348,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
                             </svg>
                             Back to List
-                        </a>
-                        <a href="{{ route('property-a.edit', $property) }}" 
-                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                            Edit Property
                         </a>
                     </div>
                 </div>

@@ -51,10 +51,21 @@
                             {{ __('Activity Diary') }}
                         </a>
 
-                        <!-- Audit Log -->
+                        <!-- Listing Security -->
                         <a href="{{ route('list-security-a.index') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             {{ __('Listing Security') }}
+                        </a>
+
+                        <!-- Listing Security -->
+                        <a href="{{ route('fund-transfer-a.index') }}"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Placement & Fund Transfer') }}
+                        </a>
+
+                        <!-- Audit Log -->
+                        <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            {{ __('Audit Log') }}
                         </a>
 
                         <!-- Reports -->
@@ -90,7 +101,7 @@
                 <div class="flex items-center justify-between px-4 py-5 sm:px-6">
                     <div class="flex space-x-2">
                         <!-- List Security Requests Button -->
-                        <a href="{{ route('list-security-request-m.show') }}"
+                        <a href="{{ route('list-security-request-a.show') }}"
                             class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-green-500 border border-transparent rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -99,6 +110,38 @@
                             View Requests
                         </a>
                     </div>
+                </div>
+
+                <!-- Simple Search Bar -->
+                <div class="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
+                    <form method="GET" action="{{ route('list-security-a.index') }}">
+                        <div
+                            class="flex flex-col items-start gap-3 mt-8 md:flex-row md:items-center md:justify-between">
+                            <!-- Added mt-8 here to push it further down -->
+                            <!-- Text Search Input -->
+                            <div class="w-full md:w-auto">
+                                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                                <input type="text" name="search" id="search" value="{{ request('search') }}"
+                                    placeholder="Search by any keyword"
+                                    class="block w-full px-3 py-2 mt-1 border-gray-300 rounded-md shadow-sm md:w-64 focus:border-indigo-500 focus:ring-indigo-500" />
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="flex items-center gap-2 mt-4 md:mt-0">
+                                <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Search
+                                </button>
+
+                                @if (request('search'))
+                                    <a href="{{ route('list-security-a.index') }}"
+                                        class="inline-flex items-center px-4 py-2 font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <!-- Tabs for Issuer Status -->
                 <div x-data="{ status: '{{ request('status') ?? '' }}' }" class="bg-white border-b border-gray-200">
@@ -143,6 +186,10 @@
                                 </th>
                                 <th
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Security Name
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                     Security Code
                                 </th>
                                 <th
@@ -167,9 +214,15 @@
                                         {{ $loop->iteration + ($securities->currentPage() - 1) * $securities->perPage() }}
                                     </td>
 
-                                    <!-- Issuer Short Name -->
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
-                                        {{ $security->issuer->issuer_short_name ?? '-' }}
+                                        <a href="{{ route('list-security-a.details', ['security' => $security->id]) }}"
+                                            class="text-blue-600 hover:underline">
+                                            {{ $security->issuer->issuer_short_name ?? '-' }}
+                                        </a>
+                                    </td>
+
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                        {{ $security->security_name }}
                                     </td>
 
                                     <!-- Security Code -->
@@ -181,20 +234,28 @@
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                                         {{ $security->asset_name_type }}
                                     </td>
-
                                     <!-- Status -->
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span
-                                            class="px-2 py-1 inline-flex text-xs font-semibold rounded-full
-                                            {{ match ($security->status) {
-                                                'Active' => 'bg-green-100 text-green-800',
-                                                'Pending' => 'bg-yellow-100 text-yellow-800',
-                                                'Rejected' => 'bg-red-100 text-red-800',
-                                                default => 'bg-gray-100 text-gray-800',
-                                            } }}">
-                                            {{ $security->status ?? 'N/A' }}
-                                        </span>
+                                        <div>
+                                            <span
+                                                class="px-2 py-1 inline-flex text-xs font-semibold rounded-full
+            {{ match ($security->status) {
+                'Active' => 'bg-green-100 text-green-800',
+                'Pending' => 'bg-yellow-100 text-yellow-800',
+                'Rejected' => 'bg-red-100 text-red-800',
+                default => 'bg-gray-100 text-gray-800',
+            } }}">
+                                                {{ $security->status ?? 'N/A' }}
+                                            </span>
+
+                                            @if ($security->status === 'Rejected' && $security->remarks)
+                                                <p class="mt-1 text-xs text-red-600">
+                                                    Reason: {{ $security->remarks }}
+                                                </p>
+                                            @endif
+                                        </div>
                                     </td>
+
 
                                     <!-- Actions (Approve/Reject) -->
                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
@@ -207,8 +268,8 @@
                                                     @csrf
                                                     <button type="submit"
                                                         class="inline-flex items-center px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded hover:bg-green-200">
-                                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
-                                                            viewBox="0 0 24 24">
+                                                        <svg class="w-4 h-4 mr-1" fill="none"
+                                                            stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 stroke-width="2" d="M5 13l4 4L19 7" />
                                                         </svg>
@@ -287,7 +348,7 @@
             const modal = document.getElementById('rejectModal');
             const form = document.getElementById('rejectForm');
 
-            form.action = `/approver/list-security/{id}/reject`; // Update to match your route
+            form.action = `/approver/list-security/${id}/reject`;
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');

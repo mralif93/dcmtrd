@@ -94,36 +94,38 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            @php $index = ($reports->currentPage() - 1) * $reports->perPage() + 1; @endphp
-                            @forelse ($reports as $bond)
+                            @php $index = ($facilities->currentPage() - 1) * $facilities->perPage() + 1; @endphp
+                            @forelse ($facilities as $facility)
                                 <tr class="hover:bg-gray-50 even:bg-gray-50">
                                     <td class="px-6 py-4">{{ $index++ }}</td>
-                                    <td class="px-6 py-4">{{ $bond->issuer->issuer_short_name ?? '-' }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->facility_code ?? '-' }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->bonk_sukuk_name ?? '-' }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->issuer_short_name ?? '-' }}
+                                    <td class="px-6 py-4">{{ $facility->issuer_short_name ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $facility->facility_code ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $facility->bonk_sukuk_name ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $facility->issuer->issuer_short_name ?? '-' }}
                                     </td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->facility?->facility_name ?? '-' }}
+                                    <td class="px-6 py-4 text-gray-500">{{ $facility->facility_name ?? '-' }}
                                     </td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->debenture ?? '-' }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->trustee_role_1 ?? '-' }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issuer->trustee_role_2 ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $facility->issuer->debenture ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $facility->issuer->trustee_role_1 ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $facility->issuer->trustee_role_2 ?? '-' }}</td>
                                     <td class="px-6 py-4 text-gray-500">
-                                        {{ number_format($bond->facility?->facility_amount, 2) }}</td>
+                                        {{ number_format($facility->facility_amount, 2) }}</td>
                                     <td class="px-6 py-4 text-gray-500">
-                                        {{ number_format($bond->facility?->outstanding_amount, 2) }}</td>
+                                        {{ number_format($facility->outstanding_amount, 2) }}</td>
                                     <td class="px-6 py-4 text-gray-500">
-                                        {{ $bond->facility?->trusteeFees->first()?->trustee_fee_amount_1 }}</td>
+                                        {{ $facility->trusteeFees->first()?->trustee_fee_amount_1 ?? '0.00' }}</td>
                                     <td class="px-6 py-4 text-gray-500">
-                                        {{ $bond->facility?->trusteeFees->first()?->trustee_fee_amount_2 }}</td>
+                                        {{ $facility->trusteeFees->first()?->trustee_fee_amount_2 ?? '0.00' }}</td>
                                     <td class="px-6 py-4 text-gray-500">
-                                        {{ $bond->issuer->trust_deed_date?->format('d/m/Y') }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->issue_date?->format('d/m/Y') }}</td>
+                                        {{ $facility->issuer->trust_deed_date?->format('d/m/Y') }}</td>
                                     <td class="px-6 py-4 text-gray-500">
-                                        {{ $bond->facility?->maturity_date?->format('d/m/Y') }}</td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->created_at?->format('d/m/Y H:i') }}
+                                        {{ $facility->issuer->bonds->first()?->issue_date?->format('d/m/Y H:i') ?? '-' }}
                                     </td>
-                                    <td class="px-6 py-4 text-gray-500">{{ $bond->updated_at?->format('d/m/Y H:i') }}
+                                    <td class="px-6 py-4 text-gray-500">
+                                        {{ $facility->maturity_date?->format('d/m/Y') }}</td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $facility->created_at?->format('d/m/Y H:i') }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-500">{{ $facility->updated_at?->format('d/m/Y H:i') }}
                                     </td>
                                 </tr>
                             @empty
@@ -194,7 +196,7 @@
 
                 <!-- Pagination -->
                 <div class="px-6 py-4 bg-white border-t">
-                    {{ $reports->links() }}
+                    {{ $facilities->links() }}
                 </div>
             </div>
         </div>
