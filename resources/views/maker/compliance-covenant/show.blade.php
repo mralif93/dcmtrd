@@ -122,7 +122,11 @@
                                 </dd>
                                 <dt class="mt-2 text-sm font-medium text-gray-500">Due Date</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $compliance->audited_financial_statements_due ?? 'Not Submitted' }}
+                                    @if ($compliance->afs_not_required)
+                                        <span class="font-bold text-red-600">Not Applicable</span>
+                                    @else
+                                        {{ $compliance->audited_financial_statements_due ?? 'Not Submitted' }}
+                                    @endif
                                 </dd>
                             </div>
 
@@ -142,7 +146,11 @@
                             <div class="p-4 rounded-lg bg-gray-50">
                                 <dt class="text-sm font-medium text-gray-500">Annual Budget</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $compliance->annual_budget ?? 'Not Submitted' }}
+                                    @if ($compliance->budget_not_required)
+                                        <span class="font-bold text-red-600">Not Applicable</span>
+                                    @else
+                                        {{ $compliance->annual_budget ?? 'Not Submitted' }}
+                                    @endif
                                 </dd>
                             </div>
                         </div>
@@ -161,7 +169,11 @@
                                 </dd>
                                 <dt class="mt-2 text-sm font-medium text-gray-500">Due Date</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $compliance->unaudited_financial_statements_due ?? 'Not Submitted' }}
+                                    @if ($compliance->ufs_not_required)
+                                        <span class="font-bold text-red-600">Not Applicable</span>
+                                    @else
+                                        {{ $compliance->unaudited_financial_statements_due ?? 'Not Submitted' }}
+                                    @endif
                                 </dd>
                             </div>
 
@@ -169,7 +181,11 @@
                             <div class="p-4 rounded-lg bg-gray-50">
                                 <dt class="text-sm font-medium text-gray-500">Finance Service Cover Ratio</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $compliance->finance_service_cover_ratio ?? 'Not Submitted' }}
+                                    @if ($compliance->fscr_not_required)
+                                        <span class="font-bold text-red-600">Not Applicable</span>
+                                    @else
+                                        {{ $compliance->finance_service_cover_ratio ?? 'Not Submitted' }}
+                                    @endif
                                 </dd>
                             </div>
 
@@ -177,14 +193,41 @@
                             <div class="p-4 bg-white rounded-lg">
                                 <dt class="text-sm font-medium text-gray-500">Computation of Finance to EBITDA</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
-                                    {{ $compliance->computation_of_finance_to_ebitda ?? 'Not Submitted' }}
+                                    @if ($compliance->ebitda_not_required)
+                                        <span class="font-bold text-red-600">Not Applicable</span>
+                                    @else
+                                        {{ $compliance->computation_of_finance_to_ebitda ?? 'Not Submitted' }}
+                                    @endif
                                 </dd>
                             </div>
                         </div>
                     </div>
                 </div>
 
-
+                <!-- Verification Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900">Verification Information</h3>
+                    </div>
+                    <dl>
+                        <div class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $compliance->prepared_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $compliance->verified_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $compliance->approval_datetime ? $compliance->approval_datetime->format('d/m/Y H:i') : 'N/A' }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
 
                 <!-- System Information Section -->
                 <div class="border-t border-gray-200">

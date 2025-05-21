@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-3xl font-bold text-gray-800">{{ __('Trustee Master Reports') }}</h2>
+        <h2 class="text-3xl font-bold text-gray-800">{{ __('Trust Master Reports') }}</h2>
     </x-slot>
 
     <div class="py-12">

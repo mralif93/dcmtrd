@@ -164,8 +164,9 @@
                                 <select name="payment_status" id="payment_status"
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">All Status</option>
-                                    <option value="paid" @selected(request('payment_status') === 'paid')>Paid</option>
-                                    <option value="unpaid" @selected(request('payment_status') === 'unpaid')>Unpaid</option>
+                                    <option value="Paid" @selected(request('payment_status') === 'Paid')>Paid</option>
+                                    <option value="Pending" @selected(request('payment_status') === 'Pending')>Pending</option>
+                                    <option value="Early Redemption" @selected(request('payment_status') === 'Early Redemption')>Early Redemption</option>
                                 </select>
                             </div>
 

@@ -232,7 +232,7 @@
                                                     {{ $checklist->pivot->prepared_by ?? 'N/A' }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <a href="{{ route('checklist.details', ['tenant' => $tenant->id, 'checklist' => $checklist->id]) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                    <a href="{{ route('checklist-a.details', ['tenant' => $tenant->id, 'checklist' => $checklist->id]) }}" class="text-indigo-600 hover:text-indigo-900">
                                                         View
                                                     </a>
                                                 </td>

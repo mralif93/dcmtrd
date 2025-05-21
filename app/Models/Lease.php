@@ -27,18 +27,21 @@ class Lease extends Model implements Auditable
         'end_date',
         'base_rate_year_1',
         'monthly_gsto_year_1',
+        'remarks_year_1',
         'base_rate_year_2',
         'monthly_gsto_year_2',
+        'remarks_year_2',
         'base_rate_year_3',
         'monthly_gsto_year_3',
+        'remarks_year_3',
         'space',
         'tenancy_type',
         'attachment',
         'status',
         'prepared_by',
         'verified_by',
-        'approval_datetime',
         'remarks',
+        'approval_datetime',
     ];
 
     /**
@@ -58,6 +61,30 @@ class Lease extends Model implements Auditable
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    /**
+     * Get the lease's attachment URL.
+     *
+     * @return string
+     */
+    public function getAttachmentUrlAttribute()
+    {
+        return $this->attachment ? asset('storage/' . $this->attachment) : null;
+    }
+
+    /**
+     * Get the tenancy letters associated with the lease.
+     */
+    public function tenancyLetters()
+    {
+        return $this->hasMany(TenancyLetter::class);
+    }
+
+    // check is tenancy letter under lease id already created or not
+    public function hasTenancyLetter()
+    {
+        return $this->tenancyLetters()->exists();
     }
 
     /**

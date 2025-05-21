@@ -34,30 +34,55 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    {{ match(strtolower($financial->status)) {
-                                        'completed' => 'bg-green-100 text-green-800',
-                                        'scheduled' => 'bg-blue-100 text-blue-800',
-                                        'cancelled' => 'bg-red-100 text-red-800',
-                                        'pending' => 'bg-yellow-100 text-yellow-800',
-                                        'active' => 'bg-green-100 text-green-800',
-                                        'inactive' => 'bg-gray-100 text-gray-800',
-                                        'rejected' => 'bg-red-100 text-red-800',
-                                        'draft' => 'bg-blue-100 text-blue-800',
-                                        'withdrawn' => 'bg-purple-100 text-purple-800',
-                                        'in progress' => 'bg-indigo-100 text-indigo-800',
-                                        'on hold' => 'bg-orange-100 text-orange-800',
-                                        'reviewing' => 'bg-teal-100 text-teal-800',
-                                        'approved' => 'bg-emerald-100 text-emerald-800',
-                                        'expired' => 'bg-rose-100 text-rose-800',
-                                        default => 'bg-gray-100 text-gray-800'
-                                    } }}">
-                                    {{ ucfirst($financial->status) }}
-                                </span>
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {{ match(strtolower($financial->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
+                                        {{ ucfirst($financial->status) }}
+                                    </span>
+
+                                    @if(strtolower($financial->status) === 'draft' || strtolower($financial->status) === 'rejected')
+                                        <form action="{{ route('financial-m.approval', $financial) }}" class="ml-4" id="approval-form">
+                                            @csrf
+                                            <button type="button" 
+                                                    onclick="confirmApproval()"
+                                                    class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-full font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                Submit for Approval
+                                            </button>
+                                        </form>
+                                        
+                                        <script>
+                                            function confirmApproval() {
+                                                if (confirm('Are you sure you want to submit this financial for approval?')) {
+                                                    document.getElementById('approval-form').submit();
+                                                }
+                                            }
+                                        </script>
+                                    @endif
+                                </div>
                             </dd>
                         </div>
                     </dl>
                 </div>
+
+                <!-- Remarks Section -->
+                @if($financial->remarks)
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Remarks</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:px-6">
+                            <p class="text-sm text-gray-900">{{ $financial->remarks }}</p>
+                        </div>
+                    </dl>
+                </div>
+                @endif
 
                 <!-- Basic Information Section -->
                 <div class="border-t border-gray-200">
@@ -73,24 +98,6 @@
                                 </a>
                             </dd>
                         </div>
-                        @if($financial->prepared_by)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->prepared_by }}</dd>
-                        </div>
-                        @endif
-                        @if($financial->verified_by)
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->verified_by }}</dd>
-                        </div>
-                        @endif
-                        @if($financial->approval_datetime)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ \Carbon\Carbon::parse($financial->approval_datetime)->format('d/m/Y H:i') }}</dd>
-                        </div>
-                        @endif
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Portfolio Type</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->portfolio->portfolioType->name ?? 'N/A' }}</dd>
@@ -99,11 +106,11 @@
                             <dt class="text-sm font-medium text-gray-500">Bank</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->bank->name }}</dd>
                         </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Financial Type</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->financialType->name }}</dd>
                         </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Batch No</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->batch_no }}</dd>
                         </div>
@@ -357,6 +364,29 @@
                     </div>
                 </div>
 
+                <!-- Administrative Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Administrative Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->prepared_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->verified_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $financial->approval_datetime ? date('d/m/Y h:i A', strtotime($financial->approval_datetime)) : 'Not yet approved' }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
                 <!-- System Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
@@ -371,12 +401,6 @@
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->updated_at->format('d/m/Y H:i') }}</dd>
                         </div>
-                        @if($financial->prepared_by)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $financial->prepared_by }}</dd>
-                        </div>
-                        @endif
                     </dl>
                 </div>
 

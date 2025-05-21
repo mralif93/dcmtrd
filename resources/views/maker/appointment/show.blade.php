@@ -1,5 +1,3 @@
-<!-- resources/views/appointments/show.blade.php -->
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -40,21 +38,37 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    {{ match(strtolower($appointment->status)) {
-                                        'completed' => 'bg-green-100 text-green-800',
-                                        'pending' => 'bg-yellow-100 text-yellow-800',
-                                        'active' => 'bg-green-100 text-green-800',
-                                        'inactive' => 'bg-gray-100 text-gray-800',
-                                        'cancelled' => 'bg-red-100 text-red-800',
-                                        'draft' => 'bg-blue-100 text-blue-800',
-                                        'in progress' => 'bg-indigo-100 text-indigo-800',
-                                        'reviewing' => 'bg-teal-100 text-teal-800',
-                                        'approved' => 'bg-emerald-100 text-emerald-800',
-                                        default => 'bg-gray-100 text-gray-800'
-                                    } }}">
-                                    {{ ucfirst($appointment->status) }}
-                                </span>
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {{ match(strtolower($appointment->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
+                                        {{ ucfirst($appointment->status) }}
+                                    </span>
+                                    
+                                    @if(strtolower($appointment->status) === 'draft' || strtolower($appointment->status) === 'rejected')
+                                        <form action="{{ route('appointment-m.approval', $appointment) }}" class="ml-4" id="approval-form">
+                                            @csrf
+                                            <button type="button" 
+                                                    onclick="confirmApproval()"
+                                                    class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-full font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                Submit for Approval
+                                            </button>
+                                        </form>
+                                        
+                                        <script>
+                                            function confirmApproval() {
+                                                if (confirm('Are you sure you want to submit this appointment for approval?')) {
+                                                    document.getElementById('approval-form').submit();
+                                                }
+                                            }
+                                        </script>
+                                    @endif
+                                </div>
                             </dd>
                         </div>
                     </dl>
@@ -117,6 +131,29 @@
                             </dd>
                         </div>
                         @endif
+                    </dl>
+                </div>
+
+                <!-- Administrative Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Administrative Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $appointment->prepared_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $appointment->verified_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $appointment->approval_datetime ? date('d/m/Y h:i A', strtotime($appointment->approval_datetime)) : 'Not yet approved' }}
+                            </dd>
+                        </div>
                     </dl>
                 </div>
 

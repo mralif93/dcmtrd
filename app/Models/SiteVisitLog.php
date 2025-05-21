@@ -17,11 +17,11 @@ class SiteVisitLog extends Model implements Auditable
         'visit_month',
         'visit_year',
         'purpose',
-        'remarks',
         'category',
         'status',
         'prepared_by',
         'verified_by',
+        'remarks',
         'approval_datetime',
     ];
 
