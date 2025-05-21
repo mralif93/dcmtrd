@@ -3,8 +3,14 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <!-- Print Button -->
-                    <div class="print-controls mb-4 flex justify-end">
+                    <!-- Buttons (Back, Edit and Print in one line) -->
+                    <div class="print-controls mb-4 flex justify-end space-x-4">
+                        <a href="{{ route('lease-m.show', $tenancyLetter->lease) }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                            <i class="fa fa-arrow-left mr-2"></i> Back to Lease
+                        </a>
+                        <a href="{{ route('tenancy-letter-m.edit', $tenancyLetter) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <i class="fa fa-edit mr-2"></i> Edit Document
+                        </a>
                         <button id="printButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             <i class="fa fa-print mr-2"></i> Print Document
                         </button>
@@ -18,13 +24,13 @@
                                 <td style="padding-bottom: 20px;">
                                     <table class="w-full" style="border-collapse: collapse;">
                                         <tr>
-                                            <td>Your Ref. : DRMSB/AL-SALĀM REIT/KomtarJBCC/1124</td>
+                                            <td>Your Ref. : {{ $tenancyLetter->your_reference ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Our Ref. : ART/RU/TENANCY/ALSM/2024-108</td>
+                                            <td>Our Ref. : {{ $tenancyLetter->our_reference ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Date : 26 November 2024</td>
+                                            <td>Date : {{ $tenancyLetter->letter_date ? $tenancyLetter->letter_date->format('d F Y') : 'N/A' }}</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -35,22 +41,24 @@
                                 <td style="padding-bottom: 20px;">
                                     <table class="w-full" style="border-collapse: collapse;">
                                         <tr>
-                                            <td class="font-bold">DAMANSARA REIT MANAGERS SDN BERHAD</td>
+                                            <td class="font-bold">{{ $tenancyLetter->recipient_company ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Unit 1-19-02, Level 19</td>
+                                            <td>{{ $tenancyLetter->recipient_address_line_1 ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Block 1, V SQUARE</td>
+                                            <td>{{ $tenancyLetter->recipient_address_line_2 ?? 'N/A' }}</td>
+                                        </tr>
+                                        @if($tenancyLetter->recipient_address_line_3)
+                                        <tr>
+                                            <td>{{ $tenancyLetter->recipient_address_line_3 ?? 'N/A' }}</td>
+                                        </tr>
+                                        @endif
+                                        <tr>
+                                            <td>{{ $tenancyLetter->recipient_address_postcode ?? 'N/A' }} {{ $tenancyLetter->recipient_address_city ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Jalan Utara</td>
-                                        </tr>
-                                        <tr>
-                                            <td>46200 Petaling Jaya</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Selangor Darul Ehsan</td>
+                                            <td>{{ $tenancyLetter->recipient_address_state ?? 'N/A' }}, {{ $tenancyLetter->recipient_address_country ?? 'N/A' }}</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -62,11 +70,11 @@
                                     <table class="w-full" style="border-collapse: collapse;">
                                         <tr>
                                             <td width="95"><span class="font-semibold">Attention to:</span></td>
-                                            <td>ENCIK HAMIM BIN MOHAMAD</td>
+                                            <td>{{ $tenancyLetter->attention_to_name ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td></td>
-                                            <td>Manager, Legal Department</td>
+                                            <td>{{ $tenancyLetter->attention_to_position ?? 'N/A' }}</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -82,21 +90,21 @@
                                 <td style="padding-bottom: 20px;">
                                     <table class="w-full" style="border-collapse: collapse;">
                                         <tr>
-                                            <td class="font-bold" style="text-decoration: underline;">AL-SALĀM REAL ESTATE INVESTMENT TRUST ("Al-Salām REIT")</td>
+                                            <td class="font-bold" style="text-decoration: underline;">{{ $tenancyLetter->lease->tenant->property->portfolio->portfolio_name ?? 'N/A' }} REAL ESTATE INVESTMENT TRUST ("{{ $tenancyLetter->lease->tenant->property->portfolio->portfolio_name ?? 'N/A' }} REIT")</td>
                                         </tr>
                                         <tr>
-                                            <td class="font-bold" style="text-decoration: underline;">NEW TENANCY</td>
+                                            <td class="font-bold" style="text-decoration: underline;">{{ strtoupper($tenancyLetter->lease->tenancy_type) ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <table class="w-full" style="border-collapse: collapse;">
                                                     <tr>
                                                         <td width="140">Tenant</td>
-                                                        <td>: F.O.S APPAREL GROUP SDN BHD</td>
+                                                        <td>: {{ strtoupper($tenancyLetter->lease->tenant->name) ?? 'N/A' }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td width="140" style="vertical-align: top;">Demised Premises</td>
-                                                        <td>: Lot No. 227, 228, 229 & 230, Second Floor, Komtar JBCC, 80000 Johor Bahru, Johor (7,989 sq. ft.) ("Tenancy")</td>
+                                                        <td>: {{ $tenancyLetter->lease->demised_premises ?? 'N/A' }} ({{ $tenancyLetter->lease->space ?? 'N/A' }} sq. ft.) ("Tenancy")</td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -110,13 +118,13 @@
                                 <td style="padding-bottom: 20px;">
                                     <table class="w-full" style="border-collapse: collapse;">
                                         <tr>
-                                            <td style="padding-bottom: 15px;">The above matter and your letter dated 19 November 2024 refer.</td>
+                                            <td style="padding-bottom: 15px;">The above matter and your letter dated {{ $tenancyLetter->letter_offer_date ? $tenancyLetter->letter_offer_date->format('d F Y') : 'N/A' }} refer.</td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-bottom: 15px;">We, AmanahRaya Trustees Berhad, as Trustee to Al-Salam REIT hereby approve the New Tenancy of the above-mentioned Demised Premises.</td>
+                                            <td style="padding-bottom: 15px;">{{ $tenancyLetter->description_1 ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-bottom: 15px;">The Demised Premises is to be used exclusively for the retail sale of ladies, men and children apparels and other related accessories under the trade name of F.O.S only for the rental as follows:</td>
+                                            <td style="padding-bottom: 15px;">{{ $tenancyLetter->description_2 ?? 'N/A' }}</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -130,14 +138,27 @@
                                             <th style="border: 1px solid #ccc; padding: 8px; text-align: center; width: 20%; background-color: #f2f2f2;">Year</th>
                                             <th style="border: 1px solid #ccc; padding: 8px; text-align: center; width: 80%; background-color: #f2f2f2;">Total Monthly Rental</th>
                                         </tr>
+                                        @if($tenancyLetter->lease->monthly_gsto_year_1)
+                                        <!-- lease base rate year 1 -->
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">1</td>
-                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">7% of Monthly Gross Sales Turnover</td>
+                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{{ $tenancyLetter->lease->monthly_gsto_year_1 ?? 'N/A' }}% of Monthly Gross Sales Turnover</td>
                                         </tr>
+                                        @endif
+                                        @if($tenancyLetter->lease->monthly_gsto_year_2)
+                                        <!-- lease base rate year 2 -->
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">2</td>
-                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">7% of Monthly Gross Sales Turnover</td>
+                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{{ $tenancyLetter->lease->monthly_gsto_year_2 ?? 'N/A' }}% of Monthly Gross Sales Turnover</td>
                                         </tr>
+                                        @endif
+                                        @if($tenancyLetter->lease->monthly_gsto_year_3)
+                                        <!-- lease base rate year 3 -->
+                                        <tr>
+                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">3</td>
+                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{{ $tenancyLetter->lease->monthly_gsto_year_3 ?? 'N/A' }}% of Monthly Gross Sales Turnover</td>
+                                        </tr>
+                                        @endif
                                     </table>
                                 </td>
                             </tr>
@@ -147,7 +168,7 @@
                                 <td style="padding-bottom: 20px;">
                                     <table class="w-full" style="border-collapse: collapse;">
                                         <tr>
-                                            <td style="padding-bottom: 15px;">The above approval is subject to the terms and conditions specified in the Letter of Offer dated 11 July 2024 and Supplemental Letter of Offer dated 11 September 2024.</td>
+                                            <td style="padding-bottom: 15px;">{{ $tenancyLetter->description_3 ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="padding-bottom: 30px;">Thank you.</td>
@@ -164,19 +185,19 @@
                                             <td>Yours faithfully</td>
                                         </tr>
                                         <tr>
-                                            <td class="font-bold">AMANAHRAYA TRUSTEES BERHAD</td>
+                                            <td class="font-bold">{{ strtoupper($tenancyLetter->trustee_name) ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="padding-top: 30px;"></td>
                                         </tr>
                                         <tr>
-                                            <td class="font-bold">ROSLIM SYAH BIN IDRIS</td>
+                                            <td class="font-bold">{{ strtoupper($tenancyLetter->approver_name) ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Head</td>
+                                            <td>{{ ucfirst($tenancyLetter->approver_position) ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Debt Capital Market & Trusts and REITs Department</td>
+                                            <td>{{ ucfirst($tenancyLetter->approver_department) ?? 'N/A' }}</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -233,7 +254,7 @@
         }
     </style>
     
-    <!-- Add Font Awesome for the print icon -->
+    <!-- Add Font Awesome for the icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <!-- Print JavaScript Function -->

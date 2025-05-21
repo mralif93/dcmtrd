@@ -29,6 +29,7 @@ return new class extends Migration
             $table->text('recipient_address_line_3')->nullable();
             $table->text('recipient_address_postcode')->nullable();
             $table->text('recipient_address_city')->nullable();
+            $table->text('recipient_address_state')->nullable();
             $table->text('recipient_address_country')->nullable();
 
             // Attention information

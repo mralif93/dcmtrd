@@ -2406,9 +2406,9 @@ class MakerController extends Controller
             return redirect()
                 ->route('tenant-m.index', $tenant->property)
                 ->with('success', 'Tenant submitted for approval successfully.');
-
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
     }
@@ -2478,9 +2478,13 @@ class MakerController extends Controller
 
         try {
             $lease = Lease::create($validated);
-            return redirect()->route('lease-m.index', $lease->tenant->property)->with('success', 'Lease created successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error creating lease: ' . $e->getMessage());
+            return redirect()
+                ->route('lease-m.index', $lease->tenant->property)
+                ->with('success', 'Lease created successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating lease: ' . $e->getMessage());
         }
     }
 
@@ -2506,9 +2510,13 @@ class MakerController extends Controller
 
         try {
             $lease->update($validated);
-            return redirect()->route('lease-m.show', $lease)->with('success', 'Lease updated successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error updating lease: ' . $e->getMessage());
+            return redirect()
+                ->route('lease-m.show', $lease)
+                ->with('success', 'Lease updated successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating lease: ' . $e->getMessage());
         }
     }
 
@@ -2530,6 +2538,7 @@ class MakerController extends Controller
                 ->with('success', 'Lease submitted for approval successfully.');
         } catch(\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error submitting lease for approval: ' . $e->getMessage());
         }
     }
@@ -2577,23 +2586,20 @@ class MakerController extends Controller
     {
         // Get all tenancy letters for this lease
         $tenancyLetters = $lease->tenancyLetters()
-            ->with(['lease', 'lease.tenant'])
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
-
-        // Load the lease with its relationships
-        $lease->load(['tenant', 'tenant.property.portfolio']);
 
         return view('maker.tenancy-letter.index', compact('tenancyLetters', 'lease'));
     }
 
     public function TenancyLetterCreate(Lease $lease)
     {
-        // get all leases for this property
-        $leases = Lease::where('property_id', $lease->tenant->property_id)
-            ->orderBy('start_date')
+        // get all lease which status is active
+        $leases = Lease::where('status', 'active')
+            ->orderBy('created_at', 'desc')
             ->get();
+
         return view('maker.tenancy-letter.create', compact('lease', 'leases'));
     }
 
@@ -2606,34 +2612,46 @@ class MakerController extends Controller
 
         try {
             $tenancyLetter = TenancyLetter::create($validated);
-            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter created successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error creating tenancy letter: ' . $e->getMessage());
+            return redirect()
+                ->route('lease-m.show', $tenancyLetter->lease)
+                ->with('success', 'Tenancy Letter created successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating tenancy letter: ' . $e->getMessage());
         }
     }
 
     public function TenancyLetterEdit(TenancyLetter $tenancyLetter)
     {
-        $properties = Property::orderBy('name')->get();
-        return view('maker.tenancy-letter.edit', compact('properties', 'tenancyLetter'));
+         // get all lease which status is active
+        $leases = Lease::where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('maker.tenancy-letter.edit', compact('leases', 'tenancyLetter'));
     }
 
     public function TenancyLetterUpdate(Request $request, TenancyLetter $tenancyLetter)
     {
         $validated = $this->TenancyLetterValidate($request);
 
-
         try {
             $tenancyLetter->update($validated);
-            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter updated successfully.');
-        } catch (\Exception $e) {
+            return redirect()
+                ->route('tenancy-letter-m.show', $tenancyLetter)
+                ->with('success', 'Tenancy Letter updated successfully.');
+        } catch(\Exception $e) {
             return back()->with('error', 'Error updating tenancy letter: ' . $e->getMessage());
         }
     }
 
-    public function TenancyLetterShow()
+    public function TenancyLetterShow(TenancyLetter $tenancyLetter)
     {
-        return view('maker.tenancy-letter.show');
+        // Load the lease and property relationships
+        $tenancyLetter->load(['lease', 'lease.tenant', 'lease.tenant.property']);
+
+        return view('maker.tenancy-letter.show', compact('tenancyLetter'));
     }
 
     // submit for approval
@@ -2645,21 +2663,46 @@ class MakerController extends Controller
                 'prepared_by' => Auth::user()->name,
             ]);
             
-            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter submitted for approval successfully.');
+            return redirect()
+                ->route('tenancy-letter-m.index', $tenancyLetter->property)
+                ->with('success', 'Tenancy Letter submitted for approval successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error submitting for approval: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
     }
 
     public function TenancyLetterValidate(Request $request)
     {
         return $request->validate([
-            'property_id' => 'required|exists:properties,id',
-            'tenant_id' => 'required|exists:tenants,id',
             'lease_id' => 'required|exists:leases,id',
-            'attachment' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
-            'prepared_by' => 'nullable|string|max:255',
+            'your_reference' => 'nullable|string|max:255',
+            'our_reference' => 'required|string|max:255',
+            'letter_date' => 'required|date',
+            'recipient_company' => 'required|string|max:255',
+            'recipient_address_line_1' => 'required|string|max:255',
+            'recipient_address_line_2' => 'nullable|string|max:255',
+            'recipient_address_line_3' => 'nullable|string|max:255',
+            'recipient_address_postcode' => 'required|string|max:255',
+            'recipient_address_city' => 'required|string|max:255',
+            'recipient_address_state' => 'required|string|max:255',
+            'recipient_address_country' => 'required|string|max:255',
+            'attention_to_name' => 'nullable|string|max:255',
+            'attention_to_position' => 'nullable|string|max:255',
+            'description_1' => 'required|string',
+            'description_2' => 'nullable|string',
+            'description_3' => 'nullable|string',
+            'letter_offer_date' => 'nullable|date',
+            'trustee_name' => 'nullable|string|max:255',
+            'approver_name' => 'required|string|max:255',
+            'approver_position' => 'required|string|max:255',
+            'approver_department' => 'required|string|max:255',
             'status' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|string',
+            'approval_datetime' => 'nullable|date',
         ]);
     }
 
@@ -2667,9 +2710,13 @@ class MakerController extends Controller
     {
         try {
             $tenancyLetter->delete();
-            return redirect()->route('tenancy-letter-m.index', $tenancyLetter->property)->with('success', 'Tenancy Letter deleted successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error deleting tenancy letter: ' . $e->getMessage());
+            return redirect()
+                ->route('tenancy-letter-m.index', $tenancyLetter->property)
+                ->with('success', 'Tenancy Letter deleted successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error deleting tenancy letter: ' . $e->getMessage());
         }
     }
 
@@ -2709,9 +2756,13 @@ class MakerController extends Controller
 
         try {
             $siteVisit = SiteVisit::create($validated);
-            return redirect()->route('tenant-m.index', $siteVisit->property)->with('success', 'Site visit created successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error creating site visit: ' . $e->getMEssage());
+            return redirect()
+                ->route('tenant-m.index', $siteVisit->property)
+                ->with('success', 'Site visit created successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating site visit: ' . $e->getMEssage());
         }
     }
 
@@ -2741,9 +2792,13 @@ class MakerController extends Controller
 
         try {
             $siteVisit->update($validated);
-            return redirect()->route('tenant-m.index', $siteVisit->property)->with('success', 'Site visit updated successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error updating site visit: ' . $e->getMessage());
+            return redirect()
+                ->route('tenant-m.index', $siteVisit->property)
+                    ->with('success', 'Site visit updated successfully.');
+        } catch(\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating site visit: ' . $e->getMessage());
         }
     }
 
@@ -2766,6 +2821,7 @@ class MakerController extends Controller
                 ->with('success', 'Site visit submitted for approval successfully.');
         } catch(\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error submitting for approval: ' . $e->getMessage());
         }
     }
@@ -2845,10 +2901,10 @@ class MakerController extends Controller
     {
         // Get only active site visits related to the current property
         $siteVisits = SiteVisit::where('property_id', $property->id)
-            ->where('status', 'pending')
-            ->orderBy('date_visit', 'desc')
-            ->get();
-
+                            ->where('status', 'active')
+                            ->orderBy('date_visit', 'desc')
+                            ->get();
+        
         // Eager load the tenants relationship to avoid N+1 query issues
         // Only get active tenants
         $property->load(['tenants' => function ($query) {
@@ -4279,9 +4335,41 @@ class MakerController extends Controller
         return view('maker.approval-property.index', compact('approvalProperties'));
     }
 
+    public function ApprovalPropertyCreate()
+    {
+        $properties = Property::where('status', 'active')->get();
+        return view('maker.approval-property.create', compact('properties'));
+    }
+
+    public function ApprovalPropertyStore(Request $request)
+    {
+        $validated = $this->ApprovalPropertyValidate($request);
+
+        // attachment
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('public');
+        }
+
+        // Add system fields
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'draft';
+
+        try {
+            ApprovalProperty::create($validated);
+
+            return redirect()
+                ->route('approval-property-m.index')
+                ->with('success', 'Property approval created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating property approval: ' . $e->getMessage());
+        }
+    }
+
     public function ApprovalPropertyEdit(ApprovalProperty $approvalProperty)
     {
-        $properties = Property::where('status', 'active')->paginate(10);
+        $properties = Property::where('status', 'active')->get();
         return view('maker.approval-property.edit', compact('approvalProperty', 'properties'));
     }
 

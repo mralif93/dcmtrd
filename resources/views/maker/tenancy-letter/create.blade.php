@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Create New Tenancy Letter') }}
             </h2>
-            <a href="{{ route('tenancy-letter-m.index', $lease) }}" class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
+            <a href="{{ route('lease-m.show', $lease) }}" class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
                 Back
             </a>
         </div>
@@ -46,22 +46,22 @@
                             </div>
 
                             <!-- Lease Selection -->
-                                <div>
-                                    <label for="lease_id" class="block text-sm font-medium text-gray-500">Lease</label>
-                                    <select id="lease_id" name="lease_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                                        <option value="">Select a lease</option>
-                                        @foreach($leases as $lease)
-                                            <option value="{{ $lease->id }}" {{ old('lease_id') == $lease->id ? 'selected' : '' }}>
-                                                {{ $lease->lease_number }} ({{ $lease->property->name ?? 'Unknown Property' }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('lease_id')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
+                            <div class="hidden">
+                                <label for="lease_id" class="block text-sm font-medium text-gray-500">Lease</label>
+                                <select id="lease_id" name="lease_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <option value="">-- Select Lease --</option>
+                                    @foreach($leases as $leaseOption)
+                                        <option value="{{ $leaseOption->id }}" {{ old('lease_id', $lease->id) == $leaseOption->id ? 'selected' : '' }}>
+                                            {{ $leaseOption->lease_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('lease_id')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- References -->
                                 <div>
                                     <label for="your_reference" class="block text-sm font-medium text-gray-500">Your Reference</label>
@@ -103,12 +103,68 @@
                                     @enderror
                                 </div>
 
+                                <!-- Address Fields -->
                                 <div class="col-span-2">
-                                    <label for="recipient_address" class="block text-sm font-medium text-gray-500">Recipient Address</label>
-                                    <textarea id="recipient_address" name="recipient_address" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>{{ old('recipient_address') }}</textarea>
-                                    @error('recipient_address')
+                                    <label for="recipient_address_line_1" class="block text-sm font-medium text-gray-500">Address Line 1</label>
+                                    <input id="recipient_address_line_1" type="text" name="recipient_address_line_1" value="{{ old('recipient_address_line_1') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    @error('recipient_address_line_1')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
+                                </div>
+
+                                <div class="col-span-2">
+                                    <label for="recipient_address_line_2" class="block text-sm font-medium text-gray-500">Address Line 2</label>
+                                    <input id="recipient_address_line_2" type="text" name="recipient_address_line_2" value="{{ old('recipient_address_line_2') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('recipient_address_line_2')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2">
+                                    <label for="recipient_address_line_3" class="block text-sm font-medium text-gray-500">Address Line 3</label>
+                                    <input id="recipient_address_line_3" type="text" name="recipient_address_line_3" value="{{ old('recipient_address_line_3') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('recipient_address_line_3')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="recipient_address_city" class="block text-sm font-medium text-gray-500">City</label>
+                                    <input id="recipient_address_city" type="text" name="recipient_address_city" value="{{ old('recipient_address_city') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    @error('recipient_address_city')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="recipient_address_state" class="block text-sm font-medium text-gray-500">State</label>
+                                    <input id="recipient_address_state" type="text" name="recipient_address_state" value="{{ old('recipient_address_state') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    @error('recipient_address_state')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="recipient_address_postcode" class="block text-sm font-medium text-gray-500">Postcode</label>
+                                    <input id="recipient_address_postcode" type="text" name="recipient_address_postcode" value="{{ old('recipient_address_postcode') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    @error('recipient_address_postcode')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="recipient_address_country" class="block text-sm font-medium text-gray-500">Country</label>
+                                    <input id="recipient_address_country" type="text" name="recipient_address_country" value="{{ old('recipient_address_country') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    @error('recipient_address_country')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Attention Information -->
+                                <div class="col-span-2">
+                                    <h4 class="text-md font-medium text-gray-700 mb-2">Attention Information</h4>
                                 </div>
 
                                 <div>
@@ -128,8 +184,17 @@
                                 </div>
 
                                 <!-- Letter Content -->
-                                 <div class="col-span-2">
+                                <div class="col-span-2">
                                     <h4 class="text-md font-medium text-gray-700 mb-2">Letter Content</h4>
+                                </div>
+
+                                <!-- Letter Offer Date -->
+                                <div class="col-span-2">
+                                    <label for="letter_offer_date" class="block text-sm font-medium text-gray-500">Letter Offer Date</label>
+                                    <input id="letter_offer_date" type="date" name="letter_offer_date" value="{{ old('letter_offer_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('letter_offer_date')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div class="col-span-2">
@@ -197,7 +262,7 @@
 
                         <div class="border-t border-gray-200 py-4 mt-6">
                             <div class="flex justify-end gap-4">
-                                <a href="{{ route('tenancy-letter-m.index', $lease) }}" 
+                                <a href="{{ route('lease-m.show', $lease) }}" 
                                     class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     Cancel
                                 </a>

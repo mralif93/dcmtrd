@@ -41,11 +41,11 @@
                         @csrf
 
                         <div class="grid grid-cols-1 gap-6">
-                            <div class="col-span-1">
+                            <div class="col-span-1 hidden">
                                 <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Portfolio Information</h3>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
                                 <!-- Portfolio -->
                                 <div class="col-span-2">
                                     <label for="portfolio_id" class="block text-sm font-medium text-gray-500">Portfolio</label>
