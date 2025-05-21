@@ -4253,7 +4253,7 @@ class MakerController extends Controller
         return view('maker.approval-property.create', compact('properties'));
     }
 
-    protected function ApprovalPropertyStore(Request $request)
+    public function ApprovalPropertyStore(Request $request)
     {
         $validated = $this->ApprovalPropertyValidate($request);
 
@@ -4261,6 +4261,10 @@ class MakerController extends Controller
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('public');
         }
+
+        // Add system fields
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'draft';
 
         try {
             ApprovalProperty::create($validated);
