@@ -4253,9 +4253,31 @@ class MakerController extends Controller
         return view('maker.approval-property.create', compact('properties'));
     }
 
+    protected function ApprovalPropertyStore(Request $request)
+    {
+        $validated = $this->ApprovalPropertyValidate($request);
+
+        // attachment
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('public');
+        }
+
+        try {
+            ApprovalProperty::create($validated);
+
+            return redirect()
+                ->route('approval-property-m.index')
+                ->with('success', 'Property approval created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Error creating property approval: ' . $e->getMessage());
+        }
+    }
+
     public function ApprovalPropertyEdit(ApprovalProperty $approvalProperty)
     {
-        $properties = Property::where('status', 'active')->paginate(10);
+        $properties = Property::where('status', 'active')->get();
         return view('maker.approval-property.edit', compact('approvalProperty', 'properties'));
     }
 
