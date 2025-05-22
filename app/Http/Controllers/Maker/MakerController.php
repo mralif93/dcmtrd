@@ -2892,10 +2892,7 @@ class MakerController extends Controller
     public function ChecklistCreate(Property $property)
     {
         // Get only active site visits related to the current property
-        $siteVisits = SiteVisit::where('property_id', $property->id)
-                            ->where('status', 'active')
-                            ->orderBy('date_visit', 'desc')
-                            ->get();
+        $siteVisits = SiteVisit::where('property_id', $property->id)->get();
         
         // Eager load the tenants relationship to avoid N+1 query issues
         // Only get active tenants
