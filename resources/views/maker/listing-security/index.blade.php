@@ -107,31 +107,43 @@
                 </div>
             @endif
 
-            <div class="overflow-hidden bg-white shadow sm:rounded-lg">
-                <div class="flex items-center justify-between px-4 py-5 sm:px-6">
+            <div class="overflow-hidden bg-white shadow rounded-xl">
+                <div
+                    class="flex flex-col px-6 py-5 space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900">List of Transaction Documents</h3>
-                        <p class="px-3 py-2 mt-1 text-xs text-red-700 bg-red-100 rounded-md shadow-sm">
-                            ⚠️ Only <strong>active</strong> status will display in Legal Department view.
+                        <h3 class="text-xl font-semibold text-gray-900">📄 List of Transaction Documents</h3>
+                        <p class="px-4 py-2 mt-2 text-sm text-red-800 bg-red-100 rounded-md shadow-sm">
+                            ⚠️ Only <strong>active</strong> status will display in Legal Department view.<br>
                             Make sure status is <strong>active</strong> and <strong>submitted for approval</strong>
                             first.
                         </p>
                     </div>
-                    <div class="flex space-x-2">
-                        <!-- Add New Security Button -->
-                        <a href="{{ route('list-security-m.create') }}"
-                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                    <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                        <!-- Create Button -->
+                        <a href="{{ route('legal.request-documents.create') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition duration-150 bg-pink-700 rounded-lg shadow hover:bg-pink-800">
+                            <svg class="w-4 h-4 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
-                            Add Security
+                            Make Request
                         </a>
 
-                        <!-- List Security Requests Button -->
+                        <!-- Add Transaction Documents Button -->
+                        <a href="{{ route('list-security-m.create') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition duration-150 bg-indigo-600 rounded-lg shadow hover:bg-indigo-700">
+                            <svg class="w-4 h-4 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Transaction Documents
+                        </a>
+
+                        <!-- View Requests Button -->
                         <a href="{{ route('list-security-request-m.show') }}"
-                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-green-500 border border-transparent rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition duration-150 bg-green-600 rounded-lg shadow hover:bg-green-700">
+                            <svg class="w-4 h-4 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 6h18M3 12h18M3 18h18" />
                             </svg>
@@ -143,7 +155,9 @@
                 <!-- Simple Search Bar -->
                 <div class="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
                     <form method="GET" action="{{ route('list-security-m.index') }}">
-                        <div class="flex flex-col items-start gap-3 mt-8 md:flex-row md:items-center md:justify-between"> <!-- Added mt-8 here to push it further down -->
+                        <div
+                            class="flex flex-col items-start gap-3 mt-8 md:flex-row md:items-center md:justify-between">
+                            <!-- Added mt-8 here to push it further down -->
                             <!-- Text Search Input -->
                             <div class="w-full md:w-auto">
                                 <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
@@ -151,14 +165,14 @@
                                     placeholder="Search by invoice no or keyword"
                                     class="block w-full px-3 py-2 mt-1 border-gray-300 rounded-md shadow-sm md:w-64 focus:border-indigo-500 focus:ring-indigo-500" />
                             </div>
-                
+
                             <!-- Buttons -->
                             <div class="flex items-center gap-2 mt-4 md:mt-0">
                                 <button type="submit"
                                     class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                     Search
                                 </button>
-                
+
                                 @if (request('search'))
                                     <a href="{{ route('list-security-m.index') }}"
                                         class="inline-flex items-center px-4 py-2 font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
