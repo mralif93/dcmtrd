@@ -162,7 +162,6 @@
                                         <th class="px-6 py-3 font-medium">Fund Transfer Amount</th>
                                         <th class="px-6 py-3 font-medium">Prepared By</th>
                                         <th class="px-6 py-3 font-medium">Verified By</th>
-                                        <th class="px-6 py-3 font-medium">Verified Date</th>
                                         <th class="px-6 py-3 font-medium">Status</th>
                                         <th class="px-6 py-3 font-medium">Actions</th>
                                     </tr>
@@ -185,7 +184,6 @@
                                             </td>
                                             <td class="px-6 py-3">{{ $fundTransfer->prepared_by }}</td>
                                             <td class="px-6 py-3">{{ $fundTransfer->verified_by ?? '-' }}</td>
-                                            <td class="px-6 py-3">{{ $fundTransfer->approval_datetime ?? '-' }}</td>
                                             <td class="px-6 py-3">
                                                 @if ($fundTransfer->status === 'Pending')
                                                     <span class="px-2 py-1 text-xs text-yellow-800 bg-yellow-100 rounded-full">Pending</span>
