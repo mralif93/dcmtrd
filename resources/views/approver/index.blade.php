@@ -108,7 +108,7 @@
                         color="bg-blue-100" />
 
                     <!-- Corporate Bond Listing Security -->
-                    <x-dashboard-card title="Corporate Bond Listing Security" icon="shield-check" :count="$listSecuritiesCount ?? 0"
+                    <x-dashboard-card title="Transaction Documents" icon="shield-check" :count="$listSecuritiesCount ?? 0"
                         :href="route('list-security-a.index')" color="bg-blue-100" />
 
                     <!-- Corporate Bond Listing Security -->

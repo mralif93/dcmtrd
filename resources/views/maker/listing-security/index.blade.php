@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                {{ __('Listing Security') }}
+                {{ __('Transaction Documents') }}
             </h2>
 
             <!-- Dropdown Menu -->
@@ -54,7 +54,7 @@
                         <!-- Listing Security -->
                         <a href="{{ route('list-security-m.index') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Listing Security') }}
+                            {{ __('Transaction Documents') }}
                         </a>
 
                         <!-- Listing Security -->
@@ -110,7 +110,7 @@
             <div class="overflow-hidden bg-white shadow sm:rounded-lg">
                 <div class="flex items-center justify-between px-4 py-5 sm:px-6">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900">List of Security</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">List of Transaction Documents</h3>
                         <p class="px-3 py-2 mt-1 text-xs text-red-700 bg-red-100 rounded-md shadow-sm">
                             ⚠️ Only <strong>active</strong> status will display in Legal Department view.
                             Make sure status is <strong>active</strong> and <strong>submitted for approval</strong>
