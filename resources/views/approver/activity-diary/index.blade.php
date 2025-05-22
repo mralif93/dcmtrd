@@ -225,26 +225,31 @@
                                             {{ $activity->due_date ? $activity->due_date->format('d/m/Y') : '-' }}
                                         </div>
                                     </td>
+                                    @php
+                                        $statusColors = [
+                                            'Completed' => 'bg-green-100 text-green-800',
+                                            'Overdue' => 'bg-red-100 text-red-800',
+                                            'In progress' => 'bg-blue-100 text-blue-800',
+                                            'Compiled' => 'bg-purple-100 text-purple-800',
+                                            'Notification' => 'bg-orange-100 text-orange-800',
+                                            'Passed' => 'bg-teal-100 text-teal-800',
+                                            'Draft' => 'bg-gray-100 text-gray-800',
+                                            'Active' => 'bg-emerald-100 text-emerald-800',
+                                            'Rejected' => 'bg-rose-100 text-rose-800',
+                                            'Pending' => 'bg-yellow-100 text-yellow-800',
+                                        ];
+
+                                        $status = $activity->status ?? 'Pending';
+                                        $statusClass = $statusColors[$status] ?? 'bg-yellow-100 text-yellow-800';
+                                    @endphp
+
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
-                                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $activity->status == 'completed'
-                                                ? 'bg-green-100 text-green-800'
-                                                : ($activity->status == 'overdue'
-                                                    ? 'bg-red-100 text-red-800'
-                                                    : ($activity->status == 'Rejected'
-                                                        ? 'bg-red-100 text-red-800'
-                                                        : ($activity->status == 'in_progress'
-                                                            ? 'bg-blue-100 text-blue-800'
-                                                            : ($activity->status == 'compiled'
-                                                                ? 'bg-purple-100 text-purple-800'
-                                                                : ($activity->status == 'notification'
-                                                                    ? 'bg-orange-100 text-orange-800'
-                                                                    : ($activity->status == 'passed'
-                                                                        ? 'bg-teal-100 text-teal-800'
-                                                                        : 'bg-yellow-100 text-yellow-800')))))) }}">
-                                            {{ ucfirst(str_replace('_', ' ', $activity->status ?? 'pending')) }}
+                                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
+                                            {{ ucfirst(str_replace('_', ' ', $status)) }}
                                         </span>
                                     </td>
+
                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                                         <div class="flex justify-end space-x-2">
                                             <a href="{{ route('activity-diary-a.show', $activity) }}"

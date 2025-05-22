@@ -72,6 +72,7 @@ use App\Jobs\FundTransfer\SendFundTransferPendingEmail;
 use App\Jobs\ListSecurity\SendListSecurityRequestEmail;
 use App\Jobs\ListSecurity\SendListSecuritySubmittedEmail;
 use App\Jobs\Compliance\SendComplianceCovenantSubmittedEmail;
+use App\Jobs\ActivityDiary\SendActivityDiarySubmittedEmailJob;
 
 class MakerController extends Controller
 {
@@ -1682,7 +1683,7 @@ class MakerController extends Controller
     public function ActivityUpdateStatus(Request $request, ActivityDiary $activity)
     {
         $validated = $request->validate([
-            'status' => ['required', 'string', Rule::in(['Draft', 'Active', 'Rejected', 'Pending', 'In_progress', 'Completed', 'Overdue', 'Compiled', 'Notification', 'Passed'])],
+            'status' => ['required', 'string', Rule::in(['Draft', 'Active', 'Rejected', 'Pending', 'In Progress', 'Completed', 'Overdue', 'Compiled', 'Notification', 'Passed'])],
         ]);
 
         // Handle approval datetime if status is changing to completed
@@ -1761,6 +1762,8 @@ class MakerController extends Controller
                 'prepared_by' => Auth::user()->name,
             ]);
 
+            dispatch(new SendActivityDiarySubmittedEmailJob($activity));
+
             return redirect()
                 ->route('activity-diary-m.show', $activity)
                 ->with('success', 'Activity diary submitted for approval successfully.');
@@ -1780,7 +1783,7 @@ class MakerController extends Controller
             'extension_note_1' => 'nullable|string',
             'extension_date_2' => 'nullable|date',
             'extension_note_2' => 'nullable|string',
-            'status' => ['nullable', 'string', Rule::in(['Draft', 'Active', 'Rejected', 'Pending', 'In_progress', 'Completed', 'Overdue', 'Compiled', 'Notification', 'Passed'])],
+            'status' => ['nullable', 'string', Rule::in(['Draft', 'Active', 'Rejected', 'Pending', 'In Progress', 'Completed', 'Overdue', 'Compiled', 'Notification', 'Passed'])],
             'remarks' => 'nullable|string',
             'verified_by' => 'nullable|string',
         ]);
