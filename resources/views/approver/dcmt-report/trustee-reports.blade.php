@@ -82,6 +82,26 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
+                            @php
+                                $totalTrustAmount = 0;
+                                $totalShares = 0;
+                                $totalOutstanding = 0;
+                                $totalTrusteeFee = 0;
+
+                                foreach ($reports as $item) {
+                                    $totalTrustAmount += is_numeric($item->trust_amount_escrow_sum)
+                                        ? (float) $item->trust_amount_escrow_sum
+                                        : 0;
+                                    $totalShares += is_numeric($item->no_of_share) ? (int) $item->no_of_share : 0;
+                                    $totalOutstanding += is_numeric($item->outstanding_size)
+                                        ? (float) $item->outstanding_size
+                                        : 0;
+                                    $totalTrusteeFee += is_numeric($item->total_trustee_fee)
+                                        ? (float) $item->total_trustee_fee
+                                        : 0;
+                                }
+                            @endphp
+
                             @forelse ($reports as $index => $item)
                                 <tr class="transition-all duration-150 hover:bg-gray-100">
                                     <td class="px-6 py-4 text-sm text-gray-900">{{ $reports->firstItem() + $index }}
@@ -110,7 +130,19 @@
                                     </td>
                                 </tr>
                             @endforelse
+
+                            {{-- Grand total row --}}
+                            @if ($reports->count())
+                                <tr class="font-semibold bg-indigo-100">
+                                    <td colspan="4" class="px-6 py-4 text-right">Grand Total</td>
+                                    <td class="px-6 py-4">{{ number_format($totalTrustAmount, 2) }}</td>
+                                    <td class="px-6 py-4">{{ number_format($totalShares, 0) }}</td>
+                                    <td class="px-6 py-4">{{ number_format($totalOutstanding, 2) }}</td>
+                                    <td class="px-6 py-4">{{ number_format($totalTrusteeFee, 2) }}</td>
+                                </tr>
+                            @endif
                         </tbody>
+
                     </table>
                 </div>
 
