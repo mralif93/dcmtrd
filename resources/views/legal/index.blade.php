@@ -34,7 +34,7 @@
                     </a>
 
                     <!-- Card 2 -->
-                    {{-- <a href="{{ route('legal.dashboard.main') }}"
+                    <a href="{{ route('legal.dashboard.main') }}"
                         class="p-6 transition transform bg-white border border-gray-200 shadow group rounded-2xl hover:shadow-lg hover:-translate-y-1">
                         <div class="flex items-center space-x-4">
                             <div
@@ -55,7 +55,7 @@
                                     documents.</p>
                             </div>
                         </div>
-                    </a> --}}
+                    </a>
                 </div>
             </div>
         </div>
