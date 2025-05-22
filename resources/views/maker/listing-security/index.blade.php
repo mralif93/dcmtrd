@@ -121,7 +121,7 @@
 
                     <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
                         <!-- Create Button -->
-                        <a href="{{ route('legal.request-documents.create') }}"
+                        <a href="{{ route('maker.request-documents.create') }}"
                             class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition duration-150 bg-pink-700 rounded-lg shadow hover:bg-pink-800">
                             <svg class="w-4 h-4 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -337,7 +337,16 @@
 
                                             </form>
                                         @else
-                                            <span class="text-xs text-gray-400">No action available</span>
+                                            <a href="{{ route('maker.request-documents.history', $security->id) }}"
+                                                class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M12 8v4l3 3M12 4a8 8 0 100 16 8 8 0 000-16z" />
+                                                </svg>
+                                                History
+                                            </a>
                                         @endif
                                     </td>
 

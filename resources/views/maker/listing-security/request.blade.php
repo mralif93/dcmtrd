@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Create New Transaction Documents') }}
+            {{ __('Create New Transaction Documents Request') }}
         </h2>
     </x-slot>
 
@@ -34,7 +34,7 @@
             @endif
 
             <div class="overflow-hidden bg-white shadow sm:rounded-lg">
-                <form action="{{ route('legal.request-documents.store') }}" method="POST" class="p-6">
+                <form action="{{ route('maker.request-documents.store') }}" method="POST" class="p-6">
                     @csrf
                     <div class="pb-6 space-y-6">
                         <!-- Basic Information Section -->
@@ -99,7 +99,7 @@
 
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 pt-6 border-gray-200">
-                        <a href="{{ route('legal.sec-documents') }}"
+                        <a href="{{ route('list-security-m.index') }}"
                             class="inline-flex items-center px-4 py-2 font-medium text-gray-700 bg-gray-200 border border-transparent rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             Cancel
                         </a>

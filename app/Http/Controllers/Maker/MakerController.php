@@ -69,6 +69,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
 use App\Jobs\TrusteeFee\SendTrusteeFeeSubmittedEmail;
 use App\Jobs\FundTransfer\SendFundTransferPendingEmail;
+use App\Jobs\ListSecurity\SendListSecurityRequestEmail;
 use App\Jobs\ListSecurity\SendListSecuritySubmittedEmail;
 use App\Jobs\Compliance\SendComplianceCovenantSubmittedEmail;
 
@@ -319,7 +320,7 @@ class MakerController extends Controller
     public function BondStore(BondFormRequest $request, Bond $bond)
     {
         $validated = $request->validated();
-        
+
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'Pending';
 
@@ -1881,10 +1882,10 @@ class MakerController extends Controller
     {
         // Get paginated properties with a unique page name
         $properties = $portfolio->properties()->paginate(10, ['*'], 'properties_page');
-        
+
         // Get paginated financials with a different page name
         $financials = $portfolio->financials()->paginate(10, ['*'], 'financials_page');
-        
+
         return view('maker.portfolio.show', compact('portfolio', 'properties', 'financials'));
     }
 
@@ -1949,7 +1950,7 @@ class MakerController extends Controller
         // Add prepared_by from authenticated user and set status
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
-        
+
         try {
             // Create the financial record
             $financial = Financial::create($validated);
@@ -2064,7 +2065,7 @@ class MakerController extends Controller
             ]);
 
             return redirect()
-                ->route('property-m.index', $financial->portfolio) 
+                ->route('property-m.index', $financial->portfolio)
                 ->with('success', 'Financial submitted for approval successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2072,7 +2073,8 @@ class MakerController extends Controller
         }
     }
 
-    public function FinancialValidate(Request $request) {
+    public function FinancialValidate(Request $request)
+    {
         return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
             'bank_id' => 'required|exists:banks,id',
@@ -2194,7 +2196,7 @@ class MakerController extends Controller
 
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
-        
+
         // Check if a master lease agreement file was uploaded
         if ($request->hasFile('master_lease_agreement')) {
             // Store the file and get its path
@@ -2287,7 +2289,6 @@ class MakerController extends Controller
             return redirect()
                 ->route('property-m.index', $property->portfolio)
                 ->with('success', 'Property submitted for approval successfully.');
-
         } catch (\Exception $e) {
             return back()
                 ->with('error', 'Error submitting for approval: ' . $e->getMessage());
@@ -2439,7 +2440,7 @@ class MakerController extends Controller
             ->count();
 
         $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)->count();
-        
+
         // Pass calculated metrics to view
         return view('maker.lease.index', compact(
             'property',
@@ -2462,7 +2463,7 @@ class MakerController extends Controller
         // Set default values
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
-        
+
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('lease-attachments', 'public');
@@ -2473,7 +2474,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('lease-m.index', $lease->tenant->property)
                 ->with('success', 'Lease created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error creating lease: ' . $e->getMessage());
@@ -2505,7 +2506,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('lease-m.show', $lease)
                 ->with('success', 'Lease updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error updating lease: ' . $e->getMessage());
@@ -2528,7 +2529,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('lease-m.index', $lease->tenant->property)
                 ->with('success', 'Lease submitted for approval successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error submitting lease for approval: ' . $e->getMessage());
@@ -2607,7 +2608,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('lease-m.show', $tenancyLetter->lease)
                 ->with('success', 'Tenancy Letter created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error creating tenancy letter: ' . $e->getMessage());
@@ -2616,7 +2617,7 @@ class MakerController extends Controller
 
     public function TenancyLetterEdit(TenancyLetter $tenancyLetter)
     {
-         // get all lease which status is active
+        // get all lease which status is active
         $leases = Lease::where('status', 'active')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -2633,7 +2634,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('tenancy-letter-m.show', $tenancyLetter)
                 ->with('success', 'Tenancy Letter updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'Error updating tenancy letter: ' . $e->getMessage());
         }
     }
@@ -2654,7 +2655,7 @@ class MakerController extends Controller
                 'status' => 'pending',
                 'prepared_by' => Auth::user()->name,
             ]);
-            
+
             return redirect()
                 ->route('tenancy-letter-m.index', $tenancyLetter->property)
                 ->with('success', 'Tenancy Letter submitted for approval successfully.');
@@ -2705,7 +2706,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('tenancy-letter-m.index', $tenancyLetter->property)
                 ->with('success', 'Tenancy Letter deleted successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error deleting tenancy letter: ' . $e->getMessage());
@@ -2751,7 +2752,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('tenant-m.index', $siteVisit->property)
                 ->with('success', 'Site visit created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error creating site visit: ' . $e->getMEssage());
@@ -2786,8 +2787,8 @@ class MakerController extends Controller
             $siteVisit->update($validated);
             return redirect()
                 ->route('tenant-m.index', $siteVisit->property)
-                    ->with('success', 'Site visit updated successfully.');
-        } catch(\Exception $e) {
+                ->with('success', 'Site visit updated successfully.');
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error updating site visit: ' . $e->getMessage());
@@ -2811,7 +2812,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('tenant-m.index', $siteVisit->property)
                 ->with('success', 'Site visit submitted for approval successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error submitting for approval: ' . $e->getMessage());
@@ -2877,7 +2878,7 @@ class MakerController extends Controller
             // You might want to add additional statistics here if needed
             $pendingCount = $checklists->where('status', 'pending')->count();
             $completedCount = $checklists->where('status', 'completed')->count();
-            
+
             return view('maker.checklist.index', compact(
                 'property',
                 'checklists',
@@ -2893,7 +2894,7 @@ class MakerController extends Controller
     {
         // Get only active site visits related to the current property
         $siteVisits = SiteVisit::where('property_id', $property->id)->get();
-        
+
         // Eager load the tenants relationship to avoid N+1 query issues
         // Only get active tenants
         $property->load(['tenants' => function ($query) {
@@ -2907,10 +2908,10 @@ class MakerController extends Controller
     {
         // Get the validated data from the separate validation methods
         $validated = $this->ChecklistValidate($request);
-        
+
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
-        
+
         try {
             // create checklist
             $checklist = Checklist::create($validated);
@@ -3032,7 +3033,7 @@ class MakerController extends Controller
             'disposalInstallation',
             'tenants'
         ]);
-        
+
         return view('maker.checklist.letter', compact('checklist'));
     }
 
@@ -3057,7 +3058,7 @@ class MakerController extends Controller
 
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
-        
+
         try {
             // create legal documentation
             ChecklistLegalDocumentation::create($validated);
@@ -3103,7 +3104,7 @@ class MakerController extends Controller
     {
         return view('maker.checklist.legal-documentation.show', compact('checklist', 'legalDocumentation'));
     }
-    
+
     public function SubmitApprovalChecklistLegalDocumentation(Checklist $checklist, ChecklistLegalDocumentation $legalDocumentation)
     {
         try {
@@ -3225,7 +3226,7 @@ class MakerController extends Controller
 
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
-        
+
         try {
             // create external area condition
             ChecklistExternalAreaCondition::create($validated);
@@ -3311,7 +3312,7 @@ class MakerController extends Controller
 
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
-        
+
         try {
             // create internal area condition
             ChecklistInternalAreaCondition::create($validated);
@@ -3399,7 +3400,7 @@ class MakerController extends Controller
 
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
-        
+
         try {
             // create property development
             ChecklistPropertyDevelopment::create($validated);
@@ -3485,7 +3486,7 @@ class MakerController extends Controller
 
         $validated['prepared_by'] = Auth::user()->name;
         $validated['status'] = 'draft';
-        
+
         try {
             // create disposal installation
             $checklistDisposalInstallation = ChecklistDisposalInstallation::create($validated);
@@ -3756,48 +3757,48 @@ class MakerController extends Controller
     {
         // Retrieve appointments with related portfolio, handling search and filtering
         $query = Appointment::with('portfolio')
-        // Handle search - only for party name
-        ->when($request->input('search'), function ($query, $search) {
-            return $query->where('party_name', 'like', "%{$search}%");
-        })
-        // Filter by status
-        ->when($request->input('status'), function ($query, $status) {
-            return $query->where('status', $status);
-        })
-        // Filter by portfolio
-        ->when($request->input('portfolio_id'), function ($query, $portfolioId) {
-            return $query->where('portfolio_id', $portfolioId);
-        })
-        // Filter by year
-        ->when($request->input('year'), function ($query, $year) {
-            return $query->whereRaw('strftime(\'%Y\', date_of_approval) = ?', [$year]);
-        })
-        // Filter by month
-        ->when($request->input('month'), function ($query, $month) {
-            return $query->whereRaw('strftime(\'%m\', date_of_approval) = ?', [$month]);
-        })
-        ->latest()
-        ->paginate(15)
-        ->withQueryString(); // Preserve query parameters in pagination links
+            // Handle search - only for party name
+            ->when($request->input('search'), function ($query, $search) {
+                return $query->where('party_name', 'like', "%{$search}%");
+            })
+            // Filter by status
+            ->when($request->input('status'), function ($query, $status) {
+                return $query->where('status', $status);
+            })
+            // Filter by portfolio
+            ->when($request->input('portfolio_id'), function ($query, $portfolioId) {
+                return $query->where('portfolio_id', $portfolioId);
+            })
+            // Filter by year
+            ->when($request->input('year'), function ($query, $year) {
+                return $query->whereRaw('strftime(\'%Y\', date_of_approval) = ?', [$year]);
+            })
+            // Filter by month
+            ->when($request->input('month'), function ($query, $month) {
+                return $query->whereRaw('strftime(\'%m\', date_of_approval) = ?', [$month]);
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString(); // Preserve query parameters in pagination links
 
         // Get all portfolios for the dropdown
         $portfolios = \App\Models\Portfolio::orderBy('portfolio_name')->get();
 
         // Extract unique years from appointment dates - SQLite compatible
         $years = Appointment::selectRaw('strftime(\'%Y\', date_of_approval) as year')
-        ->distinct()
-        ->orderByDesc('year')
-        ->pluck('year')
-        ->toArray();
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->toArray();
 
         // Define status options
         $statuses = ['active', 'pending', 'rejected', 'inactive'];
 
         return view('maker.appointment.index', [
-        'appointments' => $query,
-        'portfolios' => $portfolios,
-        'years' => $years,
-        'statuses' => $statuses
+            'appointments' => $query,
+            'portfolios' => $portfolios,
+            'years' => $years,
+            'statuses' => $statuses
         ]);
     }
 
@@ -3978,7 +3979,7 @@ class MakerController extends Controller
         $validated = $this->ApprovalFormValidate($request);
 
         $validated['prepared_by'] = Auth::user()->name;
-                $validated['status'] = 'draft';
+        $validated['status'] = 'draft';
 
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
@@ -4104,39 +4105,39 @@ class MakerController extends Controller
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-        
+
         // Filter by property if provided
         if ($request->filled('property_id')) {
             $query->where('property_id', $request->property_id);
         }
-        
+
         // Filter by visit day if provided
         if ($request->filled('visit_day')) {
             $query->where('visit_day', $request->visit_day);
         }
-        
+
         // Filter by visit month if provided
         if ($request->filled('visit_month')) {
             $query->where('visit_month', $request->visit_month);
         }
-        
+
         // Filter by visit year if provided
         if ($request->filled('visit_year')) {
             $query->where('visit_year', $request->visit_year);
         }
-        
+
         // Filter by date range if all components are provided
         if ($request->filled(['from_day', 'from_month', 'from_year', 'to_day', 'to_month', 'to_year'])) {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 // Create comparable date strings (YYYYMMDD format)
-                $fromDate = $request->from_year . 
-                            str_pad($request->from_month, 2, '0', STR_PAD_LEFT) . 
-                            str_pad($request->from_day, 2, '0', STR_PAD_LEFT);
-                
-                $toDate = $request->to_year . 
-                          str_pad($request->to_month, 2, '0', STR_PAD_LEFT) . 
-                          str_pad($request->to_day, 2, '0', STR_PAD_LEFT);
-                
+                $fromDate = $request->from_year .
+                    str_pad($request->from_month, 2, '0', STR_PAD_LEFT) .
+                    str_pad($request->from_day, 2, '0', STR_PAD_LEFT);
+
+                $toDate = $request->to_year .
+                    str_pad($request->to_month, 2, '0', STR_PAD_LEFT) .
+                    str_pad($request->to_day, 2, '0', STR_PAD_LEFT);
+
                 // For SQLite, we build comparable date strings in the query
                 $q->whereRaw("(visit_year || 
                               CASE WHEN length(visit_month) = 1 THEN '0' || visit_month ELSE visit_month END || 
@@ -4144,33 +4145,33 @@ class MakerController extends Controller
                               BETWEEN ? AND ?", [$fromDate, $toDate]);
             });
         }
-        
+
         // Search by purpose or remarks if provided
         if ($request->filled('search')) {
             $searchTerm = $request->search;
-            $query->where(function($q) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->where('purpose', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('remarks', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('remarks', 'LIKE', "%{$searchTerm}%");
             });
         }
-    
+
         // Sort in chronological order (newest to oldest)
         $siteVisitLogs = $query->orderBy('visit_year', 'desc')
-                              ->orderBy('visit_month', 'desc')
-                              ->orderBy('visit_day', 'desc')
-                              ->paginate(10)
-                              ->appends($request->except('page')); // Maintain filters when paginating
-    
+            ->orderBy('visit_month', 'desc')
+            ->orderBy('visit_day', 'desc')
+            ->paginate(10)
+            ->appends($request->except('page')); // Maintain filters when paginating
+
         // Get data for filter dropdowns
         $properties = Property::where('status', 'active')->get();
         $statuses = ['pending', 'approved', 'rejected']; // Add all possible statuses
-        
+
         // Get years for dropdown (current year to 10 years back)
         $years = [];
         for ($i = date('Y'); $i >= date('Y') - 10; $i--) {
             $years[] = $i;
         }
-        
+
         // Get months for dropdown
         $months = [
             '01' => 'January',
@@ -4186,12 +4187,12 @@ class MakerController extends Controller
             '11' => 'November',
             '12' => 'December'
         ];
-    
+
         return view('maker.site-visit-log.index', compact(
-            'siteVisitLogs', 
-            'properties', 
-            'statuses', 
-            'years', 
+            'siteVisitLogs',
+            'properties',
+            'statuses',
+            'years',
             'months',
             'request' // Pass request to maintain filter values in the form
         ));
@@ -4220,7 +4221,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('site-visit-log-m.index')
                 ->with('success', 'Site Visit Log created successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error creating site visit log: ' . $e->getMessage());
@@ -4242,7 +4243,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('site-visit-log-m.index')
                 ->with('success', 'Site Visit Log updated successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error updating site visit log: ' . $e->getMessage());
@@ -4266,7 +4267,7 @@ class MakerController extends Controller
             return redirect()
                 ->route('site-visit-log-m.index')
                 ->with('success', 'Site Visit Log submitted for approval successfully.');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()
                 ->withInput()
                 ->with('error', 'Error submitting site visit log for approval: ' . $e->getMessage());
@@ -4290,37 +4291,37 @@ class MakerController extends Controller
     public function ApprovalPropertyIndex(Request $request)
     {
         $query = ApprovalProperty::query()->with('property');
-    
+
         // Apply Description Search
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 $q->where('description', 'like', '%' . $request->search . '%')
-                  ->orWhere('remarks', 'like', '%' . $request->search . '%');
+                    ->orWhere('remarks', 'like', '%' . $request->search . '%');
             });
         }
-    
+
         // Apply Property Filter
         if ($request->filled('property_id')) {
             $query->where('property_id', $request->property_id);
         }
-    
+
         // Apply Date Range Filter
         if ($request->filled('date_from')) {
             $query->whereDate('date_of_approval', '>=', $request->date_from);
         }
-    
+
         if ($request->filled('date_to')) {
             $query->whereDate('date_of_approval', '<=', $request->date_to);
         }
-    
+
         // Apply Status Filter
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-    
+
         // Get the filtered results with pagination
         $approvalProperties = $query->latest()->paginate(10);
-    
+
         return view('maker.approval-property.index', compact('approvalProperties'));
     }
 
@@ -4534,6 +4535,92 @@ class MakerController extends Controller
         $security = ListSecurity::with('issuer')->findOrFail($id);
 
         return view('maker.listing-security.details', compact('security'));
+    }
+
+    public function RequestDocumentsHistory(ListSecurity $security)
+    {
+        $history = $security->securityDocRequests()->latest()->get();
+
+        return view('maker.listing-security.history', compact('security', 'history'));
+    }
+
+    public function RequestDocumentsCreate()
+    {
+        $user = Auth::user();
+
+        $listSecurities = ListSecurity::with('issuer')
+            ->where('status', 'Active')
+            ->latest()
+            ->get();
+
+        return view('maker.listing-security.request', compact('user', 'listSecurities'));
+    }
+
+    public function RequestDocumentsStore(Request $request)
+    {
+        $request->validate([
+            'security_id' => 'required|exists:list_securities,id',
+            'request_date' => 'required|date',
+            'purpose' => 'required|string',
+        ]);
+
+        SecurityDocRequest::create([
+            'list_security_id' => $request->security_id,
+            'request_date' => $request->request_date,
+            'purpose' => $request->purpose,
+            'status' => 'Draft', // or 'Draft'
+            'prepared_by' => Auth::user()->name,
+        ]);
+
+        return redirect()->route('maker.request-documents.history', $request->security_id)->with('success', 'Document request created successfully.');
+    }
+
+    public function RequestDocumentsEdit(Request $request, $id)
+    {
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $listSecurities = ListSecurity::with('issuer')
+            ->where('status', 'Active')
+            ->latest()
+            ->get();
+
+        return view('maker.listing-security.edit-request', compact('documentRequest', 'listSecurities'));
+    }
+
+    public function RequestDocumentsUpdate(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'security_id'  => 'required|exists:list_securities,id',
+            'request_date' => 'required|date',
+            'purpose'      => 'required|string|max:1000',
+            'prepared_by'  => 'required|string|max:255',
+        ]);
+
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $documentRequest->update([
+            'list_security_id' => $validated['security_id'],
+            'request_date'     => $validated['request_date'],
+            'purpose'          => $validated['purpose'],
+            'prepared_by'      => $validated['prepared_by'],
+        ]);
+
+        return redirect()->route('maker.request-documents.history', [
+            'security' => $documentRequest->list_security_id,
+        ])->with('success', 'Document request updated successfully!');
+    }
+
+    public function submitRequest(Request $request, $id)
+    {
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $documentRequest->update([
+            'status' => 'Pending',
+        ]);
+
+        dispatch(new SendListSecurityRequestEmail($documentRequest));
+
+        return redirect()->back()->with('success', 'Document request submitted successfully!');
     }
 
     public function ListSecurityRequest()
