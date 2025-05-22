@@ -730,14 +730,6 @@ class MakerController extends Controller
         ]);
     }
 
-    public function toggleRedeem(FacilityInformation $facility)
-    {
-        $facility->is_redeemed = !$facility->is_redeemed;
-        $facility->save();
-
-        return redirect()->route('bond-m.details', $facility->issuer)->with('success', 'Facility Information redeemed status updated successfully');
-    }
-
     protected function validateFacilityInfo(Request $request, $facility = null)
     {
         return $request->validate([
