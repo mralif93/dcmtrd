@@ -1,11 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Edit Legal Documentation') }}
             </h2>
-            <a href="{{ route('legal.dashboard') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
-                Back
+            <a href="{{ route('legal.dashboard', ['section' => 'reits']) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to List
             </a>
         </div>
     </x-slot>
@@ -34,13 +37,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    @endif
-
-                    @if(session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
 
@@ -89,10 +85,18 @@
                                 </div>
 
                                 <!-- Sale and Purchase Agreement -->
-                                <div class="col-span-2">
-                                    <label for="sale_purchase_agreement" class="block text-sm font-medium text-gray-500">Sale & Purchase Agreement</label>
-                                    <input id="sale_purchase_agreement" type="text" name="sale_purchase_agreement" value="{{ old('sale_purchase_agreement', $checklistLegalDocumentation->sale_purchase_agreement) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('sale_purchase_agreement')
+                                <div>
+                                    <label for="sale_purchase_agreement_ref" class="block text-sm font-medium text-gray-500">Sale & Purchase Agreement Reference</label>
+                                    <input id="sale_purchase_agreement_ref" type="text" name="sale_purchase_agreement_ref" value="{{ old('sale_purchase_agreement_ref', $checklistLegalDocumentation->sale_purchase_agreement_ref) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('sale_purchase_agreement_ref')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="sale_purchase_agreement_location" class="block text-sm font-medium text-gray-500">Sale & Purchase Agreement Location</label>
+                                    <input id="sale_purchase_agreement_location" type="text" name="sale_purchase_agreement_location" value="{{ old('sale_purchase_agreement_location', $checklistLegalDocumentation->sale_purchase_agreement_location) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('sale_purchase_agreement_location')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -115,10 +119,18 @@
                                 </div>
 
                                 <!-- Agreement to Lease -->
-                                <div class="col-span-2">
-                                    <label for="agreement_to_lease" class="block text-sm font-medium text-gray-500">Agreement to Lease</label>
-                                    <input id="agreement_to_lease" type="text" name="agreement_to_lease" value="{{ old('agreement_to_lease', $checklistLegalDocumentation->agreement_to_lease) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('agreement_to_lease')
+                                <div>
+                                    <label for="agreement_to_lease_ref" class="block text-sm font-medium text-gray-500">Agreement to Lease Reference</label>
+                                    <input id="agreement_to_lease_ref" type="text" name="agreement_to_lease_ref" value="{{ old('agreement_to_lease_ref', $checklistLegalDocumentation->agreement_to_lease_ref) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('agreement_to_lease_ref')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="agreement_to_lease_location" class="block text-sm font-medium text-gray-500">Agreement to Lease Location</label>
+                                    <input id="agreement_to_lease_location" type="text" name="agreement_to_lease_location" value="{{ old('agreement_to_lease_location', $checklistLegalDocumentation->agreement_to_lease_location) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('agreement_to_lease_location')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -141,19 +153,35 @@
                                 </div>
 
                                 <!-- Development Agreement -->
-                                <div class="col-span-2">
-                                    <label for="development_agreement" class="block text-sm font-medium text-gray-500">Development Agreement</label>
-                                    <input id="development_agreement" type="text" name="development_agreement" value="{{ old('development_agreement', $checklistLegalDocumentation->development_agreement) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('development_agreement')
+                                <div>
+                                    <label for="development_agreement_ref" class="block text-sm font-medium text-gray-500">Development Agreement Reference</label>
+                                    <input id="development_agreement_ref" type="text" name="development_agreement_ref" value="{{ old('development_agreement_ref', $checklistLegalDocumentation->development_agreement_ref) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('development_agreement_ref')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="development_agreement_location" class="block text-sm font-medium text-gray-500">Development Agreement Location</label>
+                                    <input id="development_agreement_location" type="text" name="development_agreement_location" value="{{ old('development_agreement_location', $checklistLegalDocumentation->development_agreement_location) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('development_agreement_location')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <!-- Other Legal Documents -->
-                                <div class="col-span-2">
-                                    <label for="other_legal_docs" class="block text-sm font-medium text-gray-500">Other Legal Documents</label>
-                                    <textarea id="other_legal_docs" name="other_legal_docs" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('other_legal_docs', $checklistLegalDocumentation->other_legal_docs) }}</textarea>
-                                    @error('other_legal_docs')
+                                <div>
+                                    <label for="others_ref" class="block text-sm font-medium text-gray-500">Other Legal Documents Reference</label>
+                                    <input id="others_ref" type="text" name="others_ref" value="{{ old('others_ref', $checklistLegalDocumentation->others_ref) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('others_ref')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="others_location" class="block text-sm font-medium text-gray-500">Other Legal Documents Location</label>
+                                    <input id="others_location" type="text" name="others_location" value="{{ old('others_location', $checklistLegalDocumentation->others_location) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('others_location')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>

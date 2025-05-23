@@ -255,7 +255,7 @@
                                             <td style="border: 1px solid #ccc; padding: 5px; font-weight: bold;">Internal Area</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;"></td>
                                             <td style="border: 1px solid #ccc; padding: 5px;"></td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->internalAreaCondition->internal_remarks ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px;"></td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">4.1</td>

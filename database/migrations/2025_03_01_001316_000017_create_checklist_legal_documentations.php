@@ -22,14 +22,18 @@ return new class extends Migration
             $table->string('title_location')->nullable();
             $table->string('trust_deed_ref')->nullable();
             $table->string('trust_deed_location')->nullable();
-            $table->string('sale_purchase_agreement')->nullable();
+            $table->string('sale_purchase_agreement_ref')->nullable();
+            $table->string('sale_purchase_agreement_location')->nullable();
             $table->string('lease_agreement_ref')->nullable();
             $table->string('lease_agreement_location')->nullable();
-            $table->string('agreement_to_lease')->nullable();
+            $table->string('agreement_to_lease_ref')->nullable();
+            $table->string('agreement_to_lease_location')->nullable();
             $table->string('maintenance_agreement_ref')->nullable();
             $table->string('maintenance_agreement_location')->nullable();
-            $table->string('development_agreement')->nullable();
-            $table->text('other_legal_docs')->nullable();
+            $table->string('development_agreement_ref')->nullable();
+            $table->string('development_agreement_location')->nullable();
+            $table->string('others_ref')->nullable();
+            $table->string('others_location')->nullable();
             
             // system information
             $table->string('status')->nullable();

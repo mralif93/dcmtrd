@@ -46,7 +46,7 @@
                             </div>
 
                             <!-- Lease Selection -->
-                            <div class="hidden">
+                            <div class="col-span-1">
                                 <label for="lease_id" class="block text-sm font-medium text-gray-500">Lease</label>
                                 <select id="lease_id" name="lease_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     <option value="">-- Select Lease --</option>
