@@ -32,10 +32,29 @@ class LegalController extends Controller
         // Start with the Checklist query
         $query = Checklist::with(['siteVisit.property', 'legalDocumentation']);
 
+        // Apply filters if provided
+        if ($request->has('status') && $request->status != '') {
+            $query->whereHas('legalDocumentation', function ($q) use ($request) {
+                $q->where('status', $request->status);
+            });
+        }
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->whereHas('siteVisit.property', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('city', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%');
+            });
+        }
+
         // Get checklists with related data
         $checklists = $query->latest()->paginate(10)->withQueryString();
 
-        return view('legal.checklist.index', compact('checklists'));
+        // Get statuses for dropdown
+        $statuses = ['draft', 'active', 'pending', 'rejected', 'inactive'];
+
+        return view('legal.checklist.index', compact('checklists', 'statuses'));
     }
     public function index(Request $request)
     {
@@ -61,7 +80,10 @@ class LegalController extends Controller
         // Get checklists with related data
         $checklists = $query->latest()->paginate(10)->withQueryString();
 
-        return view('legal.index', compact('checklists'));
+        // Get statuses for dropdown
+        $statuses = ['draft', 'active', 'pending', 'rejected', 'inactive'];
+
+        return view('legal.index', compact('checklists', 'statuses'));
     }
 
     // Checklist Module
