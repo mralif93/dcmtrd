@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Legal Documentation Details') }}
             </h2>
-            <a href="{{ route('legal.dashboard') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+            <a href="{{ route('legal.dashboard', ['section' => 'reits']) }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -33,8 +33,8 @@
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <!-- Header Section -->
                 <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg font-medium text-gray-900">Legal Documentation for: {{ $legalDocumentation->checklist->siteVisit->property->name ?? 'N/A' }}</h3>
-                    <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ $legalDocumentation->checklist->siteVisit->property->address ?? 'N/A' }}</p>
+                    <h3 class="text-lg font-medium text-gray-900">Legal Documentation for: {{ $checklistLegalDocumentation->checklist->siteVisit->property->name ?? 'N/A' }}</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ $checklistLegalDocumentation->checklist->siteVisit->property->address ?? 'N/A' }}</p>
                 </div>
 
                 <!-- Legal Documentation Section -->
@@ -46,168 +46,121 @@
                         <!-- Title Information -->
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Title Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->title_ref ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->title_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Title Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->title_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->title_location ?? 'N/A' }}</dd>
                         </div>
                         
                         <!-- Trust Deed Information -->
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Trust Deed Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->trust_deed_ref ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->trust_deed_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Trust Deed Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->trust_deed_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->trust_deed_location ?? 'N/A' }}</dd>
                         </div>
                         
                         <!-- Sale and Purchase Agreement -->
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Sale & Purchase Agreement</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->sale_purchase_agreement ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Sale & Purchase Agreement Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->sale_purchase_agreement_ref ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Sale & Purchase Agreement Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->sale_purchase_agreement_location ?? 'N/A' }}</dd>
                         </div>
                         
                         <!-- Lease Agreement Information -->
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Lease Agreement Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->lease_agreement_ref ?? 'N/A' }}</dd>
-                        </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Lease Agreement Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->lease_agreement_ref ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Lease Agreement Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->lease_agreement_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->lease_agreement_location ?? 'N/A' }}</dd>
                         </div>
                         
                         <!-- Agreement to Lease -->
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->agreement_to_lease_ref ?? 'N/A' }}</dd>
+                        </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->agreement_to_lease ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->agreement_to_lease_location ?? 'N/A' }}</dd>
                         </div>
                         
                         <!-- Maintenance Agreement Information -->
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Maintenance Agreement Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->maintenance_agreement_ref ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->maintenance_agreement_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Maintenance Agreement Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->maintenance_agreement_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->maintenance_agreement_location ?? 'N/A' }}</dd>
                         </div>
                         
                         <!-- Development Agreement -->
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Development Agreement</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->development_agreement ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Development Agreement Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->development_agreement_ref ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Development Agreement Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->development_agreement_location ?? 'N/A' }}</dd>
                         </div>
                         
                         <!-- Other Legal Documents -->
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Other Legal Documents Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->others_ref ?? 'N/A' }}</dd>
+                        </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Other Legal Documents</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->other_legal_docs ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Other Legal Documents Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->others_location ?? 'N/A' }}</dd>
                         </div>
                     </dl>
                 </div>
 
-                <!-- Related Checklist Information -->
+                <!-- Administrative Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Related Information</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Administrative Information</h3>
                     </div>
                     <dl>
-                        @if($legalDocumentation->checklist)
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Related Checklist</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <a href="{{ route('checklist-l.show', $legalDocumentation->checklist) }}" class="text-indigo-600 hover:text-indigo-900">
-                                    View Full Checklist
-                                </a>
-                            </dd>
-                        </div>
-                        
-                        @if($legalDocumentation->checklist->siteVisit)
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Related Site Visit</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <a href="{{ route('site-visit-l.show', $legalDocumentation->checklist->siteVisit) }}" class="text-indigo-600 hover:text-indigo-900">
-                                    {{ date('d/m/Y', strtotime($legalDocumentation->checklist->siteVisit->date_visit)) }} - {{ $legalDocumentation->checklist->siteVisit->inspector_name }}
-                                </a>
-                            </dd>
-                        </div>
-                        @endif
-                        
-                        @if($legalDocumentation->checklist->siteVisit && $legalDocumentation->checklist->siteVisit->property)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Property Name</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->checklist->siteVisit->property->name ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->prepared_by ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Property Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->checklist->siteVisit->property->address ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->verified_by ?? 'N/A' }}</dd>
                         </div>
-                        @endif
-                        
-                        @else
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Related Information</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">No related checklist information available</dd>
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $checklistLegalDocumentation->approval_datetime ? date('d/m/Y h:i A', strtotime($checklistLegalDocumentation->approval_datetime)) : 'Not yet approved' }}
+                            </dd>
                         </div>
-                        @endif
                     </dl>
                 </div>
 
-                <!-- System Information -->
+                <!-- System Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
                         <h3 class="text-lg leading-6 font-medium text-gray-900">System Information</h3>
                     </div>
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Status</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    {{ match(strtolower($legalDocumentation->status ?? '')) {
-                                        'active' => 'bg-green-100 text-green-800',
-                                        'pending' => 'bg-yellow-100 text-yellow-800',
-                                        'rejected' => 'bg-red-100 text-red-800',
-                                        'inactive' => 'bg-gray-100 text-gray-800',
-                                        default => 'bg-gray-100 text-gray-800'
-                                    } }}">
-                                    {{ ucfirst($legalDocumentation->status ?? 'N/A') }}
-                                </span>
-                            </dd>
-                        </div>
-                        
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->prepared_by ?? 'N/A' }}</dd>
-                        </div>
-                        
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->verified_by ?? 'N/A' }}</dd>
-                        </div>
-                        
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Approval Date & Time</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $legalDocumentation->approval_datetime ? date('d/m/Y h:i A', strtotime($legalDocumentation->approval_datetime)) : 'N/A' }}
-                            </dd>
-                        </div>
-                        
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->created_at ? date('d/m/Y h:i A', strtotime($legalDocumentation->created_at)) : 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->created_at->format('d/m/Y h:i A') }}</dd>
                         </div>
-                        
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->updated_at ? date('d/m/Y h:i A', strtotime($legalDocumentation->updated_at)) : 'N/A' }}</dd>
-                        </div>
-                        
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Remarks</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDocumentation->remarks ?? 'No remarks available' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistLegalDocumentation->updated_at->format('d/m/Y h:i A') }}</dd>
                         </div>
                     </dl>
                 </div>
@@ -222,7 +175,7 @@
                             </svg>
                             Back to List
                         </a>
-                        <a href="{{ route('legal-checklist-l.edit', $legalDocumentation) }}" 
+                        <a href="{{ route('checklist-legal-l.edit', $checklistLegalDocumentation) }}" 
                             class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
