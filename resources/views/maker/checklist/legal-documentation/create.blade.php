@@ -98,11 +98,20 @@
                                     @enderror
                                 </div>
 
-                                <!-- Sale Purchase Agreement -->
+                                <!-- Sale Purchase Agreement Reference -->
                                 <div>
-                                    <label for="sale_purchase_agreement" class="block text-sm font-medium text-gray-500">Sale Purchase Agreement</label>
-                                    <input id="sale_purchase_agreement" type="text" name="sale_purchase_agreement" value="{{ old('sale_purchase_agreement') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('sale_purchase_agreement')
+                                    <label for="sale_purchase_agreement_ref" class="block text-sm font-medium text-gray-500">Sale Purchase Agreement Reference</label>
+                                    <input id="sale_purchase_agreement_ref" type="text" name="sale_purchase_agreement_ref" value="{{ old('sale_purchase_agreement_ref') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('sale_purchase_agreement_ref')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Sale Purchase Agreement Location -->
+                                <div>
+                                    <label for="sale_purchase_agreement_location" class="block text-sm font-medium text-gray-500">Sale Purchase Agreement Location</label>
+                                    <input id="sale_purchase_agreement_location" type="text" name="sale_purchase_agreement_location" value="{{ old('sale_purchase_agreement_location') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('sale_purchase_agreement_location')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -125,11 +134,20 @@
                                     @enderror
                                 </div>
 
-                                <!-- Agreement to Lease -->
+                                <!-- Agreement to Lease Reference -->
                                 <div>
-                                    <label for="agreement_to_lease" class="block text-sm font-medium text-gray-500">Agreement to Lease</label>
-                                    <input id="agreement_to_lease" type="text" name="agreement_to_lease" value="{{ old('agreement_to_lease') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('agreement_to_lease')
+                                    <label for="agreement_to_lease_ref" class="block text-sm font-medium text-gray-500">Agreement to Lease Reference</label>
+                                    <input id="agreement_to_lease_ref" type="text" name="agreement_to_lease_ref" value="{{ old('agreement_to_lease_ref') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('agreement_to_lease_ref')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Agreement to Lease Location -->
+                                <div>
+                                    <label for="agreement_to_lease_location" class="block text-sm font-medium text-gray-500">Agreement to Lease Location</label>
+                                    <input id="agreement_to_lease_location" type="text" name="agreement_to_lease_location" value="{{ old('agreement_to_lease_location') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('agreement_to_lease_location')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -152,79 +170,38 @@
                                     @enderror
                                 </div>
 
-                                <!-- Development Agreement -->
+                                <!-- Development Agreement Reference -->
                                 <div>
-                                    <label for="development_agreement" class="block text-sm font-medium text-gray-500">Development Agreement</label>
-                                    <input id="development_agreement" type="text" name="development_agreement" value="{{ old('development_agreement') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('development_agreement')
+                                    <label for="development_agreement_ref" class="block text-sm font-medium text-gray-500">Development Agreement Reference</label>
+                                    <input id="development_agreement_ref" type="text" name="development_agreement_ref" value="{{ old('development_agreement_ref') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('development_agreement_ref')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
 
-                                <!-- Status -->
+                                <!-- Development Agreement Location -->
                                 <div>
-                                    <label for="status" class="block text-sm font-medium text-gray-500">Status</label>
-                                    <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="verified" {{ old('status') == 'verified' ? 'selected' : '' }}>Verified</option>
-                                        <option value="approved" {{ old('status') == 'approved' ? 'selected' : '' }}>Approved</option>
-                                    </select>
-                                    @error('status')
+                                    <label for="development_agreement_location" class="block text-sm font-medium text-gray-500">Development Agreement Location</label>
+                                    <input id="development_agreement_location" type="text" name="development_agreement_location" value="{{ old('development_agreement_location') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('development_agreement_location')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
 
-                                <!-- Prepared By -->
+                                <!-- Others Reference -->
                                 <div>
-                                    <label for="prepared_by" class="block text-sm font-medium text-gray-500">Prepared By</label>
-                                    <input id="prepared_by" type="text" name="prepared_by" value="{{ old('prepared_by', Auth::user()->name) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('prepared_by')
+                                    <label for="others_ref" class="block text-sm font-medium text-gray-500">Other Legal Documents Reference</label>
+                                    <input id="others_ref" type="text" name="others_ref" value="{{ old('others_ref') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('others_ref')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
 
-                                <!-- Verified By -->
+                                <!-- Others Location -->
                                 <div>
-                                    <label for="verified_by" class="block text-sm font-medium text-gray-500">Verified By</label>
-                                    <input id="verified_by" type="text" name="verified_by" value="{{ old('verified_by') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('verified_by')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Approval Datetime -->
-                                <div>
-                                    <label for="approval_datetime" class="block text-sm font-medium text-gray-500">Approval Date</label>
-                                    <input id="approval_datetime" type="datetime-local" name="approval_datetime" value="{{ old('approval_datetime') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('approval_datetime')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Other Legal Docs -->
-                                <div class="col-span-2">
-                                    <label for="other_legal_docs" class="block text-sm font-medium text-gray-500">Other Legal Documents</label>
-                                    <textarea id="other_legal_docs" name="other_legal_docs" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('other_legal_docs') }}</textarea>
-                                    @error('other_legal_docs')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Remarks -->
-                                <div class="col-span-2">
-                                    <label for="remarks" class="block text-sm font-medium text-gray-500">Remarks</label>
-                                    <textarea id="remarks" name="remarks" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks') }}</textarea>
-                                    @error('remarks')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Document Uploads -->
-                                <div class="col-span-2">
-                                    <label for="documents" class="block text-sm font-medium text-gray-500">Document Attachments</label>
-                                    <input id="documents" type="file" name="documents[]" multiple class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-6 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                                    <p class="mt-1 text-sm text-gray-500">Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG (max 10MB)</p>
-                                    @error('documents')
+                                    <label for="others_location" class="block text-sm font-medium text-gray-500">Other Legal Documents Location</label>
+                                    <input id="others_location" type="text" name="others_location" value="{{ old('others_location') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('others_location')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>

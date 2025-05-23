@@ -3780,7 +3780,7 @@ class MakerController extends Controller
         ->withQueryString(); // Preserve query parameters in pagination links
 
         // Get all portfolios for the dropdown
-        $portfolios = \App\Models\Portfolio::orderBy('portfolio_name')->get();
+        $portfolios = Portfolio::orderBy('portfolio_name')->get();
 
         // Extract unique years from appointment dates - SQLite compatible
         $years = Appointment::selectRaw('strftime(\'%Y\', date_of_approval) as year')

@@ -114,20 +114,28 @@
                     </div>
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Sale/Purchase Agreement</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->sale_purchase_agreement ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Sale/Purchase Agreement Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->sale_purchase_agreement_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Sale/Purchase Agreement Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->sale_purchase_agreement_location ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Lease Agreement Reference</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->lease_agreement_ref ?? 'N/A' }}</dd>
                         </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Lease Agreement Location</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->lease_agreement_location ?? 'N/A' }}</dd>
                         </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->agreement_to_lease_ref ?? 'N/A' }}</dd>
+                        </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->agreement_to_lease ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->agreement_to_lease_location ?? 'N/A' }}</dd>
                         </div>
                     </dl>
                 </div>
@@ -147,8 +155,12 @@
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->maintenance_agreement_location ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Development Agreement</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->development_agreement ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Development Agreement Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->development_agreement_ref ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Development Agreement Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->development_agreement_location ?? 'N/A' }}</dd>
                         </div>
                     </dl>
                 </div>
@@ -160,33 +172,13 @@
                     </div>
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Additional Documentation</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->other_legal_docs ?? 'No additional documents' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Additional Documentation Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->others_ref ?? 'No additional documents' }}</dd>
                         </div>
-                        @if(isset($documentAttachments) && count($documentAttachments) > 0)
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Document Attachments</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <ul class="border border-gray-200 rounded-md divide-y divide-gray-200">
-                                    @foreach($documentAttachments as $attachment)
-                                    <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                                        <div class="w-0 flex-1 flex items-center">
-                                            <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                            </svg>
-                                            <span class="ml-2 flex-1 w-0 truncate">{{ $attachment->filename }}</span>
-                                        </div>
-                                        <div class="ml-4 flex-shrink-0">
-                                            <a href="{{ $attachment->url }}" target="_blank" class="font-medium text-indigo-600 hover:text-indigo-500">
-                                                Download
-                                            </a>
-                                        </div>
-                                    </li>
-                                    @endforeach
-                                </ul>
-                            </dd>
+                            <dt class="text-sm font-medium text-gray-500">Additional Documentation Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $legalDoc->others_location ?? 'No additional documents' }}</dd>
                         </div>
-                        @endif
                     </dl>
                 </div>
 
