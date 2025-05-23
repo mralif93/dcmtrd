@@ -1976,7 +1976,7 @@ class ApproverController extends Controller
             ApprovalForm::create($validated);
 
             return redirect()
-                ->route('approval-form-a.index')
+                ->route('approval-form-a.main')
                 ->with('success', 'Approval form created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1999,7 +1999,7 @@ class ApproverController extends Controller
             $approvalForm->update($validated);
 
             return redirect()
-                ->route('approval-form-a.index')
+                ->route('approval-form-a.main')
                 ->with('success', 'Approval form updated successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2018,10 +2018,11 @@ class ApproverController extends Controller
         return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
             'property_id' => 'required|exists:properties,id',
-            'category' => 'required|string|max:255',
+            'category' => 'nullable|string|max:100',
+            'details' => 'nullable|string',
             'received_date' => 'required|date',
-            'send_date' => 'required|date',
-            'status' => 'required|string|max:255',
+            'send_date' => 'nullable|date|after_or_equal:received_date',
+            'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
         ]);
     }
 
