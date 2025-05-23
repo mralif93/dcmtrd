@@ -151,31 +151,6 @@
                                                         d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 </svg>
                                             </a>
-
-                                            <!-- Toggle Redeem -->
-                                            <form method="POST"
-                                                action="{{ route('facility.toggle-redeem', $facility->id) }}">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" title="Toggle Redeem"
-                                                    class="{{ $facility->is_redeemed ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800' }}">
-                                                    @if ($facility->is_redeemed)
-                                                        <!-- Icon for Redeemed -->
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
-                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                        </svg>
-                                                    @else
-                                                        <!-- Icon for Not Redeemed -->
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
-                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2" d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                    @endif
-                                                </button>
-                                            </form>
                                         </div>
                                     </td>
                                 </tr>
