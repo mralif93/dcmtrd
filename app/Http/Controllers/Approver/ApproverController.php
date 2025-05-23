@@ -282,6 +282,14 @@ class ApproverController extends Controller
         return view('approver.bond.show', compact('bond', 'relatedDocuments'));
     }
 
+    public function toggleRedeem(FacilityInformation $facility)
+    {
+        $facility->is_redeemed = !$facility->is_redeemed;
+        $facility->save();
+
+        return redirect()->route('bond-a.details', $facility->issuer)->with('success', 'Facility Information redeemed status updated successfully');
+    }
+
     /**
      * Get additional bond data via AJAX after initial page load
      */

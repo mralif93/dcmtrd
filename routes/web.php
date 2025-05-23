@@ -471,7 +471,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/facility-info/{facility}/update', [MakerController::class, 'FacilityInfoUpdate'])->name('facility-info-m.update')->middleware('permission:DCMTRD');
     Route::get('maker/facility-info/{facility}/show', [MakerController::class, 'FacilityInfoShow'])->name('facility-info-m.show')->middleware('permission:DCMTRD');
 
-    Route::patch('/maker/facility-info/{facility}/toggle-redeem', [MakerController::class, 'toggleRedeem'])->name('facility.toggle-redeem');
+
     // Rating Movement Module
     Route::get('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementCreate'])->name('rating-m.create')->middleware('permission:DCMTRD');
     Route::post('maker/rating-movement/{bond}/create', [MakerController::class, 'RatingMovementStore'])->name('rating-m.store')->middleware('permission:DCMTRD');
@@ -790,6 +790,8 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
 
     // Facility Info Module
     Route::get('approver/facility-info/{facility}/show', [ApproverController::class, 'FacilityInfoShow'])->name('facility-info-a.show')->middleware('permission:DCMTRD');
+
+    Route::patch('/approver/facility-info/{facility}/toggle-redeem', [ApproverController::class, 'toggleRedeem'])->name('facility.toggle-redeem');
 
     // Trustee Fee Module
     Route::get('approver/trustee-fee', [ApproverController::class, 'TrusteeFeeIndex'])->name('trustee-fee-a.index')->middleware('permission:DCMTRD');
