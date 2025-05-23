@@ -145,6 +145,7 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Site Visit Date</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Main Status</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component Status</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -164,6 +165,14 @@
                                             @if($checklist->approval_datetime)
                                                 Last Updated: {{ date('d M Y', strtotime($checklist->updated_at)) }}
                                             @endif
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ $checklist->siteVisit->date_visit ? date('d M Y', strtotime($checklist->siteVisit->date_visit)) : 'N/A' }}
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            {{ $checklist->siteVisit->time_visit ? date('h:i A', strtotime($checklist->siteVisit->time_visit)) : 'N/A' }}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
