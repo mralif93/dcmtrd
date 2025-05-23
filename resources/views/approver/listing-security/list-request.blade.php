@@ -135,6 +135,10 @@
                                 </th>
                                 <th
                                     class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Request By
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                     Status
                                 </th>
                                 <th
@@ -160,6 +164,9 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                                         {{ $req->request_date ?? '-' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                        {{ $req->prepared_by ?? '-' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
