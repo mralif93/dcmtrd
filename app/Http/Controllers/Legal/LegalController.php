@@ -50,20 +50,13 @@ class LegalController extends Controller
         $validated = $this->ChecklistLegalDocumentationValidate($request);
     
         $validated['verified_by'] = Auth::user()->name;
-        $validated['status'] = 'Active';
+        $validated['status'] = 'pending';
 
         try {
             // Update the legal documentation
             $checklistLegalDocumentation->update($validated);
-
-            // Updated checklist to active
-            $checklist = $checklistLegalDocumentation->checklist;
-            $checklist['verified_by'] = Auth::user()->name;
-            $checklist['status'] = 'Active';
-            $checklist['approval_datetime'] = now();
-            $checklist->update();
             
-            return redirect()->route('legal.dashboard', ['section' => 'reits'])->with('success', 'Legal documentation updated successfully.');
+            return redirect()->route('legal.main')->with('success', 'Legal documentation updated successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error updating legal documentation: ' . $e->getMessage());
         }
