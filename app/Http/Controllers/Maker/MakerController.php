@@ -2329,12 +2329,18 @@ class MakerController extends Controller
     {
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
-            'name' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
             'contact_person' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'email' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'commencement_date' => 'nullable|date',
-            'expiry_date' => 'nullable|date|after:commencement_date',
+            'commencement_date' => 'required|date',
+            'approval_date' => 'nullable|date',
+            'expiry_date' => 'required|date|after:commencement_date',
+            'status' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|text',
+            'approval_datetime' => 'nullable|datetime',
         ]);
     }
 
