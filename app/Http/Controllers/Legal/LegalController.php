@@ -27,27 +27,37 @@ use App\Jobs\ListSecurity\SendListSecurityRequestEmail;
 
 class LegalController extends Controller
 {
+    public function indexMain(Request $request)
+    {
+        // Start with the Checklist query
+        $query = Checklist::with(['siteVisit.property', 'legalDocumentation']);
+
+        // Get checklists with related data
+        $checklists = $query->latest()->paginate(10)->withQueryString();
+
+        return view('legal.checklist.index', compact('checklists'));
+    }
     public function index(Request $request)
     {
         // Start with the Checklist query
         $query = Checklist::with(['siteVisit.property', 'legalDocumentation']);
-        
+
         // Apply filters if provided
         if ($request->has('status') && $request->status != '') {
-            $query->whereHas('legalDocumentation', function($q) use ($request) {
+            $query->whereHas('legalDocumentation', function ($q) use ($request) {
                 $q->where('status', $request->status);
             });
         }
-        
+
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->whereHas('siteVisit.property', function($q) use ($search) {
+            $query->whereHas('siteVisit.property', function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('city', 'like', '%' . $search . '%')
-                  ->orWhere('address', 'like', '%' . $search . '%');
+                    ->orWhere('city', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%');
             });
         }
-        
+
         // Get checklists with related data
         $checklists = $query->latest()->paginate(10)->withQueryString();
 
@@ -76,7 +86,7 @@ class LegalController extends Controller
         try {
             // Update the legal documentation
             $checklistLegalDocumentation->update($validated);
-            
+
             return redirect()
                 ->route('legal.dashboard', ['section' => 'reits'])
                 ->with('success', 'Legal documentation updated successfully.');
@@ -117,11 +127,6 @@ class LegalController extends Controller
             'remarks' => 'nullable|string',
             'approval_datetime' => 'nullable|date',
         ]);
-    }
-
-    public function ChecklistLegalDocumentationShow(Checklist $checklist)
-    {
-        return view('legal.checklist-legal-documentation.show', compact('checklist'));
     }
 
     public function SecDocuments(Request $request)
