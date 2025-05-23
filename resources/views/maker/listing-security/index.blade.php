@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                {{ __('Transaction Documents') }}
+                {{ __('Corporate Bond Listing Security') }}
             </h2>
 
             <!-- Dropdown Menu -->
@@ -54,7 +54,7 @@
                         <!-- Listing Security -->
                         <a href="{{ route('list-security-m.index') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Transaction Documents') }}
+                            {{ __('Corporate Bond Listing Security') }}
                         </a>
 
                         <!-- Listing Security -->
@@ -111,7 +111,7 @@
                 <div
                     class="flex flex-col px-6 py-5 space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                     <div>
-                        <h3 class="text-xl font-semibold text-gray-900">📄 List of Transaction Documents</h3>
+                        <h3 class="text-xl font-semibold text-gray-900">📄 List of Corporate Bond Listing Security</h3>
                         <p class="px-4 py-2 mt-2 text-sm text-red-800 bg-red-100 rounded-md shadow-sm">
                             ⚠️ Only <strong>active</strong> status will display in Legal Department view.<br>
                             Make sure status is <strong>active</strong> and <strong>submitted for approval</strong>
@@ -137,7 +137,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
-                            Add Transaction Documents
+                            Add Corporate Bond Listing Security
                         </a>
 
                         <!-- View Requests Button -->

@@ -105,7 +105,7 @@
 
             <div class="overflow-hidden bg-white shadow sm:rounded-lg">
                 <div class="flex items-center justify-between px-4 py-5 sm:px-6">
-                    <h3 class="text-lg font-semibold text-gray-900">List of Transaction Documents Request</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">List of Corporate Bond Security Request</h3>
                 </div>
 
                 <!-- List of Securities Table -->

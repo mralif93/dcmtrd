@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Create New Transaction Documents Request') }}
+            {{ __('Create New Corporate Bond Security Request') }}
         </h2>
     </x-slot>
 
