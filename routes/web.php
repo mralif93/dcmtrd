@@ -396,8 +396,8 @@ Route::middleware(['auth', 'two-factor', 'role:legal'])->group(function () {
     Route::get('legal/checklist/{checklist}/show', [LegalController::class, 'ChecklistShow'])->name('checklist-l.show')->middleware('permission:LEGAL');
 
     // Checklist Legal Module
-    Route::get('legal/checklist-legal/{checklist}/edit', [LegalController::class, 'ChecklistLegalDocumentationEdit'])->name('checklist-legal-l.edit')->middleware('permission:LEGAL');
-    Route::patch('legal/checklist-legal/{checklistLegalDocumentation}/update', [LegalController::class, 'ChecklistLegalDocumentationUpdate'])->name('checklist-legal-l.update')->middleware('permission:LEGAL');
+    Route::get('legal/checklist-legal/{checklistLegalDocumentation}/edit', [LegalController::class, 'ChecklistLegalDocumentationEdit'])->name('checklist-legal-l.edit')->middleware('permission:LEGAL');
+    Route::patch('legal/checklist-legal/{checklistLegalDocumentation}/update', [LegalController::class, 'ChecklistLegalDocumentationUpdate'])->name('checklist-legal-l.update');
     Route::get('legal/checklist-legal/{checklistLegalDocumentation}/show', [LegalController::class, 'ChecklistLegalDocumentationShow'])->name('checklist-legal-l.show')->middleware('permission:LEGAL');
 });
 
@@ -576,6 +576,12 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::patch('maker/list-security/{id}/back-to-draft', [MakerController::class, 'BackToDraft'])->name('back-to-draft-m.approval')->middleware('permission:DCMTRD');
     Route::post('maker/list-security/{security}/reset', [MakerController::class, 'resetToDraft'])->name('list-security-m.reset')->middleware('permission:DCMTRD');
     Route::get('maker/list-security/{security}/details', [MakerController::class, 'ListSecurityDetails'])->name('list-security-m.details')->middleware('permission:DCMTRD');
+    Route::get('/maker/list-security/{security}/request-documents/history', [MakerController::class, 'RequestDocumentsHistory'])->name('maker.request-documents.history')->middleware('permission:DCMTRD');
+    Route::get('/maker/list-security/request-documents/create', [MakerController::class, 'RequestDocumentsCreate'])->name('maker.request-documents.create')->middleware('permission:DCMTRD');
+    Route::post('/maker/list-security/request-documents', [MakerController::class, 'RequestDocumentsStore'])->name('maker.request-documents.store')->middleware('permission:DCMTRD');
+    Route::get('/maker/list-security/request-documents/{security}/edit', [MakerController::class, 'RequestDocumentsEdit'])->name('maker.request-documents.edit')->middleware('permission:DCMTRD');
+    Route::patch('/maker/list-security/request-documents/{security}/update', [MakerController::class, 'RequestDocumentsUpdate'])->name('maker.request-documents.update')->middleware('permission:DCMTRD');
+    Route::patch('/maker/list-security/request-documents/{id}/submit', [MakerController::class, 'submitRequest'])->name('maker.request-documents.submit')->middleware('permission:DCMTRD');
 
     // Listing Security Module
     Route::get('maker/fund-transfer', [MakerController::class, 'ListFundTransfer'])->name('fund-transfer-m.index')->middleware('permission:DCMTRD');

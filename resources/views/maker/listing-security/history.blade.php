@@ -4,7 +4,7 @@
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 Security Request History for: {{ $security->security_name }}
             </h2>
-            <a href="{{ route('legal.sec-documents') }}"
+            <a href="{{ route('list-security-m.index') }}"
                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700">
                 ← Back
             </a>
@@ -100,14 +100,14 @@
                                             <td class="px-6 py-4 text-right whitespace-nowrap">
                                                 @if ($request->status == 'Draft' && $request->prepared_by == auth()->user()->name)
                                                     <!-- Edit Button -->
-                                                    <a href="{{ route('legal.request-documents.edit', $request->id) }}"
+                                                    <a href="{{ route('maker.request-documents.edit', $request->id) }}"
                                                         class="inline-flex items-center px-3 py-1 text-xs font-medium text-white bg-yellow-500 rounded hover:bg-yellow-600">
                                                         ✏️ Edit
                                                     </a>
 
                                                     <!-- Submit Button -->
                                                     <form method="POST"
-                                                        action="{{ route('legal.request-documents.submit', $request->id) }}"
+                                                        action="{{ route('maker.request-documents.submit', $request->id) }}"
                                                         class="inline-block ml-2"
                                                         onsubmit="return confirm('Are you sure you want to submit this request?');">
                                                         @csrf
@@ -125,8 +125,6 @@
                                                     </span>
                                                 @endif
                                             </td>
-
-
                                         </tr>
                                     @endforeach
                                 </tbody>

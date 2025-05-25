@@ -52,80 +52,105 @@
                                 <!-- Title References -->
                                 <div>
                                     <label for="title_ref" class="block text-sm font-medium text-gray-700">Title Reference</label>
-                                    <input type="text" name="title_ref" id="title_ref" value="{{ old('title_ref', $legalDocumentation->title_ref) }}" 
+                                    <input type="text" name="title_ref" id="title_ref" value="{{ old('title_ref', $legalDocumentation->title_ref ?? '') }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                                 
                                 <div>
                                     <label for="title_location" class="block text-sm font-medium text-gray-700">Title Location</label>
-                                    <input type="text" name="title_location" id="title_location" value="{{ old('title_location', $legalDocumentation->title_location) }}" 
+                                    <input type="text" name="title_location" id="title_location" value="{{ old('title_location', $legalDocumentation->title_location ?? '') }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
 
                                 <!-- Trust Deed -->
                                 <div>
                                     <label for="trust_deed_ref" class="block text-sm font-medium text-gray-700">Trust Deed Reference</label>
-                                    <input type="text" name="trust_deed_ref" id="trust_deed_ref" value="{{ old('trust_deed_ref', $legalDocumentation->trust_deed_ref) }}" 
+                                    <input type="text" name="trust_deed_ref" id="trust_deed_ref" value="{{ old('trust_deed_ref', $legalDocumentation->trust_deed_ref ?? '') }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                                 
                                 <div>
                                     <label for="trust_deed_location" class="block text-sm font-medium text-gray-700">Trust Deed Location</label>
-                                    <input type="text" name="trust_deed_location" id="trust_deed_location" value="{{ old('trust_deed_location', $legalDocumentation->trust_deed_location) }}" 
+                                    <input type="text" name="trust_deed_location" id="trust_deed_location" value="{{ old('trust_deed_location', $legalDocumentation->trust_deed_location ?? '') }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
 
                                 <!-- Sale Purchase Agreement -->
                                 <div>
-                                    <label for="sale_purchase_agreement" class="block text-sm font-medium text-gray-700">Sale Purchase Agreement</label>
-                                    <input type="text" name="sale_purchase_agreement" id="sale_purchase_agreement" value="{{ old('sale_purchase_agreement', $legalDocumentation->sale_purchase_agreement) }}" 
+                                    <label for="sale_purchase_agreement_ref" class="block text-sm font-medium text-gray-700">Sale Purchase Agreement Reference</label>
+                                    <input type="text" name="sale_purchase_agreement_ref" id="sale_purchase_agreement_ref" value="{{ old('sale_purchase_agreement_ref', $legalDocumentation->sale_purchase_agreement_ref ?? '') }}" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="sale_purchase_agreement_location" class="block text-sm font-medium text-gray-700">Sale Purchase Agreement Location</label>
+                                    <input type="text" name="sale_purchase_agreement_location" id="sale_purchase_agreement_location" value="{{ old('sale_purchase_agreement_location', $legalDocumentation->sale_purchase_agreement_location ?? '') }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
 
                                 <!-- Lease Agreement -->
                                 <div>
                                     <label for="lease_agreement_ref" class="block text-sm font-medium text-gray-700">Lease Agreement Reference</label>
-                                    <input type="text" name="lease_agreement_ref" id="lease_agreement_ref" value="{{ old('lease_agreement_ref', $legalDocumentation->lease_agreement_ref) }}" 
+                                    <input type="text" name="lease_agreement_ref" id="lease_agreement_ref" value="{{ old('lease_agreement_ref', $legalDocumentation->lease_agreement_ref ?? '') }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                                 
                                 <div>
                                     <label for="lease_agreement_location" class="block text-sm font-medium text-gray-700">Lease Agreement Location</label>
-                                    <input type="text" name="lease_agreement_location" id="lease_agreement_location" value="{{ old('lease_agreement_location', $legalDocumentation->lease_agreement_location) }}" 
+                                    <input type="text" name="lease_agreement_location" id="lease_agreement_location" value="{{ old('lease_agreement_location', $legalDocumentation->lease_agreement_location ?? '') }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
 
+                                <!-- Agreement to Lease -->
                                 <div>
-                                    <label for="agreement_to_lease" class="block text-sm font-medium text-gray-700">Agreement to Lease</label>
-                                    <input type="text" name="agreement_to_lease" id="agreement_to_lease" value="{{ old('agreement_to_lease', $legalDocumentation->agreement_to_lease) }}" 
+                                    <label for="agreement_to_lease_ref" class="block text-sm font-medium text-gray-700">Agreement to Lease Reference</label>
+                                    <input type="text" name="agreement_to_lease_ref" id="agreement_to_lease_ref" value="{{ old('agreement_to_lease_ref', $legalDocumentation->agreement_to_lease_ref ?? '') }}" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="agreement_to_lease_location" class="block text-sm font-medium text-gray-700">Agreement to Lease Location</label>
+                                    <input type="text" name="agreement_to_lease_location" id="agreement_to_lease_location" value="{{ old('agreement_to_lease_location', $legalDocumentation->agreement_to_lease_location ?? '') }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
 
                                 <!-- Maintenance Agreement -->
                                 <div>
                                     <label for="maintenance_agreement_ref" class="block text-sm font-medium text-gray-700">Maintenance Agreement Reference</label>
-                                    <input type="text" name="maintenance_agreement_ref" id="maintenance_agreement_ref" value="{{ old('maintenance_agreement_ref', $legalDocumentation->maintenance_agreement_ref) }}" 
+                                    <input type="text" name="maintenance_agreement_ref" id="maintenance_agreement_ref" value="{{ old('maintenance_agreement_ref', $legalDocumentation->maintenance_agreement_ref ?? '') }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                                 
                                 <div>
                                     <label for="maintenance_agreement_location" class="block text-sm font-medium text-gray-700">Maintenance Agreement Location</label>
-                                    <input type="text" name="maintenance_agreement_location" id="maintenance_agreement_location" value="{{ old('maintenance_agreement_location', $legalDocumentation->maintenance_agreement_location) }}" 
+                                    <input type="text" name="maintenance_agreement_location" id="maintenance_agreement_location" value="{{ old('maintenance_agreement_location', $legalDocumentation->maintenance_agreement_location ?? '') }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
 
                                 <!-- Development Agreement -->
                                 <div>
-                                    <label for="development_agreement" class="block text-sm font-medium text-gray-700">Development Agreement</label>
-                                    <input type="text" name="development_agreement" id="development_agreement" value="{{ old('development_agreement', $legalDocumentation->development_agreement) }}" 
+                                    <label for="development_agreement_ref" class="block text-sm font-medium text-gray-700">Development Agreement Reference</label>
+                                    <input type="text" name="development_agreement_ref" id="development_agreement_ref" value="{{ old('development_agreement_ref', $legalDocumentation->development_agreement_ref ?? '') }}" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="development_agreement_location" class="block text-sm font-medium text-gray-700">Development Agreement Location</label>
+                                    <input type="text" name="development_agreement_location" id="development_agreement_location" value="{{ old('development_agreement_location', $legalDocumentation->development_agreement_location ?? '') }}" 
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
 
                                 <!-- Other Legal Docs -->
-                                <div class="md:col-span-2">
-                                    <label for="other_legal_docs" class="block text-sm font-medium text-gray-700">Other Legal Documents</label>
-                                    <textarea name="other_legal_docs" id="other_legal_docs" rows="3" 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('other_legal_docs', $legalDocumentation->other_legal_docs) }}</textarea>
+                                <div>
+                                    <label for="others_ref" class="block text-sm font-medium text-gray-700">Other Legal Documents Reference</label>
+                                    <input type="text" name="others_ref" id="others_ref" value="{{ old('others_ref', $legalDocumentation->others_ref ?? '') }}" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="others_location" class="block text-sm font-medium text-gray-700">Other Legal Documents Location</label>
+                                    <input type="text" name="others_location" id="others_location" value="{{ old('others_location', $legalDocumentation->others_location ?? '') }}" 
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
                             </div>
                         </div>

@@ -59,6 +59,8 @@ use App\Jobs\ListSecurity\SendListSecurityRejectedEmail;
 use App\Jobs\ListSecurity\SendListSecurityWithdrawalEmail;
 use App\Jobs\TrusteeFee\SendTrusteeFeeApprovedNotification;
 use App\Jobs\TrusteeFee\SendTrusteeFeeRejectedNotification;
+use App\Jobs\ActivityDiary\SendActivityDiaryApprovedEmailJob;
+use App\Jobs\ActivityDiary\SendActivityDiaryRejectedEmailJob;
 
 class ApproverController extends Controller
 {
@@ -661,6 +663,8 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
 
+            dispatch(new SendActivityDiaryApprovedEmailJob($activity));
+
             return redirect()
                 ->route('activity-diary-a.index')
                 ->with('success', 'Activity Diary approved successfully.');
@@ -683,6 +687,8 @@ class ApproverController extends Controller
                 'verified_by' => Auth::user()->name,
                 'remarks' => $request->input('rejection_reason'),
             ]);
+
+            dispatch(new SendActivityDiaryRejectedEmailJob($activity));
 
             return redirect()
                 ->route('activity-diary-a.index')
@@ -1976,9 +1982,69 @@ class ApproverController extends Controller
         return view('approver.approval-form.index', compact('approvalForms', 'portfolios', 'categories'));
     }
 
+    // create approval form
+    public function ApprovalFormCreate()
+    {
+        $portfolios = Portfolio::all();
+        $properties = Property::all();
+        return view('approver.approval-form.create', compact('portfolios', 'properties'));
+    }
+
+    public function ApprovalFormStore(Request $request)
+    {
+        $validated = $this->ApprovalFormValidate($request);
+
+        try {
+            ApprovalForm::create($validated);
+
+            return redirect()
+                ->route('approval-form-a.index')
+                ->with('success', 'Approval form created successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error creating approval form: ' . $e->getMessage());
+        }
+    }
+
+    public function ApprovalFormEdit(ApprovalForm $approvalForm)
+    {
+        $portfolios = Portfolio::all();
+        $properties = Property::all();
+        return view('approver.approval-form.edit', compact('approvalForm', 'portfolios', 'properties'));
+    }
+
+    public function ApprovalFormUpdate(Request $request, ApprovalForm $approvalForm)
+    {
+        $validated = $this->ApprovalFormValidate($request);
+
+        try {
+            $approvalForm->update($validated);
+
+            return redirect()
+                ->route('approval-form-a.index')
+                ->with('success', 'Approval form updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Error updating approval form: ' . $e->getMessage());
+        }
+    }
+
     public function ApprovalFormShow(ApprovalForm $approvalForm)
     {
         return view('approver.approval-form.show', compact('approvalForm'));
+    }
+
+    // approval form validate module
+    public function ApprovalFormValidate(Request $request, ApprovalForm $approvalForm = null)
+    {
+        return $request->validate([
+            'portfolio_id' => 'required|exists:portfolios,id',
+            'property_id' => 'required|exists:properties,id',
+            'category' => 'required|string|max:255',
+            'received_date' => 'required|date',
+            'send_date' => 'required|date',
+            'status' => 'required|string|max:255',
+        ]);
     }
 
     public function ApprovalFormMain(Request $request)

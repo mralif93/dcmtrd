@@ -59,7 +59,7 @@
                             </a>
                             <a href="{{ route('document-m.create', $issuer) }}"
                                 class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
-                                Security Document
+                                Transaction Documents
                             </a>
                             <a href="{{ route('adi-holder-m.create', $issuer) }}"
                                 class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
@@ -295,7 +295,7 @@
                     <button @click="openSection = openSection === 'documents' ? null : 'documents'"
                         class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-xl font-semibold">Security Documents</h3>
+                            <h3 class="text-xl font-semibold">Transaction Documents</h3>
                             <svg class="w-6 h-6 transition-transform transform"
                                 :class="{ 'rotate-180': openSection === 'documents' }" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">

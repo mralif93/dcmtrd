@@ -30,15 +30,18 @@ class DcmtReportController extends Controller
 
         $facilities = FacilityInformation::with(['issuer.bonds', 'trusteeFees'])
             ->whereHas('issuer', function ($query) {
-                $query->whereIn('debenture', ['Corporate Bond', 'Loan']);
+                $query->where('status', 'Active') // Only active issuers
+                    ->whereIn('debenture', ['Corporate Bond', 'Loan']);
             })
             ->when($search, function ($query, $search) {
-                $query->where('facility_code', 'like', '%' . $search . '%')
-                    ->orWhere('facility_name', 'like', '%' . $search . '%')
-                    ->orWhereHas('issuer', function ($query) use ($search) {
-                        $query->where('issuer_short_name', 'like', '%' . $search . '%')
-                            ->orWhere('issuer_name', 'like', '%' . $search . '%');
-                    });
+                $query->where(function ($q) use ($search) {
+                    $q->where('facility_code', 'like', '%' . $search . '%')
+                        ->orWhere('facility_name', 'like', '%' . $search . '%')
+                        ->orWhereHas('issuer', function ($q) use ($search) {
+                            $q->where('issuer_short_name', 'like', '%' . $search . '%')
+                                ->orWhere('issuer_name', 'like', '%' . $search . '%');
+                        });
+                });
             })
             ->paginate(10)
             ->withQueryString();
@@ -77,6 +80,7 @@ class DcmtReportController extends Controller
     }
 
 
+
     public function cbReportsA(Request $request)
     {
         // Get the search query from the request
@@ -84,15 +88,18 @@ class DcmtReportController extends Controller
 
         $reports = FacilityInformation::with(['issuer.bonds', 'trusteeFees'])
             ->whereHas('issuer', function ($query) {
-                $query->whereIn('debenture', ['Corporate Bond', 'Loan']);
+                $query->where('status', 'Active') // Only active issuers
+                    ->whereIn('debenture', ['Corporate Bond', 'Loan']);
             })
             ->when($search, function ($query, $search) {
-                $query->where('facility_code', 'like', '%' . $search . '%')
-                    ->orWhere('facility_name', 'like', '%' . $search . '%')
-                    ->orWhereHas('issuer', function ($query) use ($search) {
-                        $query->where('issuer_short_name', 'like', '%' . $search . '%')
-                            ->orWhere('issuer_name', 'like', '%' . $search . '%');
-                    });
+                $query->where(function ($q) use ($search) {
+                    $q->where('facility_code', 'like', '%' . $search . '%')
+                        ->orWhere('facility_name', 'like', '%' . $search . '%')
+                        ->orWhereHas('issuer', function ($q) use ($search) {
+                            $q->where('issuer_short_name', 'like', '%' . $search . '%')
+                                ->orWhere('issuer_name', 'like', '%' . $search . '%');
+                        });
+                });
             })
             ->paginate(10)
             ->withQueryString();
@@ -134,6 +141,7 @@ class DcmtReportController extends Controller
     {
         // Eager-load relationships and filter only Corporate Trust issuers
         $reports = Issuer::with(['facilities.trusteeFees'])
+            ->where('status', 'Active')
             ->where('debenture', 'Corporate Trust')
             ->paginate(10)
             ->withQueryString();
@@ -158,6 +166,7 @@ class DcmtReportController extends Controller
     {
         // Eager-load relationships and filter only Corporate Trust issuers
         $reports = Issuer::with(['facilities.trusteeFees'])
+            ->where('status', 'Active')
             ->where('debenture', 'Corporate Trust')
             ->paginate(10)
             ->withQueryString();
@@ -214,7 +223,8 @@ class DcmtReportController extends Controller
 
         $reports = FacilityInformation::with(['issuer.bonds', 'trusteeFees'])
             ->whereHas('issuer', function ($query) {
-                $query->whereIn('debenture', ['Corporate Bond', 'Loan']);
+                $query->where('status', 'Active') // Only active issuers
+                    ->whereIn('debenture', ['Corporate Bond', 'Loan']);
             })
             ->when($search, function ($query, $search) {
                 $query->where('facility_code', 'like', '%' . $search . '%')
@@ -273,7 +283,8 @@ class DcmtReportController extends Controller
 
         $reports = FacilityInformation::with(['issuer.bonds', 'trusteeFees'])
             ->whereHas('issuer', function ($query) {
-                $query->whereIn('debenture', ['Corporate Bond', 'Loan']);
+                $query->where('status', 'Active') // Only active issuers
+                    ->whereIn('debenture', ['Corporate Bond', 'Loan']);
             })
             ->when($search, function ($query, $search) {
                 $query->where('facility_code', 'like', '%' . $search . '%')

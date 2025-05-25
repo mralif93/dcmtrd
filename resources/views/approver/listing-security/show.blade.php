@@ -42,7 +42,7 @@
                                 {{ \Carbon\Carbon::parse($security->request_date)->format('Y-m-d') }}</dd>
                         </div>
                         <div class="flex flex-col">
-                            <dt class="text-gray-500">Request By (Legal Department)</dt>
+                            <dt class="text-gray-500">Request By </dt>
                             <dd class="font-medium text-gray-900">{{ $security->prepared_by }}</dd>
                         </div>
                         <div class="flex flex-col">

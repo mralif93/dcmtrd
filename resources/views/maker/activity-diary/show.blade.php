@@ -44,22 +44,29 @@
                 <div class="px-4 py-3 border-t border-gray-200 bg-gray-50">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
+                            @php
+                                $statusColors = [
+                                    'Completed' => 'bg-green-100 text-green-800',
+                                    'Overdue' => 'bg-red-100 text-red-800',
+                                    'In Progress' => 'bg-blue-100 text-blue-800',
+                                    'Compiled' => 'bg-purple-100 text-purple-800',
+                                    'Notification' => 'bg-orange-100 text-orange-800',
+                                    'Passed' => 'bg-teal-100 text-teal-800',
+                                    'Draft' => 'bg-gray-100 text-gray-800',
+                                    'Active' => 'bg-emerald-100 text-emerald-800',
+                                    'Rejected' => 'bg-rose-100 text-rose-800',
+                                    'Pending' => 'bg-yellow-100 text-yellow-800',
+                                ];
+
+                                $status = $activity->status ?? 'Pending';
+                                $statusClass = $statusColors[$status] ?? 'bg-yellow-100 text-yellow-800';
+                            @endphp
+
                             <span
-                                class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full {{ $activity->status == 'Completed'
-                                    ? 'bg-green-100 text-green-800'
-                                    : ($activity->status == 'Overdue'
-                                        ? 'bg-red-100 text-red-800'
-                                        : ($activity->status == 'In progress'
-                                            ? 'bg-blue-100 text-blue-800'
-                                            : ($activity->status == 'Compiled'
-                                                ? 'bg-purple-100 text-purple-800'
-                                                : ($activity->status == 'Notification'
-                                                    ? 'bg-orange-100 text-orange-800'
-                                                    : ($activity->status == 'Passed'
-                                                        ? 'bg-teal-100 text-teal-800'
-                                                        : 'bg-yellow-100 text-yellow-800'))))) }}">
-                                {{ ucfirst(str_replace('_', ' ', $activity->status ?? 'Pending')) }}
+                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
+                                {{ ucfirst(str_replace('_', ' ', $status)) }}
                             </span>
+
 
                             @if ($activity->due_date)
                                 @php
@@ -270,7 +277,7 @@
                 </div>
 
                 <!-- Status Update Section (if not completed) -->
-                @if ($activity->status != 'completed')
+                @if ($activity->status !== 'Pending' && $activity->status !== 'Rejected')
                     <div class="px-4 py-5 border-t border-gray-200 sm:px-6">
                         <h3 class="mb-4 text-lg font-medium leading-6 text-gray-900">Update Status</h3>
                         <form action="{{ route('activity-diary-m.update-status', $activity) }}" method="POST"
@@ -280,8 +287,6 @@
 
                             <select name="status"
                                 class="border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                <option value="Pending" {{ $activity->status == 'Pending' ? 'selected' : '' }}>Pending
-                                </option>
                                 <option value="In_progress"
                                     {{ $activity->status == 'In_progress' ? 'selected' : '' }}>In Progress</option>
                                 <option value="Completed">Mark as Completed</option>
