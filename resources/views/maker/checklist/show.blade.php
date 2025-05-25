@@ -90,18 +90,22 @@
                                     $tenantStatuses = $checklist->tenants->pluck('pivot.status')->unique();
                                     
                                     // Determine an overall status
-                                    $overallStatus = 'N/A';
+                                    $overallStatus = 'draft';
                                     if($tenantStatuses->contains('pending')) {
                                         $overallStatus = 'pending';
                                     } elseif($tenantStatuses->count() > 0 && $tenantStatuses->every(function($status) { return $status === 'active'; })) {
                                         $overallStatus = 'active';
                                     } elseif($tenantStatuses->isNotEmpty()) {
-                                        $overallStatus = 'in-progress';
+                                        $overallStatus = 'not available';
                                     }
                                     
                                     // Set the appropriate CSS classes based on status
-                                    $statusClasses = $overallStatus === 'active' ? 'bg-green-100 text-green-800' : 
-                                                ($overallStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800');
+                                    $statusClasses = match($overallStatus) {
+                                        'active' => 'bg-green-100 text-green-800',
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'rejected' => 'bg-red-100 text-red-800',
+                                        default => 'bg-gray-100 text-gray-800'
+                                    };
                                 @endphp
                                 
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $statusClasses }}">
@@ -151,18 +155,39 @@
                                     // Count all disposal installation items
                                     $totalItems = $checklist->disposalInstallation->count();
                                     
-                                    // Count completed items
-                                    $completedItems = $checklist->disposalInstallation->where('status', 'active')->count();
-                                    
-                                    // Check if all items are completed
-                                    $allCompleted = ($totalItems > 0 && $completedItems == $totalItems);
-                                    
-                                    // Set status text
-                                    $statusText = $allCompleted ? 'active' : 'pending';
+                                    // If no items, show as draft
+                                    if ($totalItems == 0) {
+                                        $statusText = 'draft';
+                                    } else {
+                                        // Count items by status
+                                        $activeItems = $checklist->disposalInstallation->where('status', 'active')->count();
+                                        $pendingItems = $checklist->disposalInstallation->where('status', 'pending')->count();
+                                        
+                                        // Determine overall status
+                                        if ($activeItems == $totalItems) {
+                                            $statusText = 'active';
+                                        } elseif ($pendingItems == $totalItems) {
+                                            $statusText = 'pending';
+                                        } else {
+                                            $statusText = 'pending'; // Mixed statuses default to pending
+                                        }
+                                    }
                                     
                                     // Set appropriate color classes based on status
-                                    $bgColorClass = $allCompleted ? 'bg-green-100' : 'bg-yellow-100';
-                                    $textColorClass = $allCompleted ? 'text-green-800' : 'text-yellow-800';
+                                    $bgColorClass = match($statusText) {
+                                        'active' => 'bg-green-100',
+                                        'pending' => 'bg-yellow-100',
+                                        'rejected' => 'bg-red-100',
+                                        'draft' => 'bg-gray-100',
+                                        default => 'bg-gray-100'
+                                    };
+                                    $textColorClass = match($statusText) {
+                                        'active' => 'text-green-800',
+                                        'pending' => 'text-yellow-800',
+                                        'rejected' => 'text-red-800',
+                                        'draft' => 'text-gray-800',
+                                        default => 'text-gray-800'
+                                    };
                                 @endphp
 
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $bgColorClass }} {{ $textColorClass }}">

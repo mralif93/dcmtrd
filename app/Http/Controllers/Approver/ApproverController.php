@@ -59,6 +59,8 @@ use App\Jobs\ListSecurity\SendListSecurityRejectedEmail;
 use App\Jobs\ListSecurity\SendListSecurityWithdrawalEmail;
 use App\Jobs\TrusteeFee\SendTrusteeFeeApprovedNotification;
 use App\Jobs\TrusteeFee\SendTrusteeFeeRejectedNotification;
+use App\Jobs\ActivityDiary\SendActivityDiaryApprovedEmailJob;
+use App\Jobs\ActivityDiary\SendActivityDiaryRejectedEmailJob;
 
 class ApproverController extends Controller
 {
@@ -659,6 +661,8 @@ class ApproverController extends Controller
                 'approval_datetime' => now(),
             ]);
 
+            dispatch(new SendActivityDiaryApprovedEmailJob($activity));
+
             return redirect()
                 ->route('activity-diary-a.index')
                 ->with('success', 'Activity Diary approved successfully.');
@@ -681,6 +685,8 @@ class ApproverController extends Controller
                 'verified_by' => Auth::user()->name,
                 'remarks' => $request->input('rejection_reason'),
             ]);
+
+            dispatch(new SendActivityDiaryRejectedEmailJob($activity));
 
             return redirect()
                 ->route('activity-diary-a.index')

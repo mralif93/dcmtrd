@@ -5,23 +5,25 @@
         </h2>
     </x-slot>
 
-    @if(Auth::user()->hasPermission('LEGAL'))
-    <div class="hidden py-12 dashboard-section" id="legal-section" data-section="legal">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <p>Legal Information</p>
+    @if (Auth::user()->hasPermission('LEGAL'))
+        <div class="hidden py-12 dashboard-section" id="legal-section" data-section="legal">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <p>Legal Information</p>
+            </div>
         </div>
-    </div>
     @endif
 
-    {{-- @if(Auth::user()->hasPermission('REITS')) --}}
+    {{-- @if (Auth::user()->hasPermission('REITS')) --}}
     <div class="hidden py-12 dashboard-section" id="reits-section" data-section="reits">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            @if(session('success'))
+            @if (session('success'))
                 <div class="p-4 mb-6 border-l-4 border-green-400 bg-green-50">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd" />
                             </svg>
                         </div>
                         <div class="ml-3">
@@ -45,18 +47,22 @@
                 </div>
 
                 <!-- Search and Filter Bar -->
-                <div class="hidden px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
-                    <form method="GET" action="{{ route('checklists.index') }}" class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div class="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
+                    <form method="GET" action="{{ route('legal.dashboard') }}"
+                        class="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <!-- Search Field -->
                         <div>
-                            <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                            <label for="search" class="block text-sm font-medium text-gray-700">Search
+                                Property</label>
                             <div class="relative mt-1 rounded-md shadow-sm">
-                                <input type="text" name="search" id="search" value="{{ request('search') }}" 
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
-                                    placeholder="Search by property, tenant...">
+                                <input type="text" name="search" id="search" value="{{ request('search') }}"
+                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    placeholder="Search by property name or city...">
                                 <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
                                 </div>
                             </div>
@@ -65,28 +71,38 @@
                         <!-- Status Filter -->
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                            <select name="status" id="status" 
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">All Status</option>
-                                <option value="active" @selected(request('status') === 'active')>Active</option>
-                                <option value="pending" @selected(request('status') === 'pending')>Pending</option>
-                                <option value="rejected" @selected(request('status') === 'rejected')>Rejected</option>
-                                <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
+                            <select id="status" name="status"
+                                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">All Statuses</option>
+                                @foreach ($statuses as $status)
+                                    <option value="{{ $status }}"
+                                        {{ request('status') == $status ? 'selected' : '' }}>
+                                        {{ ucfirst($status) }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
 
-                        <!-- Filter Button -->
-                        <div class="flex items-end">
-                            <button type="submit" 
-                                    class="inline-flex items-center px-4 py-2 text-xs font-medium tracking-widest text-white uppercase bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                        <!-- Submit and Reset Buttons -->
+                        <div class="flex items-end space-x-2">
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 -ml-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
-                                Apply Filters
+                                Search
                             </button>
 
-                            @if(request('search') || request('status'))
-                                <a href="{{ route('checklists.index') }}" class="inline-flex items-center px-4 py-2 ml-2 text-xs font-medium tracking-widest text-gray-700 uppercase bg-gray-200 border border-transparent rounded-md hover:bg-gray-300">
+                            @if (request('search') || request('status'))
+                                <a href="{{ route('legal.dashboard') }}"
+                                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 -ml-1" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
                                     Clear
                                 </a>
                             @endif
@@ -99,80 +115,143 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Property</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Site Visit</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Prepared By</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Actions</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Property</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Site Visit</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Status</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Prepared By</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">
+                                    Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($checklists as $checklist)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">{{ $checklist->siteVisit->property->name ?? 'N/A' }}</div>
-                                        <div class="text-xs text-gray-500">{{ $checklist->siteVisit->property->address ?? 'N/A' }}</div>
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ $checklist->siteVisit->property->name ?? 'N/A' }}</div>
+                                        <div class="text-xs text-gray-500">
+                                            {{ $checklist->siteVisit->property->address ?? 'N/A' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        @if($checklist->siteVisit)
+                                        @if ($checklist->siteVisit)
                                             <div class="text-sm text-gray-900">
-                                                <span class="font-medium">Date:</span> {{ $checklist->siteVisit->date_visit ? date('d M Y', strtotime($checklist->siteVisit->date_visit)) : 'N/A' }}
+                                                <span class="font-medium">Date:</span>
+                                                {{ $checklist->siteVisit->date_visit ? date('d M Y', strtotime($checklist->siteVisit->date_visit)) : 'N/A' }}
                                             </div>
                                             <div class="text-xs text-gray-500">
-                                                <span class="font-medium">Time:</span> {{ $checklist->siteVisit->time_visit ? date('h:i A', strtotime($checklist->siteVisit->time_visit)) : 'N/A' }}
+                                                <span class="font-medium">Time:</span>
+                                                {{ $checklist->siteVisit->time_visit ? date('h:i A', strtotime($checklist->siteVisit->time_visit)) : 'N/A' }}
                                             </div>
                                         @else
                                             <div class="text-sm text-gray-500">No visit scheduled</div>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                                            {{ match(strtolower($checklist->status)) {
+                                        @if ($checklist->legalDocumentation && $checklist->legalDocumentation->status)
+                                            <span
+                                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ match (strtolower($checklist->legalDocumentation->status)) {
                                                 'active' => 'bg-green-100 text-green-800',
                                                 'pending' => 'bg-yellow-100 text-yellow-800',
                                                 'rejected' => 'bg-red-100 text-red-800',
                                                 'inactive' => 'bg-gray-100 text-gray-800',
-                                                default => 'bg-gray-100 text-gray-800'
+                                                default => 'bg-gray-100 text-gray-800',
                                             } }}">
-                                            {{ ucfirst($checklist->status) }}
-                                        </span>
-                                        @if($checklist->approval_datetime)
-                                            <div class="mt-1 text-xs text-gray-500">
-                                                Approved: {{ date('d M Y', strtotime($checklist->approval_datetime)) }}
-                                            </div>
+                                                {{ ucfirst($checklist->legalDocumentation->status) }}
+                                            </span>
+                                            @if ($checklist->legalDocumentation->approval_datetime)
+                                                <div class="mt-1 text-xs text-gray-500">
+                                                    Approved:
+                                                    {{ date('d M Y', strtotime($checklist->legalDocumentation->approval_datetime)) }}
+                                                </div>
+                                            @endif
+                                        @else
+                                            <span
+                                                class="inline-flex px-2 py-1 text-xs font-semibold leading-5 text-gray-800 bg-gray-100 rounded-full">
+                                                Not Started
+                                            </span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $checklist->prepared_by ?? 'Not assigned' }}</div>
-                                        @if($checklist->verified_by)
-                                            <div class="text-xs text-gray-500">Verified by: {{ $checklist->verified_by }}</div>
+                                        @if ($checklist->legalDocumentation && $checklist->legalDocumentation->prepared_by)
+                                            <div class="text-sm text-gray-900">
+                                                {{ $checklist->legalDocumentation->prepared_by ?? 'Not assigned' }}
+                                            </div>
+                                        @else
+                                            <div class="text-sm text-gray-900">Not assigned</div>
+                                        @endif
+                                        @if ($checklist->legalDocumentation && $checklist->legalDocumentation->verified_by)
+                                            <div class="text-xs text-gray-500">Verified by:
+                                                {{ $checklist->legalDocumentation->verified_by }}</div>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                                         <div class="flex justify-end space-x-2">
-                                            <a href="{{ route('checklist-legal-l.edit', $checklist) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                </svg>
-                                            </a>
-                                            <a href="{{ route('checklist-l.show', $checklist) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                </svg>
-                                            </a>
+                                            @if ($checklist->legalDocumentation)
+                                                <a href="{{ route('checklist-legal-l.edit', $checklist->legalDocumentation->id) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                </a>
+                                                <a href="{{ route('checklist-legal-l.show', $checklist->legalDocumentation->id) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                </a>
+                                            @else
+                                                <span class="text-gray-400 cursor-not-allowed">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                </span>
+                                                <span class="text-gray-400 cursor-not-allowed">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5
+                                                    .586-8.586z" />
+                                                    </svg>
+                                                </span>
+                                            @endif
+
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap">No checklists found {{ request('search') ? 'matching your search' : '' }}</td>
+                                    <td colspan="5"
+                                        class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap">No
+                                        checklists found {{ request('search') ? 'matching your search' : '' }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-                
+
                 <!-- Pagination Links -->
                 <div class="px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
                     {{ $checklists->links() }}
@@ -188,24 +267,24 @@
             // Get the section parameter from the URL
             const urlParams = new URLSearchParams(window.location.search);
             const section = urlParams.get('section');
-            
+
             // Initially hide the default message (will show it if no valid section is found)
             const defaultMessage = document.getElementById('default-message');
-            
+
             // Select all section elements
             const sections = document.querySelectorAll('.dashboard-section');
-            
+
             // If a section parameter is present
             if (section) {
                 // Find the target section
                 const targetSection = document.querySelector(`[data-section="${section}"]`);
-                
+
                 if (targetSection) {
                     // Hide default message
                     if (defaultMessage) {
                         defaultMessage.classList.add('hidden');
                     }
-                    
+
                     // Show only the target section
                     targetSection.classList.remove('hidden');
                 } else {

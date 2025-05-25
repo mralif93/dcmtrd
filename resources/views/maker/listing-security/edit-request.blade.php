@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Create New Request for Corporate Bond Security') }}
+            {{ __('Edit Security Documents Request') }}
         </h2>
     </x-slot>
 
@@ -34,8 +34,11 @@
             @endif
 
             <div class="overflow-hidden bg-white shadow sm:rounded-lg">
-                <form action="{{ route('legal.request-documents.store') }}" method="POST" class="p-6">
+                <form action="{{ route('maker.request-documents.update', $documentRequest->id) }}" method="POST"
+                    class="p-6">
                     @csrf
+                    @method('PATCH')
+
                     <div class="pb-6 space-y-6">
                         <!-- Basic Information Section -->
                         <div class="pb-6 border-b border-gray-200">
@@ -51,7 +54,7 @@
                                         <option value="">-- Select Security --</option>
                                         @foreach ($listSecurities as $security)
                                             <option value="{{ $security->id }}"
-                                                {{ old('security_id') == $security->id ? 'selected' : '' }}>
+                                                {{ old('security_id', $documentRequest->list_security_id) == $security->id ? 'selected' : '' }}>
                                                 {{ $security->security_name }} ({{ $security->security_code }})
                                             </option>
                                         @endforeach
@@ -63,7 +66,7 @@
                                     <label for="request_date" class="block text-sm font-medium text-gray-700">Request
                                         Date *</label>
                                     <input type="date" name="request_date" id="request_date" required
-                                        value="{{ old('request_date') }}"
+                                        value="{{ old('request_date', $documentRequest->request_date) }}"
                                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 </div>
 
@@ -72,7 +75,7 @@
                                     <label for="purpose" class="block text-sm font-medium text-gray-700">Purpose
                                         *</label>
                                     <textarea name="purpose" id="purpose" rows="4" required
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('purpose') }}</textarea>
+                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('purpose', $documentRequest->purpose) }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -86,26 +89,25 @@
                                     <label class="block text-sm font-medium text-gray-700">Prepared By</label>
                                     <div
                                         class="px-4 py-2 mt-1 text-gray-700 bg-gray-100 border border-gray-300 rounded-md shadow-sm">
-                                        {{ $user->name }}
+                                        {{ auth()->user()->name }}
                                     </div>
                                     <!-- Hidden input to send value to backend -->
-                                    <input type="hidden" name="prepared_by" value="{{ $user->name }}">
+                                    <input type="hidden" name="prepared_by" value="{{ auth()->user()->name }}">
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
 
                     <!-- Form Actions -->
                     <div class="flex justify-end gap-4 pt-6 border-gray-200">
-                        <a href="{{ route('legal.sec-documents') }}"
+                        <a href="{{ route('maker.request-documents.history', $documentRequest->list_security_id) }}"
                             class="inline-flex items-center px-4 py-2 font-medium text-gray-700 bg-gray-200 border border-transparent rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                            Cancel
+                            View History
                         </a>
+
                         <button type="submit"
                             class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Create New Security Documents Request
+                            Update Security Document Request
                         </button>
                     </div>
                 </form>

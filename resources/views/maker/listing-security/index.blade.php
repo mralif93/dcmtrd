@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                {{ __('Transaction Documents') }}
+                {{ __('Corporate Bond Listing Security') }}
             </h2>
 
             <!-- Dropdown Menu -->
@@ -54,7 +54,7 @@
                         <!-- Listing Security -->
                         <a href="{{ route('list-security-m.index') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Transaction Documents') }}
+                            {{ __('Corporate Bond Listing Security') }}
                         </a>
 
                         <!-- Listing Security -->
@@ -111,7 +111,7 @@
                 <div
                     class="flex flex-col px-6 py-5 space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                     <div>
-                        <h3 class="text-xl font-semibold text-gray-900">📄 List of Transaction Documents</h3>
+                        <h3 class="text-xl font-semibold text-gray-900">📄 List of Corporate Bond Listing Security</h3>
                         <p class="px-4 py-2 mt-2 text-sm text-red-800 bg-red-100 rounded-md shadow-sm">
                             ⚠️ Only <strong>active</strong> status will display in Legal Department view.<br>
                             Make sure status is <strong>active</strong> and <strong>submitted for approval</strong>
@@ -121,7 +121,7 @@
 
                     <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
                         <!-- Create Button -->
-                        <a href="{{ route('legal.request-documents.create') }}"
+                        <a href="{{ route('maker.request-documents.create') }}"
                             class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition duration-150 bg-pink-700 rounded-lg shadow hover:bg-pink-800">
                             <svg class="w-4 h-4 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -137,7 +137,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
-                            Add Transaction Documents
+                            Add Corporate Bond Listing Security
                         </a>
 
                         <!-- View Requests Button -->
@@ -337,7 +337,16 @@
 
                                             </form>
                                         @else
-                                            <span class="text-xs text-gray-400">No action available</span>
+                                            <a href="{{ route('maker.request-documents.history', $security->id) }}"
+                                                class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded hover:bg-blue-200">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M12 8v4l3 3M12 4a8 8 0 100 16 8 8 0 000-16z" />
+                                                </svg>
+                                                History
+                                            </a>
                                         @endif
                                     </td>
 

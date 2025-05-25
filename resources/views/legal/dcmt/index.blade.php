@@ -31,7 +31,7 @@
                     <div class="flex flex-wrap items-center justify-between gap-4">
                         <!-- Left: Title -->
                         <h3 class="text-lg font-semibold text-gray-900 whitespace-nowrap">
-                            List of Security Documents Request
+                            List of Corporate Bond Security Request
                         </h3>
 
                         <!-- Right: Search, Reset, Create -->
