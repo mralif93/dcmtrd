@@ -3,7 +3,7 @@ services:
         build:
             context: .
             dockerfile: docker/DockerFile
-        image:  matkmin/docker-image-2024:latest
+        image: matkmin/docker-image-2024:latest
         container_name: "dcmtrd-app"
         platform: linux/amd64
         networks:
@@ -17,7 +17,7 @@ services:
             - ".:/var/www/html"
             - "./docker/php.ini:/usr/local/etc/php/conf.d/php.ini"
     nginx:
-        image:  matkmin/docker-image-2024:nginx
+        image: matkmin/docker-image-2024:nginx
         container_name: dcmtrd-nginx
         platform: linux/amd64
         restart: unless-stopped
