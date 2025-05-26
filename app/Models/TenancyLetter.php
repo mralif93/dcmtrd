@@ -25,12 +25,12 @@ class TenancyLetter extends Model
     protected $fillable = [
         'lease_id',
 
-        // letter head information
+        // Letter reference information
         'your_reference',
         'our_reference',
         'letter_date',
 
-        // sender information
+        // Recipient information
         'recipient_company',
         'recipient_address_line_1',
         'recipient_address_line_2',
@@ -40,23 +40,16 @@ class TenancyLetter extends Model
         'recipient_address_state',
         'recipient_address_country',
 
-        // recipient information
-        'attention_to_name',
-        'attention_to_position',
-
-        // letter content
-        'description_1',
-        'description_2',
-        'description_3',
+        // Date
         'letter_offer_date',
-
-        // signature information
-        'trustee_name',
+        'supplemental_letter_offer_date',
+        
+        // Signature information
         'approver_name',
         'approver_position',
         'approver_department',
-
-        // system information
+    
+        // System information
         'status',
         'prepared_by',
         'verified_by',
@@ -72,6 +65,7 @@ class TenancyLetter extends Model
     protected $casts = [
         'letter_date' => 'date',
         'letter_offer_date' => 'date',
+        'supplemental_letter_offer_date' => 'date',
         'approval_datetime' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

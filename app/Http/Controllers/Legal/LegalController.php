@@ -66,7 +66,7 @@ class LegalController extends Controller
     public function ChecklistLegalDocumentationUpdate(Request $request, ChecklistLegalDocumentation $checklistLegalDocumentation)
     {
         $validated = $this->ChecklistLegalDocumentationValidate($request);
-    
+
         $validated['verified_by'] = Auth::user()->name;
         $validated['status'] = 'pending';
 
