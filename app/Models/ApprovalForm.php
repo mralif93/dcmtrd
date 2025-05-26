@@ -11,6 +11,13 @@ class ApprovalForm extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'approval_forms';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

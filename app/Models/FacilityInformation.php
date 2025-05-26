@@ -14,6 +14,11 @@ class FacilityInformation extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'facility_informations';
 
     protected $fillable = [

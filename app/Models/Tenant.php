@@ -11,6 +11,13 @@ class Tenant extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'tenants';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

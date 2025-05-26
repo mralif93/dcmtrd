@@ -11,6 +11,13 @@ class Appointment extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'appointments';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
