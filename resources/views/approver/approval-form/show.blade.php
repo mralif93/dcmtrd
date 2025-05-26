@@ -167,68 +167,42 @@
                 </div>
             </div>
             
-            <!-- Approval Information -->
-            <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
-                <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg font-medium text-gray-900">System Information</h3>
-                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Processing details and approval status.</p>
-                </div>
-                
+            <!-- Administrative Information Section -->
                 <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Administrative Information</h3>
+                    </div>
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Status</dt>
-                            <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                    {{ $approvalForm->status === 'approved' ? 'bg-green-100 text-green-800' : 
-                                       ($approvalForm->status === 'rejected' ? 'bg-red-100 text-red-800' : 
-                                        'bg-yellow-100 text-yellow-800') }}">
-                                    {{ ucfirst($approvalForm->status) }}
-                                </span>
-                            </dd>
-                        </div>
-                        
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                @if($approvalForm->preparedBy)
-                                    {{ $approvalForm->preparedBy->name }}
-                                @else
-                                    <span class="text-gray-500">Not specified</span>
-                                @endif
-                            </dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $portfolio->prepared_by ?? 'N/A' }}</dd>
                         </div>
-                        
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                @if($approvalForm->verifiedBy)
-                                    {{ $approvalForm->verifiedBy->name }}
-                                @else
-                                    <span class="text-gray-500">Not verified yet</span>
-                                @endif
-                            </dd>
-                        </div>
-                        
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Approval Date & Time</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $approvalForm->approval_datetime ? $approvalForm->approval_datetime->format('d M Y H:i') : 'Pending approval' }}
-                            </dd>
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $portfolio->verified_by ?? 'N/A' }}</dd>
                         </div>
-                        
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Created</dt>
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $approvalForm->created_at->format('d M Y H:i') }}
+                                {{ $portfolio->approval_datetime ? date('d/m/Y h:i A', strtotime($portfolio->approval_datetime)) : 'Not yet approved' }}
                             </dd>
                         </div>
-                        
+                    </dl>
+                </div>
+
+                <!-- System Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">System Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $portfolio->created_at->format('d/m/Y h:i A') }}</dd>
+                        </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $approvalForm->updated_at->format('d M Y H:i') }}
-                            </dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $portfolio->updated_at->format('d/m/Y h:i A') }}</dd>
                         </div>
                     </dl>
                 </div>

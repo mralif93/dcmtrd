@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Create New Approval Form') }}
             </h2>
-            <a href="{{ route('approval-form-m.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
+            <a href="{{ route('approval-form-a.main') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-500 focus:outline-none focus:border-gray-500 focus:shadow-outline-gray transition ease-in-out duration-150">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -40,7 +40,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('approval-form-m.store') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('approval-form-a.store') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="grid grid-cols-1 gap-6">
@@ -51,8 +51,8 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Portfolio Dropdown -->
                                 <div>
-                                    <label for="portfolio_id" class="block text-sm font-medium text-gray-500">Portfolio</label>
-                                    <select name="portfolio_id" id="portfolio_id" 
+                                    <label for="portfolio_id" class="block text-sm font-medium text-gray-500">Portfolio *</label>
+                                    <select name="portfolio_id" id="portfolio_id" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">-- Select Portfolio --</option>
                                         @foreach($portfolios as $portfolio)
@@ -68,8 +68,8 @@
                                 
                                 <!-- Property Dropdown -->
                                 <div>
-                                    <label for="property_id" class="block text-sm font-medium text-gray-500">Property</label>
-                                    <select name="property_id" id="property_id"
+                                    <label for="property_id" class="block text-sm font-medium text-gray-500">Property *</label>
+                                    <select name="property_id" id="property_id" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                         <option value="">-- Select Property --</option>
                                         @foreach($properties as $property)
@@ -92,13 +92,9 @@
                                 <!-- Category -->
                                 <div class="col-span-2">
                                     <label for="category" class="block text-sm font-medium text-gray-500">Category</label>
-                                    <select name="category" id="category"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">-- Select Category --</option>
-                                        @foreach(['Legal', 'Financial', 'Operational', 'Administrative', 'Technical', 'Others'] as $category)
-                                            <option value="{{ $category }}" @selected(old('category') == $category)>{{ $category }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="text" name="category" id="category" 
+                                           value="{{ old('category') }}"
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('category')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -143,21 +139,9 @@
                                 </div>
                             </div>
 
-                            <div class="col-span-1">
-                                <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Additional Information</h3>
-                            </div>
+                            <div class="mb-2"></div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Remarks -->
-                                <div class="col-span-2">
-                                    <label for="remarks" class="block text-sm font-medium text-gray-500">Remarks</label>
-                                    <textarea id="remarks" name="remarks" rows="4" 
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks') }}</textarea>
-                                    @error('remarks')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
                                 <!-- Attachment -->
                                 <div class="col-span-2">
                                     <label for="attachment" class="block text-sm font-medium text-gray-500">Attachment</label>
@@ -173,7 +157,7 @@
 
                         <div class="border-t border-gray-200 py-4 mt-6">
                             <div class="flex justify-end gap-4">
-                                <a href="{{ route('approval-form-m.index') }}" 
+                                <a href="{{ route('approval-form-a.main') }}" 
                                    class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                                     <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
