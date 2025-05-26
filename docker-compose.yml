@@ -3,7 +3,7 @@ services:
         build:
             context: .
             dockerfile: docker/DockerFile
-        image: php:8.3-fpm-alpine
+        image: dcmtrd:php8.3
         container_name: "dcmtrd-app"
         platform: linux/amd64
         networks:
@@ -17,7 +17,7 @@ services:
             - ".:/var/www/html"
             - "./docker/php.ini:/usr/local/etc/php/conf.d/php.ini"
     nginx:
-        image: nginx:1.25-alpine
+        image: nginx:alpine
         container_name: dcmtrd-nginx
         platform: linux/amd64
         restart: unless-stopped
@@ -32,7 +32,7 @@ services:
         depends_on:
             - dcmtrd-app
     mariadb:
-        image: mariadb:11.3
+        image: mariadb:10.11.13
         container_name: dcmtrd-mariadb
         platform: linux/amd64
         restart: unless-stopped
@@ -49,7 +49,7 @@ services:
         networks:
             - app-network
     redis:
-        image: redis:7.2-alpine
+        image: redis:alpine3.21
         container_name: dcmtrd-redis
         platform: linux/amd64
         restart: unless-stopped
