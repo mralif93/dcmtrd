@@ -212,7 +212,7 @@
 
                             <!-- Additional External Remarks -->
                             <div class="mb-6">
-                                <label for="external_remarks" class="block text-sm font-medium text-gray-700">Additional External Remarks</label>
+                                <label for="external_remarks" class="block text-sm font-medium text-gray-700">External Remarks</label>
                                 <textarea id="external_remarks" name="external_remarks" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('external_remarks', $checklistExternalAreaCondition->external_remarks) }}</textarea>
                             </div>
                         </div>

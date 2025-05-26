@@ -1585,7 +1585,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistLegalDocumentation->checklist)
+                ->route('checklist-a.details', $checklistLegalDocumentation->checklist)
                 ->with('success', 'Checklist Legal Documentation approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1607,7 +1607,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistLegalDocumentation->checklist)
+                ->route('checklist-a.details', $checklistLegalDocumentation->checklist)
                 ->with('success', 'Checklist Legal Documentation rejected successfully.');
         } catch (\Exception $e) {
             return back()
