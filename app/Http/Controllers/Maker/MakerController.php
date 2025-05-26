@@ -3458,9 +3458,9 @@ class MakerController extends Controller
         }
     }
 
-    public function ChecklistDisposalInstallationShow(Checklist $checklist, ChecklistDisposalInstallation $disposalInst)
+    public function ChecklistDisposalInstallationShow(Checklist $checklist, ChecklistDisposalInstallation $checklistDisposalInstallation)
     {
-        return view('maker.checklist.disposal-installation.show', compact('checklist', 'disposalInst'));
+        return view('maker.checklist.disposal-installation.show', compact('checklist', 'checklistDisposalInstallation'));
     }
 
     public function SubmitApprovalChecklistDisposalInstallation(ChecklistDisposalInstallation $checklistDisposalInstallation)
