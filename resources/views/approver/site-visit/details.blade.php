@@ -34,7 +34,14 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $siteVisit->status_badge_class }}">
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                    {{ match(strtolower($siteVisit->status)) {
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'active' => 'bg-green-100 text-green-800',
+                                        'inactive' => 'bg-gray-100 text-gray-800',
+                                        'rejected' => 'bg-red-100 text-red-800',
+                                        default => 'bg-gray-100 text-gray-800'
+                                    } }}">
                                     {{ ucfirst($siteVisit->status) }}
                                 </span>
                                 @if($siteVisit->follow_up_required)
@@ -47,56 +54,82 @@
                     </dl>
                 </div>
 
+               <!-- Remarks Section -->
+                @if($siteVisit->remarks)
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Remarks</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:px-6">
+                            <p class="text-sm text-gray-900">{{ $siteVisit->remarks }}</p>
+                        </div>
+                    </dl>
+                </div>
+                @endif
+
+                <!-- Property Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Property Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Property Name</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <a href="{{ route('property-m.show', $siteVisit->property->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                                    {{ $siteVisit->property->name }}
+                                </a>
+                            </dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Property Address</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->property->address }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Property Type</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->property->category ?? 'N/A' }}</dd>
+                        </div>
+                    </dl>
+                </div>
+
                 <!-- Visit Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
                         <h3 class="text-lg leading-6 font-medium text-gray-900">Visit Information</h3>
                     </div>
                     <dl>
+                        <!-- Visit Date and Time -->
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Property</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <a href="{{ route('property-a.show', $siteVisit->property) }}" class="text-indigo-600 hover:text-indigo-900">
-                                    {{ $siteVisit->property->name ?? 'N/A' }}
-                                </a>
-                            </dd>
+                            <dt class="text-sm font-medium text-gray-500">Visit Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ date('d/m/Y', strtotime($siteVisit->date_visit)) }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Visit Date</dt>
+                            <dt class="text-sm font-medium text-gray-500">Visit Time</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ date('H:i', strtotime($siteVisit->time_visit)) }}</dd>
+                        </div>
+                        
+                        <!-- Submission Date -->
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Submission Date</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $siteVisit->date_visit->format('d/m/Y') }}
-                                @if($siteVisit->isToday())
-                                    <span class="ml-2 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                        Today
-                                    </span>
-                                @elseif($siteVisit->isPast())
-                                    <span class="ml-2 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                        Past
-                                    </span>
+                                {{ $siteVisit->submission_date ? date('d/m/Y', strtotime($siteVisit->submission_date)) : 'Not submitted yet' }}
+                            </dd>
+                        </div>
+                        
+                        <!-- Follow Up Required -->
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Follow Up Required</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                @if($siteVisit->follow_up_required)
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Yes</span>
                                 @else
-                                    <span class="ml-2 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                        Upcoming
-                                    </span>
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">No</span>
                                 @endif
                             </dd>
                         </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Visit Time</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->formatted_time }}</dd>
-                        </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Submission Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->submission_date ? $siteVisit->submission_date->format('d/m/Y') : 'Not submitted yet' }}</dd>
-                        </div>
-                    </dl>
-                </div>
-
-                <!-- Personnel Section -->
-                <div class="border-t border-gray-200">
-                    <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Personnel</h3>
-                    </div>
-                    <dl>
+                        
+                        <!-- Personnel Information -->
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Trustee</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->trustee ?? 'N/A' }}</dd>
@@ -113,95 +146,49 @@
                             <dt class="text-sm font-medium text-gray-500">Building Manager</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->building_manager ?? 'N/A' }}</dd>
                         </div>
+                        
+                        <!-- Notes and Attachment -->
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Notes</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->notes ?? 'No notes available' }}</dd>
+                        </div>
+                        @if($siteVisit->attachment)
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Attachment</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <a href="{{ $siteVisit->attachment_url }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                                    <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                    </svg>
+                                    View Attachment
+                                </a>
+                            </dd>
+                        </div>
+                        @endif
                     </dl>
                 </div>
 
-                <!-- Notes Section -->
+                <!-- Administrative Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Notes</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Administrative Information</h3>
                     </div>
-                    <div class="px-4 py-5 sm:px-6">
-                        <div class="prose prose-sm max-w-none text-gray-900">
-                            @if($siteVisit->notes)
-                                {!! nl2br(e($siteVisit->notes)) !!}
-                            @else
-                                <p class="text-sm text-gray-500">No notes available.</p>
-                            @endif
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->prepared_by ?? 'N/A' }}</dd>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Attachment Section -->
-                @if($siteVisit->hasAttachment())
-                <div class="border-t border-gray-200">
-                    <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Attachments</h3>
-                    </div>
-                    <div class="px-4 py-5 sm:px-6">
-                        <div class="flex items-center">
-                            <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
-                            </svg>
-                            <a href="{{ $siteVisit->attachment_url }}" target="_blank" class="ml-2 text-sm text-indigo-600 hover:text-indigo-900">
-                                View Attachment
-                            </a>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->verified_by ?? 'N/A' }}</dd>
                         </div>
-                    </div>
-                </div>
-                @endif
-
-                <!-- Checklist Section -->
-                <div class="border-t border-gray-200">
-                    <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Checklist</h3>
-                    </div>
-                    <div class="px-4 py-5 sm:px-6">
-                        @if($siteVisit->checklist)
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Item
-                                            </th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Status
-                                            </th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Notes
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach($siteVisit->checklist->items as $item)
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {{ $item->name }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ match(strtolower($item->pivot->status)) {
-                                                            'completed' => 'bg-green-100 text-green-800',
-                                                            'pending' => 'bg-yellow-100 text-yellow-800',
-                                                            'failed' => 'bg-red-100 text-red-800',
-                                                            default => 'bg-gray-100 text-gray-800'
-                                                        } }}">
-                                                        {{ ucfirst($item->pivot->status) }}
-                                                    </span>
-                                                </td>
-                                                <td class="px-6 py-4 text-sm text-gray-500">
-                                                    {{ $item->pivot->notes ?? 'N/A' }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <p class="text-sm text-gray-500">No checklist available for this site visit.</p>
-                        @endif
-                    </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $siteVisit->approval_datetime ? date('d/m/Y h:i A', strtotime($siteVisit->approval_datetime)) : 'Not yet approved' }}
+                            </dd>
+                        </div>
+                    </dl>
                 </div>
 
                 <!-- System Information Section -->
@@ -218,20 +205,6 @@
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->updated_at->format('d/m/Y h:i A') }}</dd>
                         </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->prepared_by ?? 'N/A' }}</dd>
-                        </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $siteVisit->verified_by ?? 'N/A' }}</dd>
-                        </div>
-                        @if($siteVisit->approval_datetime)
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ \Carbon\Carbon::parse($siteVisit->approval_datetime)->format('d/m/Y H:i') }}</dd>
-                        </div>
-                        @endif
                     </dl>
                 </div>
 
@@ -239,43 +212,9 @@
                 <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
                     <div class="flex justify-end gap-x-4">
                         @if($siteVisit->status == 'pending')
-                            <form method="POST" action="{{ route('site-visit.approve', $siteVisit) }}" class="inline">
-                                @csrf
-                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Approve
-                                </button>
-                            </form>
-                            
-                            <button onclick="openCancelModal('{{ $siteVisit->id }}')" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                Cancel Visit
-                            </button>
                         @endif
                         
-                        @if($siteVisit->status == 'scheduled' || $siteVisit->status == 'pending')
-                            <a href="{{ route('site-visit.edit', $siteVisit) }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                                Edit
-                            </a>
-                        @endif
-                        
-                        @if($siteVisit->status == 'scheduled')
-                            <a href="{{ route('site-visit.complete', $siteVisit) }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                                Complete Visit
-                            </a>
-                        @endif
-                        
-                        <a href="{{ route('site-visit.index', ['status' => $siteVisit->status]) }}" 
+                        <a href="{{ route('site-visit-a.main') }}" 
                             class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
@@ -287,52 +226,4 @@
             </div>
         </div>
     </div>
-    
-    <!-- Cancel Modal -->
-    <div id="cancelModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div class="sm:flex sm:items-start">
-                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                        <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                    </div>
-                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Cancel Site Visit</h3>
-                        <div class="mt-2">
-                            <p class="text-sm text-gray-500">Please provide a reason for cancelling this site visit.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <form id="cancelForm" method="POST" action="">
-                    @csrf
-                    <div class="mt-4">
-                        <label for="cancellation_reason" class="block text-sm font-medium text-gray-700">Cancellation Reason</label>
-                        <textarea id="cancellation_reason" name="cancellation_reason" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
-                    </div>
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
-                            Cancel Visit
-                        </button>
-                        <button type="button" onclick="closeCancelModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                            Back
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function openCancelModal(siteVisitId) {
-            document.getElementById('cancelForm').action = `/approver/site-visit/${siteVisitId}/cancel`;
-            document.getElementById('cancelModal').classList.remove('hidden');
-        }
-        
-        function closeCancelModal() {
-            document.getElementById('cancelModal').classList.add('hidden');
-        }
-    </script>
 </x-app-layout>
