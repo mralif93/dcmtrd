@@ -35,7 +35,6 @@ class User extends Authenticatable
         'department',
         'office_location',
         'email_verified_at',
-        'password',
         'two_factor_code',
         'two_factor_expires_at',
         'two_factor_verified',
@@ -95,7 +94,7 @@ class User extends Authenticatable
     {
         return $this->attributes['two_factor_enabled'] ?? false;
     }
-    
+
     public function getTwoFactorExpiresAtAttribute(): ?\DateTime
     {
         return $this->attributes['two_factor_expires_at']
