@@ -161,33 +161,11 @@
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Attention Information -->
-                                <div class="col-span-2">
-                                    <h4 class="text-md font-medium text-gray-700 mb-2">Attention Information</h4>
-                                </div>
-
-                                <div>
-                                    <label for="attention_to_name" class="block text-sm font-medium text-gray-500">Attention To (Name)</label>
-                                    <input id="attention_to_name" type="text" name="attention_to_name" value="{{ old('attention_to_name', $tenancyLetter->attention_to_name) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('attention_to_name')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div>
-                                    <label for="attention_to_position" class="block text-sm font-medium text-gray-500">Attention To (Position)</label>
-                                    <input id="attention_to_position" type="text" name="attention_to_position" value="{{ old('attention_to_position', $tenancyLetter->attention_to_position) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('attention_to_position')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
                                 <!-- Letter Content -->
                                 <div class="col-span-2">
                                     <h4 class="text-md font-medium text-gray-700 mb-2">Letter Content</h4>
                                 </div>
 
-                                <!-- Letter Offer Date -->
                                 <div>
                                     <label for="letter_offer_date" class="block text-sm font-medium text-gray-500">Letter Offer Date</label>
                                     <input id="letter_offer_date" type="date" name="letter_offer_date" value="{{ old('letter_offer_date', $tenancyLetter->letter_offer_date ? $tenancyLetter->letter_offer_date->format('Y-m-d') : '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -196,41 +174,27 @@
                                     @enderror
                                 </div>
 
-                                <div class="col-span-2">
-                                    <label for="description_1" class="block text-sm font-medium text-gray-500">Description 1</label>
-                                    <textarea id="description_1" name="description_1" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description_1', $tenancyLetter->description_1) }}</textarea>
-                                    @error('description_1')
+                                <div>
+                                    <label for="supplemental_letter_offer_date" class="block text-sm font-medium text-gray-500">Supplemental Letter Offer Date</label>
+                                    <input id="supplemental_letter_offer_date" type="date" name="supplemental_letter_offer_date" value="{{ old('supplemental_letter_offer_date', $tenancyLetter->supplemental_letter_offer_date ? $tenancyLetter->supplemental_letter_offer_date->format('Y-m-d') : '') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('supplemental_letter_offer_date')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <div class="col-span-2">
-                                    <label for="description_2" class="block text-sm font-medium text-gray-500">Description 2</label>
-                                    <textarea id="description_2" name="description_2" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description_2', $tenancyLetter->description_2) }}</textarea>
-                                    @error('description_2')
+                                    <label for="remarks" class="block text-sm font-medium text-gray-500">Remarks</label>
+                                    <textarea id="remarks" name="remarks" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('remarks', $tenancyLetter->remarks) }}</textarea>
+                                    @error('remarks')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
+                            </div>
 
-                                <div class="col-span-2">
-                                    <label for="description_3" class="block text-sm font-medium text-gray-500">Description 3</label>
-                                    <textarea id="description_3" name="description_3" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description_3', $tenancyLetter->description_3) }}</textarea>
-                                    @error('description_3')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Signature Information -->
                                 <div class="col-span-2">
                                     <h4 class="text-md font-medium text-gray-700 mb-2">Signature Information</h4>
-                                </div>
-
-                                <div>
-                                    <label for="trustee_name" class="block text-sm font-medium text-gray-500">Trustee Name</label>
-                                    <input id="trustee_name" type="text" name="trustee_name" value="{{ old('trustee_name', $tenancyLetter->trustee_name) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('trustee_name')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
                                 </div>
 
                                 <div>

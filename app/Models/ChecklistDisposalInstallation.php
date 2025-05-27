@@ -13,6 +13,13 @@ class ChecklistDisposalInstallation extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'checklist_disposal_installations';
+
     protected $fillable = [
         'checklist_id',
         'component_name',

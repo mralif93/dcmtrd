@@ -1605,7 +1605,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistLegalDocumentation->checklist)
+                ->route('checklist-a.details', $checklistLegalDocumentation->checklist)
                 ->with('success', 'Checklist Legal Documentation approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1627,7 +1627,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistLegalDocumentation->checklist)
+                ->route('checklist-a.details', $checklistLegalDocumentation->checklist)
                 ->with('success', 'Checklist Legal Documentation rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1992,11 +1992,23 @@ class ApproverController extends Controller
     {
         $validated = $this->ApprovalFormValidate($request);
 
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+        // if send date is provided, set status to active
+        if ($request->filled('send_date')) {
+            $validated['status'] = 'active';
+        }
+
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+        }
+
         try {
             ApprovalForm::create($validated);
 
             return redirect()
-                ->route('approval-form-a.index')
+                ->route('approval-form-a.main')
                 ->with('success', 'Approval form created successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2015,11 +2027,26 @@ class ApproverController extends Controller
     {
         $validated = $this->ApprovalFormValidate($request);
 
+        // if send date is provided, set status to active
+        if ($request->filled('send_date')) {
+            $validated['status'] = 'active';
+        }
+
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            // Delete old attachment if exists
+            if ($approvalForm->attachment) {
+                Storage::disk('public')->delete($approvalForm->attachment);
+            }
+
+            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+        }
+
         try {
             $approvalForm->update($validated);
 
             return redirect()
-                ->route('approval-form-a.index')
+                ->route('approval-form-a.main')
                 ->with('success', 'Approval form updated successfully.');
         } catch (\Exception $e) {
             return back()
@@ -2038,10 +2065,11 @@ class ApproverController extends Controller
         return $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
             'property_id' => 'required|exists:properties,id',
-            'category' => 'required|string|max:255',
+            'category' => 'nullable|string|max:100',
+            'details' => 'nullable|string',
             'received_date' => 'required|date',
-            'send_date' => 'required|date',
-            'status' => 'required|string|max:255',
+            'send_date' => 'nullable|date|after_or_equal:received_date',
+            'attachment' => 'nullable|file|max:10240|mimes:pdf,doc,docx,jpg,jpeg,png',
         ]);
     }
 

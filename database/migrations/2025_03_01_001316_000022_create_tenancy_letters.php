@@ -32,20 +32,11 @@ return new class extends Migration
             $table->text('recipient_address_state')->nullable();
             $table->text('recipient_address_country')->nullable();
 
-            // Attention information
-            $table->string('attention_to_name')->nullable();
-            $table->string('attention_to_position')->nullable();
-
-            // Description
-            $table->text('description_1')->nullable();
-            $table->text('description_2')->nullable();
-            $table->text('description_3')->nullable();
-
-            // Letter Offer Date
+            // Date
             $table->date('letter_offer_date')->nullable();
+            $table->date('supplemental_letter_offer_date')->nullable();
             
-            // Approver information
-            $table->string('trustee_name')->nullable();
+            // Signature information
             $table->string('approver_name')->nullable();
             $table->string('approver_position')->nullable();
             $table->string('approver_department')->nullable();
