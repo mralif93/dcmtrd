@@ -1210,9 +1210,13 @@
                                 @if(optional($checklist->propertyDevelopment)->others_proposals_approvals_status)
                                 <div class="mt-1">Status: 
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $checklist->propertyDevelopment->others_proposals_approvals_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                    ($checklist->propertyDevelopment->others_proposals_approvals_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                    ($checklist->propertyDevelopment->others_proposals_approvals_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        {{ match(strtolower($checklist->propertyDevelopment->others_proposals_approvals_status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
                                         {{ ucfirst(str_replace('_', ' ', $checklist->propertyDevelopment->others_proposals_approvals_status)) }}
                                     </span>
                                 </div>
@@ -1236,7 +1240,7 @@
                         </div>
 
                         <!-- Remarks -->
-                        @if($checklist->propertyDevelopment->remarks)
+                        @if(optional($checklist->propertyDevelopment)->remarks)
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Remarks</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">

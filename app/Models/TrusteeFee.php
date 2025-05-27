@@ -12,6 +12,13 @@ class TrusteeFee extends Model implements Auditable
     use HasFactory, SoftDeletes, \OwenIt\Auditing\Auditable;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'trustee_fees';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

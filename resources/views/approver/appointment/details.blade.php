@@ -209,7 +209,7 @@
 
     <script>
         function openRejectModal(appointmentId) {
-            document.getElementById('rejectForm').action = `/appointment/${appointmentId}/reject`;
+            document.getElementById('rejectForm').action = `/approver/appointment/${appointmentId}/reject`;
             document.getElementById('rejectModal').classList.remove('hidden');
         }
         

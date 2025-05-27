@@ -1607,7 +1607,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistLegalDocumentation->checklist)
+                ->route('checklist-a.details', $checklistLegalDocumentation->checklist)
                 ->with('success', 'Checklist Legal Documentation approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1629,7 +1629,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistLegalDocumentation->checklist)
+                ->route('checklist-a.details', $checklistLegalDocumentation->checklist)
                 ->with('success', 'Checklist Legal Documentation rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1994,6 +1994,18 @@ class ApproverController extends Controller
     {
         $validated = $this->ApprovalFormValidate($request);
 
+        $validated['prepared_by'] = Auth::user()->name;
+        $validated['status'] = 'pending';
+
+        // if send date is provided, set status to active
+        if ($request->filled('send_date')) {
+            $validated['status'] = 'active';
+        }
+
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+        }
+
         try {
             ApprovalForm::create($validated);
 
@@ -2016,6 +2028,21 @@ class ApproverController extends Controller
     public function ApprovalFormUpdate(Request $request, ApprovalForm $approvalForm)
     {
         $validated = $this->ApprovalFormValidate($request);
+
+        // if send date is provided, set status to active
+        if ($request->filled('send_date')) {
+            $validated['status'] = 'active';
+        }
+
+        // Handle file upload if present
+        if ($request->hasFile('attachment')) {
+            // Delete old attachment if exists
+            if ($approvalForm->attachment) {
+                Storage::disk('public')->delete($approvalForm->attachment);
+            }
+
+            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+        }
 
         try {
             $approvalForm->update($validated);

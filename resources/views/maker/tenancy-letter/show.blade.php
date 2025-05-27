@@ -18,191 +18,125 @@
                     
                     <!-- Document Content -->
                     <div id="printableArea" class="bg-white document">
-                        <table class="w-full" style="border-collapse: collapse;">
-                            <!-- Header Section -->
-                            <tr>
-                                <td style="padding-bottom: 20px;">
-                                    <table class="w-full" style="border-collapse: collapse;">
-                                        <tr>
-                                            <td>Your Ref. : {{ $tenancyLetter->your_reference ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Our Ref. : {{ $tenancyLetter->our_reference ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Date : {{ $tenancyLetter->letter_date ? $tenancyLetter->letter_date->format('d F Y') : 'N/A' }}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            
-                            <!-- Sender Info Section -->
-                            <tr>
-                                <td style="padding-bottom: 20px;">
-                                    <table class="w-full" style="border-collapse: collapse;">
-                                        <tr>
-                                            <td class="font-bold">{{ $tenancyLetter->recipient_company ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>{{ $tenancyLetter->recipient_address_line_1 ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>{{ $tenancyLetter->recipient_address_line_2 ?? 'N/A' }}</td>
-                                        </tr>
-                                        @if($tenancyLetter->recipient_address_line_3)
-                                        <tr>
-                                            <td>{{ $tenancyLetter->recipient_address_line_3 ?? 'N/A' }}</td>
-                                        </tr>
-                                        @endif
-                                        <tr>
-                                            <td>{{ $tenancyLetter->recipient_address_postcode ?? 'N/A' }} {{ $tenancyLetter->recipient_address_city ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>{{ $tenancyLetter->recipient_address_state ?? 'N/A' }}, {{ $tenancyLetter->recipient_address_country ?? 'N/A' }}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            
-                            <!-- Attention Section -->
-                            <tr>
-                                <td style="padding-bottom: 20px;">
-                                    <table class="w-full" style="border-collapse: collapse;">
-                                        <tr>
-                                            <td width="95"><span class="font-semibold">Attention to:</span></td>
-                                            <td>{{ $tenancyLetter->attention_to_name ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td>{{ $tenancyLetter->attention_to_position ?? 'N/A' }}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            
-                            <!-- Greeting -->
-                            <tr>
-                                <td style="padding-bottom: 20px;">Dear Sir,</td>
-                            </tr>
-                            
-                            <!-- Subject Section -->
-                            <tr>
-                                <td style="padding-bottom: 20px;">
-                                    <table class="w-full" style="border-collapse: collapse;">
-                                        <tr>
-                                            <td class="font-bold" style="text-decoration: underline;">{{ $tenancyLetter->lease->tenant->property->portfolio->portfolio_name ?? 'N/A' }} REAL ESTATE INVESTMENT TRUST ("{{ $tenancyLetter->lease->tenant->property->portfolio->portfolio_name ?? 'N/A' }} REIT")</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-bold" style="text-decoration: underline;">{{ strtoupper($tenancyLetter->lease->tenancy_type) ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <table class="w-full" style="border-collapse: collapse;">
-                                                    <tr>
-                                                        <td width="140">Tenant</td>
-                                                        <td>: {{ strtoupper($tenancyLetter->lease->tenant->name) ?? 'N/A' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="140" style="vertical-align: top;">Demised Premises</td>
-                                                        <td>: {{ $tenancyLetter->lease->demised_premises ?? 'N/A' }} ({{ $tenancyLetter->lease->space ?? 'N/A' }} sq. ft.) ("Tenancy")</td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            
-                            <!-- Content Section -->
-                            <tr>
-                                <td style="padding-bottom: 20px;">
-                                    <table class="w-full" style="border-collapse: collapse;">
-                                        <tr>
-                                            <td style="padding-bottom: 15px;">The above matter and your letter dated {{ $tenancyLetter->letter_offer_date ? $tenancyLetter->letter_offer_date->format('d F Y') : 'N/A' }} refer.</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="padding-bottom: 15px;">{{ $tenancyLetter->description_1 ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="padding-bottom: 15px;">{{ $tenancyLetter->description_2 ?? 'N/A' }}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            
-                            <!-- Rental Table -->
-                            <tr>
-                                <td style="padding-bottom: 20px;">
-                                    <table class="w-full" style="border-collapse: collapse; border: 1px solid #ccc;">
-                                        <tr>
-                                            <th style="border: 1px solid #ccc; padding: 8px; text-align: center; width: 20%; background-color: #f2f2f2;">Year</th>
-                                            <th style="border: 1px solid #ccc; padding: 8px; text-align: center; width: 80%; background-color: #f2f2f2;">Total Monthly Rental</th>
-                                        </tr>
+                        <!-- Space for ART Letter Head -->
+                        <div style="height: 80px; margin-bottom: 20px;">
+                            <!-- ART Letter Head will be here -->
+                        </div>
+                        
+                        <!-- Reference Section -->
+                        <div style="margin-bottom: 20px;">
+                            <table class="w-full" style="border-collapse: collapse;">
+                                <tr>
+                                    <td width="80">Your Ref.</td>
+                                    <td width="10">:</td>
+                                    <td>{{ $tenancyLetter->your_reference ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Our Ref.</td>
+                                    <td>:</td>
+                                    <td>{{ $tenancyLetter->our_reference ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Date</td>
+                                    <td>:</td>
+                                    <td>{{ $tenancyLetter->letter_date ? $tenancyLetter->letter_date->format('d F Y') : 'N/A' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <!-- Recipient Info Section -->
+                        <div style="margin-bottom: 20px;">
+                            <div class="font-bold">{{ strtoupper($tenancyLetter->recipient_company) ?? 'N/A' }}</div>
+                            <div>{{ $tenancyLetter->recipient_address_line_1 ?? 'N/A' }}</div>
+                            <div>{{ $tenancyLetter->recipient_address_line_2 ?? 'N/A' }}</div>
+                            @if($tenancyLetter->recipient_address_line_3)
+                                <div>{{ $tenancyLetter->recipient_address_line_3 }}</div>
+                            @endif
+                            <div>{{ $tenancyLetter->recipient_address_postcode ?? 'N/A' }} {{ $tenancyLetter->recipient_address_city ?? 'N/A' }}</div>
+                            <div>{{ $tenancyLetter->recipient_address_state ?? 'N/A' }}, {{ $tenancyLetter->recipient_address_country ?? 'N/A' }}</div>
+                        </div>
+                        
+                        <!-- Greeting -->
+                        <div style="margin-bottom: 20px;">Dear Sir,</div>
+                        
+                        <!-- Subject Section -->
+                        <div style="margin-bottom: 20px;">
+                            <div class="font-bold" style="text-decoration: underline;">{{ strtoupper($tenancyLetter->lease->tenant->property->portfolio->portfolio_name) ?? 'N/A' }} REAL ESTATE INVESTMENT TRUST ("{{ strtoupper($tenancyLetter->lease->tenant->property->portfolio->portfolio_name) ?? 'N/A' }} REIT")</div>
+                            <div class="font-bold" style="text-decoration: underline;">{{ strtoupper($tenancyLetter->lease->tenancy_type) ?? 'N/A' }}</div>
+                        </div>
+                        
+                        <!-- Main Content -->
+                        <div style="margin-bottom: 20px;">
+                            <div>The above matter refers.</div>
+                            <div style="margin-top: 15px;">We, AmanahRaya Trustees Berhad, as Trustee to {{ $tenancyLetter->lease->tenant->property->portfolio->portfolio_name ?? 'N/A' }} REIT hereby approve of the above-mentioned Demised Premises with following details:</div>
+                        </div>
+                        
+                        <!-- Details Table -->
+                        <div style="margin-bottom: 20px;">
+                            <table class="w-full" style="border-collapse: collapse;">
+                                <tr>
+                                    <td width="150" style="padding: 5px 0;">Tenant</td>
+                                    <td width="10">:</td>
+                                    <td style="padding: 5px 0;">{{ strtoupper($tenancyLetter->lease->tenant->name) ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px 0;">Demised Details</td>
+                                    <td>:</td>
+                                    <td style="padding: 5px 0;">{{ $tenancyLetter->lease->demised_premises ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px 0;">Permitted Use</td>
+                                    <td>:</td>
+                                    <td style="padding: 5px 0;">{{ $tenancyLetter->lease->permitted_use ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px 0;">Lettable Floor Area (sq. ft)</td>
+                                    <td>:</td>
+                                    <td style="padding: 5px 0;">{{ $tenancyLetter->lease->space ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px 0; vertical-align: top;">Rental</td>
+                                    <td style="vertical-align: top;">:</td>
+                                    <td style="padding: 5px 0;">
                                         @if($tenancyLetter->lease->monthly_gsto_year_1)
-                                        <!-- lease base rate year 1 -->
-                                        <tr>
-                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">1</td>
-                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{{ $tenancyLetter->lease->monthly_gsto_year_1 ?? 'N/A' }}% of Monthly Gross Sales Turnover</td>
-                                        </tr>
+                                            Year 1: {{ $tenancyLetter->lease->monthly_gsto_year_1 }}% of Monthly Gross Sales Turnover<br>
                                         @endif
                                         @if($tenancyLetter->lease->monthly_gsto_year_2)
-                                        <!-- lease base rate year 2 -->
-                                        <tr>
-                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">2</td>
-                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{{ $tenancyLetter->lease->monthly_gsto_year_2 ?? 'N/A' }}% of Monthly Gross Sales Turnover</td>
-                                        </tr>
+                                            Year 2: {{ $tenancyLetter->lease->monthly_gsto_year_2 }}% of Monthly Gross Sales Turnover<br>
                                         @endif
                                         @if($tenancyLetter->lease->monthly_gsto_year_3)
-                                        <!-- lease base rate year 3 -->
-                                        <tr>
-                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">3</td>
-                                            <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{{ $tenancyLetter->lease->monthly_gsto_year_3 ?? 'N/A' }}% of Monthly Gross Sales Turnover</td>
-                                        </tr>
+                                            Year 3: {{ $tenancyLetter->lease->monthly_gsto_year_3 }}% of Monthly Gross Sales Turnover
                                         @endif
-                                    </table>
-                                </td>
-                            </tr>
-                            
-                            <!-- Final Content Section -->
-                            <tr>
-                                <td style="padding-bottom: 20px;">
-                                    <table class="w-full" style="border-collapse: collapse;">
-                                        <tr>
-                                            <td style="padding-bottom: 15px;">{{ $tenancyLetter->description_3 ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="padding-bottom: 30px;">Thank you.</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            
-                            <!-- Signature Section -->
-                            <tr>
-                                <td>
-                                    <table class="w-full" style="border-collapse: collapse;">
-                                        <tr>
-                                            <td>Yours faithfully</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-bold">{{ strtoupper($tenancyLetter->trustee_name) ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="padding-top: 30px;"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-bold">{{ strtoupper($tenancyLetter->approver_name) ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>{{ ucfirst($tenancyLetter->approver_position) ?? 'N/A' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>{{ ucfirst($tenancyLetter->approver_department) ?? 'N/A' }}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px 0;">Letter of Offer</td>
+                                    <td>:</td>
+                                    <td style="padding: 5px 0;">{{ $tenancyLetter->letter_offer_date ? $tenancyLetter->letter_offer_date->format('d F Y') : 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px 0;">Supplemental Letter of Offer</td>
+                                    <td>:</td>
+                                    <td style="padding: 5px 0;">{{ $tenancyLetter->supplemental_letter_offer_date ? $tenancyLetter->supplemental_letter_offer_date->format('d F Y') : 'N/A' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <!-- Final Content -->
+                        <div style="margin-bottom: 30px;">
+                            <div>The above approval is subject to the terms and conditions specified in the Letter of Offer dated and Supplemental Letter of Offer mentioned above.</div>
+                            <div style="margin-top: 15px;">Thank you.</div>
+                        </div>
+                        
+                        <!-- Signature Section -->
+                        <div>
+                            <div>Yours faithfully</div>
+                            <div class="font-bold">AMANAHRATA TRUSTEES BERHAD</div>
+                            <div style="height: 60px;"></div>
+                            <div class="font-bold">{{ strtoupper($tenancyLetter->approver_name) ?? 'N/A' }}</div>
+                            <div>{{ ucfirst($tenancyLetter->approver_position) ?? 'N/A' }}</div>
+                            <div>{{ ucfirst($tenancyLetter->approver_department) ?? 'N/A' }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -218,7 +152,7 @@
             margin: 0 auto;
             background: white;
             font-family: 'Roboto', sans-serif;
-            font-size: 10px;
+            font-size: 12px;
             line-height: 1.5;
             padding: 30px;
         }
@@ -250,6 +184,12 @@
             
             .print-controls {
                 display: none;
+            }
+            
+            /* A4 size for printing */
+            @page {
+                size: A4 portrait;
+                margin: 0.5cm;
             }
         }
     </style>

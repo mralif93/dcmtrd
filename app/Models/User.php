@@ -15,6 +15,13 @@ class User extends Authenticatable implements Auditable
     use HasFactory, Notifiable, SoftDeletes,\OwenIt\Auditing\Auditable;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'users';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -29,7 +36,6 @@ class User extends Authenticatable implements Auditable
         'department',
         'office_location',
         'email_verified_at',
-        'password',
         'two_factor_code',
         'two_factor_expires_at',
         'two_factor_verified',
@@ -91,7 +97,7 @@ class User extends Authenticatable implements Auditable
     {
         return $this->attributes['two_factor_enabled'] ?? false;
     }
-    
+
     public function getTwoFactorExpiresAtAttribute(): ?\DateTime
     {
         return $this->attributes['two_factor_expires_at']

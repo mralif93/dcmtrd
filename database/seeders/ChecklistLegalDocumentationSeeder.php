@@ -78,20 +78,24 @@ class ChecklistLegalDocumentationSeeder extends Seeder
                 $trustDeedRef = rand(1, 10) > 3 ? $this->generateReference($refFormats) : null;
                 $trustDeedLocation = $trustDeedRef ? $locations[array_rand($locations)] : null;
                 
-                $salePurchaseAgreement = rand(1, 10) > 4 ? $this->generateReference($refFormats) : null;
+                $salePurchaseAgreementRef = rand(1, 10) > 4 ? $this->generateReference($refFormats) : null;
+                $salePurchaseAgreementLocation = $salePurchaseAgreementRef ? $locations[array_rand($locations)] : null;
                 
                 $leaseAgreementRef = rand(1, 10) > 3 ? $this->generateReference($refFormats) : null;
                 $leaseAgreementLocation = $leaseAgreementRef ? $locations[array_rand($locations)] : null;
                 
-                $agreementToLease = rand(1, 10) > 5 ? $this->generateReference($refFormats) : null;
+                $agreementToLeaseRef = rand(1, 10) > 5 ? $this->generateReference($refFormats) : null;
+                $agreementToLeaseLocation = $agreementToLeaseRef ? $locations[array_rand($locations)] : null;
                 
                 $maintenanceAgreementRef = rand(1, 10) > 6 ? $this->generateReference($refFormats) : null;
                 $maintenanceAgreementLocation = $maintenanceAgreementRef ? $locations[array_rand($locations)] : null;
                 
-                $developmentAgreement = rand(1, 10) > 7 ? $this->generateReference($refFormats) : null;
+                $developmentAgreementRef = rand(1, 10) > 7 ? $this->generateReference($refFormats) : null;
+                $developmentAgreementLocation = $developmentAgreementRef ? $locations[array_rand($locations)] : null;
                 
                 // Generate other legal docs if needed (30% chance)
-                $otherLegalDocs = rand(1, 10) <= 3 ? $this->generateOtherLegalDocs() : null;
+                $othersRef = rand(1, 10) <= 3 ? $this->generateReference($refFormats) : null;
+                $othersLocation = $othersRef ? $locations[array_rand($locations)] : null;
                 
                 // Create the legal documentation record
                 $legalDoc = new ChecklistLegalDocumentation([
@@ -100,14 +104,18 @@ class ChecklistLegalDocumentationSeeder extends Seeder
                     'title_location' => $titleLocation,
                     'trust_deed_ref' => $trustDeedRef,
                     'trust_deed_location' => $trustDeedLocation,
-                    'sale_purchase_agreement' => $salePurchaseAgreement,
+                    'sale_purchase_agreement_ref' => $salePurchaseAgreementRef,
+                    'sale_purchase_agreement_location' => $salePurchaseAgreementLocation,
                     'lease_agreement_ref' => $leaseAgreementRef,
                     'lease_agreement_location' => $leaseAgreementLocation,
-                    'agreement_to_lease' => $agreementToLease,
+                    'agreement_to_lease_ref' => $agreementToLeaseRef,
+                    'agreement_to_lease_location' => $agreementToLeaseLocation,
                     'maintenance_agreement_ref' => $maintenanceAgreementRef,
                     'maintenance_agreement_location' => $maintenanceAgreementLocation,
-                    'development_agreement' => $developmentAgreement,
-                    'other_legal_docs' => $otherLegalDocs,
+                    'development_agreement_ref' => $developmentAgreementRef,
+                    'development_agreement_location' => $developmentAgreementLocation,
+                    'others_ref' => $othersRef,
+                    'others_location' => $othersLocation,
                     'status' => $status,
                     'prepared_by' => $preparedBy,
                     'verified_by' => $verifiedBy,
@@ -157,35 +165,6 @@ class ChecklistLegalDocumentationSeeder extends Seeder
         );
         
         return $reference;
-    }
-    
-    /**
-     * Generate other legal documents text
-     */
-    private function generateOtherLegalDocs(): string
-    {
-        $otherDocs = [
-            'Environmental Compliance Certificate REF-ENV-',
-            'Easement Agreement REF-EAS-',
-            'Statutory Declaration SD-',
-            'Power of Attorney POA-',
-            'Restrictive Covenant RC-',
-            'Mortgage Agreement MA-',
-            'Indemnity Agreement IA-',
-            'Water Rights Certificate WRC-',
-            'Access Agreement AA-',
-            'Building Permit BP-'
-        ];
-        
-        $result = [];
-        $numDocs = rand(1, 3);
-        
-        for ($i = 0; $i < $numDocs; $i++) {
-            $doc = $otherDocs[array_rand($otherDocs)];
-            $result[] = $doc . rand(1000, 9999) . '-' . rand(1, 99);
-        }
-        
-        return implode('; ', $result);
     }
     
     /**

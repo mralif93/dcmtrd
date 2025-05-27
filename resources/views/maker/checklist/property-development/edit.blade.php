@@ -49,7 +49,7 @@
 
                             <!-- Development/Expansion Section -->
                             <div>
-                                <h4 class="font-medium text-gray-700 mb-3">Development/Expansion</h4>
+                                <h4 class="font-medium text-gray-700 mb-3">5.1 Development/Expansion</h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <!-- Development Date -->
                                     <div>
@@ -87,7 +87,7 @@
 
                             <!-- Renovation Section -->
                             <div class="border-t border-gray-200 pt-4">
-                                <h4 class="font-medium text-gray-700 mb-3">Renovation</h4>
+                                <h4 class="font-medium text-gray-700 mb-3">5.2 Renovation</h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <!-- Renovation Date -->
                                     <div>
@@ -125,7 +125,7 @@
 
                             <!-- External Repainting Section -->
                             <div class="border-t border-gray-200 pt-4">
-                                <h4 class="font-medium text-gray-700 mb-3">External Repainting</h4>
+                                <h4 class="font-medium text-gray-700 mb-3">5.3 External Repainting</h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <!-- External Repainting Date -->
                                     <div>
@@ -163,7 +163,7 @@
 
                             <!-- Others/Proposals/Approvals Section -->
                             <div class="border-t border-gray-200 pt-4">
-                                <h4 class="font-medium text-gray-700 mb-3">Others/Proposals/Approvals</h4>
+                                <h4 class="font-medium text-gray-700 mb-3">5.5 Others/Proposals/Approvals</h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <!-- Others/Proposals/Approvals Date -->
                                     <div>
