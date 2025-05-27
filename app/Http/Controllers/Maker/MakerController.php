@@ -4361,4 +4361,32 @@ class MakerController extends Controller
             'attachment' => 'nullable|file|max:10240',
         ]);
     }
+
+    // Notification
+    public function NotificationIndex(Request $request) {
+        // fetch leases expiring within a week
+        $leases = Lease::expiringWithin(365)->latest()->paginate(10);
+
+        // fetch all site visit with pagination
+        $siteVisits = SiteVisit::latest()->paginate(10, ['*'], 'siteVisits_page');
+
+        // fetch all site visit log with pagination
+        $siteVisitLogs = SiteVisitLog::latest()->paginate(10, ['*'], 'siteVisitLogs_page');
+
+        return view('maker.notification.index', compact('leases', 'siteVisits', 'siteVisitLogs'));
+    }
+
+    public function NotificationShow() {
+        return view('maker.notification.show', compact('notification'));
+    }
+
+    public function NotificationMarkAsRead(Notification $notification) {
+        return back()
+            ->route('maker.notification.index')
+            ->with('success', 'Notification marked as read.');
+    }
+
+    public function NotificationMarkAllAsRead() {
+        return back();
+    }
 }

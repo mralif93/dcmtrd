@@ -5,54 +5,71 @@
                 {{ __('Maker Dashboard') }}
             </h2>
 
-            <!-- Dropdown Menu - Only visible for DCMTRD section -->
-            <div class="relative" x-data="{ open: false }" id="header-dropdown" style="display: none;">
-                <button @click="open = !open" class="flex items-center text-gray-700 px-3 py-2 text-sm font-medium rounded-md bg-white border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none">
-                    <span>{{ __('Menu') }}</span>
-                    <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </button>
+            <div class="flex items-center space-x-4">
+                <!-- Notification Icon -->
+                <div class="relative">
+                    <a href="{{ route('maker.notification.index') }}">
+                    <button type="button" class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                        <!-- Notification Badge -->
+                        <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                            3
+                        </span>
+                    </button>
+                    </a>
+                </div>
 
-                <div x-show="open" 
-                    @click.away="open = false" 
-                    class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10"
-                    x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="transform opacity-0 scale-95"
-                    x-transition:enter-end="transform opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-75"
-                    x-transition:leave-start="transform opacity-100 scale-100"
-                    x-transition:leave-end="transform opacity-0 scale-95">
-                    <div class="py-1">
-                        <!-- Dashboard -->
-                        <a href="{{ route('maker.dashboard', ['section' => 'dcmtrd']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Dashboard') }}
-                        </a>
+                <!-- Dropdown Menu - Only visible for DCMTRD section -->
+                <div class="relative" x-data="{ open: false }" id="header-dropdown" style="display: none;">
+                    <button @click="open = !open" class="flex items-center text-gray-700 px-3 py-2 text-sm font-medium rounded-md bg-white border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none">
+                        <span>{{ __('Menu') }}</span>
+                        <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
 
-                        <!-- Trustee Fee -->
-                        <a href="{{ route('trustee-fee-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Trustee Fee') }}
-                        </a>
+                    <div x-show="open"
+                        @click.away="open = false"
+                        class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10"
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95">
+                        <div class="py-1">
+                            <!-- Dashboard -->
+                            <a href="{{ route('maker.dashboard', ['section' => 'dcmtrd']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Dashboard') }}
+                            </a>
 
-                        <!-- Compliance Covenant -->
-                        <a href="{{ route('compliance-covenant-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Compliance Covenant') }}
-                        </a>
+                            <!-- Trustee Fee -->
+                            <a href="{{ route('trustee-fee-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Trustee Fee') }}
+                            </a>
 
-                        <!-- Activity Diary -->
-                        <a href="{{ route('activity-diary-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Activity Diary') }}
-                        </a>
+                            <!-- Compliance Covenant -->
+                            <a href="{{ route('compliance-covenant-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Compliance Covenant') }}
+                            </a>
 
-                        <!-- Audit Log -->
-                        <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Audit Log') }}
-                        </a>
+                            <!-- Activity Diary -->
+                            <a href="{{ route('activity-diary-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Activity Diary') }}
+                            </a>
 
-                        <!-- Reports -->
-                        <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Reports') }}
-                        </a>
+                            <!-- Audit Log -->
+                            <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Audit Log') }}
+                            </a>
+
+                            <!-- Reports -->
+                            <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Reports') }}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -73,10 +90,10 @@
             // Get the section parameter from the URL
             const urlParams = new URLSearchParams(window.location.search);
             const section = urlParams.get('section') || '';
-            
+
             // Get the dropdown menu element
             const headerDropdown = document.getElementById('header-dropdown');
-            
+
             // Show the dropdown only if the section is 'dcmtrd'
             if (section === 'dcmtrd') {
                 headerDropdown.style.display = 'block';
@@ -148,7 +165,7 @@
                     href="#"
                     color="bg-blue-100"
                 />
-                
+
                 <!-- Reports -->
                 <x-dashboard-card
                     title="Reports"
@@ -165,7 +182,7 @@
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">List of Issuers</h3>
                     <div class="flex gap-2">
-                        <a href="{{ route('issuer-m.create') }}" 
+                        <a href="{{ route('issuer-m.create') }}"
                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -186,14 +203,14 @@
                             <div>
                                 <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
                                 <input type="text" name="search" id="search" value="{{ old('search', request('search')) }}"
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                        placeholder="Issuer name, short name, or reg. no...">
                             </div>
 
                             <!-- Status Filter -->
                             <div>
                                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                <select name="status" id="status" 
+                                <select name="status" id="status"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">All Status</option>
                                     <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
@@ -205,14 +222,14 @@
 
                             <!-- Filter Button -->
                             <div class="flex items-end">
-                                <button type="submit" 
+                                <button type="submit"
                                         class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                     <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                                     </svg>
                                     Search
                                 </button>
-                                
+
                                 @if(request('search') || request('status'))
                                     <a href="{{ route('maker.dashboard', ['section' => 'dcmtrd']) }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
                                         Clear
@@ -222,7 +239,7 @@
                         </div>
                     </form>
                 </div>
-                
+
                 <!-- Issuer Table -->
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -254,9 +271,9 @@
                                         {{ $issuer->registration_number }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            {{ $issuer->status == 'active' ? 'bg-green-100 text-green-800' : 
-                                            ($issuer->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ $issuer->status == 'active' ? 'bg-green-100 text-green-800' :
+                                            ($issuer->status == 'pending' ? 'bg-yellow-100 text-yellow-800' :
                                             ($issuer->status == 'rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
                                             {{ $issuer->status }}
                                         </span>
@@ -264,8 +281,8 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end space-x-2">
                                             @if ($issuer->status == 'Draft' or $issuer->status == 'Rejected')
-                                            <a href="{{ route('issuer-m.approval', $issuer) }}" 
-                                               class="text-indigo-600 hover:text-indigo-900" 
+                                            <a href="{{ route('issuer-m.approval', $issuer) }}"
+                                               class="text-indigo-600 hover:text-indigo-900"
                                                title="Submit for Approval"
                                                onclick="confirmApproval(event, '{{ $issuer->issuer_name }}')">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -396,7 +413,7 @@
                 <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">List of Portfolios</h3>
                     <div class="flex gap-2">
-                        <a href="{{ route('portfolio-m.create') }}" 
+                        <a href="{{ route('portfolio-m.create') }}"
                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -417,14 +434,14 @@
                             <div>
                                 <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
                                 <input type="text" name="search" id="search" value="{{ old('search', request('search')) }}"
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                        placeholder="Portfolio name..">
                             </div>
 
                             <!-- Status Filter -->
                             <div>
                                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                <select name="status" id="status" 
+                                <select name="status" id="status"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">All Status</option>
                                     <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
@@ -437,14 +454,14 @@
 
                             <!-- Filter Button -->
                             <div class="flex items-end">
-                                <button type="submit" 
+                                <button type="submit"
                                         class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                     <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                                     </svg>
                                     Search
                                 </button>
-                                
+
                                 @if(request('search') || request('status'))
                                     <a href="{{ route('maker.dashboard', ['section' => 'reits']) }}" class="ml-2 inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-200">
                                         Clear
@@ -513,7 +530,7 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                                         {{ match(strtolower($portfolio->status)) {
                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                             'active' => 'bg-green-100 text-green-800',
@@ -527,8 +544,8 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
                                         @if ($portfolio->status == 'draft' or $portfolio->status == 'rejected')
-                                        <a href="{{ route('portfolio-m.approval', $portfolio) }}" 
-                                            class="text-indigo-600 hover:text-indigo-900" 
+                                        <a href="{{ route('portfolio-m.approval', $portfolio) }}"
+                                            class="text-indigo-600 hover:text-indigo-900"
                                             title="Submit for Approval"
                                             onclick="confirmApproval(event, '{{ $portfolio->portfolio_name }}')">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -587,24 +604,24 @@
             // Get the section parameter from the URL
             const urlParams = new URLSearchParams(window.location.search);
             const section = urlParams.get('section');
-            
+
             // Initially hide the default message (will show it if no valid section is found)
             const defaultMessage = document.getElementById('default-message');
-            
+
             // Select all section elements
             const sections = document.querySelectorAll('.dashboard-section');
-            
+
             // If a section parameter is present
             if (section) {
                 // Find the target section
                 const targetSection = document.querySelector(`[data-section="${section}"]`);
-                
+
                 if (targetSection) {
                     // Hide default message
                     if (defaultMessage) {
                         defaultMessage.classList.add('hidden');
                     }
-                    
+
                     // Show only the target section
                     targetSection.classList.remove('hidden');
                 } else {
