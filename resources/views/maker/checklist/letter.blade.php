@@ -33,31 +33,47 @@
                                 <td style="padding-bottom: 20px;">
                                     <table class="w-full" style="border-collapse: collapse;">
                                         <tr>
-                                            <td style="padding-bottom: 5px;">Property: <strong>{{ $checklist->siteVisit->property->name }}</strong></td>
+                                            <td style="padding-bottom: 5px;">Property: <strong>{{ $checklist->siteVisit->property->name ?? 'N/A' }}</strong></td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-bottom: 5px;">Property Address: <strong>{{ $checklist->siteVisit->property->getFullAddressAttribute() }}</strong></td>
+                                            <td style="padding-bottom: 5px;">Property Address: <strong>{{ $checklist->siteVisit->property->getFullAddressAttribute() ?? 'N/A' }}</strong></td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-bottom: 5px;">Date of Site Visit: <strong>{{ $checklist->siteVisit->date_visit->format('d/m/Y') }}</strong></td>
+                                            <td style="padding-bottom: 5px;">Date of Site Visit: <strong>
+                                                @if(isset($checklist->siteVisit->date_visit))
+                                                    {{ $checklist->siteVisit->date_visit instanceof \Carbon\Carbon 
+                                                        ? $checklist->siteVisit->date_visit->format('d/m/Y') 
+                                                        : date('d/m/Y', strtotime($checklist->siteVisit->date_visit)) }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </strong></td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-bottom: 5px;">Time of Visit: <strong>{{ $checklist->siteVisit->time_visit->format('h:i A') }}</strong></td>
+                                            <td style="padding-bottom: 5px;">Time of Visit: <strong>
+                                                @if(isset($checklist->siteVisit->time_visit))
+                                                    {{ $checklist->siteVisit->time_visit instanceof \Carbon\Carbon 
+                                                        ? $checklist->siteVisit->time_visit->format('h:i A') 
+                                                        : date('h:i A', strtotime($checklist->siteVisit->time_visit)) }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </strong></td>
                                         </tr>
                                         <tr>
                                             <td style="padding-bottom: 5px;">Representative from:</td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-bottom: 5px;">1) Trustee: <strong>{{ $checklist->siteVisit->trustee }}</strong></td>
+                                            <td style="padding-bottom: 5px;">1) Trustee: <strong>{{ $checklist->siteVisit->trustee ?? 'N/A' }}</strong></td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-bottom: 5px;">2) Manager: <strong>{{ $checklist->siteVisit->manager }}</strong></td>
+                                            <td style="padding-bottom: 5px;">2) Manager: <strong>{{ $checklist->siteVisit->manager ?? 'N/A' }}</strong></td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-bottom: 5px;">3) Maintenance Manager: <strong>{{ $checklist->siteVisit->maintenance_manager }}</strong></td>
+                                            <td style="padding-bottom: 5px;">3) Maintenance Manager: <strong>{{ $checklist->siteVisit->maintenance_manager ?? 'N/A' }}</strong></td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-bottom: 5px;">4) Building Manager: <strong>{{ $checklist->siteVisit->building_manager }}</strong></td>
+                                            <td style="padding-bottom: 5px;">4) Building Manager: <strong>{{ $checklist->siteVisit->building_manager ?? 'N/A' }}</strong></td>
                                         </tr>
                                     </table>
                                 </td>
@@ -94,7 +110,7 @@
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.3</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Sale and Purchase Agreement</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->sale_purchase_agreement ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->sale_purchase_agreement_ref ?? 'N/A' }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->sale_purchase_agreement_location ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
@@ -106,7 +122,7 @@
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.5</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Agreement to Lease</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->agreement_to_lease ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->agreement_to_lease_ref ?? 'N/A' }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->agreement_to_lease_location ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
@@ -118,14 +134,14 @@
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.7</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Development Agreement</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->development_agreement ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->development_agreement_ref ?? 'N/A' }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->development_agreement_location ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">1.8</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Others</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->other_legal_docs ?? 'N/A' }}</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->other_legal_docs_location ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->others_ref ?? 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->legalDocumentation->others_location ?? 'N/A' }}</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -146,15 +162,39 @@
                                             <th style="border: 1px solid #ccc; padding: 5px; text-align: center; background-color: #f2f2f2; width: 20%;">Commencement Tenancy</th>
                                             <th style="border: 1px solid #ccc; padding: 5px; text-align: center; background-color: #f2f2f2; width: 15%;">Expiry</th>
                                         </tr>
-                                        @if ($checklist->tenants->count() > 0)
+                                        @if (isset($checklist->tenants) && $checklist->tenants->count() > 0)
                                             <!-- Tenants -->
                                             @foreach ($checklist->tenants as $tenant)
                                                 <tr>
                                                     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $loop->iteration }}.</td>
-                                                    <td style="border: 1px solid #ccc; padding: 5px;">{{ $tenant->name }} ({{ $tenant->property->name ?? 'N/A' }})</td>
-                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $tenant->approval_date ? $tenant->approval_date->format('d/m/Y') : 'N/A' }}</td>
-                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $tenant->commencement_date ? $tenant->commencement_date->format('d/m/Y') : 'N/A' }}</td>
-                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $tenant->expiry_date ? $tenant->expiry_date->format('d/m/Y') : 'N/A' }}</td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px;">{{ $tenant->name ?? 'N/A' }} ({{ $tenant->property->name ?? 'N/A' }})</td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
+                                                        @if(isset($tenant->approval_date))
+                                                            {{ $tenant->approval_date instanceof \Carbon\Carbon 
+                                                                ? $tenant->approval_date->format('d/m/Y') 
+                                                                : date('d/m/Y', strtotime($tenant->approval_date)) }}
+                                                        @else
+                                                            N/A
+                                                        @endif
+                                                    </td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
+                                                        @if(isset($tenant->commencement_date))
+                                                            {{ $tenant->commencement_date instanceof \Carbon\Carbon 
+                                                                ? $tenant->commencement_date->format('d/m/Y') 
+                                                                : date('d/m/Y', strtotime($tenant->commencement_date)) }}
+                                                        @else
+                                                            N/A
+                                                        @endif
+                                                    </td>
+                                                    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
+                                                        @if(isset($tenant->expiry_date))
+                                                            {{ $tenant->expiry_date instanceof \Carbon\Carbon 
+                                                                ? $tenant->expiry_date->format('d/m/Y') 
+                                                                : date('d/m/Y', strtotime($tenant->expiry_date)) }}
+                                                        @else
+                                                            N/A
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         @else
@@ -338,21 +378,21 @@
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">5.1</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Development/Expansion</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->development_date ? $checklist->propertyDevelopment->development_date->format('d/m/Y') : 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ optional($checklist->propertyDevelopment)->development_date ? $checklist->propertyDevelopment->development_date->format('d/m/Y') : 'N/A' }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->development_scope_of_work ?? 'N/A' }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->development_status ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">5.2</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">Renovation</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->renovation_date ? $checklist->propertyDevelopment->renovation_date->format('d/m/Y') : 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ optional($checklist->propertyDevelopment)->renovation_date ? $checklist->propertyDevelopment->renovation_date->format('d/m/Y') : 'N/A' }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->renovation_scope_of_work ?? 'N/A' }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->renovation_status ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">5.3</td>
                                             <td style="border: 1px solid #ccc; padding: 5px;">External Repainting</td>
-                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->external_repainting_date ? $checklist->propertyDevelopment->external_repainting_date->format('d/m/Y') : 'N/A' }}</td>
+                                            <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ optional($checklist->propertyDevelopment)->external_repainting_date ? $checklist->propertyDevelopment->external_repainting_date->format('d/m/Y') : 'N/A' }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->external_repainting_scope_of_work ?? 'N/A' }}</td>
                                             <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">{{ $checklist->propertyDevelopment->external_repainting_status ?? 'N/A' }}</td>
                                         </tr>
@@ -404,8 +444,24 @@
                                             <td style="padding-top: 60px;">{{ $checklist->verified_by ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Date: {{ $checklist->created_at ? $checklist->created_at->format('d/m/Y') : 'N/A' }}</td>
-                                            <td>Date: {{ $checklist->approval_datetime ? $checklist->approval_datetime->format('d/m/Y') : 'N/A' }}</td>
+                                            <td>Date: 
+                                                @if(isset($checklist->created_at))
+                                                    {{ $checklist->created_at instanceof \Carbon\Carbon 
+                                                        ? $checklist->created_at->format('d/m/Y') 
+                                                        : date('d/m/Y', strtotime($checklist->created_at)) }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </td>
+                                            <td>Date: 
+                                                @if(isset($checklist->approval_datetime))
+                                                    {{ $checklist->approval_datetime instanceof \Carbon\Carbon 
+                                                        ? $checklist->approval_datetime->format('d/m/Y') 
+                                                        : date('d/m/Y', strtotime($checklist->approval_datetime)) }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </td>
                                         </tr>
                                     </table>
                                 </td>

@@ -2412,12 +2412,18 @@ class MakerController extends Controller
     {
         return $request->validate([
             'property_id' => 'required|exists:properties,id',
-            'name' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
             'contact_person' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'email' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'commencement_date' => 'nullable|date',
-            'expiry_date' => 'nullable|date|after:commencement_date',
+            'commencement_date' => 'required|date',
+            'approval_date' => 'nullable|date',
+            'expiry_date' => 'required|date|after:commencement_date',
+            'status' => 'nullable|string|max:255',
+            'prepared_by' => 'nullable|string|max:255',
+            'verified_by' => 'nullable|string|max:255',
+            'remarks' => 'nullable|text',
+            'approval_datetime' => 'nullable|datetime',
         ]);
     }
 
@@ -2672,9 +2678,13 @@ class MakerController extends Controller
     {
         return $request->validate([
             'lease_id' => 'required|exists:leases,id',
+            
+            // Letter reference information
             'your_reference' => 'nullable|string|max:255',
             'our_reference' => 'required|string|max:255',
             'letter_date' => 'required|date',
+            
+            // Recipient information
             'recipient_company' => 'required|string|max:255',
             'recipient_address_line_1' => 'required|string|max:255',
             'recipient_address_line_2' => 'nullable|string|max:255',
@@ -2683,21 +2693,22 @@ class MakerController extends Controller
             'recipient_address_city' => 'required|string|max:255',
             'recipient_address_state' => 'required|string|max:255',
             'recipient_address_country' => 'required|string|max:255',
-            'attention_to_name' => 'nullable|string|max:255',
-            'attention_to_position' => 'nullable|string|max:255',
-            'description_1' => 'required|string',
-            'description_2' => 'nullable|string',
-            'description_3' => 'nullable|string',
+            
+            // Date
             'letter_offer_date' => 'nullable|date',
-            'trustee_name' => 'nullable|string|max:255',
-            'approver_name' => 'required|string|max:255',
-            'approver_position' => 'required|string|max:255',
-            'approver_department' => 'required|string|max:255',
+            'supplemental_letter_offer_date' => 'nullable|date',
+            
+            // Signature information
+            'approver_name' => 'nullable|string|max:255',
+            'approver_position' => 'nullable|string|max:255',
+            'approver_department' => 'nullable|string|max:255',
+            
+            // System information
             'status' => 'nullable|string|max:255',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',
-            'approval_datetime' => 'nullable|date',
+            'approval_datetime' => 'nullable|datetime',
         ]);
     }
 
@@ -3530,9 +3541,9 @@ class MakerController extends Controller
         }
     }
 
-    public function ChecklistDisposalInstallationShow(Checklist $checklist, ChecklistDisposalInstallation $disposalInst)
+    public function ChecklistDisposalInstallationShow(Checklist $checklist, ChecklistDisposalInstallation $checklistDisposalInstallation)
     {
-        return view('maker.checklist.disposal-installation.show', compact('checklist', 'disposalInst'));
+        return view('maker.checklist.disposal-installation.show', compact('checklist', 'checklistDisposalInstallation'));
     }
 
     public function SubmitApprovalChecklistDisposalInstallation(ChecklistDisposalInstallation $checklistDisposalInstallation)
@@ -3581,14 +3592,20 @@ class MakerController extends Controller
             'title_location' => 'nullable|string|max:255',
             'trust_deed_ref' => 'nullable|string|max:255',
             'trust_deed_location' => 'nullable|string|max:255',
-            'sale_purchase_agreement' => 'nullable|string|max:255',
+            'sale_purchase_agreement_ref' => 'nullable|string|max:255',
+            'sale_purchase_agreement_location' => 'nullable|string|max:255',
             'lease_agreement_ref' => 'nullable|string|max:255',
             'lease_agreement_location' => 'nullable|string|max:255',
-            'agreement_to_lease' => 'nullable|string|max:255',
+            'agreement_to_lease_ref' => 'nullable|string|max:255',
+            'agreement_to_lease_location' => 'nullable|string|max:255',
             'maintenance_agreement_ref' => 'nullable|string|max:255',
             'maintenance_agreement_location' => 'nullable|string|max:255',
-            'development_agreement' => 'nullable|string|max:255',
-            'other_legal_docs' => 'nullable|string',
+            'development_agreement_ref' => 'nullable|string|max:255',
+            'development_agreement_location' => 'nullable|string|max:255',
+            'others_ref' => 'nullable|string|max:255',
+            'others_location' => 'nullable|string|max:255',
+            'checklist_id' => 'required|exists:checklists,id',
+            'status' => 'nullable|string|in:draft,active,pending,rejected,inactive',
             'prepared_by' => 'nullable|string|max:255',
             'verified_by' => 'nullable|string|max:255',
             'remarks' => 'nullable|string',

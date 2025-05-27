@@ -25,34 +25,9 @@
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <!-- Header Section -->
                 <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg font-medium text-gray-900">Disposal Installation for: Checklist #{{ $disposalInstallation->checklist->id }}</h3>
+                    <h3 class="text-lg font-medium text-gray-900">Disposal Installation for: Checklist #{{ $checklistDisposalInstallation->checklist->id }}</h3>
                 </div>
-
-                <!-- Checklist Information Section -->
-                <div class="border-t border-gray-200">
-                    <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Checklist Information</h3>
-                    </div>
-                    <dl>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Checklist ID</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <a href="{{ route('checklists.show', $disposalInstallation->checklist->id) }}" class="text-indigo-600 hover:text-indigo-900">
-                                    {{ $disposalInstallation->checklist->id }}
-                                </a>
-                            </dd>
-                        </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Checklist Name</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $disposalInstallation->checklist->name ?? 'N/A' }}</dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Checklist Type</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $disposalInstallation->checklist->type ?? 'N/A' }}</dd>
-                        </div>
-                    </dl>
-                </div>
-
+                
                 <!-- Component Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
@@ -61,26 +36,26 @@
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Component Name</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $disposalInstallation->component_name ?? 'Not specified' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistDisposalInstallation->component_name ?? 'Not specified' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Component Date</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $disposalInstallation->component_date ? \Carbon\Carbon::parse($disposalInstallation->component_date)->format('d/m/Y') : 'Not specified' }}
+                                {{ $checklistDisposalInstallation->component_date ? \Carbon\Carbon::parse($checklistDisposalInstallation->component_date)->format('d/m/Y') : 'Not specified' }}
                             </dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Component Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                @if($disposalInstallation->component_status)
+                                @if($checklistDisposalInstallation->component_status)
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ match(strtolower($disposalInstallation->component_status)) {
+                                        {{ match(strtolower($checklistDisposalInstallation->component_status)) {
                                             'active' => 'bg-green-100 text-green-800',
                                             'inactive' => 'bg-red-100 text-red-800',
                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                             default => 'bg-gray-100 text-gray-800'
                                         } }}">
-                                        {{ ucfirst($disposalInstallation->component_status) }}
+                                        {{ ucfirst($checklistDisposalInstallation->component_status) }}
                                     </span>
                                 @else
                                     Not specified
@@ -89,7 +64,30 @@
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Component Scope of Work</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $disposalInstallation->component_scope_of_work ?? 'Not specified' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistDisposalInstallation->component_scope_of_work ?? 'Not specified' }}</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Administrative Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Administrative Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistDisposalInstallation->prepared_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Verified By</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistDisposalInstallation->verified_by ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $checklistDisposalInstallation->approval_datetime ? date('d/m/Y h:i A', strtotime($checklistDisposalInstallation->approval_datetime)) : 'Not yet approved' }}
+                            </dd>
                         </div>
                     </dl>
                 </div>
@@ -102,11 +100,11 @@
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $disposalInstallation->created_at->format('d/m/Y h:i A') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistDisposalInstallation->created_at->format('d/m/Y h:i A') }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $disposalInstallation->updated_at->format('d/m/Y h:i A') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistDisposalInstallation->updated_at->format('d/m/Y h:i A') }}</dd>
                         </div>
                     </dl>
                 </div>
@@ -114,19 +112,12 @@
                 <!-- Action Buttons -->
                 <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
                     <div class="flex justify-end gap-x-4">
-                        <a href="{{ route('checklist-disposal-installations.index') }}" 
+                        <a href="{{ route('checklist-m.show', $checklistDisposalInstallation->checklist->id) }}" 
                             class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
                             </svg>
                             Back to List
-                        </a>
-                        <a href="{{ route('checklist-disposal-installations.edit', $disposalInstallation) }}" 
-                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                            Edit Installation
                         </a>
                     </div>
                 </div>

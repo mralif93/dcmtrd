@@ -24,16 +24,7 @@ class DefaultReitsSeeder extends Seeder
       'active', 
       'inactive', 
       'rejected', 
-      'draft', 
-      'withdrawn', 
-      'completed', 
-      'scheduled', 
-      'cancelled',
-      'in progress',
-      'on hold',
-      'reviewing',
-      'approved', 
-      'expired'
+      'draft',
     ];
 
     // Define colors for each status
@@ -43,15 +34,6 @@ class DefaultReitsSeeder extends Seeder
       'inactive' => 'bg-gray-100 text-gray-800',
       'rejected' => 'bg-red-100 text-red-800',
       'draft' => 'bg-blue-100 text-blue-800',
-      'withdrawn' => 'bg-gray-100 text-gray-800',
-      'completed' => 'bg-green-100 text-green-800',
-      'scheduled' => 'bg-blue-100 text-blue-800',
-      'cancelled' => 'bg-red-100 text-red-800',
-      'in progress' => 'bg-yellow-100 text-yellow-800',
-      'on hold' => 'bg-gray-100 text-gray-800',
-      'reviewing' => 'bg-blue-100 text-blue-800',
-      'approved' => 'bg-green-100 text-green-800',
-      'expired' => 'bg-red-100 text-red-800',
     ];
 
     // Define banks

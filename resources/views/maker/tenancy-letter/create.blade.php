@@ -62,7 +62,11 @@
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- References -->
+                                <!-- Letter head information -->
+                                <div class="col-span-2">
+                                    <h4 class="text-md font-medium text-gray-700 mb-2">Letter Head Information</h4>
+                                </div>
+                                
                                 <div>
                                     <label for="your_reference" class="block text-sm font-medium text-gray-500">Your Reference</label>
                                     <input id="your_reference" type="text" name="your_reference" value="{{ old('your_reference') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -79,7 +83,6 @@
                                     @enderror
                                 </div>
 
-                                <!-- Letter Date -->
                                 <div>
                                     <label for="letter_date" class="block text-sm font-medium text-gray-500">Letter Date</label>
                                     <input id="letter_date" type="date" name="letter_date" value="{{ old('letter_date', date('Y-m-d')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
@@ -129,6 +132,14 @@
                                 </div>
 
                                 <div>
+                                    <label for="recipient_address_postcode" class="block text-sm font-medium text-gray-500">Postcode</label>
+                                    <input id="recipient_address_postcode" type="text" name="recipient_address_postcode" value="{{ old('recipient_address_postcode') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    @error('recipient_address_postcode')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
                                     <label for="recipient_address_city" class="block text-sm font-medium text-gray-500">City</label>
                                     <input id="recipient_address_city" type="text" name="recipient_address_city" value="{{ old('recipient_address_city') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     @error('recipient_address_city')
@@ -145,14 +156,6 @@
                                 </div>
 
                                 <div>
-                                    <label for="recipient_address_postcode" class="block text-sm font-medium text-gray-500">Postcode</label>
-                                    <input id="recipient_address_postcode" type="text" name="recipient_address_postcode" value="{{ old('recipient_address_postcode') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                                    @error('recipient_address_postcode')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div>
                                     <label for="recipient_address_country" class="block text-sm font-medium text-gray-500">Country</label>
                                     <input id="recipient_address_country" type="text" name="recipient_address_country" value="{{ old('recipient_address_country') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                     @error('recipient_address_country')
@@ -162,33 +165,11 @@
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Attention Information -->
-                                <div class="col-span-2">
-                                    <h4 class="text-md font-medium text-gray-700 mb-2">Attention Information</h4>
-                                </div>
-
-                                <div>
-                                    <label for="attention_to_name" class="block text-sm font-medium text-gray-500">Attention To (Name)</label>
-                                    <input id="attention_to_name" type="text" name="attention_to_name" value="{{ old('attention_to_name') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('attention_to_name')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div>
-                                    <label for="attention_to_position" class="block text-sm font-medium text-gray-500">Attention To (Position)</label>
-                                    <input id="attention_to_position" type="text" name="attention_to_position" value="{{ old('attention_to_position') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('attention_to_position')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
                                 <!-- Letter Content -->
                                 <div class="col-span-2">
                                     <h4 class="text-md font-medium text-gray-700 mb-2">Letter Content</h4>
                                 </div>
 
-                                <!-- Letter Offer Date -->
                                 <div class="col-span-2">
                                     <label for="letter_offer_date" class="block text-sm font-medium text-gray-500">Letter Offer Date</label>
                                     <input id="letter_offer_date" type="date" name="letter_offer_date" value="{{ old('letter_offer_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -198,45 +179,23 @@
                                 </div>
 
                                 <div class="col-span-2">
-                                    <label for="description_1" class="block text-sm font-medium text-gray-500">Description 1</label>
-                                    <textarea id="description_1" name="description_1" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>{{ old('description_1') }}</textarea>
-                                    @error('description_1')
+                                    <label for="supplemental_letter_offer_date" class="block text-sm font-medium text-gray-500">Supplemental Letter Offer Date</label>
+                                    <input id="supplemental_letter_offer_date" type="date" name="supplemental_letter_offer_date" value="{{ old('supplemental_letter_offer_date') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('supplemental_letter_offer_date')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
+                            </div>
 
-                                <div class="col-span-2">
-                                    <label for="description_2" class="block text-sm font-medium text-gray-500">Description 2</label>
-                                    <textarea id="description_2" name="description_2" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description_2') }}</textarea>
-                                    @error('description_2')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div class="col-span-2">
-                                    <label for="description_3" class="block text-sm font-medium text-gray-500">Description 3</label>
-                                    <textarea id="description_3" name="description_3" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('description_3') }}</textarea>
-                                    @error('description_3')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Signature Information -->
                                 <div class="col-span-2">
                                     <h4 class="text-md font-medium text-gray-700 mb-2">Signature Information</h4>
                                 </div>
 
                                 <div>
-                                    <label for="trustee_name" class="block text-sm font-medium text-gray-500">Trustee Name</label>
-                                    <input id="trustee_name" type="text" name="trustee_name" value="{{ old('trustee_name') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    @error('trustee_name')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div>
                                     <label for="approver_name" class="block text-sm font-medium text-gray-500">Approver Name</label>
-                                    <input id="approver_name" type="text" name="approver_name" value="{{ old('approver_name') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="approver_name" type="text" name="approver_name" value="{{ old('approver_name') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('approver_name')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -244,7 +203,7 @@
 
                                 <div>
                                     <label for="approver_position" class="block text-sm font-medium text-gray-500">Approver Position</label>
-                                    <input id="approver_position" type="text" name="approver_position" value="{{ old('approver_position') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="approver_position" type="text" name="approver_position" value="{{ old('approver_position') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('approver_position')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -252,7 +211,7 @@
 
                                 <div>
                                     <label for="approver_department" class="block text-sm font-medium text-gray-500">Approver Department</label>
-                                    <input id="approver_department" type="text" name="approver_department" value="{{ old('approver_department') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <input id="approver_department" type="text" name="approver_department" value="{{ old('approver_department') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     @error('approver_department')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
