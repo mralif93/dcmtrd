@@ -3691,6 +3691,10 @@ class MakerController extends Controller
     // Appointment Module
     public function AppointmentIndex(Request $request)
     {
+        // Determine database connection type
+        $dbConnection = config('database.default');
+        $isSqlite = $dbConnection === 'sqlite';
+
         // Retrieve appointments with related portfolio, handling search and filtering
         $query = Appointment::with('portfolio')
         // Handle search - only for party name
@@ -3705,13 +3709,29 @@ class MakerController extends Controller
         ->when($request->input('portfolio_id'), function ($query, $portfolioId) {
             return $query->where('portfolio_id', $portfolioId);
         })
-        // Filter by year
-        ->when($request->input('year'), function ($query, $year) {
-            return $query->whereRaw('strftime(\'%Y\', date_of_approval) = ?', [$year]);
+        // Filter by year - using appropriate function based on database
+        ->when($request->input('year'), function ($query, $year) use ($isSqlite) {
+            if ($isSqlite) {
+                return $query->whereRaw("strftime('%Y', date_of_approval) = ?", [$year]);
+            } else {
+                return $query->whereRaw('YEAR(date_of_approval) = ?', [$year]);
+            }
         })
-        // Filter by month
-        ->when($request->input('month'), function ($query, $month) {
-            return $query->whereRaw('strftime(\'%m\', date_of_approval) = ?', [$month]);
+        // Filter by month - using appropriate function based on database
+        ->when($request->input('month'), function ($query, $month) use ($isSqlite) {
+            if ($isSqlite) {
+                return $query->whereRaw("strftime('%m', date_of_approval) = ?", [sprintf('%02d', $month)]);
+            } else {
+                return $query->whereRaw('MONTH(date_of_approval) = ?', [$month]);
+            }
+        })
+        // Filter by day - using appropriate function based on database
+        ->when($request->input('day'), function ($query, $day) use ($isSqlite) {
+            if ($isSqlite) {
+                return $query->whereRaw("strftime('%d', date_of_approval) = ?", [sprintf('%02d', $day)]);
+            } else {
+                return $query->whereRaw('DAY(date_of_approval) = ?', [$day]);
+            }
         })
         ->latest()
         ->paginate(15)
@@ -3720,21 +3740,29 @@ class MakerController extends Controller
         // Get all portfolios for the dropdown
         $portfolios = Portfolio::orderBy('portfolio_name')->get();
 
-        // Extract unique years from appointment dates - SQLite compatible
-        $years = Appointment::selectRaw('strftime(\'%Y\', date_of_approval) as year')
-        ->distinct()
-        ->orderByDesc('year')
-        ->pluck('year')
-        ->toArray();
+        // Extract unique years from appointment dates - using appropriate function based on database
+        if ($isSqlite) {
+            $years = Appointment::selectRaw("strftime('%Y', date_of_approval) as year")
+                ->distinct()
+                ->orderByDesc('year')
+                ->pluck('year')
+                ->toArray();
+        } else {
+            $years = Appointment::selectRaw('YEAR(date_of_approval) as year')
+                ->distinct()
+                ->orderByDesc('year')
+                ->pluck('year')
+                ->toArray();
+        }
 
         // Define status options
         $statuses = ['active', 'pending', 'rejected', 'inactive'];
 
         return view('maker.appointment.index', [
-        'appointments' => $query,
-        'portfolios' => $portfolios,
-        'years' => $years,
-        'statuses' => $statuses
+            'appointments' => $query,
+            'portfolios' => $portfolios,
+            'years' => $years,
+            'statuses' => $statuses
         ]);
     }
 
