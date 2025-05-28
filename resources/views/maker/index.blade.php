@@ -9,8 +9,8 @@
                 <!-- Notification Icon -->
                 <div class="relative">
                     <a href="{{ route('maker.notification.index') }}">
-                    <button type="button" class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <button type="button" class="relative p-2 text-gray-600 transition-colors duration-200 rounded-full hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                         </svg>
                         <!-- Notification Badge -->
@@ -21,18 +21,18 @@
                     </a>
                 </div>
 
-                <!-- Dropdown Menu - Only visible for DCMTRD section -->
-                <div class="relative" x-data="{ open: false }" id="header-dropdown" style="display: none;">
-                    <button @click="open = !open" class="flex items-center text-gray-700 px-3 py-2 text-sm font-medium rounded-md bg-white border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none">
-                        <span>{{ __('Menu') }}</span>
-                        <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
+            <!-- Dropdown Menu - Only visible for DCMTRD section -->
+            <div class="relative" x-data="{ open: false }" id="header-dropdown" style="display: none;">
+                <button @click="open = !open" class="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none">
+                    <span>{{ __('Menu') }}</span>
+                    <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
 
                     <div x-show="open"
                         @click.away="open = false"
-                        class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10"
+                        class="absolute right-0 z-10 w-48 mt-2 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
                         x-transition:enter="transition ease-out duration-200"
                         x-transition:enter-start="transform opacity-0 scale-95"
                         x-transition:enter-end="transform opacity-100 scale-100"
@@ -91,8 +91,10 @@
             const urlParams = new URLSearchParams(window.location.search);
             const section = urlParams.get('section') || '';
 
+
             // Get the dropdown menu element
             const headerDropdown = document.getElementById('header-dropdown');
+
 
             // Show the dropdown only if the section is 'dcmtrd'
             if (section === 'dcmtrd') {
@@ -574,22 +576,27 @@
             const urlParams = new URLSearchParams(window.location.search);
             const section = urlParams.get('section');
 
+
             // Initially hide the default message (will show it if no valid section is found)
             const defaultMessage = document.getElementById('default-message');
 
+
             // Select all section elements
             const sections = document.querySelectorAll('.dashboard-section');
+
 
             // If a section parameter is present
             if (section) {
                 // Find the target section
                 const targetSection = document.querySelector(`[data-section="${section}"]`);
 
+
                 if (targetSection) {
                     // Hide default message
                     if (defaultMessage) {
                         defaultMessage.classList.add('hidden');
                     }
+
 
                     // Show only the target section
                     targetSection.classList.remove('hidden');
