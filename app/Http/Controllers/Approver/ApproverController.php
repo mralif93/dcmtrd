@@ -1899,7 +1899,7 @@ class ApproverController extends Controller
 
         // Get list of portfolios from appointment data
         $portfolios = Portfolio::whereIn('id', Appointment::distinct()->pluck('portfolio_id'))
-            ->orderBy('name')
+            ->orderBy('portfolio_name')
             ->get();
 
         // Count records for each tab
