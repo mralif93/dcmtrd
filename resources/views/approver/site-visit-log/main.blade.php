@@ -319,7 +319,7 @@
         });
         
         function openRejectModal(logId) {
-            document.getElementById('rejectForm').action = `/approver/site-visit-log/${logId}/reject`;
+            document.getElementById('rejectForm').action = `/approver/site-visit-log-a/${logId}/reject`;
             document.getElementById('rejectModal').classList.remove('hidden');
         }
         

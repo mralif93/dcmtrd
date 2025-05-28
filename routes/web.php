@@ -432,12 +432,6 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
         Route::get('/trustee-reports/batches/{id}/download', [DcmtReportController::class, 'downloadBatchTrustee'])->name('trustee-reports.download');
     });
 
-    // Notification
-    Route::get('/maker/notifications', [MakerController::class, 'NotificationIndex'])->name('maker.notification.index');
-    Route::get('/maker/notifications/{notification}', [MakerController::class, 'NotificationShow'])->name('maker.notification.show');
-    Route::get('/maker/notifications/{notification}/mark-as-read', [MakerController::class, 'NotificationMarkAsRead'])->name('maker.notification.mark-as-read');
-    Route::get('/maker/notifications/mark-all-as-read', [MakerController::class, 'NotificationMarkAllAsRead'])->name('maker.notification.mark-all-as-read');
-
     // Issuer Module
     Route::get('maker/issuer/create', [MakerController::class, 'IssuerCreate'])->name('issuer-m.create')->middleware('permission:DCMTRD');
     Route::post('maker/issuer/create', [MakerController::class, 'IssuerStore'])->name('issuer-m.store')->middleware('permission:DCMTRD');

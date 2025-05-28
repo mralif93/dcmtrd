@@ -151,31 +151,4 @@ class Lease extends Model implements Auditable
         
         return $year1Value + $year2Value + $year3Value;
     }
-
-    /**
-     * Check if the lease is expiring within a specified number of days.
-     *
-     * @param int $days
-     * @return bool
-     */
-    public function isExpiringWithin($days)
-    {
-        $futureDate = now()->addDays($days);
-        return $this->end_date->lte($futureDate) && $this->end_date->gte(now());
-    }
-
-    /**
-     * Scope a query to only include leases expiring within a specified number of days.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param int $days
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeExpiringWithin($query, $days)
-    {
-        $futureDate = now()->addDays($days);
-        return $query->where('end_date', '<=', $futureDate)
-                     ->where('end_date', '>=', now())
-                     ->where('status', 'active');
-    }
 }
