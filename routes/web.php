@@ -416,6 +416,12 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     // Dashboard
     Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
 
+    // Notification
+    Route::get('/maker/notifications', [MakerController::class, 'NotificationIndex'])->name('maker.notification.index');
+    Route::get('/maker/notifications/{notification}', [MakerController::class, 'NotificationShow'])->name('maker.notification.show');
+    Route::get('/maker/notifications/{notification}/mark-as-read', [MakerController::class, 'NotificationMarkAsRead'])->name('maker.notification.mark-as-read');
+    Route::get('/maker/notifications/mark-all-as-read', [MakerController::class, 'NotificationMarkAllAsRead'])->name('maker.notification.mark-all-as-read');
+
     Route::prefix('/maker/dcmt')->name('dcmt-reports.')->group(function () {
         Route::get('/reports', [DcmtReportController::class, 'index'])->name('index');
         Route::get('/cb-reports', [DcmtReportController::class, 'cbReports'])->name('cb-reports');

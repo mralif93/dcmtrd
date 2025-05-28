@@ -2679,12 +2679,12 @@ class MakerController extends Controller
     {
         return $request->validate([
             'lease_id' => 'required|exists:leases,id',
-            
+
             // Letter reference information
             'your_reference' => 'nullable|string|max:255',
             'our_reference' => 'required|string|max:255',
             'letter_date' => 'required|date',
-            
+
             // Recipient information
             'recipient_company' => 'required|string|max:255',
             'recipient_address_line_1' => 'required|string|max:255',
@@ -2694,16 +2694,16 @@ class MakerController extends Controller
             'recipient_address_city' => 'required|string|max:255',
             'recipient_address_state' => 'required|string|max:255',
             'recipient_address_country' => 'required|string|max:255',
-            
+
             // Date
             'letter_offer_date' => 'nullable|date',
             'supplemental_letter_offer_date' => 'nullable|date',
-            
+
             // Signature information
             'approver_name' => 'nullable|string|max:255',
             'approver_position' => 'nullable|string|max:255',
             'approver_department' => 'nullable|string|max:255',
-            
+
             // System information
             'status' => 'nullable|string|max:255',
             'prepared_by' => 'nullable|string|max:255',
@@ -3789,13 +3789,13 @@ class MakerController extends Controller
             ->when($request->input('portfolio_id'), function ($query, $portfolioId) {
                 return $query->where('portfolio_id', $portfolioId);
             })
-            // Filter by year
+            // Filter by year (MySQL compatible)
             ->when($request->input('year'), function ($query, $year) {
-                return $query->whereRaw('strftime(\'%Y\', date_of_approval) = ?', [$year]);
+                return $query->whereYear('date_of_approval', $year);
             })
-            // Filter by month
+            // Filter by month (MySQL compatible)
             ->when($request->input('month'), function ($query, $month) {
-                return $query->whereRaw('strftime(\'%m\', date_of_approval) = ?', [$month]);
+                return $query->whereMonth('date_of_approval', $month);
             })
             ->latest()
             ->paginate(15)
@@ -3804,9 +3804,8 @@ class MakerController extends Controller
         // Get all portfolios for the dropdown
         $portfolios = Portfolio::orderBy('portfolio_name')->get();
 
-        // Extract unique years from appointment dates - SQLite compatible
-        $years = Appointment::selectRaw('strftime(\'%Y\', date_of_approval) as year')
-            ->distinct()
+        // Extract unique years from appointment dates (MySQL compatible)
+        $years = Appointment::selectRaw('DISTINCT YEAR(date_of_approval) as year')
             ->orderByDesc('year')
             ->pluck('year')
             ->toArray();
@@ -3821,6 +3820,7 @@ class MakerController extends Controller
             'statuses' => $statuses
         ]);
     }
+
 
     public function AppointmentCreate()
     {
@@ -4444,6 +4444,38 @@ class MakerController extends Controller
             'remarks' => 'nullable|string',
             'attachment' => 'nullable|file|max:10240',
         ]);
+    }
+
+    // Notification
+    public function NotificationIndex(Request $request)
+    {
+        // fetch leases expiring within a week
+        $leases = Lease::expiringWithin(365)->latest()->paginate(10);
+
+        // fetch all site visit with pagination
+        $siteVisits = SiteVisit::latest()->paginate(10, ['*'], 'siteVisits_page');
+
+        // fetch all site visit log with pagination
+        $siteVisitLogs = SiteVisitLog::latest()->paginate(10, ['*'], 'siteVisitLogs_page');
+
+        return view('maker.notification.index', compact('leases', 'siteVisits', 'siteVisitLogs'));
+    }
+
+    public function NotificationShow()
+    {
+        return view('maker.notification.show', compact('notification'));
+    }
+
+    public function NotificationMarkAsRead(Notification $notification)
+    {
+        return back()
+            ->route('maker.notification.index')
+            ->with('success', 'Notification marked as read.');
+    }
+
+    public function NotificationMarkAllAsRead()
+    {
+        return back();
     }
 
     public function ListSecurityIndex(Request $request)

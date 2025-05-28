@@ -364,11 +364,22 @@
                         </div>
                     </div>
                 @endif
-
                 <div class="pb-6">
-                    <h2 class="text-xl font-bold leading-tight text-gray-800">
-                        {{ __('Real Estate Investment Trusts (REITs)') }}
-                    </h2>
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold leading-tight text-gray-800">
+                            {{ __('Real Estate Investment Trusts (REITs)') }}
+                        </h2>
+
+                        <a href="{{ route('maker.notification.index') }}"
+                            class="inline-flex items-center justify-center w-10 h-10 text-white bg-blue-600 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            title="Notifications">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Cards -->
@@ -474,116 +485,151 @@
                         </form>
                     </div>
 
-                <div class="overflow-x-auto rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Name</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Trust Deed</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Annual Report</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Insurance</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Valuation Report</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse ($portfolios as $portfolio)
-                            <tr class="transition-colors hover:bg-gray-50">
-                                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-                                    <a href="{{ route('property-m.index', $portfolio) }}" class="text-blue-600 cursor-pointer hover:text-blue-900">
-                                        {{ $portfolio->portfolio_name }}
-                                    </a>
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-                                    @if ($portfolio->trust_deed_document)
-                                    <a href="{{ Storage::url($portfolio->trust_deed_document) }}" class="text-indigo-600 hover:text-indigo-900">
-                                        Download
-                                    </a>
-                                    @else
-                                    <span class="text-gray-500">N/A</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-                                    @if ($portfolio->annual_report)
-                                    <a href="{{ Storage::url($portfolio->annual_report) }}" class="text-indigo-600 hover:text-indigo-900">
-                                        Download
-                                    </a>
-                                    @else
-                                    <span class="text-gray-500">N/A</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-                                    @if ($portfolio->insurance_document)
-                                    <a href="{{ Storage::url($portfolio->insurance_document) }}" class="text-indigo-600 hover:text-indigo-900">
-                                        Download
-                                    </a>
-                                    @else
-                                    <span class="text-gray-500">N/A</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-                                    @if ($portfolio->valuation_report)
-                                    <a href="{{ Storage::url($portfolio->valuation_report) }}" class="text-indigo-600 hover:text-indigo-900">
-                                        Download
-                                    </a>
-                                    @else
-                                    <span class="text-gray-500">N/A</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ match(strtolower($portfolio->status)) {
+                    <div class="overflow-x-auto rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Name</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Trust Deed</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Annual Report</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Insurance</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Valuation Report</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Status</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse ($portfolios as $portfolio)
+                                    <tr class="transition-colors hover:bg-gray-50">
+                                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+                                            <a href="{{ route('property-m.index', $portfolio) }}"
+                                                class="text-blue-600 cursor-pointer hover:text-blue-900">
+                                                {{ $portfolio->portfolio_name }}
+                                            </a>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+                                            @if ($portfolio->trust_deed_document)
+                                                <a href="{{ Storage::url($portfolio->trust_deed_document) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900">
+                                                    Download
+                                                </a>
+                                            @else
+                                                <span class="text-gray-500">N/A</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+                                            @if ($portfolio->annual_report)
+                                                <a href="{{ Storage::url($portfolio->annual_report) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900">
+                                                    Download
+                                                </a>
+                                            @else
+                                                <span class="text-gray-500">N/A</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+                                            @if ($portfolio->insurance_document)
+                                                <a href="{{ Storage::url($portfolio->insurance_document) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900">
+                                                    Download
+                                                </a>
+                                            @else
+                                                <span class="text-gray-500">N/A</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+                                            @if ($portfolio->valuation_report)
+                                                <a href="{{ Storage::url($portfolio->valuation_report) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900">
+                                                    Download
+                                                </a>
+                                            @else
+                                                <span class="text-gray-500">N/A</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+                                            <span
+                                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        {{ match (strtolower($portfolio->status)) {
                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                             'active' => 'bg-green-100 text-green-800',
                                             'inactive' => 'bg-gray-100 text-gray-800',
                                             'rejected' => 'bg-red-100 text-red-800',
-                                            default => 'bg-gray-100 text-gray-800'
+                                            default => 'bg-gray-100 text-gray-800',
                                         } }}">
-                                        {{ ucfirst($portfolio->status) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                    <div class="flex justify-end space-x-2">
-                                        @if ($portfolio->status == 'draft' or $portfolio->status == 'rejected')
-                                        <a href="{{ route('portfolio-m.approval', $portfolio) }}" 
-                                            class="text-indigo-600 hover:text-indigo-900" 
-                                            title="Submit for Approval"
-                                            onclick="confirmApproval(event, '{{ $portfolio->portfolio_name }}')">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-5m0 0l-2 2m2-2l2 2" />
-                                            </svg>
-                                        </a>
-                                        @endif
-                                        <a href="{{ route('portfolio-m.show', $portfolio) }}" class="text-indigo-600 hover:text-indigo-900" title="View">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                            </svg>
-                                        </a>
-                                        <a href="{{ route('portfolio-m.edit', $portfolio) }}" class="text-indigo-600 hover:text-indigo-900" title="Edit">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
-                                        No portfolio found
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                                {{ ucfirst($portfolio->status) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                                            <div class="flex justify-end space-x-2">
+                                                @if ($portfolio->status == 'draft' or $portfolio->status == 'rejected')
+                                                    <a href="{{ route('portfolio-m.approval', $portfolio) }}"
+                                                        class="text-indigo-600 hover:text-indigo-900"
+                                                        title="Submit for Approval"
+                                                        onclick="confirmApproval(event, '{{ $portfolio->portfolio_name }}')">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2" d="M14 3v4a1 1 0 001 1h4" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2" d="M12 16v-5m0 0l-2 2m2-2l2 2" />
+                                                        </svg>
+                                                    </a>
+                                                @endif
+                                                <a href="{{ route('portfolio-m.show', $portfolio) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900" title="View">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                </a>
+                                                <a href="{{ route('portfolio-m.edit', $portfolio) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900" title="Edit">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7"
+                                            class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
+                                            No portfolio found
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @endif
 
     <!-- If the user has no permissions, show a message -->
