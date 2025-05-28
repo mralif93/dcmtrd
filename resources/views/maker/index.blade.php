@@ -62,11 +62,11 @@
                             {{ __('Audit Log') }}
                         </a>
 
-                        <!-- Reports -->
-                        <a href="{{ route('dcmt-reports.index') }}"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Reports') }}
-                        </a>
+                            <!-- Reports -->
+                            <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Reports') }}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -136,38 +136,50 @@
                     <x-dashboard-card title="Compliance Covenants" icon="document-check" :count="$complianceCovenantCount ?? 0"
                         :href="route('compliance-covenant-m.index')" color="bg-blue-100" />
 
-                    <!-- Activity Dairy -->
-                    <x-dashboard-card title="Activity Diary" icon="calendar" :count="$activityDairyCount ?? 0" :href="route('activity-diary-m.index')"
-                        color="bg-blue-100" />
+                <!-- Activity Dairy -->
+                <x-dashboard-card
+                    title="Activity Dairy"
+                    icon="calendar"
+                    :count="$activityDairyCount ?? 0"
+                    :href="route('activity-diary-m.index')"
+                    color="bg-blue-100"
+                />
 
-                    <!-- Reports -->
-                    <x-dashboard-card title="Reports" icon="document" :count="$reportsCount ?? 2" :href="route('dcmt-reports.index')"
-                        color="bg-blue-100" />
+                <div class="hidden">
+                <!-- Audit Log -->
+                <x-dashboard-card
+                    title="Audit Log"
+                    icon="clipboard-list"
+                    :count="$auditLogCount ?? 0"
+                    href="#"
+                    color="bg-blue-100"
+                />
 
-                    <!-- Corporate Bond Listing Security -->
-                    <x-dashboard-card title="Corporate Bond Listing Security" icon="shield-check" :count="$listSecuritiesCount ?? 0"
-                        :href="route('list-security-m.index')" color="bg-blue-100" />
-
-                    <!-- Corporate Bond Listing Security -->
-                    <x-dashboard-card title="Placement & Fund Transfer" icon="shield-check" :count="$placementFundTransfersCount ?? 0"
-                        :href="route('fund-transfer-m.index')" color="bg-blue-100" />
+                <!-- Reports -->
+                <x-dashboard-card
+                    title="Reports"
+                    icon="document"
+                    :count="$reportsCount ?? 0"
+                    href="#"
+                    color="bg-blue-100"
+                />
                 </div>
+            </div>
 
-                <!-- Issuers -->
-                <div class="mt-6 overflow-hidden bg-white rounded-lg shadow">
-                    <div class="flex items-center justify-between px-4 py-5 sm:px-6">
-                        <h3 class="text-lg font-medium text-gray-900">List of Issuers</h3>
-                        <div class="flex gap-2">
-                            <a href="{{ route('issuer-m.create') }}"
-                                class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 4v16m8-8H4" />
-                                </svg>
-                                Create New Issuer
-                            </a>
-                        </div>
+            <!-- Issuers -->
+            <div class="mt-6 overflow-hidden bg-white rounded-lg shadow">
+                <div class="flex items-center justify-between px-4 py-5 sm:px-6">
+                    <h3 class="text-lg font-medium text-gray-900">List of Issuers</h3>
+                    <div class="flex gap-2">
+                        <a href="{{ route('issuer-m.create') }}"
+                           class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Create New Issuer
+                        </a>
                     </div>
+                </div>
 
                     <!-- Search and Filter Bar -->
                     <div class="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
@@ -175,165 +187,124 @@
                             <!-- Fixed section parameter -->
                             <input type="hidden" name="section" value="dcmtrd">
 
-                            <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-                                <!-- Issuer Name Search Field -->
-                                <div>
-                                    <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
-                                    <input type="text" name="search" id="search"
-                                        value="{{ old('search', request('search')) }}"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        placeholder="Issuer name, short name, or reg. no...">
-                                </div>
-
-                                <!-- Status Filter -->
-                                <div>
-                                    <label for="status"
-                                        class="block text-sm font-medium text-gray-700">Status</label>
-                                    <select name="status" id="status"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">All Status</option>
-                                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
-                                            Active</option>
-                                        <option value="pending"
-                                            {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="rejected"
-                                            {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                        <option value="inactive"
-                                            {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                    </select>
-                                </div>
-
-                                <!-- Filter Button -->
-                                <div class="flex items-end">
-                                    <button type="submit"
-                                        class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                                        </svg>
-                                        Search
-                                    </button>
-
-                                    @if (request('search') || request('status'))
-                                        <a href="{{ route('maker.dashboard', ['section' => 'dcmtrd']) }}"
-                                            class="inline-flex items-center px-4 py-2 ml-2 font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
-                                            Clear
-                                        </a>
-                                    @endif
-                                </div>
+                        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                            <!-- Issuer Name Search Field -->
+                            <div>
+                                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                                <input type="text" name="search" id="search" value="{{ old('search', request('search')) }}"
+                                       class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                       placeholder="Issuer name, short name, or reg. no...">
                             </div>
-                        </form>
-                    </div>
 
-                    <!-- Issuer Table -->
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                        No
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                        Issuer Name
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                        Registration Number
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                        Status
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
-                                        Action
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse ($issuers as $issuer)
-                                    <tr class="transition-colors hover:bg-gray-50">
-                                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-                                            {{ $loop->iteration + ($issuers->currentPage() - 1) * $issuers->perPage() }}
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-                                            <a href="{{ route('bond-m.details', $issuer) }}"
-                                                class="text-blue-600 cursor-pointer hover:text-blue-900">
-                                                {{ $issuer->issuer_name }}
+                            <!-- Status Filter -->
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <select name="status" id="status"
+                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">All Status</option>
+                                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Filter Button -->
+                            <div class="flex items-end">
+                                <button type="submit"
+                                        class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                    </svg>
+                                    Search
+                                </button>
+
+                                @if(request('search') || request('status'))
+                                    <a href="{{ route('maker.dashboard', ['section' => 'dcmtrd']) }}" class="inline-flex items-center px-4 py-2 ml-2 font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Issuer Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Issuer Name
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Registration Number
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                    Status
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse ($issuers as $issuer)
+                                <tr class="transition-colors hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+                                        <a href="{{ route('bond-m.details', $issuer) }}" class="text-blue-600 cursor-pointer hover:text-blue-900">
+                                            {{ $issuer->issuer_name }}
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                        {{ $issuer->registration_number }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ $issuer->status == 'active' ? 'bg-green-100 text-green-800' :
+                                            ($issuer->status == 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                            ($issuer->status == 'rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800')) }}">
+                                            {{ $issuer->status }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                                        <div class="flex justify-end space-x-2">
+                                            @if ($issuer->status == 'Draft' or $issuer->status == 'Rejected')
+                                            <a href="{{ route('issuer-m.approval', $issuer) }}"
+                                               class="text-indigo-600 hover:text-indigo-900"
+                                               title="Submit for Approval"
+                                               onclick="confirmApproval(event, '{{ $issuer->issuer_name }}')">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v4a1 1 0 001 1h4" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-5m0 0l-2 2m2-2l2 2" />
+                                                </svg>
                                             </a>
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {{ $issuer->registration_number }}
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            <span
-                                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            {{ $issuer->status == 'Active'
-                                                ? 'bg-green-100 text-green-800'
-                                                : ($issuer->status == 'Pending'
-                                                    ? 'bg-yellow-100 text-yellow-800'
-                                                    : ($issuer->status == 'Rejected'
-                                                        ? 'bg-red-100 text-red-800'
-                                                        : 'bg-gray-100 text-gray-800')) }}">
-                                                {{ $issuer->status }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                            <div class="flex justify-end space-x-2">
-                                                @if ($issuer->status == 'Draft' or $issuer->status == 'Rejected')
-                                                    <a href="{{ route('issuer-m.approval', $issuer) }}"
-                                                        class="text-indigo-600 hover:text-indigo-900"
-                                                        title="Submit for Approval"
-                                                        onclick="confirmApproval(event, '{{ $issuer->issuer_name }}')">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                            viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2" d="M14 3v4a1 1 0 001 1h4" />
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2" d="M12 16v-5m0 0l-2 2m2-2l2 2" />
-                                                        </svg>
-                                                    </a>
-                                                @endif
-                                                <a href="{{ route('issuer-m.show', $issuer) }}"
-                                                    class="text-indigo-600 hover:text-indigo-900" title="View">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                    </svg>
-                                                </a>
-                                                <a href="{{ route('issuer-m.edit', $issuer) }}"
-                                                    class="text-indigo-600 hover:text-indigo-900" title="Edit">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                    </svg>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4"
-                                            class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
-                                            No issuers found
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                                            @endif
+                                            <a href="{{ route('issuer-m.show', $issuer) }}" class="text-indigo-600 hover:text-indigo-900" title="View">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="{{ route('issuer-m.edit', $issuer) }}" class="text-indigo-600 hover:text-indigo-900" title="Edit">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
+                                        No issuers found
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
                     @if ($issuers->hasPages())
                         <div class="px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
@@ -398,21 +369,20 @@
                         color="bg-blue-100" />
                 </div>
 
-                <!-- Table Portfolio -->
-                <div class="mt-6 overflow-hidden bg-white rounded-lg shadow">
-                    <div class="flex items-center justify-between px-4 py-5 sm:px-6">
-                        <h3 class="text-lg font-medium text-gray-900">List of Portfolios</h3>
-                        <div class="flex gap-2">
-                            <a href="{{ route('portfolio-m.create') }}"
-                                class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 4v16m8-8H4" />
-                                </svg>
-                                Add New Portfolio
-                            </a>
-                        </div>
+            <!-- Table Portfolio -->
+            <div class="mt-6 overflow-hidden bg-white rounded-lg shadow">
+                <div class="flex items-center justify-between px-4 py-5 sm:px-6">
+                    <h3 class="text-lg font-medium text-gray-900">List of Portfolios</h3>
+                    <div class="flex gap-2">
+                        <a href="{{ route('portfolio-m.create') }}"
+                           class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Add New Portfolio
+                        </a>
                     </div>
+                </div>
 
                     <!-- Search and Filter Bar -->
                     <div class="px-4 py-4 border-t border-gray-200 bg-gray-50 sm:px-6">
@@ -420,59 +390,48 @@
                             <!-- Fixed section parameter -->
                             <input type="hidden" name="section" value="reits">
 
-                            <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-                                <!-- Issuer Name Search Field -->
-                                <div>
-                                    <label for="search"
-                                        class="block text-sm font-medium text-gray-700">Search</label>
-                                    <input type="text" name="search" id="search"
-                                        value="{{ old('search', request('search')) }}"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        placeholder="Portfolio name..">
-                                </div>
-
-                                <!-- Status Filter -->
-                                <div>
-                                    <label for="status"
-                                        class="block text-sm font-medium text-gray-700">Status</label>
-                                    <select name="status" id="status"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="">All Status</option>
-                                        <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>
-                                            Draft</option>
-                                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
-                                            Active</option>
-                                        <option value="pending"
-                                            {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="rejected"
-                                            {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                        <option value="inactive"
-                                            {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                    </select>
-                                </div>
-
-                                <!-- Filter Button -->
-                                <div class="flex items-end">
-                                    <button type="submit"
-                                        class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                                        </svg>
-                                        Search
-                                    </button>
-
-                                    @if (request('search') || request('status'))
-                                        <a href="{{ route('maker.dashboard', ['section' => 'reits']) }}"
-                                            class="inline-flex items-center px-4 py-2 ml-2 font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
-                                            Clear
-                                        </a>
-                                    @endif
-                                </div>
+                        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                            <!-- Issuer Name Search Field -->
+                            <div>
+                                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                                <input type="text" name="search" id="search" value="{{ old('search', request('search')) }}"
+                                       class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                       placeholder="Portfolio name..">
                             </div>
-                        </form>
-                    </div>
+
+                            <!-- Status Filter -->
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <select name="status" id="status"
+                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">All Status</option>
+                                    <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Filter Button -->
+                            <div class="flex items-end">
+                                <button type="submit"
+                                        class="inline-flex items-center px-4 py-2 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                    </svg>
+                                    Search
+                                </button>
+
+                                @if(request('search') || request('status'))
+                                    <a href="{{ route('maker.dashboard', ['section' => 'reits']) }}" class="inline-flex items-center px-4 py-2 ml-2 font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
+                                        Clear
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
                 <div class="overflow-x-auto rounded-lg">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -532,7 +491,7 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                                         {{ match(strtolower($portfolio->status)) {
                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                             'active' => 'bg-green-100 text-green-800',

@@ -415,7 +415,7 @@ Route::middleware(['auth', 'two-factor', 'role:compliance'])->group(function () 
 Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     // Dashboard
     Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
-
+    
     Route::prefix('/maker/dcmt')->name('dcmt-reports.')->group(function () {
         Route::get('/reports', [DcmtReportController::class, 'index'])->name('index');
         Route::get('/cb-reports', [DcmtReportController::class, 'cbReports'])->name('cb-reports');

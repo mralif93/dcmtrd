@@ -70,6 +70,24 @@ class DefaultUsersSeeder extends Seeder
         $usersData = [
             // Admin Users
             [
+                'name' => 'ADMINISTRATOR',
+                'email' => 'admin@example.com',
+                'role' => 'admin',
+                'job_title' => 'EXECUTIVE',
+                'department' => 'ADMINISTRATOR',
+                'office_location' => 'Headquarters',
+                'email_verified_at' => $now,
+                'password' => bcrypt('P@ssw0rd123'), // Use bcrypt for password hashing
+                'two_factor_code' => null,
+                'two_factor_expires_at' => null,
+                'two_factor_verified' => false,
+                'two_factor_enabled' => true,
+                'remember_token' => null,
+                'last_login_at' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
                 'name' => 'MOHD ASHRAF BIN AZMI',
                 'email' => 'ashraf_azmi@artrustees.com.my',
                 'role' => 'admin',
@@ -739,13 +757,29 @@ class DefaultUsersSeeder extends Seeder
 
         foreach ($complianceEmails as $email) {
             $userId = DB::table('users')->where('email', $email)->value('id');
-            // Add COMPLIANCE permission
-            $permissionUserData[] = [
-                'user_id' => $userId,
-                'permission_id' => $compliancePermissionId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
+            if ($userId) {
+                // Add COMPLIANCE permission
+                $permissionUserData[] = [
+                    'user_id' => $userId,
+                    'permission_id' => $compliancePermissionId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+                // Add DCMTRD permission
+                $permissionUserData[] = [
+                    'user_id' => $userId,
+                    'permission_id' => $dcmtrdPermissionId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+                // Add REITS permission
+                $permissionUserData[] = [
+                    'user_id' => $userId,
+                    'permission_id' => $reitsPermissionId,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
         }
 
         // Legal users get LEGAL, DCMTRD and REITS permissions

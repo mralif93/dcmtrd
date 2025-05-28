@@ -1955,7 +1955,6 @@ class MakerController extends Controller
         $validated['status'] = 'draft';
 
         try {
-            // Create the financial record
             $financial = Financial::create($validated);
 
             // Process property data from flat arrays to nested format
