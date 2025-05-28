@@ -5,6 +5,22 @@
                 {{ __('Maker Dashboard') }}
             </h2>
 
+            <div class="flex items-center space-x-4">
+                <!-- Notification Icon -->
+                <div class="relative">
+                    <a href="{{ route('maker.notification.index') }}">
+                    <button type="button" class="relative p-2 text-gray-600 transition-colors duration-200 rounded-full hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                        <!-- Notification Badge -->
+                        <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                            3
+                        </span>
+                    </button>
+                    </a>
+                </div>
+
             <!-- Dropdown Menu - Only visible for DCMTRD section -->
             <div class="relative" x-data="{ open: false }" id="header-dropdown" style="display: none;">
                 <button @click="open = !open"
@@ -33,40 +49,31 @@
                             {{ __('Dashboard') }}
                         </a>
 
-                        <!-- Trustee Fee -->
-                        <a href="{{ route('trustee-fee-m.index') }}"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Trustee Fee') }}
-                        </a>
+                            <!-- Trustee Fee -->
+                            <a href="{{ route('trustee-fee-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Trustee Fee') }}
+                            </a>
 
-                        <!-- Compliance Covenant -->
-                        <a href="{{ route('compliance-covenant-m.index') }}"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Compliance Covenant') }}
-                        </a>
+                            <!-- Compliance Covenant -->
+                            <a href="{{ route('compliance-covenant-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Compliance Covenant') }}
+                            </a>
 
-                        <!-- Activity Diary -->
-                        <a href="{{ route('activity-diary-m.index') }}"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Activity Diary') }}
-                        </a>
+                            <!-- Activity Diary -->
+                            <a href="{{ route('activity-diary-m.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Activity Diary') }}
+                            </a>
 
-                        <!-- Listing Security -->
-                        <a href="{{ route('list-security-m.index') }}"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Listing Security') }}
-                        </a>
+                            <!-- Audit Log -->
+                            <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Audit Log') }}
+                            </a>
 
-                        <!-- Audit Log -->
-                        <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Audit Log') }}
-                        </a>
-
-                        <!-- Reports -->
-                        <a href="{{ route('dcmt-reports.index') }}"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            {{ __('Reports') }}
-                        </a>
+                            <!-- Reports -->
+                            <a href="#" class="hidden block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {{ __('Reports') }}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -175,15 +182,14 @@
                             <!-- Fixed section parameter -->
                             <input type="hidden" name="section" value="dcmtrd">
 
-                            <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-                                <!-- Issuer Name Search Field -->
-                                <div>
-                                    <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
-                                    <input type="text" name="search" id="search"
-                                        value="{{ old('search', request('search')) }}"
-                                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        placeholder="Issuer name, short name, or reg. no...">
-                                </div>
+                        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                            <!-- Issuer Name Search Field -->
+                            <div>
+                                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                                <input type="text" name="search" id="search" value="{{ old('search', request('search')) }}"
+                                       class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                       placeholder="Issuer name, short name, or reg. no...">
+                            </div>
 
                                 <!-- Status Filter -->
                                 <div>
@@ -345,42 +351,29 @@
         </div>
     @endif
 
-    @if (Auth::user()->hasPermission('REITS'))
-        <div class="hidden py-12 dashboard-section" id="reits-section" data-section="reits">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                @if (session('success'))
-                    <div class="p-4 mb-6 border-l-4 border-green-400 bg-green-50">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-                            </div>
+    @if(Auth::user()->hasPermission('REITS'))
+    <div class="hidden py-12 dashboard-section" id="reits-section" data-section="reits">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            @if(session('success'))
+                <div class="p-4 mb-6 border-l-4 border-green-400 bg-green-50">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
                         </div>
                     </div>
-                @endif
-                <div class="pb-6">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-bold leading-tight text-gray-800">
-                            {{ __('Real Estate Investment Trusts (REITs)') }}
-                        </h2>
-
-                        <a href="{{ route('maker.notification.index') }}"
-                            class="inline-flex items-center justify-center w-10 h-10 text-white bg-blue-600 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            title="Notifications">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                        </a>
-                    </div>
                 </div>
+            @endif
+
+            <div class="pb-6">
+                <h2 class="text-xl font-bold leading-tight text-gray-800">
+                    {{ __('Real Estate Investment Trusts (REITs)') }}
+                </h2>
+            </div>
 
                 <!-- Cards -->
                 <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-3 lg:grid-cols-3">
@@ -692,3 +685,4 @@
         });
     </script>
 </x-app-layout>
+
