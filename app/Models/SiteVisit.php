@@ -50,7 +50,7 @@ class SiteVisit extends Model implements Auditable
      */
     protected $casts = [
         'date_visit' => 'date',
-        'time_visit' => 'date',
+        'time_visit' => 'datetime',
         'submission_date' => 'date',
         'follow_up_required' => 'boolean',
         'approval_datetime' => 'datetime',
