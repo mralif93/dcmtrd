@@ -15,6 +15,7 @@ class Bond extends Model
         'sub_name',
         'rating',
         'category',
+        'o_s_amount',
         'principal',
         'islamic_concept',
         'isin_code',
@@ -33,6 +34,7 @@ class Bond extends Model
         'last_traded_price',
         'last_traded_amount',
         'last_traded_date',
+        'ratings',
         'coupon_accrual',
         'prev_coupon_payment_date',
         'first_coupon_payment_date',
@@ -61,6 +63,7 @@ class Bond extends Model
         'next_coupon_payment_date' => 'date',
         'last_coupon_payment_date' => 'date',
         'approval_datetime' => 'datetime',
+        'o_s_amount' => 'decimal:2',
         'coupon_rate' => 'decimal:4',
         'issue_tenure_years' => 'decimal:4',
         'residual_tenure_years' => 'decimal:4',
@@ -69,6 +72,7 @@ class Bond extends Model
         'last_traded_amount' => 'decimal:2',
         'amount_issued' => 'decimal:2',
         'amount_outstanding' => 'decimal:2',
+        'ratings' => 'array',
     ];
 
     public function issuer()
