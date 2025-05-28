@@ -178,7 +178,7 @@ class MakerController extends Controller
         // calculate total of lease which has remaining time
         $activeLeasesCount = Lease::where('end_date', '>', now())->count();
 
-
+        
         // Fetch site visits with pagination
         $siteVisits = SiteVisit::with(['property.portfolio'])
             ->where('date_visit', '>', now())
@@ -192,27 +192,27 @@ class MakerController extends Controller
             ->where('visit_year', '>', now()->year)
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
+                      ->where('visit_month', '>', now()->month);
             })
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
+                      ->where('visit_month', now()->month)
+                      ->where('visit_day', '>', now()->day);
             });
 
         // calculate total number of site visit log which has remaining time less than or equal to 30 days
         $activeSiteVisitLogsCount = SiteVisitLog::where('visit_year', '>', now()->year)
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
+                      ->where('visit_month', '>', now()->month);
             })
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
+                      ->where('visit_month', now()->month)
+                      ->where('visit_day', '>', now()->day);
             })
             ->count();
-
+        
         // Fetch appointments with pagination
         $appointments = Appointment::with(['portfolio'])
             ->where('date_of_approval', '>', now())
@@ -222,7 +222,7 @@ class MakerController extends Controller
         $activeAppointmentsCount = Appointment::where('date_of_approval', '>', now())->count();
 
         $totalNotifications = $activeLeasesCount + $activeSiteVisitsCount + $activeSiteVisitLogsCount + $activeAppointmentsCount;
-
+    
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
@@ -241,16 +241,16 @@ class MakerController extends Controller
             'placementFundTransfersCount' => $counts->placement_fund_transfers_count,
 
             // Adding pending counts
-            'trusteeFeePendingCount' => $counts->trustee_fees_pending_count,
-            'complianceCovenantPendingCount' => $counts->compliance_covenants_pending_count,
-            'activityDiaryPendingCount' => $counts->activity_diaries_pending_count,
-            'propertiesPendingCount' => $counts->pending_properties_count,
-            'financialsPendingCount' => $counts->pending_financials_count,
-            'tenantsPendingCount' => $counts->pending_tenants_count,
-            'appointmentsPendingCount' => $counts->pending_appointments_count,
-            'approvalFormsPendingCount' => $counts->pending_approval_forms_count,
-            'approvalPropertiesPendingCount' => $counts->pending_approval_properties_count,
-            'siteVisitLogsPendingCount' => $counts->pending_site_visit_logs_count,
+            'trusteeFeePendingCount' => $counts['trustee_fees_pending_count'],
+            'complianceCovenantPendingCount' => $counts['compliance_covenants_pending_count'],
+            'activityDiaryPendingCount' => $counts['activity_diaries_pending_count'],
+            'propertiesPendingCount' => $counts['pending_properties_count'],
+            'financialsPendingCount' => $counts['pending_financials_count'],
+            'tenantsPendingCount' => $counts['pending_tenants_count'],
+            'appointmentsPendingCount' => $counts['pending_appointments_count'],
+            'approvalFormsPendingCount' => $counts['pending_approval_forms_count'],
+            'approvalPropertiesPendingCount' => $counts['pending_approval_properties_count'],
+            'siteVisitLogsPendingCount' => $counts['pending_site_visit_logs_count'],
 
             'totalNotifications' => $totalNotifications,
         ]);
@@ -4541,14 +4541,13 @@ class MakerController extends Controller
     }
 
     // Notification
-    public function NotificationIndex(Request $request)
-    {
+    public function NotificationIndex(Request $request) {
         // Get current tab or default to 'lease'
         $activeTab = $request->query('active_tab', 'lease');
-
+        
         // Set pagination limit
         $perPage = 10;
-
+        
         // Fetch leases with pagination
         $leases = Lease::with(['tenant.property.portfolio'])
             ->where('end_date', '>', now())
@@ -4559,7 +4558,7 @@ class MakerController extends Controller
         // calculate total of lease which has remaining time
         $activeLeasesCount = Lease::where('end_date', '>', now())->count();
 
-
+        
         // Fetch site visits with pagination
         $siteVisits = SiteVisit::with(['property.portfolio'])
             ->where('date_visit', '>', now())
@@ -4575,12 +4574,12 @@ class MakerController extends Controller
             ->where('visit_year', '>', now()->year)
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
+                      ->where('visit_month', '>', now()->month);
             })
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
+                      ->where('visit_month', now()->month)
+                      ->where('visit_day', '>', now()->day);
             })
             ->paginate($perPage, ['*'], 'site_visit_log_page')
             ->withQueryString();
@@ -4589,15 +4588,15 @@ class MakerController extends Controller
         $activeSiteVisitLogsCount = SiteVisitLog::where('visit_year', '>', now()->year)
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
+                      ->where('visit_month', '>', now()->month);
             })
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
+                      ->where('visit_month', now()->month)
+                      ->where('visit_day', '>', now()->day);
             })
             ->count();
-
+        
         // Fetch appointments with pagination
         $appointments = Appointment::with(['portfolio'])
             ->where('date_of_approval', '>', now())
@@ -4607,11 +4606,11 @@ class MakerController extends Controller
 
         // calculate total number of appointment which has remaining time less than or equal to 30 days
         $activeAppointmentsCount = Appointment::where('date_of_approval', '>', now())->count();
-
+        
         // Pass all data to the view
         return view('maker.notification.index', compact(
-            'leases',
-            'siteVisits',
+            'leases', 
+            'siteVisits', 
             'siteVisitLogs',
             'appointments',
             'activeTab',
