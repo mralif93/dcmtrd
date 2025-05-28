@@ -37,11 +37,11 @@ class ApprovalFormSeeder extends Seeder
 
         // Sample statuses
         $statuses = [
+            'draft',
+            'active',
             'pending',
-            'approved',
             'rejected',
-            'in_review',
-            'postponed'
+            'inactive',
         ];
 
         // Sample names for prepared_by and verified_by
