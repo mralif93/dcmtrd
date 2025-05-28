@@ -16,464 +16,247 @@
         </div>
     </x-slot>
 
-    <div class="py-6">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="bg-white border-b border-gray-200">
-                    <!-- Tabs Navigation -->
-                    <div class="border-b border-gray-200">
-                        <nav class="flex px-6 -mb-px space-x-6">
-                            <button type="button" onclick="switchTab('lease')" 
-                                    class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm {{ $activeTab == 'lease' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}" 
-                                    id="tab-lease">
-                                Lease
-                                <span class="ml-2 py-0.5 px-2.5 text-xs rounded-full bg-gray-100">{{ $activeLeasesCount ?? 0 }}</span>
-                            </button>
-                            
-                            <button type="button" onclick="switchTab('siteVisit')" 
-                                    class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm {{ $activeTab == 'siteVisit' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}" 
-                                    id="tab-siteVisit">
-                                Site Visits
-                                <span class="ml-2 py-0.5 px-2.5 text-xs rounded-full bg-gray-100">{{ $activeSiteVisitsCount ?? 0 }}</span>
-                            </button>
-                            
-                            <button type="button" onclick="switchTab('siteVisitLog')" 
-                                    class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm {{ $activeTab == 'siteVisitLog' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}" 
-                                    id="tab-siteVisitLog">
-                                Activity Diary
-                                <span class="ml-2 py-0.5 px-2.5 text-xs rounded-full bg-gray-100">{{ $activeSiteVisitLogsCount ?? 0 }}</span>
-                            </button>
-                            
-                            <button type="button" onclick="switchTab('appointments')" 
-                                    class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm {{ $activeTab == 'appointments' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}" 
-                                    id="tab-appointments">
-                                Appointments
-                                <span class="ml-2 py-0.5 px-2.5 text-xs rounded-full bg-gray-100">{{ $activeAppointmentsCount ?? 0 }}</span>
-                            </button>
-                        </nav>
-                    </div>
-
-                    <!-- Lease Tab Content -->
-                    <div id="content-lease" class="tab-content {{ $activeTab != 'lease' ? 'hidden' : '' }}">
-                        <div class="p-6 overflow-x-auto">
-                            <table class="min-w-full overflow-hidden bg-white border-b border-gray-200 divide-y divide-gray-200 shadow sm:rounded-lg">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Portfolio</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Property</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Tenant</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Period Date</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Remaining Time</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @forelse($leases as $lease)
-                                        @php
-                                            // Calculate time remaining until lease end
-                                            $endDate = \Carbon\Carbon::parse($lease->end_date);
-                                            $now = \Carbon\Carbon::now();
-                                            $daysRemaining = $now->diffInDays($endDate, false);
-
-                                            // Format the time remaining text and badge color
-                                            if ($daysRemaining < 0) {
-                                                // Past date - no special formatting
-                                                $timeRemaining = 'Past';
-                                                $badgeClass = 'bg-gray-100 text-gray-500';
-                                            } else {
-                                                // Show total days remaining as integer (no decimals)
-                                                $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
-                                                
-                                                // Apply color coding based on urgency
-                                                if ($daysRemaining == 0) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 7) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 30) {
-                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                } else {
-                                                    $badgeClass = 'bg-blue-100 text-blue-800';
-                                                }
-                                            }
-                                        @endphp
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ $lease->tenant->property->portfolio->portfolio_name ?? 'N/A' }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ $lease->tenant->property->name ?? 'N/A' }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ $lease->tenant->name ?? 'N/A' }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ date('d/m/Y', strtotime($lease->start_date)) }} - {{ date('d/m/Y', strtotime($lease->end_date)) }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badgeClass }}">
-                                                    {{ $timeRemaining }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                    {{ match(strtolower($lease->status)) {
-                                                        'pending' => 'bg-yellow-100 text-yellow-800',
-                                                        'active' => 'bg-green-100 text-green-800',
-                                                        'inactive' => 'bg-gray-100 text-gray-800',
-                                                        'rejected' => 'bg-red-100 text-red-800',
-                                                        default => 'bg-gray-100 text-gray-800'
-                                                    } }}">
-                                                    {{ ucfirst($lease->status) }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                <div class="flex justify-end space-x-2">
-                                                    <a href="{{ route('lease-m.show', $lease->id) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5
-                                                            .064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                        </svg>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
-                                                No leases found.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                            <!-- Pagination with tab preservation -->
-                            <div class="mt-4">
-                                {{ $leases->appends(['active_tab' => 'lease'])->links() }}
-                            </div>
+    <div class="py-12">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            @if (session('success'))
+                <div class="p-4 mb-6 border-l-4 border-green-400 bg-green-50">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
                         </div>
                     </div>
+                </div>
+            @endif
 
-                    <!-- Site Visit Tab Content -->
-                    <div id="content-siteVisit" class="tab-content {{ $activeTab != 'siteVisit' ? 'hidden' : '' }}">
-                        <div class="p-6 overflow-x-auto">
-                            <table class="min-w-full overflow-hidden bg-white border-b border-gray-200 divide-y divide-gray-200 shadow sm:rounded-lg">
-                                <thead class="bg-gray-50">
+            <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+                <!-- Tabs Navigation -->
+                <div class="border-b border-gray-200">
+                    <nav class="flex px-6 -mb-px space-x-6">
+                        <button type="button" onclick="switchTab('lease')"
+                            class="px-1 py-4 text-sm font-medium text-indigo-600 border-b-2 border-indigo-500 tab-button whitespace-nowrap"
+                            id="tab-lease">
+                            Lease
+                        </button>
+                        <button type="button" onclick="switchTab('siteVisit')"
+                            class="px-1 py-4 text-sm font-medium text-gray-500 border-b-2 border-transparent tab-button whitespace-nowrap hover:text-gray-700 hover:border-gray-300"
+                            id="tab-siteVisit">
+                            Site Visit
+                        </button>
+                        <button type="button" onclick="switchTab('siteVisitLog')"
+                            class="px-1 py-4 text-sm font-medium text-gray-500 border-b-2 border-transparent tab-button whitespace-nowrap hover:text-gray-700 hover:border-gray-300"
+                            id="tab-siteVisitLog">
+                            Site Visit Log
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Lease Tab Content -->
+                <div id="content-lease" class="tab-content">
+                    <div class="p-6 overflow-x-auto">
+                        <table class="min-w-full border border-gray-200 divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Portfolio</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Property</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Tenant</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Commencement Date</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Expiry Date</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">
+                                        Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach ($leases as $lease)
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Portfolio</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Property</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Visit Date/Time</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Remaining Time</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Actions</th>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ $lease->tenant->property->portfolio->portfolio_name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">{{ $lease->tenant->name }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ $lease->tenant->property->name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ date('d/m/Y', strtotime($lease->start_date)) }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ date('d/m/Y', strtotime($lease->end_date)) }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex justify-end space-x-2">
+                                                <a href="{{ route('maker.notification.show', $lease) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @forelse($siteVisits as $siteVisit)
-                                        @php
-                                            // Parse date and time separately to avoid concatenation issues
-                                            $visitDate = \Carbon\Carbon::parse($siteVisit->date_visit);
-                                            $visitTime = \Carbon\Carbon::parse($siteVisit->time_visit);
-                                            
-                                            // Calculate time remaining until site visit
-                                            $now = \Carbon\Carbon::now();
-                                            $daysRemaining = $now->diffInDays($visitDate, false);
-                                            
-                                            // Format the time remaining text and badge color
-                                            if ($daysRemaining < 0) {
-                                                // Past date - no special formatting
-                                                $timeRemaining = 'Past';
-                                                $badgeClass = 'bg-gray-100 text-gray-500';
-                                            } else {
-                                                // Show total days remaining as integer (no decimals)
-                                                $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
-                                                
-                                                // Apply color coding based on urgency
-                                                if ($daysRemaining == 0) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 7) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 30) {
-                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                } else {
-                                                    $badgeClass = 'bg-blue-100 text-blue-800';
-                                                }
-                                            }
-                                        @endphp
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ $siteVisit->property->portfolio->portfolio_name ?? 'N/A' }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ $siteVisit->property->name ?? 'N/A' }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ date('d/m/Y', strtotime($siteVisit->date_visit)) }} / {{ date('H:i A', strtotime($siteVisit->time_visit)) }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badgeClass }}">
-                                                    {{ $timeRemaining }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    {{ match(strtolower($siteVisit->status)) {
-                                                        'pending' => 'bg-yellow-100 text-yellow-800',
-                                                        'active' => 'bg-green-100 text-green-800',
-                                                        'inactive' => 'bg-gray-100 text-gray-800',
-                                                        'rejected' => 'bg-red-100 text-red-800',
-                                                        default => 'bg-gray-100 text-gray-800'
-                                                    } }}">
-                                                    {{ ucfirst($siteVisit->status) }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                <div class="flex justify-end space-x-2">
-                                                    <a href="{{ route('site-visit-m.show', $siteVisit->id) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5
-                                                            .064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                        </svg>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                                No site visits found.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                            <!-- Pagination with tab preservation -->
-                            <div class="mt-4">
-                                {{ $siteVisits->appends(['active_tab' => 'siteVisit'])->links() }}
-                            </div>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <!-- Pagination -->
+                        <div class="mt-4">
+                            {{ $leases->links() }}
                         </div>
                     </div>
+                </div>
 
-                    <!-- Site Visit Log Tab Content -->
-                    <div id="content-siteVisitLog" class="tab-content {{ $activeTab != 'siteVisitLog' ? 'hidden' : '' }}">
-                        <div class="p-6 overflow-x-auto">
-                            <table class="min-w-full overflow-hidden bg-white border-b border-gray-200 divide-y divide-gray-200 shadow sm:rounded-lg">
-                                <thead class="bg-gray-50">
+                <!-- Site Visit Tab Content -->
+                <div id="content-siteVisit" class="hidden tab-content">
+                    <div class="p-6 overflow-x-auto">
+                        <table class="min-w-full border border-gray-200 divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Portfolio</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Property</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Date</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Time</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">
+                                        Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach ($siteVisits as $siteVisit)
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Portfolio</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Property</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Visit Date</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Remaining Time</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Actions</th>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ $siteVisit->property->portfolio->portfolio_name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ $siteVisit->property->name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ date('d/m/Y', strtotime($siteVisit->date_visit)) }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ date('h:i A', strtotime($siteVisit->time_visit)) }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex justify-end space-x-2">
+                                                <a href="{{ route('maker.notification.show', $siteVisit) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @forelse($siteVisitLogs as $siteVisitLog)
-                                        @php
-                                            // Create a date from the components using the full visit date attribute
-                                            $fullVisitDate = $siteVisitLog->getFullVisitDateAttribute();
-                                            
-                                            // Parse the date properly
-                                            if ($fullVisitDate) {
-                                                $visitDate = \Carbon\Carbon::createFromFormat('d/m/Y', $fullVisitDate);
-                                            } else {
-                                                // Fallback if the full date is not available
-                                                $visitDate = \Carbon\Carbon::create(
-                                                    $siteVisitLog->visit_year, 
-                                                    $siteVisitLog->visit_month, 
-                                                    $siteVisitLog->visit_day
-                                                );
-                                            }
-                                            
-                                            // Calculate days since the visit (for past visits)
-                                            $now = \Carbon\Carbon::now();
-                                            $daysRemaining = $now->diffInDays($visitDate, false);
-                                            
-                                            // Format the time remaining text and badge color
-                                            if ($daysRemaining < 0) {
-                                                // Past date - show as "Past"
-                                                $timeRemaining = 'Past';
-                                                $badgeClass = 'bg-gray-100 text-gray-500';
-                                            } else {
-                                                // Show total days remaining as integer (no decimals)
-                                                $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
-                                                
-                                                // Apply color coding based on urgency
-                                                if ($daysRemaining == 0) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 7) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 30) {
-                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                } else {
-                                                    $badgeClass = 'bg-blue-100 text-blue-800';
-                                                }
-                                            }
-                                        @endphp
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">
-                                                    {{ $siteVisitLog->property->portfolio->portfolio_name ?? 'N/A' }}
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">
-                                                    {{ $siteVisitLog->property->name ?? 'Property #' . $siteVisitLog->property_id }}
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">
-                                                    {{ $siteVisitLog->getFullVisitDateAttribute() ?? 'N/A' }}
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badgeClass }}">
-                                                    {{ $timeRemaining }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                    {{ match(strtolower($siteVisitLog->status)) {
-                                                        'pending' => 'bg-yellow-100 text-yellow-800',
-                                                        'active' => 'bg-green-100 text-green-800',
-                                                        'inactive' => 'bg-gray-100 text-gray-800',
-                                                        'rejected' => 'bg-red-100 text-red-800',
-                                                        default => 'bg-gray-100 text-gray-800'
-                                                    } }}">
-                                                    {{ ucfirst($siteVisitLog->status) }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                <div class="flex justify-end space-x-2">
-                                                    <a href="{{ route('site-visit-log-m.show', $siteVisitLog->id) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5
-                                                            .064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                        </svg>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                                No activity diaries found.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                            <!-- Pagination with tab preservation -->
-                            <div class="mt-4">
-                                {{ $siteVisitLogs->appends(['active_tab' => 'siteVisitLog'])->links() }}
-                            </div>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <!-- Pagination -->
+                        <div class="mt-4">
+                            {{ $siteVisits->links() }}
                         </div>
                     </div>
+                </div>
 
-                    <!-- Appointments Tab Content -->
-                    <div id="content-appointments" class="tab-content {{ $activeTab != 'appointments' ? 'hidden' : '' }}">
-                        <div class="p-6 overflow-x-auto">
-                            <table class="min-w-full overflow-hidden bg-white border-b border-gray-200 divide-y divide-gray-200 shadow sm:rounded-lg">
-                                <thead class="bg-gray-50">
+                <!-- Site Visit Log Tab Content -->
+                <div id="content-siteVisitLog" class="hidden tab-content">
+                    <div class="p-6 overflow-x-auto">
+                        <table class="min-w-full border border-gray-200 divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Portfolio</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Property</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Date</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">
+                                        Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach ($siteVisitLogs as $siteVisitLog)
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Portfolio</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Party Name</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Date</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Remaining Time</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">Actions</th>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ $siteVisitLog->property->portfolio->portfolio_name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ $siteVisitLog->property->name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ $siteVisitLog->getFullVisitDateAttribute() }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex justify-end space-x-2">
+                                                <a href="{{ route('maker.notification.show', $siteVisitLog) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @forelse($appointments as $appointment)
-                                        @php
-                                            // calculate time remaining
-                                            $now = \Carbon\Carbon::now();
-                                            $daysRemaining = $now->diffInDays($appointment->date_of_approval, false);
-
-                                            // Format the time remaining text and badge color
-                                            if ($daysRemaining < 0) {
-                                                // Past date - show as "Past"
-                                                $timeRemaining = 'Past';
-                                                $badgeClass = 'bg-gray-100 text-gray-500';
-                                            } else {
-                                                // Show total days remaining as integer (no decimals)
-                                                $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
-                                                
-                                                // Apply color coding based on urgency
-                                                if ($daysRemaining == 0) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 7) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 30) {
-                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                } else {
-                                                    $badgeClass = 'bg-blue-100 text-blue-800';
-                                                }
-                                            }
-                                        @endphp
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">
-                                                    {{ $appointment->portfolio->portfolio_name ?? 'N/A' }}
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">{{ $appointment->party_name ?? 'N/A' }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">
-                                                    {{ $appointment->date_of_approval ? $appointment->date_of_approval->format('d/m/Y') : 'N/A' }}
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badgeClass }}">
-                                                    {{ $timeRemaining }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                    {{ match(strtolower($appointment->status ?? '')) {
-                                                        'approved' => 'bg-green-100 text-green-800',
-                                                        'pending' => 'bg-yellow-100 text-yellow-800',
-                                                        'rejected' => 'bg-red-100 text-red-800',
-                                                        'active' => 'bg-green-100 text-green-800',
-                                                        'inactive' => 'bg-gray-100 text-gray-800',
-                                                        default => 'bg-blue-100 text-blue-800'
-                                                    } }}">
-                                                    {{ ucfirst($appointment->status ?? 'Unknown') }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                <div class="flex justify-end space-x-2">
-                                                    <a href="{{ route('appointment-m.show', $appointment) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5
-                                                            .064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                        </svg>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                                No appointments found.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                            
-                            <!-- Pagination with tab preservation -->
-                            <div class="mt-4">
-                                {{ $appointments->appends(['active_tab' => 'appointments'])->links() }}
-                            </div>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <!-- Pagination -->
+                        <div class="mt-4">
+                            {{ $siteVisitLogs->links() }}
                         </div>
                     </div>
                 </div>
@@ -483,17 +266,6 @@
 
     <!-- Tab Switching JavaScript -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check URL parameters for active tab
-            const urlParams = new URLSearchParams(window.location.search);
-            const activeTab = urlParams.get('active_tab');
-            
-            // If active tab is specified in URL, switch to it
-            if (activeTab) {
-                switchTab(activeTab);
-            }
-        });
-        
         function switchTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -502,8 +274,8 @@
 
             // Show the selected tab content
             document.getElementById('content-' + tabName).classList.remove('hidden');
-            
-            // Update active tab styling
+
+            // Update tab styles
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.classList.remove('border-indigo-500', 'text-indigo-600');
                 button.classList.add('border-transparent', 'text-gray-500');
@@ -511,20 +283,6 @@
 
             document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500');
             document.getElementById('tab-' + tabName).classList.add('border-indigo-500', 'text-indigo-600');
-            
-            // Update URL with the active tab parameter without reloading the page
-            const url = new URL(window.location);
-            url.searchParams.set('active_tab', tabName);
-            
-            // Preserve any existing page parameters
-            const pageParams = ['page'];
-            pageParams.forEach(param => {
-                if (url.searchParams.has(param)) {
-                    // Keep the page parameter
-                }
-            });
-            
-            window.history.pushState({}, '', url);
         }
     </script>
 </x-app-layout>

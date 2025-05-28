@@ -159,62 +159,6 @@ class MakerController extends Controller
         // Execute the query after all filters are applied
         $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
 
-        // calculate total number of notifications
-        $totalNotifications = 0;
-
-        // Fetch leases with pagination
-        $leases = Lease::with(['tenant.property.portfolio'])
-            ->where('end_date', '>', now())
-            ->orderBy('end_date');
-
-        // calculate total of lease which has remaining time
-        $activeLeasesCount = Lease::where('end_date', '>', now())->count();
-
-
-        // Fetch site visits with pagination
-        $siteVisits = SiteVisit::with(['property.portfolio'])
-            ->where('date_visit', '>', now())
-            ->orderBy('date_visit');
-
-        // calculate total number of site visit which has remaining time less than or equal to 30 days
-        $activeSiteVisitsCount = SiteVisit::where('date_visit', '>', now())->count();
-
-        // Fetch site visit logs with pagination
-        $siteVisitLogs = SiteVisitLog::with(['property.portfolio'])
-            ->where('visit_year', '>', now()->year)
-            ->orWhere(function ($query) {
-                $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
-            })
-            ->orWhere(function ($query) {
-                $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
-            });
-
-        // calculate total number of site visit log which has remaining time less than or equal to 30 days
-        $activeSiteVisitLogsCount = SiteVisitLog::where('visit_year', '>', now()->year)
-            ->orWhere(function ($query) {
-                $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
-            })
-            ->orWhere(function ($query) {
-                $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
-            })
-            ->count();
-
-        // Fetch appointments with pagination
-        $appointments = Appointment::with(['portfolio'])
-            ->where('date_of_approval', '>', now())
-            ->orderBy('date_of_approval');
-
-        // calculate total number of appointment which has remaining time less than or equal to 30 days
-        $activeAppointmentsCount = Appointment::where('date_of_approval', '>', now())->count();
-
-        $totalNotifications = $activeLeasesCount + $activeSiteVisitsCount + $activeSiteVisitLogsCount + $activeAppointmentsCount;
-
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
@@ -243,7 +187,6 @@ class MakerController extends Controller
             'approvalFormsPendingCount' => $counts->pending_approval_forms_count,
             'approvalPropertiesPendingCount' => $counts->pending_approval_properties_count,
             'siteVisitLogsPendingCount' => $counts->pending_site_visit_logs_count,
-            'totalNotifications' => $totalNotifications,
         ]);
     }
 
@@ -4506,83 +4449,16 @@ class MakerController extends Controller
     // Notification
     public function NotificationIndex(Request $request)
     {
-        // Get current tab or default to 'lease'
-        $activeTab = $request->query('active_tab', 'lease');
+        // fetch leases expiring within a week
+        $leases = Lease::expiringWithin(365)->latest()->paginate(10);
 
-        // Set pagination limit
-        $perPage = 10;
+        // fetch all site visit with pagination
+        $siteVisits = SiteVisit::latest()->paginate(10, ['*'], 'siteVisits_page');
 
-        // Fetch leases with pagination
-        $leases = Lease::with(['tenant.property.portfolio'])
-            ->where('end_date', '>', now())
-            ->orderBy('end_date')
-            ->paginate($perPage, ['*'], 'lease_page')
-            ->withQueryString();
+        // fetch all site visit log with pagination
+        $siteVisitLogs = SiteVisitLog::latest()->paginate(10, ['*'], 'siteVisitLogs_page');
 
-        // calculate total of lease which has remaining time
-        $activeLeasesCount = Lease::where('end_date', '>', now())->count();
-
-
-        // Fetch site visits with pagination
-        $siteVisits = SiteVisit::with(['property.portfolio'])
-            ->where('date_visit', '>', now())
-            ->orderBy('date_visit')
-            ->paginate($perPage, ['*'], 'site_visit_page')
-            ->withQueryString();
-
-        // calculate total number of site visit which has remaining time less than or equal to 30 days
-        $activeSiteVisitsCount = SiteVisit::where('date_visit', '>', now())->count();
-
-        // Fetch site visit logs with pagination
-        $siteVisitLogs = SiteVisitLog::with(['property.portfolio'])
-            ->where('visit_year', '>', now()->year)
-            ->orWhere(function ($query) {
-                $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
-            })
-            ->orWhere(function ($query) {
-                $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
-            })
-            ->paginate($perPage, ['*'], 'site_visit_log_page')
-            ->withQueryString();
-
-        // calculate total number of site visit log which has remaining time less than or equal to 30 days
-        $activeSiteVisitLogsCount = SiteVisitLog::where('visit_year', '>', now()->year)
-            ->orWhere(function ($query) {
-                $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
-            })
-            ->orWhere(function ($query) {
-                $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
-            })
-            ->count();
-
-        // Fetch appointments with pagination
-        $appointments = Appointment::with(['portfolio'])
-            ->where('date_of_approval', '>', now())
-            ->orderBy('date_of_approval')
-            ->paginate($perPage, ['*'], 'appointment_page')
-            ->withQueryString();
-
-        // calculate total number of appointment which has remaining time less than or equal to 30 days
-        $activeAppointmentsCount = Appointment::where('date_of_approval', '>', now())->count();
-
-        // Pass all data to the view
-        return view('maker.notification.index', compact(
-            'leases',
-            'siteVisits',
-            'siteVisitLogs',
-            'appointments',
-            'activeTab',
-            'activeLeasesCount',
-            'activeSiteVisitsCount',
-            'activeSiteVisitLogsCount',
-            'activeAppointmentsCount'
-        ));
+        return view('maker.notification.index', compact('leases', 'siteVisits', 'siteVisitLogs'));
     }
 
     public function NotificationShow()
