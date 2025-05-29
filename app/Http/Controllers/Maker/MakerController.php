@@ -695,12 +695,13 @@ class MakerController extends Controller
 
     protected function validateDocument(Request $request)
     {
+        dd($request);
         return $request->validate([
             'facility_id' => 'required|exists:facility_informations,id',
             'document_name' => 'required|max:200',
             'document_type' => 'required|max:50',
             'upload_date' => 'required|date',
-            'document_file'   => 'nullable|file|mimes:pdf|max:20480' 
+            'document_file'   => 'nullable|file|mimes:pdf|max:51200'
         ]);
     }
 
