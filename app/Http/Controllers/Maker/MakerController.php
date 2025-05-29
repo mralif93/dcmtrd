@@ -57,6 +57,7 @@ use App\Imports\TradingActivityImport;
 
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\ListSecurityRequest;
+use Illuminate\Notifications\Notification;
 use App\Http\Requests\User\BondFormRequest;
 use App\Models\ChecklistLegalDocumentation;
 use App\Http\Requests\StoreADIHolderRequest;
@@ -159,6 +160,62 @@ class MakerController extends Controller
         // Execute the query after all filters are applied
         $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
 
+        // calculate total number of notifications
+        $totalNotifications = 0;
+
+        // Fetch leases with pagination
+        $leases = Lease::with(['tenant.property.portfolio'])
+            ->where('end_date', '>', now())
+            ->orderBy('end_date');
+
+        // calculate total of lease which has remaining time
+        $activeLeasesCount = Lease::where('end_date', '>', now())->count();
+
+
+        // Fetch site visits with pagination
+        $siteVisits = SiteVisit::with(['property.portfolio'])
+            ->where('date_visit', '>', now())
+            ->orderBy('date_visit');
+
+        // calculate total number of site visit which has remaining time less than or equal to 30 days
+        $activeSiteVisitsCount = SiteVisit::where('date_visit', '>', now())->count();
+
+        // Fetch site visit logs with pagination
+        $siteVisitLogs = SiteVisitLog::with(['property.portfolio'])
+            ->where('visit_year', '>', now()->year)
+            ->orWhere(function ($query) {
+                $query->where('visit_year', now()->year)
+                    ->where('visit_month', '>', now()->month);
+            })
+            ->orWhere(function ($query) {
+                $query->where('visit_year', now()->year)
+                    ->where('visit_month', now()->month)
+                    ->where('visit_day', '>', now()->day);
+            });
+
+        // calculate total number of site visit log which has remaining time less than or equal to 30 days
+        $activeSiteVisitLogsCount = SiteVisitLog::where('visit_year', '>', now()->year)
+            ->orWhere(function ($query) {
+                $query->where('visit_year', now()->year)
+                    ->where('visit_month', '>', now()->month);
+            })
+            ->orWhere(function ($query) {
+                $query->where('visit_year', now()->year)
+                    ->where('visit_month', now()->month)
+                    ->where('visit_day', '>', now()->day);
+            })
+            ->count();
+
+        // Fetch appointments with pagination
+        $appointments = Appointment::with(['portfolio'])
+            ->where('date_of_approval', '>', now())
+            ->orderBy('date_of_approval');
+
+        // calculate total number of appointment which has remaining time less than or equal to 30 days
+        $activeAppointmentsCount = Appointment::where('date_of_approval', '>', now())->count();
+
+        $totalNotifications = $activeLeasesCount + $activeSiteVisitsCount + $activeSiteVisitLogsCount + $activeAppointmentsCount;
+
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
@@ -187,6 +244,8 @@ class MakerController extends Controller
             'approvalFormsPendingCount' => $counts->pending_approval_forms_count,
             'approvalPropertiesPendingCount' => $counts->pending_approval_properties_count,
             'siteVisitLogsPendingCount' => $counts->pending_site_visit_logs_count,
+
+            'totalNotifications' => $totalNotifications,
         ]);
     }
 
@@ -2678,12 +2737,12 @@ class MakerController extends Controller
     {
         return $request->validate([
             'lease_id' => 'required|exists:leases,id',
-            
+
             // Letter reference information
             'your_reference' => 'nullable|string|max:255',
             'our_reference' => 'required|string|max:255',
             'letter_date' => 'required|date',
-            
+
             // Recipient information
             'recipient_company' => 'required|string|max:255',
             'recipient_address_line_1' => 'required|string|max:255',
@@ -2693,16 +2752,16 @@ class MakerController extends Controller
             'recipient_address_city' => 'required|string|max:255',
             'recipient_address_state' => 'required|string|max:255',
             'recipient_address_country' => 'required|string|max:255',
-            
+
             // Date
             'letter_offer_date' => 'nullable|date',
             'supplemental_letter_offer_date' => 'nullable|date',
-            
+
             // Signature information
             'approver_name' => 'nullable|string|max:255',
             'approver_position' => 'nullable|string|max:255',
             'approver_department' => 'nullable|string|max:255',
-            
+
             // System information
             'status' => 'nullable|string|max:255',
             'prepared_by' => 'nullable|string|max:255',
@@ -3774,69 +3833,40 @@ class MakerController extends Controller
     // Appointment Module
     public function AppointmentIndex(Request $request)
     {
-        // Determine database connection type
-        $dbConnection = config('database.default');
-        $isSqlite = $dbConnection === 'sqlite';
-
         // Retrieve appointments with related portfolio, handling search and filtering
         $query = Appointment::with('portfolio')
-        // Handle search - only for party name
-        ->when($request->input('search'), function ($query, $search) {
-            return $query->where('party_name', 'like', "%{$search}%");
-        })
-        // Filter by status
-        ->when($request->input('status'), function ($query, $status) {
-            return $query->where('status', $status);
-        })
-        // Filter by portfolio
-        ->when($request->input('portfolio_id'), function ($query, $portfolioId) {
-            return $query->where('portfolio_id', $portfolioId);
-        })
-        // Filter by year - using appropriate function based on database
-        ->when($request->input('year'), function ($query, $year) use ($isSqlite) {
-            if ($isSqlite) {
-                return $query->whereRaw("strftime('%Y', date_of_approval) = ?", [$year]);
-            } else {
-                return $query->whereRaw('YEAR(date_of_approval) = ?', [$year]);
-            }
-        })
-        // Filter by month - using appropriate function based on database
-        ->when($request->input('month'), function ($query, $month) use ($isSqlite) {
-            if ($isSqlite) {
-                return $query->whereRaw("strftime('%m', date_of_approval) = ?", [sprintf('%02d', $month)]);
-            } else {
-                return $query->whereRaw('MONTH(date_of_approval) = ?', [$month]);
-            }
-        })
-        // Filter by day - using appropriate function based on database
-        ->when($request->input('day'), function ($query, $day) use ($isSqlite) {
-            if ($isSqlite) {
-                return $query->whereRaw("strftime('%d', date_of_approval) = ?", [sprintf('%02d', $day)]);
-            } else {
-                return $query->whereRaw('DAY(date_of_approval) = ?', [$day]);
-            }
-        })
-        ->latest()
-        ->paginate(15)
-        ->withQueryString(); // Preserve query parameters in pagination links
+            // Handle search - only for party name
+            ->when($request->input('search'), function ($query, $search) {
+                return $query->where('party_name', 'like', "%{$search}%");
+            })
+            // Filter by status
+            ->when($request->input('status'), function ($query, $status) {
+                return $query->where('status', $status);
+            })
+            // Filter by portfolio
+            ->when($request->input('portfolio_id'), function ($query, $portfolioId) {
+                return $query->where('portfolio_id', $portfolioId);
+            })
+            // Filter by year (MySQL compatible)
+            ->when($request->input('year'), function ($query, $year) {
+                return $query->whereYear('date_of_approval', $year);
+            })
+            // Filter by month (MySQL compatible)
+            ->when($request->input('month'), function ($query, $month) {
+                return $query->whereMonth('date_of_approval', $month);
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString(); // Preserve query parameters in pagination links
 
         // Get all portfolios for the dropdown
         $portfolios = Portfolio::orderBy('portfolio_name')->get();
 
-        // Extract unique years from appointment dates - using appropriate function based on database
-        if ($isSqlite) {
-            $years = Appointment::selectRaw("strftime('%Y', date_of_approval) as year")
-                ->distinct()
-                ->orderByDesc('year')
-                ->pluck('year')
-                ->toArray();
-        } else {
-            $years = Appointment::selectRaw('YEAR(date_of_approval) as year')
-                ->distinct()
-                ->orderByDesc('year')
-                ->pluck('year')
-                ->toArray();
-        }
+        // Extract unique years from appointment dates (MySQL compatible)
+        $years = Appointment::selectRaw('DISTINCT YEAR(date_of_approval) as year')
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->toArray();
 
         // Define status options
         $statuses = ['active', 'pending', 'rejected', 'inactive'];
@@ -3848,6 +3878,7 @@ class MakerController extends Controller
             'statuses' => $statuses
         ]);
     }
+
 
     public function AppointmentCreate()
     {
@@ -4474,30 +4505,528 @@ class MakerController extends Controller
     }
 
     // Notification
-    public function NotificationIndex(Request $request) {
-        // fetch leases expiring within a week
-        $leases = Lease::expiringWithin(365)->latest()->paginate(10);
+    public function NotificationIndex(Request $request)
+    {
+        // Get current tab or default to 'lease'
+        $activeTab = $request->query('active_tab', 'lease');
 
-        // fetch all site visit with pagination
-        $siteVisits = SiteVisit::latest()->paginate(10, ['*'], 'siteVisits_page');
+        // Set pagination limit
+        $perPage = 10;
 
-        // fetch all site visit log with pagination
-        $siteVisitLogs = SiteVisitLog::latest()->paginate(10, ['*'], 'siteVisitLogs_page');
+        // Fetch leases with pagination
+        $leases = Lease::with(['tenant.property.portfolio'])
+            ->where('end_date', '>', now())
+            ->orderBy('end_date')
+            ->paginate($perPage, ['*'], 'lease_page')
+            ->withQueryString();
 
-        return view('maker.notification.index', compact('leases', 'siteVisits', 'siteVisitLogs'));
+        // calculate total of lease which has remaining time
+        $activeLeasesCount = Lease::where('end_date', '>', now())->count();
+
+
+        // Fetch site visits with pagination
+        $siteVisits = SiteVisit::with(['property.portfolio'])
+            ->where('date_visit', '>', now())
+            ->orderBy('date_visit')
+            ->paginate($perPage, ['*'], 'site_visit_page')
+            ->withQueryString();
+
+        // calculate total number of site visit which has remaining time less than or equal to 30 days
+        $activeSiteVisitsCount = SiteVisit::where('date_visit', '>', now())->count();
+
+        // Fetch site visit logs with pagination
+        $siteVisitLogs = SiteVisitLog::with(['property.portfolio'])
+            ->where('visit_year', '>', now()->year)
+            ->orWhere(function ($query) {
+                $query->where('visit_year', now()->year)
+                    ->where('visit_month', '>', now()->month);
+            })
+            ->orWhere(function ($query) {
+                $query->where('visit_year', now()->year)
+                    ->where('visit_month', now()->month)
+                    ->where('visit_day', '>', now()->day);
+            })
+            ->paginate($perPage, ['*'], 'site_visit_log_page')
+            ->withQueryString();
+
+        // calculate total number of site visit log which has remaining time less than or equal to 30 days
+        $activeSiteVisitLogsCount = SiteVisitLog::where('visit_year', '>', now()->year)
+            ->orWhere(function ($query) {
+                $query->where('visit_year', now()->year)
+                    ->where('visit_month', '>', now()->month);
+            })
+            ->orWhere(function ($query) {
+                $query->where('visit_year', now()->year)
+                    ->where('visit_month', now()->month)
+                    ->where('visit_day', '>', now()->day);
+            })
+            ->count();
+
+        // Fetch appointments with pagination
+        $appointments = Appointment::with(['portfolio'])
+            ->where('date_of_approval', '>', now())
+            ->orderBy('date_of_approval')
+            ->paginate($perPage, ['*'], 'appointment_page')
+            ->withQueryString();
+
+        // calculate total number of appointment which has remaining time less than or equal to 30 days
+        $activeAppointmentsCount = Appointment::where('date_of_approval', '>', now())->count();
+
+        // Pass all data to the view
+        return view('maker.notification.index', compact(
+            'leases',
+            'siteVisits',
+            'siteVisitLogs',
+            'appointments',
+            'activeTab',
+            'activeLeasesCount',
+            'activeSiteVisitsCount',
+            'activeSiteVisitLogsCount',
+            'activeAppointmentsCount'
+        ));
     }
 
-    public function NotificationShow() {
+    public function NotificationShow()
+    {
         return view('maker.notification.show', compact('notification'));
     }
 
-    public function NotificationMarkAsRead(Notification $notification) {
+    public function NotificationMarkAsRead(Notification $notification)
+    {
         return back()
             ->route('maker.notification.index')
             ->with('success', 'Notification marked as read.');
     }
 
-    public function NotificationMarkAllAsRead() {
+    public function NotificationMarkAllAsRead()
+    {
         return back();
+    }
+
+    public function ListSecurityIndex(Request $request)
+    {
+        $query = ListSecurity::with('issuer')->latest();
+
+        // Apply status filter if provided
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('security_name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('security_code', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('asset_name_type', 'like', '%' . $searchTerm . '%') // Added this line for asset_name_type
+                    ->orWhereHas('issuer', function ($query) use ($searchTerm) {
+                        $query->where('issuer_name', 'like', '%' . $searchTerm . '%'); // Replace 'issuer_name' with the actual column name in the issuer model
+                    });
+            });
+        }
+
+        // Paginate the results and keep the search parameters in the query string
+        $securities = $query->paginate(10)->withQueryString();
+
+        // Count totals per status
+        $statusCounts = ListSecurity::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        // Add total count for all
+        $statusCounts[''] = ListSecurity::count();
+
+        return view('maker.listing-security.index', compact('securities', 'statusCounts'));
+    }
+
+
+    public function ListSecurityCreate()
+    {
+        $facilities = FacilityInformation::all();
+        $issuers = Issuer::all();
+
+        return view('maker.listing-security.create', compact('facilities', 'issuers'));
+    }
+
+    public function ListSecurityStore(ListSecurityRequest $req): RedirectResponse
+    {
+        $validated = $req->validated();
+
+        $validated['status'] = 'Draft';
+        $validated['prepared_by'] = Auth::user()->name;
+
+        ListSecurity::create($validated);
+
+        return redirect()
+            ->route('list-security-m.index')
+            ->with('success', 'Listing security created successfully.');
+    }
+
+    public function ListSecurityEdit($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        $issuers = Issuer::all();
+
+        return view('maker.listing-security.edit', compact('security', 'issuers'));
+    }
+
+    public function ListSecurityUpdate(ListSecurityRequest $req, $id): RedirectResponse
+    {
+        $validated = $req->validated();
+
+        $validated['status'] = 'Draft';
+        $validated['prepared_by'] = Auth::user()->name;
+
+        ListSecurity::findOrFail($id)->update($validated);
+        return redirect()
+            ->route('list-security-m.index')
+            ->with('success', 'Listing security updated successfully.');
+    }
+
+    public function SubmitApprovalListSecurity($id)
+    {
+        $security = ListSecurity::findOrFail($id);
+
+        $security->status = 'Pending';
+        $security->prepared_by = Auth::user()->name;
+        $security->save();
+
+        dispatch(new SendListSecuritySubmittedEmail($security));
+
+        return redirect()->route('list-security-m.index')->with('success', 'Security submitted for approval.');
+    }
+
+    public function resetToDraft(ListSecurity $security)
+    {
+        $security->update([
+            'status' => 'Draft',
+            'remarks' => null, // optionally clear reason
+        ]);
+
+        return redirect()->route('list-security-m.index')->with('success', 'Security reset to Draft.');
+    }
+
+    public function ListSecurityDetails($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('maker.listing-security.details', compact('security'));
+    }
+
+    public function RequestDocumentsHistory(ListSecurity $security)
+    {
+        $history = $security->securityDocRequests()->latest()->get();
+
+        return view('maker.listing-security.history', compact('security', 'history'));
+    }
+
+    public function RequestDocumentsCreate()
+    {
+        $user = Auth::user();
+
+        $listSecurities = ListSecurity::with('issuer')
+            ->where('status', 'Active')
+            ->latest()
+            ->get();
+
+        return view('maker.listing-security.request', compact('user', 'listSecurities'));
+    }
+
+    public function RequestDocumentsStore(Request $request)
+    {
+        $request->validate([
+            'security_id' => 'required|exists:list_securities,id',
+            'request_date' => 'required|date',
+            'purpose' => 'required|string',
+        ]);
+
+        SecurityDocRequest::create([
+            'list_security_id' => $request->security_id,
+            'request_date' => $request->request_date,
+            'purpose' => $request->purpose,
+            'status' => 'Draft', // or 'Draft'
+            'prepared_by' => Auth::user()->name,
+        ]);
+
+        return redirect()->route('maker.request-documents.history', $request->security_id)->with('success', 'Document request created successfully.');
+    }
+
+    public function RequestDocumentsEdit(Request $request, $id)
+    {
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $listSecurities = ListSecurity::with('issuer')
+            ->where('status', 'Active')
+            ->latest()
+            ->get();
+
+        return view('maker.listing-security.edit-request', compact('documentRequest', 'listSecurities'));
+    }
+
+    public function RequestDocumentsUpdate(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'security_id'  => 'required|exists:list_securities,id',
+            'request_date' => 'required|date',
+            'purpose'      => 'required|string|max:1000',
+            'prepared_by'  => 'required|string|max:255',
+        ]);
+
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $documentRequest->update([
+            'list_security_id' => $validated['security_id'],
+            'request_date'     => $validated['request_date'],
+            'purpose'          => $validated['purpose'],
+            'prepared_by'      => $validated['prepared_by'],
+        ]);
+
+        return redirect()->route('maker.request-documents.history', [
+            'security' => $documentRequest->list_security_id,
+        ])->with('success', 'Document request updated successfully!');
+    }
+
+    public function submitRequest(Request $request, $id)
+    {
+        $documentRequest = SecurityDocRequest::findOrFail($id);
+
+        $documentRequest->update([
+            'status' => 'Pending',
+        ]);
+
+        dispatch(new SendListSecurityRequestEmail($documentRequest));
+
+        return redirect()->back()->with('success', 'Document request submitted successfully!');
+    }
+
+    public function ListSecurityRequest()
+    {
+        $getListReq = SecurityDocRequest::with('listSecurity.issuer')
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        // dd($getListReq);
+        return view('maker.listing-security.list-request', compact('getListReq'));
+    }
+
+    public function ListSecurityShow($id)
+    {
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        return view('maker.listing-security.show', compact('security'));
+    }
+
+    public function ListSecurityCreateWithdrawal($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('maker.listing-security.show-approval', compact('security'));
+    }
+
+    public function ListSecurityCreateReturn($id)
+    {
+        $security = ListSecurity::with('issuer')->findOrFail($id);
+
+        return view('maker.listing-security.return', compact('security'));
+    }
+    public function SendDocumentsStatus($id, Request $request)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Validate that withdrawal date is passed with the request
+        $withdrawalDate = $request->input('withdrawal_date');
+
+        // Update the status and other fields
+        $security->status = 'Withdrawal';
+        $security->verified_by = Auth::user()->name;
+        $security->withdrawal_date = $withdrawalDate; // Set the withdrawal date
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-m.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function CancelWithdrawal($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Pending';
+        $security->verified_by = null;
+        $security->withdrawal_date = null; // Set the withdrawal date
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-m.show')->with('success', 'Withdrawal cancelled successfully.');
+    }
+
+    public function CancelReturn($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Withdrawal';
+        $security->return_date = null;
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-m.show')->with('success', 'Return cancelled successfully.');
+    }
+
+    public function BackToDraft($id)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        // Update the status and other fields
+        $security->status = 'Draft';
+        $security->save(); // Save the updates to the database
+
+        return redirect()->route('list-security-request-m.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function ReturnDocumentsStatus($id, Request $request)
+    {
+        // Find the security document request by ID
+        $security = SecurityDocRequest::with('listSecurity.issuer')->findOrFail($id);
+
+        $returnDate = $request->input('return_date');
+
+        $security->status = 'Return';
+        $security->return_date = $returnDate; // Set the return date
+        $security->save(); // Save the updates to the database
+
+        // Return success response
+        return redirect()->route('list-security-request-m.show')->with('success', 'Documents sent successfully.');
+    }
+
+    public function ADIHolderCreate($id)
+    {
+        $facilities = FacilityInformation::all();
+
+        return view('maker.adi-holder.create', compact('facilities', 'id'));
+    }
+
+    public function ADIHolderStore(StoreADIHolderRequest $request, $id)
+    {
+        foreach ($request->stock_codes as $index => $stockCode) {
+            AdiHolder::create([
+                'facility_information_id' => $id,
+                'adi_holder' => $request->adi_holder,
+                'stock_code' => $stockCode,
+                'nominal_value' => $request->nominal_values[$index],
+            ]);
+        }
+
+        return redirect()->route('facility-info-m.show', $id)->with('success', 'ADI Holder(s) added successfully.');
+    }
+
+    public function ADIHolderEdit($adiHolderName)
+    {
+        // Fetch all records with the same adi_holder
+        $adiHolders = AdiHolder::where('adi_holder', $adiHolderName)->get();
+
+        // You can also fetch other related data, such as facilities
+        $facilities = FacilityInformation::all();
+
+        // Pass both the adiHolders and facility data to the view
+        return view('maker.adi-holder.edit', compact('adiHolders', 'facilities'));
+    }
+
+    public function ADIHolderUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'facility_id' => 'required|exists:facility_informations,id',
+            'adi_holder_ids' => 'required|array',
+            'adi_holder_ids.*' => 'exists:adi_holders,id',
+            'stock_codes' => 'required|array',
+            'nominal_values' => 'required|array',
+            'adi_holder_name' => 'required|string|max:255',
+        ]);
+
+        foreach ($validated['adi_holder_ids'] as $index => $id) {
+            AdiHolder::where('id', $id)->update([
+                'adi_holder' => $validated['adi_holder_name'],
+                'stock_code' => $validated['stock_codes'][$index],
+                'nominal_value' => $validated['nominal_values'][$index],
+            ]);
+        }
+
+        return redirect()->route('facility-info-m.show', $request->facility_id)->with('success', 'ADI Holder(s) added successfully.');
+    }
+
+    public function FundTransferIndex(Request $request)
+    {
+        $activeMonth = request('month') ?? null; // if no month is provided, set it to null
+
+        if ($activeMonth) {
+            $fundTransfers = PlacementFundTransfer::whereMonth('date', Carbon::parse($activeMonth)->month)
+                ->whereYear('date', Carbon::parse($activeMonth)->year)
+                ->get();
+        } else {
+            // Get all records if no month is selected
+            $fundTransfers = PlacementFundTransfer::all();
+        }
+
+        return view('maker.fund-transfer.index', compact('fundTransfers', 'activeMonth'));
+    }
+
+
+    public function FundTransferCreate()
+    {
+        return view('maker.fund-transfer.create');
+    }
+
+
+    public function FundTransferStore(StoreFundTransferRequest $request)
+    {
+        PlacementFundTransfer::create([
+            'date' => $request->get('date'),
+            'details' => $request->get('details'),
+            'placement_amount' => $request->get('placement_amount'),
+            'fund_transfer_amount' => $request->get('fund_transfer_amount'),
+            'prepared_by' => auth()->user()->name, // since it's a string in DB
+            'status' => 'Draft',
+        ]);
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer created successfully');
+    }
+
+    public function FundTransferEdit(PlacementFundTransfer $fundTransfer)
+    {
+        return view('maker.fund-transfer.edit', compact('fundTransfer'));
+    }
+    public function FundTransferUpdate(StoreFundTransferRequest $request, PlacementFundTransfer $fundTransfer)
+    {
+        $validated = $request->validated();
+
+        $fundTransfer->update([
+            'date' => $validated['date'],
+            'details' => $validated['details'],
+            'placement_amount' => $validated['placement_amount'],
+            'fund_transfer_amount' => $validated['fund_transfer_amount'],
+        ]);
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer updated successfully');
+    }
+
+    public function SubmitApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
+    {
+        $fundTransfer->status = 'Pending';
+        $fundTransfer->save();
+
+        dispatch(new SendFundTransferPendingEmail($fundTransfer));
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer approved successfully');
+    }
+
+    public function DoneApprovalFundTransfer(PlacementFundTransfer $fundTransfer)
+    {
+        $fundTransfer->status = 'Approved';
+        $fundTransfer->save();
+
+        return redirect()->route('fund-transfer-m.index')->with('success', 'Placement & Fund Transfer done successfully');
     }
 }

@@ -1566,7 +1566,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklist)
+                ->route('checklist-a.show', $checklist)
                 ->with('success', 'Checklist approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1588,7 +1588,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklist)
+                ->route('checklist-a.show', $checklist)
                 ->with('success', 'Checklist rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1648,7 +1648,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklistTenant->checklist)
+                ->route('checklist-a.show', $checklistTenant->checklist)
                 ->with('success', 'Checklist Tenant approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1670,7 +1670,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklistTenant->checklist)
+                ->route('checklist-a.show', $checklistTenant->checklist)
                 ->with('success', 'ChecklistTenant rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1689,7 +1689,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklistExternalAreaCondition->checklist)
+                ->route('checklist-a.show', $checklistExternalAreaCondition->checklist)
                 ->with('success', 'Checklist External Area Condition approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1711,7 +1711,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklistExternalAreaCondition->checklist)
+                ->route('checklist-a.show', $checklistExternalAreaCondition->checklist)
                 ->with('success', 'Checklist External Area Condition rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1730,7 +1730,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklistInternalAreaCondition->checklist)
+                ->route('checklist-a.show', $checklistInternalAreaCondition->checklist)
                 ->with('success', 'Checklist Internal Area Condition approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1752,7 +1752,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklistInternalAreaCondition->checklist)
+                ->route('checklist-a.show', $checklistInternalAreaCondition->checklist)
                 ->with('success', 'Checklist Internal Area Condition rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1771,7 +1771,7 @@ class ApproverController extends Controller
             ]);
 
             return back()
-                ->route('checklist-a.details', $checklistPropertyDevelopment->checklist)
+                ->route('checklist-a.show', $checklistPropertyDevelopment->checklist)
                 ->with('success', 'Property Development approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1793,7 +1793,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklistPropertyDevelopment->checklist)
+                ->route('checklist-a.show', $checklistPropertyDevelopment->checklist)
                 ->with('success', 'Property Development rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1812,7 +1812,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklistDisposalInstallation->checklist)
+                ->route('checklist-a.show', $checklistDisposalInstallation->checklist)
                 ->with('success', 'Disposal/Installation/Replacement approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1834,7 +1834,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklistDisposalInstallation->checklist)
+                ->route('checklist-a.show', $checklistDisposalInstallation->checklist)
                 ->with('success', 'Disposal/Installation/Replacement rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1899,9 +1899,9 @@ class ApproverController extends Controller
 
         // Get list of portfolios from appointment data
         $portfolios = Portfolio::whereIn('id', Appointment::distinct()->pluck('portfolio_id'))
-                        ->orderBy('portfolio_name')
-                        ->get();
-    
+            ->orderBy('portfolio_name')
+            ->get();
+
         // Count records for each tab
         $tabCounts = [
             'all' => Appointment::count(),

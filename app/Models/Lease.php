@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Tenant;
+use App\Models\TenancyLetter;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Lease extends Model implements Auditable
 {
@@ -125,7 +127,7 @@ class Lease extends Model implements Auditable
         if ($this->isExpired()) {
             return 0;
         }
-        
+
         return now()->diffInDays($this->end_date);
     }
 
@@ -137,18 +139,18 @@ class Lease extends Model implements Auditable
     public function getTotalContractValue()
     {
         $months = $this->start_date->diffInMonths($this->end_date);
-        
+
         // Calculate yearly proportions
         $totalMonths = $months;
         $year1Months = min(12, $totalMonths);
         $year2Months = ($totalMonths > 12) ? min(12, $totalMonths - 12) : 0;
         $year3Months = ($totalMonths > 24) ? min(12, $totalMonths - 24) : 0;
-        
+
         // Calculate total value for each year period
         $year1Value = ($this->base_rate_year_1 + $this->monthly_gsto_year_1) * $year1Months;
         $year2Value = ($this->base_rate_year_2 + $this->monthly_gsto_year_2) * $year2Months;
         $year3Value = ($this->base_rate_year_3 + $this->monthly_gsto_year_3) * $year3Months;
-        
+
         return $year1Value + $year2Value + $year3Value;
     }
 
@@ -175,7 +177,7 @@ class Lease extends Model implements Auditable
     {
         $futureDate = now()->addDays($days);
         return $query->where('end_date', '<=', $futureDate)
-                     ->where('end_date', '>=', now())
-                     ->where('status', 'active');
+            ->where('end_date', '>=', now())
+            ->where('status', 'active');
     }
 }
