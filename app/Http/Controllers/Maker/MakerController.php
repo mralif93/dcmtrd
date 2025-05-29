@@ -241,16 +241,16 @@ class MakerController extends Controller
             'placementFundTransfersCount' => $counts->placement_fund_transfers_count,
 
             // Adding pending counts
-            'trusteeFeePendingCount' => $counts['trustee_fees_pending_count'],
-            'complianceCovenantPendingCount' => $counts['compliance_covenants_pending_count'],
-            'activityDiaryPendingCount' => $counts['activity_diaries_pending_count'],
-            'propertiesPendingCount' => $counts['pending_properties_count'],
-            'financialsPendingCount' => $counts['pending_financials_count'],
-            'tenantsPendingCount' => $counts['pending_tenants_count'],
-            'appointmentsPendingCount' => $counts['pending_appointments_count'],
-            'approvalFormsPendingCount' => $counts['pending_approval_forms_count'],
-            'approvalPropertiesPendingCount' => $counts['pending_approval_properties_count'],
-            'siteVisitLogsPendingCount' => $counts['pending_site_visit_logs_count'],
+            'trusteeFeePendingCount' => $counts->trustee_fees_pending_count,
+            'complianceCovenantPendingCount' => $counts->compliance_covenants_pending_count,
+            'activityDiaryPendingCount' => $counts->activity_diaries_pending_count,
+            'propertiesPendingCount' => $counts->pending_properties_count,
+            'financialsPendingCount' => $counts->pending_financials_count,
+            'tenantsPendingCount' => $counts->pending_tenants_count,
+            'appointmentsPendingCount' => $counts->pending_appointments_count,
+            'approvalFormsPendingCount' => $counts->pending_approval_forms_count,
+            'approvalPropertiesPendingCount' => $counts->pending_approval_properties_count,
+            'siteVisitLogsPendingCount' => $counts->pending_site_visit_logs_count,
 
             'totalNotifications' => $totalNotifications,
         ]);

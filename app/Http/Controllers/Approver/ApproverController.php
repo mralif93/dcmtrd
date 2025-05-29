@@ -100,45 +100,45 @@ class ApproverController extends Controller
         $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
 
         $counts = DB::selectOne("
-        SELECT
-            -- Bond Counts
-            (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
-            (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
-            (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
-            (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
-            (SELECT COUNT(*) FROM placement_fund_transfers) AS placement_fund_transfers_count,
+            SELECT
+                -- Bond Counts
+                (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
+                (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
+                (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
+                (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
+                (SELECT COUNT(*) FROM placement_fund_transfers) AS placement_fund_transfers_count,
 
-            -- REITs Counts
-            (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
-            (SELECT COUNT(*) FROM properties) AS properties_count,
-            (SELECT COUNT(*) FROM financials) AS financials_count,
-            (SELECT COUNT(*) FROM tenants) AS tenants_count,
-            (SELECT COUNT(*) FROM leases) AS leases_count,
-            (SELECT COUNT(*) FROM site_visits) AS site_visits_count,
-            (SELECT COUNT(*) FROM checklists) AS checklists_count,
-            (SELECT COUNT(*) FROM appointments) AS appointments_count,
-            (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
-            (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
-            (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
+                -- REITs Counts
+                (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
+                (SELECT COUNT(*) FROM properties) AS properties_count,
+                (SELECT COUNT(*) FROM financials) AS financials_count,
+                (SELECT COUNT(*) FROM tenants) AS tenants_count,
+                (SELECT COUNT(*) FROM leases) AS leases_count,
+                (SELECT COUNT(*) FROM site_visits) AS site_visits_count,
+                (SELECT COUNT(*) FROM checklists) AS checklists_count,
+                (SELECT COUNT(*) FROM appointments) AS appointments_count,
+                (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
+                (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
+                (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
 
-            -- Bond Pending counts
-            (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS trustee_fees_pending_count,
-            (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS compliance_covenants_pending_count,
-            (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS activity_diaries_pending_count,
+                -- Bond Pending counts
+                (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS trustee_fees_pending_count,
+                (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS compliance_covenants_pending_count,
+                (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS activity_diaries_pending_count,
 
-            -- REITs Pending counts
-            (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
-            (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
-            (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
-            (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
-            (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
-            (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_site_visits_count,
-            (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
-            (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_site_visit_logs_count,
-            (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
-            (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approval_forms_count,
-            (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approval_properties_count
-    ");
+                -- REITs Pending counts
+                (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
+                (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
+                (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
+                (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
+                (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
+                (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_site_visits_count,
+                (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
+                (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_site_visit_logs_count,
+                (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
+                (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approval_forms_count,
+                (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approval_properties_count
+        ");
 
         return view('approver.index', [
             'issuers' => $issuers,
