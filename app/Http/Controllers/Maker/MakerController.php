@@ -700,7 +700,7 @@ class MakerController extends Controller
             'document_name' => 'required|max:200',
             'document_type' => 'required|max:50',
             'upload_date' => 'required|date',
-            'document_file' => 'nullable|file|mimes:pdf|max:51200'
+            'document_file'   => 'nullable|file|mimes:pdf|max:20480' 
         ]);
     }
 
