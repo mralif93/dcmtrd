@@ -415,7 +415,13 @@ Route::middleware(['auth', 'two-factor', 'role:compliance'])->group(function () 
 Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     // Dashboard
     Route::get('/maker/dashboard', [MakerController::class, 'index'])->name('maker.dashboard');
-    
+
+    // Notification
+    Route::get('/maker/notifications', [MakerController::class, 'NotificationIndex'])->name('maker.notification.index');
+    Route::get('/maker/notifications/{notification}', [MakerController::class, 'NotificationShow'])->name('maker.notification.show');
+    Route::get('/maker/notifications/{notification}/mark-as-read', [MakerController::class, 'NotificationMarkAsRead'])->name('maker.notification.mark-as-read');
+    Route::get('/maker/notifications/mark-all-as-read', [MakerController::class, 'NotificationMarkAllAsRead'])->name('maker.notification.mark-all-as-read');
+
     Route::prefix('/maker/dcmt')->name('dcmt-reports.')->group(function () {
         Route::get('/reports', [DcmtReportController::class, 'index'])->name('index');
         Route::get('/cb-reports', [DcmtReportController::class, 'cbReports'])->name('cb-reports');
@@ -431,12 +437,6 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
         Route::post('/trustee-reports/cutoff', [DcmtReportController::class, 'cutOffTrustee'])->name('trustee-reports.cutoff');
         Route::get('/trustee-reports/batches/{id}/download', [DcmtReportController::class, 'downloadBatchTrustee'])->name('trustee-reports.download');
     });
-
-    // Notification
-    Route::get('/maker/notifications', [MakerController::class, 'NotificationIndex'])->name('maker.notification.index');
-    Route::get('/maker/notifications/{notification}', [MakerController::class, 'NotificationShow'])->name('maker.notification.show');
-    Route::get('/maker/notifications/{notification}/mark-as-read', [MakerController::class, 'NotificationMarkAsRead'])->name('maker.notification.mark-as-read');
-    Route::get('/maker/notifications/mark-all-as-read', [MakerController::class, 'NotificationMarkAllAsRead'])->name('maker.notification.mark-all-as-read');
 
     // Issuer Module
     Route::get('maker/issuer/create', [MakerController::class, 'IssuerCreate'])->name('issuer-m.create')->middleware('permission:DCMTRD');

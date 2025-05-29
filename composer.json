@@ -10,7 +10,7 @@
         "laravel/framework": "^11.31",
         "laravel/horizon": "^5.32",
         "laravel/tinker": "^2.9",
-        "maatwebsite/excel": "^3.1.52",
+        "maatwebsite/excel": "^3.1",
         "owen-it/laravel-auditing": "^14.0"
     },
     "require-dev": {
@@ -63,7 +63,6 @@
     },
     "config": {
         "optimize-autoloader": true,
-        "classmap-authoritative": true,
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
