@@ -3,7 +3,7 @@ services:
         build:
             context: .
             dockerfile: docker/DockerFile
-        image: artdevops2025/art-devops-repo:latest
+        image: matkmin/docker-image-2024:latest
         container_name: "dcmtrd-app"
         platform: linux/amd64
         networks:
@@ -17,7 +17,7 @@ services:
             - ".:/var/www/html"
             - "./docker/php.ini:/usr/local/etc/php/conf.d/php.ini"
     nginx:
-        image: artdevops2025/art-devops-repo:nginx-alpine
+        image: matkmin/docker-image-2024:nginx
         container_name: dcmtrd-nginx
         platform: linux/amd64
         restart: unless-stopped
@@ -32,7 +32,7 @@ services:
         depends_on:
             - dcmtrd-app
     mariadb:
-        image: artdevops2025/art-devops-repo:mariadb-11.4.7
+        image: matkmin/docker-image-2024:mariadb
         container_name: dcmtrd-mariadb
         platform: linux/amd64
         restart: unless-stopped
@@ -49,7 +49,7 @@ services:
         networks:
             - app-network
     redis:
-        image: artdevops2025/art-devops-repo:redis-alpine
+        image: matkmin/docker-image-2024:redisdb
         container_name: dcmtrd-redis
         platform: linux/amd64
         restart: unless-stopped
@@ -60,7 +60,7 @@ services:
         networks:
             - app-network
     mailhog:
-        image: artdevops2025/art-devops-repo:mailhog-latest
+        image: matkmin/docker-image-2024:mailhog
         container_name: dcmtrd-mailhog
         platform: linux/amd64
         ports:
