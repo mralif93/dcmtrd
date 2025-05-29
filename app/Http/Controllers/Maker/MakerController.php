@@ -125,7 +125,7 @@ class MakerController extends Controller
                 (SELECT COUNT(*) FROM financials) AS financials_count,
                 (SELECT COUNT(*) FROM leases) AS leases_count,
                 (SELECT COUNT(*) FROM tenants) AS tenants_count,
-                (SELECT COUNT(*) FROM site_visits) AS site_visists_count,
+                (SELECT COUNT(*) FROM site_visits) AS site_visits_count,
                 (SELECT COUNT(*) FROM checklists) AS checklists_count,
                 (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
                 (SELECT COUNT(*) FROM appointments) AS appointments_count,

@@ -151,7 +151,7 @@ class ApproverController extends Controller
             'financialsCount' => $counts->financials_count,
             'tenantsCount' => $counts->tenants_count,
             'leasesCount' => $counts->leases_count,
-            'siteVisitsCount' => $counts->site_visists_count,
+            'siteVisitsCount' => $counts->site_visits_count,
             'checklistsCount' => $counts->checklists_count,
             'appointmentsCount' => $counts->appointments_count,
             'approvalFormsCount' => $counts->approval_forms_count,
