@@ -3,70 +3,73 @@
 namespace App\Http\Controllers\Maker;
 
 use Carbon\Carbon;
-use App\Models\Bank;
-use App\Models\Bond;
-use App\Models\User;
-use App\Models\Lease;
-use App\Models\Issuer;
-use App\Models\Tenant;
-use App\Models\Property;
-use App\Models\AdiHolder;
-use App\Models\Checklist;
-use App\Models\Financial;
-use App\Models\Portfolio;
-use App\Models\SiteVisit;
-
-use App\Models\Redemption;
-
-// Bonds
-use App\Models\TrusteeFee;
-use App\Imports\BondImport;
-use App\Models\Appointment;
-use App\Models\Announcement;
-use App\Models\ApprovalForm;
-use App\Models\CallSchedule;
-use App\Models\ListSecurity;
-use App\Models\SiteVisitLog;
-use Illuminate\Http\Request;
-use App\Models\ActivityDiary;
-use App\Models\FinancialType;
-use App\Models\LockoutPeriod;
-use App\Models\PortfolioType;
-use App\Models\TenancyLetter;
-
-// REITs
-use App\Models\RatingMovement;
-use App\Models\ChecklistTenant;
-use App\Models\PaymentSchedule;
-use App\Models\RelatedDocument;
-use App\Models\TradingActivity;
-use Illuminate\Validation\Rule;
-use App\Models\ApprovalProperty;
-use App\Models\ComplianceCovenant;
-use App\Models\SecurityDocRequest;
-use Illuminate\Support\Facades\DB;
-use App\Models\FacilityInformation;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Models\PlacementFundTransfer;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\Rule;
+use Illuminate\Notifications\Notification;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\User\BondFormRequest;
+use App\Http\Requests\StoreFundTransferRequest;
+use App\Http\Requests\ListSecurityRequest;
+use App\Http\Requests\StoreADIHolderRequest;
+
 use App\Imports\PaymentScheduleImport;
 use App\Imports\RatingMovementsImport;
 use App\Imports\TradingActivityImport;
+use App\Imports\BondImport;
 
-use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\ListSecurityRequest;
-use Illuminate\Notifications\Notification;
-use App\Http\Requests\User\BondFormRequest;
+use Maatwebsite\Excel\Facades\Excel;
+
+// Models Bonds
+use App\Models\Issuer;
+use App\Models\Bond;
+use App\Models\User;
+use App\Models\RatingMovement;
+use App\Models\Announcement;
+use App\Models\SecurityDocRequest;
+use App\Models\FacilityInformation;
+use App\Models\TradingActivity;
+use App\Models\Redemption;
+use App\Models\LockoutPeriod;
+use App\Models\CallSchedule;
+use App\Models\PaymentSchedule;
+use App\Models\RelatedDocument;
+use App\Models\ActivityDiary;
+use App\Models\TrusteeFee;
+use App\Models\ComplianceCovenant;
+use App\Models\PlacementFundTransfer;
+use App\Models\ListSecurity;
+use App\Models\AdiHolder;
+
+// Models REITs
+use App\Models\PortfolioType;
+use App\Models\FinancialType;
+use App\Models\Bank;
+use App\Models\Portfolio;
+use App\Models\Property;
+use App\Models\Financial;
+use App\Models\Tenant;
+use App\Models\Lease;
+use App\Models\SiteVisit;
+use App\Models\Checklist;
+use App\Models\TenancyLetter;
 use App\Models\ChecklistLegalDocumentation;
-use App\Http\Requests\StoreADIHolderRequest;
+use App\Models\ChecklistTenant;
 use App\Models\ChecklistPropertyDevelopment;
 use App\Models\ChecklistDisposalInstallation;
 use App\Models\ChecklistExternalAreaCondition;
 use App\Models\ChecklistInternalAreaCondition;
-use App\Http\Requests\StoreFundTransferRequest;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Appointment;
+use App\Models\ApprovalForm;
+use App\Models\ApprovalProperty;
+use App\Models\SiteVisitLog;
+
+// Import Jobs
 use App\Jobs\Issuer\SendCreatedIssuerToApproval;
 use App\Jobs\TrusteeFee\SendTrusteeFeeSubmittedEmail;
 use App\Jobs\FundTransfer\SendFundTransferPendingEmail;
@@ -109,28 +112,32 @@ class MakerController extends Controller
         // Get count data directly from the database
         $counts = DB::selectOne("
             SELECT 
+                -- Bond Counts
                 (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
                 (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
                 (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
+                (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
+                (SELECT COUNT(*) FROM placement_fund_transfers) AS placement_fund_transfers_count,
 
-                (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS trustee_fees_pending_count,
-                (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS compliance_covenants_pending_count,
-                (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS activity_diaries_pending_count,
-            
+                -- REITs Counts
                 (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
                 (SELECT COUNT(*) FROM properties) AS properties_count,
                 (SELECT COUNT(*) FROM financials) AS financials_count,
                 (SELECT COUNT(*) FROM leases) AS leases_count,
                 (SELECT COUNT(*) FROM tenants) AS tenants_count,
-                (SELECT COUNT(*) FROM site_visits) AS site_visists_count,
+                (SELECT COUNT(*) FROM site_visits) AS site_visits_count,
                 (SELECT COUNT(*) FROM checklists) AS checklists_count,
                 (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
                 (SELECT COUNT(*) FROM appointments) AS appointments_count,
                 (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
                 (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
-                (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
-                (SELECT COUNT(*) FROM placement_fund_transfers) AS placement_fund_transfers_count,
 
+                -- Bond Pending Counts
+                (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS trustee_fees_pending_count,
+                (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS compliance_covenants_pending_count,
+                (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS activity_diaries_pending_count,
+
+                -- REITs Pending Counts
                 (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
                 (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
                 (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
@@ -171,7 +178,7 @@ class MakerController extends Controller
         // calculate total of lease which has remaining time
         $activeLeasesCount = Lease::where('end_date', '>', now())->count();
 
-
+        
         // Fetch site visits with pagination
         $siteVisits = SiteVisit::with(['property.portfolio'])
             ->where('date_visit', '>', now())
@@ -185,27 +192,27 @@ class MakerController extends Controller
             ->where('visit_year', '>', now()->year)
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
+                      ->where('visit_month', '>', now()->month);
             })
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
+                      ->where('visit_month', now()->month)
+                      ->where('visit_day', '>', now()->day);
             });
 
         // calculate total number of site visit log which has remaining time less than or equal to 30 days
         $activeSiteVisitLogsCount = SiteVisitLog::where('visit_year', '>', now()->year)
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
+                      ->where('visit_month', '>', now()->month);
             })
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
+                      ->where('visit_month', now()->month)
+                      ->where('visit_day', '>', now()->day);
             })
             ->count();
-
+        
         // Fetch appointments with pagination
         $appointments = Appointment::with(['portfolio'])
             ->where('date_of_approval', '>', now())
@@ -215,7 +222,7 @@ class MakerController extends Controller
         $activeAppointmentsCount = Appointment::where('date_of_approval', '>', now())->count();
 
         $totalNotifications = $activeLeasesCount + $activeSiteVisitsCount + $activeSiteVisitLogsCount + $activeAppointmentsCount;
-
+    
         return view('maker.index', [
             'issuers' => $issuers,
             'portfolios' => $portfolios,
@@ -2014,7 +2021,6 @@ class MakerController extends Controller
         $validated['status'] = 'draft';
 
         try {
-            // Create the financial record
             $financial = Financial::create($validated);
 
             // Process property data from flat arrays to nested format
@@ -3834,40 +3840,69 @@ class MakerController extends Controller
     // Appointment Module
     public function AppointmentIndex(Request $request)
     {
+        // Determine database connection type
+        $dbConnection = config('database.default');
+        $isSqlite = $dbConnection === 'sqlite';
+
         // Retrieve appointments with related portfolio, handling search and filtering
         $query = Appointment::with('portfolio')
-            // Handle search - only for party name
-            ->when($request->input('search'), function ($query, $search) {
-                return $query->where('party_name', 'like', "%{$search}%");
-            })
-            // Filter by status
-            ->when($request->input('status'), function ($query, $status) {
-                return $query->where('status', $status);
-            })
-            // Filter by portfolio
-            ->when($request->input('portfolio_id'), function ($query, $portfolioId) {
-                return $query->where('portfolio_id', $portfolioId);
-            })
-            // Filter by year (MySQL compatible)
-            ->when($request->input('year'), function ($query, $year) {
-                return $query->whereYear('date_of_approval', $year);
-            })
-            // Filter by month (MySQL compatible)
-            ->when($request->input('month'), function ($query, $month) {
-                return $query->whereMonth('date_of_approval', $month);
-            })
-            ->latest()
-            ->paginate(15)
-            ->withQueryString(); // Preserve query parameters in pagination links
+        // Handle search - only for party name
+        ->when($request->input('search'), function ($query, $search) {
+            return $query->where('party_name', 'like', "%{$search}%");
+        })
+        // Filter by status
+        ->when($request->input('status'), function ($query, $status) {
+            return $query->where('status', $status);
+        })
+        // Filter by portfolio
+        ->when($request->input('portfolio_id'), function ($query, $portfolioId) {
+            return $query->where('portfolio_id', $portfolioId);
+        })
+        // Filter by year - using appropriate function based on database
+        ->when($request->input('year'), function ($query, $year) use ($isSqlite) {
+            if ($isSqlite) {
+                return $query->whereRaw("strftime('%Y', date_of_approval) = ?", [$year]);
+            } else {
+                return $query->whereRaw('YEAR(date_of_approval) = ?', [$year]);
+            }
+        })
+        // Filter by month - using appropriate function based on database
+        ->when($request->input('month'), function ($query, $month) use ($isSqlite) {
+            if ($isSqlite) {
+                return $query->whereRaw("strftime('%m', date_of_approval) = ?", [sprintf('%02d', $month)]);
+            } else {
+                return $query->whereRaw('MONTH(date_of_approval) = ?', [$month]);
+            }
+        })
+        // Filter by day - using appropriate function based on database
+        ->when($request->input('day'), function ($query, $day) use ($isSqlite) {
+            if ($isSqlite) {
+                return $query->whereRaw("strftime('%d', date_of_approval) = ?", [sprintf('%02d', $day)]);
+            } else {
+                return $query->whereRaw('DAY(date_of_approval) = ?', [$day]);
+            }
+        })
+        ->latest()
+        ->paginate(15)
+        ->withQueryString(); // Preserve query parameters in pagination links
 
         // Get all portfolios for the dropdown
         $portfolios = Portfolio::orderBy('portfolio_name')->get();
 
-        // Extract unique years from appointment dates (MySQL compatible)
-        $years = Appointment::selectRaw('DISTINCT YEAR(date_of_approval) as year')
-            ->orderByDesc('year')
-            ->pluck('year')
-            ->toArray();
+        // Extract unique years from appointment dates - using appropriate function based on database
+        if ($isSqlite) {
+            $years = Appointment::selectRaw("strftime('%Y', date_of_approval) as year")
+                ->distinct()
+                ->orderByDesc('year')
+                ->pluck('year')
+                ->toArray();
+        } else {
+            $years = Appointment::selectRaw('YEAR(date_of_approval) as year')
+                ->distinct()
+                ->orderByDesc('year')
+                ->pluck('year')
+                ->toArray();
+        }
 
         // Define status options
         $statuses = ['active', 'pending', 'rejected', 'inactive'];
@@ -4506,14 +4541,13 @@ class MakerController extends Controller
     }
 
     // Notification
-    public function NotificationIndex(Request $request)
-    {
+    public function NotificationIndex(Request $request) {
         // Get current tab or default to 'lease'
         $activeTab = $request->query('active_tab', 'lease');
-
+        
         // Set pagination limit
         $perPage = 10;
-
+        
         // Fetch leases with pagination
         $leases = Lease::with(['tenant.property.portfolio'])
             ->where('end_date', '>', now())
@@ -4524,7 +4558,7 @@ class MakerController extends Controller
         // calculate total of lease which has remaining time
         $activeLeasesCount = Lease::where('end_date', '>', now())->count();
 
-
+        
         // Fetch site visits with pagination
         $siteVisits = SiteVisit::with(['property.portfolio'])
             ->where('date_visit', '>', now())
@@ -4540,12 +4574,12 @@ class MakerController extends Controller
             ->where('visit_year', '>', now()->year)
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
+                      ->where('visit_month', '>', now()->month);
             })
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
+                      ->where('visit_month', now()->month)
+                      ->where('visit_day', '>', now()->day);
             })
             ->paginate($perPage, ['*'], 'site_visit_log_page')
             ->withQueryString();
@@ -4554,15 +4588,15 @@ class MakerController extends Controller
         $activeSiteVisitLogsCount = SiteVisitLog::where('visit_year', '>', now()->year)
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', '>', now()->month);
+                      ->where('visit_month', '>', now()->month);
             })
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                    ->where('visit_month', now()->month)
-                    ->where('visit_day', '>', now()->day);
+                      ->where('visit_month', now()->month)
+                      ->where('visit_day', '>', now()->day);
             })
             ->count();
-
+        
         // Fetch appointments with pagination
         $appointments = Appointment::with(['portfolio'])
             ->where('date_of_approval', '>', now())
@@ -4572,11 +4606,11 @@ class MakerController extends Controller
 
         // calculate total number of appointment which has remaining time less than or equal to 30 days
         $activeAppointmentsCount = Appointment::where('date_of_approval', '>', now())->count();
-
+        
         // Pass all data to the view
         return view('maker.notification.index', compact(
-            'leases',
-            'siteVisits',
+            'leases', 
+            'siteVisits', 
             'siteVisitLogs',
             'appointments',
             'activeTab',

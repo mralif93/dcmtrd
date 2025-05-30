@@ -3,50 +3,56 @@
 namespace App\Http\Controllers\Approver;
 
 use Carbon\Carbon;
-use App\Models\Bank;
-
-use App\Models\Bond;;
-
-use App\Models\Lease;
-use App\Models\Issuer;
-use App\Models\Tenant;
-use App\Models\Property;
-use App\Models\Checklist;
-use App\Models\Financial;
-use App\Models\Portfolio;
-use App\Models\SiteVisit;
-use App\Models\Redemption;
-use App\Models\TrusteeFee;
-use App\Models\Appointment;
-use App\Models\Announcement;
-use App\Models\ApprovalForm;
-use App\Models\CallSchedule;
-use App\Models\ListSecurity;
-use App\Models\SiteVisitLog;
 use Illuminate\Http\Request;
-use App\Models\ActivityDiary;
-use App\Models\FinancialType;
-use App\Models\LockoutPeriod;
-use App\Models\PortfolioType;
-use App\Models\ChecklistTenant;
-use App\Models\RelatedDocument;
-use App\Models\ApprovalProperty;
-use App\Models\ComplianceCovenant;
-use App\Models\SecurityDocRequest;
-use Illuminate\Support\Facades\DB;
-use App\Models\FacilityInformation;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Models\PlacementFundTransfer;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ListSecurityRequest;
+
+// Models Bonds
+use App\Models\Issuer;
+use App\Models\Bond;
+use App\Models\Announcement;
+use App\Models\RelatedDocument;
+use App\Models\FacilityInformation;
+use App\Models\RatingMovement;
+use App\Models\PaymentSchedule;
+use App\Models\Redemption;
+use App\Models\CallSchedule;
+use App\Models\LockoutPeriod;
+use App\Models\TradingActivity;
+use App\Models\TrusteeFee;
+use App\Models\ComplianceCovenant;
+use App\Models\ActivityDiary;
+use App\Models\SecurityDocRequest;
+use App\Models\PlacementFundTransfer;
+
+// Models REITs
+use App\Models\Bank;
+use App\Models\FinancialType;
+use App\Models\PortfolioType;
+use App\Models\Portfolio;
+use App\Models\Property;
+use App\Models\Tenant;
+use App\Models\Lease;
+use App\Models\Financial;
+use App\Models\Checklist;
 use App\Models\ChecklistLegalDocumentation;
-use App\Models\ChecklistPropertyDevelopment;
-use App\Models\ChecklistDisposalInstallation;
+use App\Models\ChecklistTenant;
 use App\Models\ChecklistExternalAreaCondition;
 use App\Models\ChecklistInternalAreaCondition;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\ChecklistPropertyDevelopment;
+use App\Models\ChecklistDisposalInstallation;
+use App\Models\SiteVisit;
+use App\Models\SiteVisitLog;
+use App\Models\Appointment;
+use App\Models\ApprovalForm;
+use App\Models\ApprovalProperty;
+
+// Jobs
 use App\Jobs\Issuer\SendIssuerApprovedNotification;
 use App\Jobs\Issuer\SendIssuerRejectedNotification;
 use App\Jobs\Compliance\SendComplianceApprovalEmail;
@@ -94,41 +100,45 @@ class ApproverController extends Controller
         $portfolios = $portfolioQuery->latest()->paginate(10)->withQueryString();
 
         $counts = DB::selectOne("
-        SELECT 
-            (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
-            (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
-            (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
+            SELECT
+                -- Bond Counts
+                (SELECT COUNT(*) FROM trustee_fees) AS trustee_fees_count,
+                (SELECT COUNT(*) FROM compliance_covenants) AS compliance_covenants_count,
+                (SELECT COUNT(*) FROM activity_diaries) AS activity_diaries_count,
+                (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
+                (SELECT COUNT(*) FROM placement_fund_transfers) AS placement_fund_transfers_count,
 
-            (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS trustee_fees_pending_count,
-            (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS compliance_covenants_pending_count,
-            (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS activity_diaries_pending_count,
-        
-            (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
-            (SELECT COUNT(*) FROM properties) AS properties_count,
-            (SELECT COUNT(*) FROM financials) AS financials_count,
-            (SELECT COUNT(*) FROM leases) AS leases_count,
-            (SELECT COUNT(*) FROM tenants) AS tenants_count,
-            (SELECT COUNT(*) FROM site_visits) AS site_visists_count,
-            (SELECT COUNT(*) FROM checklists) AS checklists_count,
-            (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
-            (SELECT COUNT(*) FROM appointments) AS appointments_count,
-            (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
-            (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
-            (SELECT COUNT(*) FROM list_securities) AS list_securities_count,
-            (SELECT COUNT(*) FROM placement_fund_transfers) AS placement_fund_transfers_count,
+                -- REITs Counts
+                (SELECT COUNT(*) FROM portfolios) AS portfolios_count,
+                (SELECT COUNT(*) FROM properties) AS properties_count,
+                (SELECT COUNT(*) FROM financials) AS financials_count,
+                (SELECT COUNT(*) FROM tenants) AS tenants_count,
+                (SELECT COUNT(*) FROM leases) AS leases_count,
+                (SELECT COUNT(*) FROM site_visits) AS site_visits_count,
+                (SELECT COUNT(*) FROM checklists) AS checklists_count,
+                (SELECT COUNT(*) FROM appointments) AS appointments_count,
+                (SELECT COUNT(*) FROM approval_forms) AS approval_forms_count,
+                (SELECT COUNT(*) FROM approval_properties) AS approval_properties_count,
+                (SELECT COUNT(*) FROM site_visit_logs) AS site_visit_logs_count,
 
-            (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
-            (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
-            (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
-            (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
-            (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
-            (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_site_visits_count,
-            (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
-            (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_site_visit_logs_count,
-            (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
-            (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approval_forms_count,
-            (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approval_properties_count
-    ");
+                -- Bond Pending counts
+                (SELECT COUNT(*) FROM trustee_fees WHERE status = 'pending') AS trustee_fees_pending_count,
+                (SELECT COUNT(*) FROM compliance_covenants WHERE status = 'pending') AS compliance_covenants_pending_count,
+                (SELECT COUNT(*) FROM activity_diaries WHERE status = 'pending') AS activity_diaries_pending_count,
+
+                -- REITs Pending counts
+                (SELECT COUNT(*) FROM portfolios WHERE status = 'pending') AS pending_portfolios_count,
+                (SELECT COUNT(*) FROM properties WHERE status = 'pending') AS pending_properties_count,
+                (SELECT COUNT(*) FROM financials WHERE status = 'pending') AS pending_financials_count,
+                (SELECT COUNT(*) FROM leases WHERE status = 'pending') AS pending_leases_count,
+                (SELECT COUNT(*) FROM tenants WHERE status = 'pending') AS pending_tenants_count,
+                (SELECT COUNT(*) FROM site_visits WHERE status = 'pending') AS pending_site_visits_count,
+                (SELECT COUNT(*) FROM checklists WHERE status = 'pending') AS pending_checklists_count,
+                (SELECT COUNT(*) FROM site_visit_logs WHERE status = 'pending') AS pending_site_visit_logs_count,
+                (SELECT COUNT(*) FROM appointments WHERE status = 'pending') AS pending_appointments_count,
+                (SELECT COUNT(*) FROM approval_forms WHERE status = 'pending') AS pending_approval_forms_count,
+                (SELECT COUNT(*) FROM approval_properties WHERE status = 'pending') AS pending_approval_properties_count
+        ");
 
         return view('approver.index', [
             'issuers' => $issuers,
@@ -141,7 +151,7 @@ class ApproverController extends Controller
             'financialsCount' => $counts->financials_count,
             'tenantsCount' => $counts->tenants_count,
             'leasesCount' => $counts->leases_count,
-            'siteVisitsCount' => $counts->site_visists_count,
+            'siteVisitsCount' => $counts->site_visits_count,
             'checklistsCount' => $counts->checklists_count,
             'appointmentsCount' => $counts->appointments_count,
             'approvalFormsCount' => $counts->approval_forms_count,
@@ -1566,7 +1576,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklist)
+                ->route('checklist-a.details', $checklist)
                 ->with('success', 'Checklist approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1588,7 +1598,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklist)
+                ->route('checklist-a.details', $checklist)
                 ->with('success', 'Checklist rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1648,7 +1658,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistTenant->checklist)
+                ->route('checklist-a.details', $checklistTenant->checklist)
                 ->with('success', 'Checklist Tenant approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1670,7 +1680,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistTenant->checklist)
+                ->route('checklist-a.details', $checklistTenant->checklist)
                 ->with('success', 'ChecklistTenant rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1689,7 +1699,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistExternalAreaCondition->checklist)
+                ->route('checklist-a.details', $checklistExternalAreaCondition->checklist)
                 ->with('success', 'Checklist External Area Condition approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1711,7 +1721,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistExternalAreaCondition->checklist)
+                ->route('checklist-a.details', $checklistExternalAreaCondition->checklist)
                 ->with('success', 'Checklist External Area Condition rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1730,7 +1740,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistInternalAreaCondition->checklist)
+                ->route('checklist-a.details', $checklistInternalAreaCondition->checklist)
                 ->with('success', 'Checklist Internal Area Condition approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1752,7 +1762,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistInternalAreaCondition->checklist)
+                ->route('checklist-a.details', $checklistInternalAreaCondition->checklist)
                 ->with('success', 'Checklist Internal Area Condition rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1771,7 +1781,7 @@ class ApproverController extends Controller
             ]);
 
             return back()
-                ->route('checklist-a.show', $checklistPropertyDevelopment->checklist)
+                ->route('checklist-a.details', $checklistPropertyDevelopment->checklist)
                 ->with('success', 'Property Development approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1793,7 +1803,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistPropertyDevelopment->checklist)
+                ->route('checklist-a.details', $checklistPropertyDevelopment->checklist)
                 ->with('success', 'Property Development rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1812,7 +1822,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistDisposalInstallation->checklist)
+                ->route('checklist-a.details', $checklistDisposalInstallation->checklist)
                 ->with('success', 'Disposal/Installation/Replacement approved successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1834,7 +1844,7 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.show', $checklistDisposalInstallation->checklist)
+                ->route('checklist-a.details', $checklistDisposalInstallation->checklist)
                 ->with('success', 'Disposal/Installation/Replacement rejected successfully.');
         } catch (\Exception $e) {
             return back()
@@ -1899,9 +1909,9 @@ class ApproverController extends Controller
 
         // Get list of portfolios from appointment data
         $portfolios = Portfolio::whereIn('id', Appointment::distinct()->pluck('portfolio_id'))
-            ->orderBy('portfolio_name')
-            ->get();
-
+                        ->orderBy('portfolio_name')
+                        ->get();
+    
         // Count records for each tab
         $tabCounts = [
             'all' => Appointment::count(),
