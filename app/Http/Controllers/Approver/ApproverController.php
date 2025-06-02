@@ -1385,6 +1385,18 @@ class ApproverController extends Controller
 
     public function SiteVisitDetails(SiteVisit $siteVisit)
     {
+        // Load the site visit with its relationships
+        $siteVisit->load([
+            'property',
+            'checklist',
+            'checklist.tenants',
+            'checklist.legalDocumentation',
+            'checklist.externalAreaCondition',
+            'checklist.internalAreaCondition',
+            'checklist.propertyDevelopment',
+            'checklist.disposalInstallation'
+        ]);
+
         return view('approver.site-visit.details', compact('siteVisit'));
     }
 
