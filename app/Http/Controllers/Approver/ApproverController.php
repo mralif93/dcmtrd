@@ -171,6 +171,9 @@ class ApproverController extends Controller
             'pendingApprovalFormsCount' => $counts->pending_approval_forms_count,
             'pendingApprovalPropertiesCount' => $counts->pending_approval_properties_count,
             'pendingSiteVisitLogsCount' => $counts->pending_site_visit_logs_count,
+
+            // Notification count (items requiring attention within 30 days)
+            'notificationCount' => $this->getNotificationCount(),
         ]);
     }
 
@@ -1438,6 +1441,169 @@ class ApproverController extends Controller
         } catch (\Exception $e) {
             return back()
                 ->with('error', 'Error rejecting site visit: ' . $e->getMessage());
+        }
+    }
+
+    // Notification Management
+    public function NotificationIndex(Request $request)
+    {
+        $activeTab = $request->get('active_tab', 'lease');
+
+        // Get leases that are ending within 30 days
+        $leases = Lease::with(['tenant.property.portfolio'])
+            ->where('end_date', '<=', now()->addDays(30))
+            ->where('end_date', '>=', now())
+            ->where('status', 'active')
+            ->orderBy('end_date', 'asc')
+            ->paginate(10, ['*'], 'lease_page');
+
+        // Get site visits that are scheduled within 30 days
+        $siteVisits = SiteVisit::with(['property.portfolio'])
+            ->where('date_visit', '<=', now()->addDays(30))
+            ->where('date_visit', '>=', now())
+            ->whereIn('status', ['pending', 'scheduled'])
+            ->orderBy('date_visit', 'asc')
+            ->paginate(10, ['*'], 'site_visit_page');
+
+        // Get site visit logs that are scheduled within 30 days - database agnostic
+        $siteVisitLogs = $this->getSiteVisitLogsForNotifications();
+
+        // Get appointments that are expiring within 30 days
+        $appointments = Appointment::with(['portfolio'])
+            ->where('date_of_approval', '<=', now()->addDays(30))
+            ->where('date_of_approval', '>=', now())
+            ->whereIn('status', ['active', 'pending'])
+            ->orderBy('date_of_approval', 'asc')
+            ->paginate(10, ['*'], 'appointment_page');
+
+        // Calculate counts for tabs
+        $activeLeasesCount = Lease::where('end_date', '<=', now()->addDays(30))
+            ->where('end_date', '>=', now())
+            ->where('status', 'active')
+            ->count();
+
+        $activeSiteVisitsCount = SiteVisit::where('date_visit', '<=', now()->addDays(30))
+            ->where('date_visit', '>=', now())
+            ->whereIn('status', ['pending', 'scheduled'])
+            ->count();
+
+        $activeSiteVisitLogsCount = $this->getSiteVisitLogsCount();
+
+        $activeAppointmentsCount = Appointment::where('date_of_approval', '<=', now()->addDays(30))
+            ->where('date_of_approval', '>=', now())
+            ->whereIn('status', ['active', 'pending'])
+            ->count();
+
+        // Pass all data to the view
+        return view('approver.notification.index', compact(
+            'leases',
+            'siteVisits',
+            'siteVisitLogs',
+            'appointments',
+            'activeTab',
+            'activeLeasesCount',
+            'activeSiteVisitsCount',
+            'activeSiteVisitLogsCount',
+            'activeAppointmentsCount'
+        ));
+    }
+
+    public function NotificationShow()
+    {
+        return view('approver.notification.show', compact('notification'));
+    }
+
+    public function NotificationMarkAsRead(Notification $notification)
+    {
+        return back()
+            ->route('approver.notification.index')
+            ->with('success', 'Notification marked as read.');
+    }
+
+    /**
+     * Get the total count of items requiring attention (notifications)
+     */
+    private function getNotificationCount()
+    {
+        // Count leases ending within 30 days
+        $leasesCount = Lease::where('end_date', '<=', now()->addDays(30))
+            ->where('end_date', '>=', now())
+            ->where('status', 'active')
+            ->count();
+
+        // Count site visits scheduled within 30 days
+        $siteVisitsCount = SiteVisit::where('date_visit', '<=', now()->addDays(30))
+            ->where('date_visit', '>=', now())
+            ->whereIn('status', ['pending', 'scheduled'])
+            ->count();
+
+        // Count site visit logs scheduled within 30 days - database agnostic approach
+        $siteVisitLogsCount = $this->getSiteVisitLogsCount();
+
+        // Count appointments expiring within 30 days
+        $appointmentsCount = Appointment::where('date_of_approval', '<=', now()->addDays(30))
+            ->where('date_of_approval', '>=', now())
+            ->whereIn('status', ['active', 'pending'])
+            ->count();
+
+        return $leasesCount + $siteVisitsCount + $siteVisitLogsCount + $appointmentsCount;
+    }
+
+    /**
+     * Get site visit logs count in a database-agnostic way
+     */
+    private function getSiteVisitLogsCount()
+    {
+        $startDate = now()->format('Y-m-d');
+        $endDate = now()->addDays(30)->format('Y-m-d');
+
+        // Get database driver
+        $driver = config('database.default');
+        $connection = config("database.connections.{$driver}.driver");
+
+        if ($connection === 'mysql') {
+            // MySQL version using CONCAT and STR_TO_DATE
+            return SiteVisitLog::whereRaw('STR_TO_DATE(CONCAT(visit_year, "-", visit_month, "-", visit_day), "%Y-%m-%d") <= ?', [$endDate])
+                ->whereRaw('STR_TO_DATE(CONCAT(visit_year, "-", visit_month, "-", visit_day), "%Y-%m-%d") >= ?', [$startDate])
+                ->whereIn('status', ['pending', 'scheduled'])
+                ->count();
+        } else {
+            // SQLite and other databases - use string concatenation and date comparison
+            return SiteVisitLog::whereRaw('(visit_year || "-" || CASE WHEN LENGTH(visit_month) = 1 THEN "0" || visit_month ELSE visit_month END || "-" || CASE WHEN LENGTH(visit_day) = 1 THEN "0" || visit_day ELSE visit_day END) <= ?', [$endDate])
+                ->whereRaw('(visit_year || "-" || CASE WHEN LENGTH(visit_month) = 1 THEN "0" || visit_month ELSE visit_month END || "-" || CASE WHEN LENGTH(visit_day) = 1 THEN "0" || visit_day ELSE visit_day END) >= ?', [$startDate])
+                ->whereIn('status', ['pending', 'scheduled'])
+                ->count();
+        }
+    }
+
+    /**
+     * Get site visit logs for notifications with pagination in a database-agnostic way
+     */
+    private function getSiteVisitLogsForNotifications()
+    {
+        $startDate = now()->format('Y-m-d');
+        $endDate = now()->addDays(30)->format('Y-m-d');
+
+        // Get database driver
+        $driver = config('database.default');
+        $connection = config("database.connections.{$driver}.driver");
+
+        if ($connection === 'mysql') {
+            // MySQL version using CONCAT and STR_TO_DATE
+            return SiteVisitLog::with(['property.portfolio'])
+                ->whereRaw('STR_TO_DATE(CONCAT(visit_year, "-", visit_month, "-", visit_day), "%Y-%m-%d") <= ?', [$endDate])
+                ->whereRaw('STR_TO_DATE(CONCAT(visit_year, "-", visit_month, "-", visit_day), "%Y-%m-%d") >= ?', [$startDate])
+                ->whereIn('status', ['pending', 'scheduled'])
+                ->orderByRaw('STR_TO_DATE(CONCAT(visit_year, "-", visit_month, "-", visit_day), "%Y-%m-%d") ASC')
+                ->paginate(10, ['*'], 'site_visit_log_page');
+        } else {
+            // SQLite and other databases - use string concatenation and date comparison
+            return SiteVisitLog::with(['property.portfolio'])
+                ->whereRaw('(visit_year || "-" || CASE WHEN LENGTH(visit_month) = 1 THEN "0" || visit_month ELSE visit_month END || "-" || CASE WHEN LENGTH(visit_day) = 1 THEN "0" || visit_day ELSE visit_day END) <= ?', [$endDate])
+                ->whereRaw('(visit_year || "-" || CASE WHEN LENGTH(visit_month) = 1 THEN "0" || visit_month ELSE visit_month END || "-" || CASE WHEN LENGTH(visit_day) = 1 THEN "0" || visit_day ELSE visit_day END) >= ?', [$startDate])
+                ->whereIn('status', ['pending', 'scheduled'])
+                ->orderByRaw('(visit_year || "-" || CASE WHEN LENGTH(visit_month) = 1 THEN "0" || visit_month ELSE visit_month END || "-" || CASE WHEN LENGTH(visit_day) = 1 THEN "0" || visit_day ELSE visit_day END) ASC')
+                ->paginate(10, ['*'], 'site_visit_log_page');
         }
     }
 

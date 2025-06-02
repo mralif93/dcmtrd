@@ -895,6 +895,11 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/site-visit/{siteVisit}/approve', [ApproverController::class, 'SiteVisitApprove'])->name('site-visit-a.approve')->middleware('permission:REITS');
     Route::post('approver/site-visit/{siteVisit}/reject', [ApproverController::class, 'SiteVisitReject'])->name('site-visit-a.reject')->middleware('permission:REITS');
 
+    // Notification Module
+    Route::get('approver/notification', [ApproverController::class, 'NotificationIndex'])->name('notification-a.index')->middleware('permission:REITS');
+    Route::get('approver/notification/{notification}', [ApproverController::class, 'NotificationShow'])->name('notification-a.show')->middleware('permission:REITS');
+    Route::post('approver/notification/{notification}/mark-as-read', [ApproverController::class, 'NotificationMarkAsRead'])->name('notification-a.mark-as-read')->middleware('permission:REITS');
+
     // Checklist Module
     Route::get('approver/checklist/{property}', [ApproverController::class, 'ChecklistIndex'])->name('checklist-a.index')->middleware('permission:REITS');
     Route::get('approver/checklist/{checklist}/show', [ApproverController::class, 'ChecklistShow'])->name('checklist-a.show')->middleware('permission:REITS');
