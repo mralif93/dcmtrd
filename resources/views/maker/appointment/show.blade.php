@@ -26,7 +26,7 @@
                 <!-- Header Section -->
                 <div class="px-4 py-5 sm:px-6">
                     <h3 class="text-lg font-medium text-gray-900">Appointment for Portfolio: 
-                        <a href="{{ route('portfolio-m.show', $appointment->portfolio->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                        <a href="{{ route('portfolio-m.show', $appointment->portfolio) }}" class="text-indigo-600 hover:text-indigo-900">
                             {{ $appointment->portfolio->portfolio_name }}
                         </a>
                     </h3>
