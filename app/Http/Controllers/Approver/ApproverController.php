@@ -1826,6 +1826,11 @@ class ApproverController extends Controller
     }
 
     // Checklist Tenant Module
+    public function ChecklistTenantShow(ChecklistTenant $checklistTenant)
+    {
+        return view('approver.checklist-tenant.show', compact('checklistTenant'));
+    }
+
     public function ChecklistTenantApprove(ChecklistTenant $checklistTenant)
     {
         try {

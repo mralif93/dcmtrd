@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tenant Details') }}
+            {{ __('Checklist Tenant Details') }}
         </h2>
     </x-slot>
 
@@ -25,7 +25,7 @@
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <!-- Header Section -->
                 <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-lg font-medium text-gray-900">Tenant: {{ $tenant->name }}</h3>
+                    <h3 class="text-lg font-medium text-gray-900">Checklist for: {{ $checklistTenant->tenant->name }}</h3>
                 </div>
 
                 <!-- Status Section -->
@@ -36,19 +36,29 @@
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 <div class="flex items-center justify-between">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                                        {{ match(strtolower($tenant->status)) {
+                                        {{ match(strtolower($checklistTenant->status)) {
+                                            'completed' => 'bg-green-100 text-green-800',
+                                            'scheduled' => 'bg-blue-100 text-blue-800',
+                                            'cancelled' => 'bg-red-100 text-red-800',
                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                             'active' => 'bg-green-100 text-green-800',
                                             'inactive' => 'bg-gray-100 text-gray-800',
                                             'rejected' => 'bg-red-100 text-red-800',
+                                            'draft' => 'bg-blue-100 text-blue-800',
+                                            'withdrawn' => 'bg-purple-100 text-purple-800',
+                                            'in progress' => 'bg-indigo-100 text-indigo-800',
+                                            'on hold' => 'bg-orange-100 text-orange-800',
+                                            'reviewing' => 'bg-teal-100 text-teal-800',
+                                            'approved' => 'bg-emerald-100 text-emerald-800',
+                                            'expired' => 'bg-rose-100 text-rose-800',
                                             default => 'bg-gray-100 text-gray-800'
                                         } }}">
-                                        {{ ucfirst($tenant->status) }}
+                                        {{ ucfirst($checklistTenant->status) }}
                                     </span>
 
-                                    @if(strtolower($tenant->status) === 'pending')
+                                    @if(strtolower($checklistTenant->status) === 'pending')
                                         <div class="flex space-x-2">
-                                            <form action="{{ route('tenant-a.approve', $tenant) }}" method="POST" class="ml-4" id="approve-form">
+                                            <form action="{{ route('checklist-tenant-a.approve', $checklistTenant) }}" method="POST" class="ml-4" id="approve-form">
                                                 @csrf
                                                 <button type="button" 
                                                         onclick="confirmAction('approve')"
@@ -58,7 +68,7 @@
                                             </form>
                                             
                                             <button type="button" 
-                                                    onclick="openRejectModal('{{ $tenant->id }}')"
+                                                    onclick="openRejectModal('{{ $checklistTenant->id }}')"
                                                     class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-full font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                                 Reject
                                             </button>
@@ -66,7 +76,7 @@
                                         
                                         <script>
                                             function confirmAction(action) {
-                                                if (confirm('Are you sure you want to approve this tenant?')) {
+                                                if (confirm('Are you sure you want to approve this checklist tenant?')) {
                                                     document.getElementById('approve-form').submit();
                                                 }
                                             }
@@ -79,127 +89,67 @@
                 </div>
 
                 <!-- Remarks Section -->
-                @if($tenant->remarks)
+                @if($checklistTenant->remarks)
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
                         <h3 class="text-lg leading-6 font-medium text-gray-900">Remarks</h3>
                     </div>
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:px-6">
-                            <p class="text-sm text-gray-900">{{ $tenant->remarks }}</p>
+                            <p class="text-sm text-gray-900">{{ $checklistTenant->remarks }}</p>
                         </div>
                     </dl>
                 </div>
                 @endif
 
-                <!-- Basic Information Section -->
+                <!-- Checklist Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Basic Information</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Checklist Information</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Site Visit Date</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $checklistTenant->checklist->siteVisit ? date('d/m/Y', strtotime($checklistTenant->checklist->siteVisit->date_visit)) : 'N/A' }}
+                            </dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Property</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                @if($checklistTenant->checklist->siteVisit && $checklistTenant->checklist->siteVisit->property)
+                                    {{ $checklistTenant->checklist->siteVisit->property->name }}
+                                @else
+                                    N/A
+                                @endif
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Tenant Information Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Tenant Information</h3>
                     </div>
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Tenant Name</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $tenant->name }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <a href="{{ route('tenant-a.details', $checklistTenant->tenant->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                                    {{ $checklistTenant->tenant->name }}
+                                </a>
+                            </dd>
                         </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Contact Person</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $tenant->contact_person ?? 'N/A' }}</dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Email</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $tenant->email ?? 'N/A' }}</dd>
-                        </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Phone</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $tenant->phone ?? 'N/A' }}</dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Commencement Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ date('d/m/Y', strtotime($tenant->commencement_date)) }}</dd>
-                        </div>
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Expiry Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ date('d/m/Y', strtotime($tenant->expiry_date)) }}</dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Approval Date</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $tenant->approval_date ? date('d/m/Y', strtotime($tenant->approval_date)) : 'N/A' }}</dd>
-                        </div>
-                    </dl>
-                </div>
 
-                <!-- Lease Information Section -->
-                <div class="border-t border-gray-200">
-                    <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Property Information</h3>
-                    </div>
-                    <dl>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Property</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $tenant->property->name }}
-                            </dd>
-                        </div>
+                        <!-- Notes -->
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Address</dt>
+                            <dt class="text-sm font-medium text-gray-500">Notes</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $tenant->property->address }}
-                            </dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">City</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $tenant->property->city }}
+                                {{ $checklistTenant->notes ?? 'No notes available' }}
                             </dd>
                         </div>
                     </dl>
-                </div>
-
-                <!-- Associated Leases Section -->
-                <div class="border-t border-gray-200">
-                    <div class="px-4 py-5 sm:px-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Associated Leases</h3>
-                    </div>
-                    <div class="px-4 py-5 sm:px-6">
-                        <div class="overflow-x-auto">
-                            @if ($tenant->leases->count() > 0)
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lease Name</th>
-                                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Premises</th>
-                                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
-                                            <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Tenancy Type</th>
-                                            <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach ($tenant->leases as $lease)
-                                            <tr>
-                                                <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ $lease->lease_name }}</td>
-                                                <td class="px-4 py-3 text-sm text-gray-500">{{ $lease->demised_premises }}</td>
-                                                <td class="px-4 py-3 text-sm text-gray-500">
-                                                    {{ date('d/m/Y', strtotime($lease->start_date)) }} - 
-                                                    {{ date('d/m/Y', strtotime($lease->end_date)) }}
-                                                </td>
-                                                <td class="px-4 py-3 text-sm text-gray-500 text-center">
-                                                    {{ $lease->tenancy_type ? ucfirst($lease->tenancy_type) : 'N/A' }}
-                                                </td>
-                                                <td class="px-4 py-3 text-sm text-center">
-                                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $lease->status === 'active' ? 'bg-green-100 text-green-800' : ($lease->status === 'inactive' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
-                                                        {{ ucfirst($lease->status) }}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @else
-                                <p class="text-sm text-gray-500">No leases associated with this tenant.</p>
-                            @endif
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Administrative Information Section -->
@@ -210,12 +160,20 @@
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $tenant->prepared_by ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistTenant->prepared_by ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Verified By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $tenant->verified_by ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklistTenant->verified_by ?? 'N/A' }}</dd>
                         </div>
+                        @if($checklistTenant->approval_datetime)
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Approval Date & Time</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ \Carbon\Carbon::parse($checklistTenant->approval_datetime)->format('d/m/Y h:i A') }}
+                            </dd>
+                        </div>
+                        @endif
                     </dl>
                 </div>
 
@@ -227,11 +185,15 @@
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $tenant->created_at->format('d/m/Y h:i A') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $checklistTenant->created_at->format('d/m/Y h:i A') }}
+                            </dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $tenant->updated_at->format('d/m/Y h:i A') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $checklistTenant->updated_at->format('d/m/Y h:i A') }}
+                            </dd>
                         </div>
                     </dl>
                 </div>
@@ -239,12 +201,12 @@
                 <!-- Action Buttons -->
                 <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
                     <div class="flex justify-end gap-x-4">
-                        <a href="{{ route('tenant-a.main', ['status' => $tenant->status]) }}" 
+                        <a href="{{ route('checklist-a.details', $checklistTenant->checklist_id) }}" 
                             class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/>
                             </svg>
-                            Back to List
+                            Back to Checklist
                         </a>
                     </div>
                 </div>
@@ -263,9 +225,9 @@
                         </svg>
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Reject Tenant</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Reject Checklist Tenant</h3>
                         <div class="mt-2">
-                            <p class="text-sm text-gray-500">Please provide a reason for rejecting this tenant.</p>
+                            <p class="text-sm text-gray-500">Please provide a reason for rejecting this checklist tenant.</p>
                         </div>
                     </div>
                 </div>
@@ -289,8 +251,8 @@
     </div>
 
     <script>
-        function openRejectModal(tenantId) {
-            document.getElementById('rejectForm').action = `/approver/tenant/${tenantId}/reject`;
+        function openRejectModal(checklistTenantId) {
+            document.getElementById('rejectForm').action = `/approver/checklist-tenant/${checklistTenantId}/reject`;
             document.getElementById('rejectModal').classList.remove('hidden');
         }
         

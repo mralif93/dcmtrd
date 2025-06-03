@@ -90,6 +90,14 @@ class Lease extends Model implements Auditable
         return $this->hasMany(TenancyLetter::class);
     }
 
+    /**
+     * Get the first tenancy letter associated with the lease.
+     */
+    public function tenancyLetter()
+    {
+        return $this->hasOne(TenancyLetter::class);
+    }
+
     // check is tenancy letter under lease id already created or not
     public function hasTenancyLetter()
     {

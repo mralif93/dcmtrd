@@ -918,7 +918,7 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
 
     // Checklist Tenant Module
     Route::get('approver/checklist-tenant/{checklist}', [ApproverController::class, 'ChecklistTenantIndex'])->name('checklist-tenant-a.index')->middleware('permission:REITS');
-    Route::get('approver/checklist-tenant/{checklistTenant}/show', [ApproverController::class, 'PENDING'])->name('checklist-tenant-a.show')->middleware('permission:REITS');
+    Route::get('approver/checklist-tenant/{checklistTenant}/show', [ApproverController::class, 'ChecklistTenantShow'])->name('checklist-tenant-a.show')->middleware('permission:REITS');
     Route::get('approver/checklist-tenant/', [ApproverController::class, 'ChecklistTenantMain'])->name('checklist-tenant-a.main')->middleware('permission:REITS');
     Route::get('approver/checklist-tenant/{checklistTenant}/details', [ApproverController::class, 'ChecklistTenantDetails'])->name('checklist-tenant-a.details')->middleware('permission:REITS');
     Route::post('approver/checklist-tenant/{checklistTenant}/approve', [ApproverController::class, 'ChecklistTenantApprove'])->name('checklist-tenant-a.approve')->middleware('permission:REITS');

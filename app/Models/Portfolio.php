@@ -86,21 +86,7 @@ class Portfolio extends Model implements Auditable
         return $this->hasMany(ApprovalForm::class);
     }
 
-    /**
-     * Get the user who prepared the portfolio.
-     */
-    public function preparedBy()
-    {
-        return $this->belongsTo(User::class, 'prepared_by', 'id');
-    }
 
-    /**
-     * Get the user who verified the portfolio.
-     */
-    public function verifiedBy()
-    {
-        return $this->belongsTo(User::class, 'verified_by', 'id');
-    }
 
     /**
      * Scope a query to only include portfolios with a specific status.

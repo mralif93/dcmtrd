@@ -149,7 +149,7 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{ $checklistTenant->preparedBy ? $checklistTenant->preparedBy->name : 'Not assigned' }}
+                                        {{ $checklistTenant->prepared_by ?? 'N/A' }}
                                     </td>
                                     <td class="px-6 py-4">
                                         {{ $checklistTenant->updated_at->format('M d, Y') }}

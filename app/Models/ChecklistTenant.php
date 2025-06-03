@@ -58,19 +58,5 @@ class ChecklistTenant extends Model
         return $this->belongsTo(Tenant::class);
     }
 
-    /**
-     * Get the user who prepared the record.
-     */
-    public function preparedBy()
-    {
-        return $this->belongsTo(User::class, 'prepared_by', 'id');
-    }
 
-    /**
-     * Get the user who verified the record.
-     */
-    public function verifiedBy()
-    {
-        return $this->belongsTo(User::class, 'verified_by', 'id');
-    }
 }
