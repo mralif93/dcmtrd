@@ -184,7 +184,7 @@ class MakerController extends Controller
             ->where('date_visit', '>', now())
             ->orderBy('date_visit');
 
-        // calculate total number of site visit which has remaining time less than or equal to 30 days
+        // calculate total number of site visit which has remaining time
         $activeSiteVisitsCount = SiteVisit::where('date_visit', '>', now())->count();
 
         // Fetch site visit logs with pagination
@@ -218,7 +218,7 @@ class MakerController extends Controller
             ->where('date_of_approval', '>', now())
             ->orderBy('date_of_approval');
 
-        // calculate total number of appointment which has remaining time less than or equal to 30 days
+        // calculate total number of appointment which has remaining time
         $activeAppointmentsCount = Appointment::where('date_of_approval', '>', now())->count();
 
         $totalNotifications = $activeLeasesCount + $activeSiteVisitsCount + $activeSiteVisitLogsCount + $activeAppointmentsCount;
