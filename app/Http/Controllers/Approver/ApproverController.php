@@ -93,7 +93,7 @@ class ApproverController extends Controller
         }
 
         // Get filtered issuers with latest first and paginate
-        $issuers = $query->whereIn('status', ['active', 'pending', 'rejected', 'draft'])
+        $issuers = $query->whereIn('status', ['active', 'pending', 'rejected', 'draft', 'inactive'])
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -304,12 +304,31 @@ class ApproverController extends Controller
 
     public function toggleRedeem(FacilityInformation $facility)
     {
+        // Toggle redeemed status
         $facility->is_redeemed = !$facility->is_redeemed;
         $facility->save();
 
-        return redirect()->route('bond-a.details', $facility->issuer)->with('success', 'Facility Information redeemed status updated successfully');
+        // Check if all facilities for this issuer are redeemed and update issuer status
+        $this->updateIssuerStatusBasedOnFacilities($facility->issuer_id);
+
+        return redirect()->route('bond-a.details', $facility->issuer)
+            ->with('success', 'Facility Information redeemed status updated successfully');
     }
 
+    protected function updateIssuerStatusBasedOnFacilities($issuerId)
+    {
+        $issuer = Issuer::find($issuerId);
+        if (!$issuer) {
+            return;
+        }
+
+        $allRedeemed = FacilityInformation::where('issuer_id', $issuerId)
+            ->where('is_redeemed', false)
+            ->doesntExist();
+
+        $issuer->status = $allRedeemed ? 'Inactive' : 'Active'; // or keep current logic
+        $issuer->save();
+    }
     /**
      * Get additional bond data via AJAX after initial page load
      */
@@ -727,10 +746,10 @@ class ApproverController extends Controller
     {
         // Get paginated properties with a unique page name
         $properties = $portfolio->properties()->paginate(10, ['*'], 'properties_page');
-        
+
         // Get paginated financials with a different page name
         $financials = $portfolio->financials()->paginate(10, ['*'], 'financials_page');
-        
+
         return view('approver.portfolio.show', compact('portfolio', 'properties', 'financials'));
     }
 
@@ -946,7 +965,8 @@ class ApproverController extends Controller
         return view('approver.financial.index', compact('financials', 'portfolio'));
     }
 
-    public function FinancialShow(Financial $financial) {
+    public function FinancialShow(Financial $financial)
+    {
         return view('approver.financial.show', compact('financial'));
     }
 
@@ -1185,7 +1205,7 @@ class ApproverController extends Controller
         $activeLeaseCount = Lease::whereIn('tenant_id', $tenantIds)
             ->where('status', 'active')
             ->count();
-        
+
         $totalLeaseCount = Lease::whereIn('tenant_id', $tenantIds)
             ->count();
 
@@ -1475,12 +1495,12 @@ class ApproverController extends Controller
             ->where('visit_year', '>', now()->year)
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                      ->where('visit_month', '>', now()->month);
+                    ->where('visit_month', '>', now()->month);
             })
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                      ->where('visit_month', now()->month)
-                      ->where('visit_day', '>', now()->day);
+                    ->where('visit_month', now()->month)
+                    ->where('visit_day', '>', now()->day);
             })
             ->paginate($perPage, ['*'], 'site_visit_log_page')
             ->withQueryString();
@@ -1500,12 +1520,12 @@ class ApproverController extends Controller
         $activeSiteVisitLogsCount = SiteVisitLog::where('visit_year', '>', now()->year)
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                      ->where('visit_month', '>', now()->month);
+                    ->where('visit_month', '>', now()->month);
             })
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                      ->where('visit_month', now()->month)
-                      ->where('visit_day', '>', now()->day);
+                    ->where('visit_month', now()->month)
+                    ->where('visit_day', '>', now()->day);
             })
             ->count();
 
@@ -1557,12 +1577,12 @@ class ApproverController extends Controller
         $siteVisitLogsCount = SiteVisitLog::where('visit_year', '>', now()->year)
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                      ->where('visit_month', '>', now()->month);
+                    ->where('visit_month', '>', now()->month);
             })
             ->orWhere(function ($query) {
                 $query->where('visit_year', now()->year)
-                      ->where('visit_month', now()->month)
-                      ->where('visit_day', '>', now()->day);
+                    ->where('visit_month', now()->month)
+                    ->where('visit_day', '>', now()->day);
             })
             ->count();
 
@@ -1633,50 +1653,50 @@ class ApproverController extends Controller
     {
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
-        
+
         // Base query with necessary relationships
         $query = Checklist::with(['siteVisit', 'siteVisit.property']);
-        
+
         // Apply status filter based on tab
         if ($activeTab !== 'all') {
             $query->where('status', $activeTab);
         }
-        
+
         // Apply search filter if provided
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('prepared_by', 'like', "%{$search}%")
-                ->orWhere('verified_by', 'like', "%{$search}%")
-                ->orWhereHas('siteVisit.property', function($propertyQuery) use ($search) {
-                    $propertyQuery->where('name', 'like', "%{$search}%");
-                });
+                    ->orWhere('verified_by', 'like', "%{$search}%")
+                    ->orWhereHas('siteVisit.property', function ($propertyQuery) use ($search) {
+                        $propertyQuery->where('name', 'like', "%{$search}%");
+                    });
             });
         }
-        
+
         // Apply property filter if provided
         if ($request->filled('property_id')) {
-            $query->whereHas('siteVisit', function($q) use ($request) {
+            $query->whereHas('siteVisit', function ($q) use ($request) {
                 $q->where('property_id', $request->input('property_id'));
             });
         }
-        
+
         // Apply site visit filter if provided
         if ($request->filled('site_visit_id')) {
             $query->where('site_visit_id', $request->input('site_visit_id'));
         }
-        
+
         // Fetch checklists with pagination
         $checklists = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
-        
+
         // Fetch all site visits for the dropdown
         $siteVisits = SiteVisit::with('property')
-                    ->orderBy('date_visit', 'desc')
-                    ->get();
-        
+            ->orderBy('date_visit', 'desc')
+            ->get();
+
         // Fetch available properties for filter dropdown
         $properties = Property::orderBy('name')->get();
-        
+
         // Count records for each tab
         $tabCounts = [
             'all' => Checklist::count(),
@@ -1685,19 +1705,19 @@ class ApproverController extends Controller
             'rejected' => Checklist::where('status', 'rejected')->count(),
             'inactive' => Checklist::where('status', 'inactive')->count(),
         ];
-        
+
         return view('approver.checklist.main', compact(
-            'checklists', 
-            'siteVisits', 
-            'properties', 
-            'activeTab', 
+            'checklists',
+            'siteVisits',
+            'properties',
+            'activeTab',
             'tabCounts'
         ));
     }
 
     public function ChecklistDetails(Checklist $checklist)
     {
-        
+
         // Load the checklist with its relationships
         $checklist->load([
             'siteVisit',
@@ -2059,9 +2079,9 @@ class ApproverController extends Controller
 
         // Get list of portfolios from appointment data
         $portfolios = Portfolio::whereIn('id', Appointment::distinct()->pluck('portfolio_id'))
-                        ->orderBy('portfolio_name')
-                        ->get();
-    
+            ->orderBy('portfolio_name')
+            ->get();
+
         // Count records for each tab
         $tabCounts = [
             'all' => Appointment::count(),
@@ -2514,15 +2534,15 @@ class ApproverController extends Controller
     {
         // Get current tab or default to 'all'
         $activeTab = $request->query('tab', 'all');
-        
+
         // Initialize the base query with necessary relationships
         $query = SiteVisitLog::with(['property.portfolio']);
-        
+
         // Apply status filter based on tab
         if ($activeTab !== 'all') {
             $query->where('status', $activeTab);
         }
-        
+
         // Apply filters using a more concise approach
         $this->applySearchFilter($query, $request);
         $this->applyCategoryFilter($query, $request);
@@ -2531,21 +2551,21 @@ class ApproverController extends Controller
 
         // Fetch site visit logs with pagination
         $siteVisitLogs = $query->latest()->paginate(10)->withQueryString();
-        
+
         // Get data for dropdown filters
         $portfolios = $this->getFilteredPortfolios($request, $siteVisitLogs);
         $properties = $this->getFilteredProperties($request, $portfolios);
         $categories = $this->getFilteredCategories($request, $siteVisitLogs);
-        
+
         // Get tab counts in a more efficient way
         $tabCounts = $this->getTabCounts();
 
         return view('approver.site-visit-log.main', compact(
-            'siteVisitLogs', 
-            'activeTab', 
-            'portfolios', 
-            'properties', 
-            'categories', 
+            'siteVisitLogs',
+            'activeTab',
+            'portfolios',
+            'properties',
+            'categories',
             'tabCounts'
         ));
     }
@@ -2559,10 +2579,10 @@ class ApproverController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('purpose', 'like', "%{$search}%")
-                ->orWhereHas('property', function($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('address', 'like', "%{$search}%");
-                });
+                    ->orWhereHas('property', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('address', 'like', "%{$search}%");
+                    });
             });
         }
     }
@@ -2583,7 +2603,7 @@ class ApproverController extends Controller
     private function applyPortfolioFilter($query, $request)
     {
         if ($request->filled('portfolio_id')) {
-            $query->whereHas('property', function($q) use ($request) {
+            $query->whereHas('property', function ($q) use ($request) {
                 $q->where('portfolio_id', $request->portfolio_id);
             });
         }
@@ -2606,22 +2626,22 @@ class ApproverController extends Controller
     {
         // Get portfolio IDs from visit logs
         $portfolioIds = collect();
-        
+
         // Extract unique portfolio IDs from the site visit logs
-        $siteVisitLogs->each(function($log) use (&$portfolioIds) {
+        $siteVisitLogs->each(function ($log) use (&$portfolioIds) {
             if ($log->property && $log->property->portfolio_id) {
                 $portfolioIds->push($log->property->portfolio_id);
             }
         });
-        
+
         // Include currently selected portfolio ID if it exists
         if ($request->filled('portfolio_id')) {
             $portfolioIds->push($request->portfolio_id);
         }
-        
+
         // Get unique portfolio IDs
         $portfolioIds = $portfolioIds->unique();
-        
+
         // Query portfolios with those IDs
         return Portfolio::whereIn('id', $portfolioIds)
             ->orderBy('portfolio_name')
@@ -2634,18 +2654,18 @@ class ApproverController extends Controller
     private function getFilteredProperties($request, $portfolios)
     {
         $query = Property::query();
-        
+
         // If portfolios are filtered, only show properties from those portfolios
         if ($portfolios->isNotEmpty()) {
             $portfolioIds = $portfolios->pluck('id')->toArray();
             $query->whereIn('portfolio_id', $portfolioIds);
         }
-        
+
         // Include the currently selected property even if it's filtered out
         if ($request->filled('property_id')) {
             $query->orWhere('id', $request->property_id);
         }
-        
+
         return $query->orderBy('name')->get();
     }
 
@@ -2657,15 +2677,15 @@ class ApproverController extends Controller
     {
         // Start with an empty collection and add "All Categories" option
         $categories = collect(['']);
-        
+
         // Add categories from the current result set
         $categories = $categories->concat($siteVisitLogs->pluck('category')->unique()->filter());
-        
+
         // Include the currently selected category even if it's not in the results
         if ($request->filled('category') && !$categories->contains($request->category)) {
             $categories->push($request->category);
         }
-        
+
         return $categories->sort();
     }
 
@@ -2676,7 +2696,7 @@ class ApproverController extends Controller
     {
         $statuses = ['all', 'active', 'pending', 'rejected', 'inactive'];
         $counts = [];
-        
+
         foreach ($statuses as $status) {
             $query = SiteVisitLog::query();
             if ($status !== 'all') {
@@ -2684,7 +2704,7 @@ class ApproverController extends Controller
             }
             $counts[$status] = $query->count();
         }
-        
+
         return $counts;
     }
 
