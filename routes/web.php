@@ -428,7 +428,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
         Route::post('/cb-reports/cutoff', [DcmtReportController::class, 'cutOff'])->name('cb-reports.cutoff');
         Route::get('/cb-reports/batches', [DcmtReportController::class, 'viewBatches'])->name('cb-reports.batches');
         Route::get('/export-cb', function () {
-            return Excel::download(new CorporateBondExport, 'corporate_bonds.xlsx');
+            return Excel::download(new CorporateBondExport, 'CB Master.xlsx');
         })->name('cb-export');
         Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports');
         Route::delete('/cb-reports/batches/{id}', [DcmtReportController::class, 'deleteBatch'])->name('cb-reports.delete');
@@ -777,7 +777,7 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
         Route::get('/cb-reports/batches/{id}/download', [DcmtReportController::class, 'downloadBatchA'])->name('cb-reports.download.a');
         Route::delete('/cb-reports/batches/{id}', [DcmtReportController::class, 'deleteBatchA'])->name('cb-reports.delete.a');
         Route::get('/export-cb', function () {
-            return Excel::download(new CorporateBondExport, 'corporate_bonds.xlsx');
+            return Excel::download(new CorporateBondExport, 'CB Master.xlsx');
         })->name('cb-export.a');
         Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReportsA'])->name('trustee-reports.a');
         Route::get('/trustee-reports/batches', [DcmtReportController::class, 'viewTrusteeBatchesA'])->name('trustee-reports.batches.a');

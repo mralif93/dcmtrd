@@ -28,9 +28,10 @@ class DcmtReportController extends Controller
     {
         $search = $request->input('search');
 
-        $facilities = FacilityInformation::with(['issuer.bonds', 'trusteeFees'])
+        // Base query (used for both full and paginated datasets)
+        $baseQuery = FacilityInformation::with(['issuer.bonds', 'trusteeFees'])
             ->whereHas('issuer', function ($query) {
-                $query->where('status', 'Active') // Only active issuers
+                $query->where('status', 'Active')
                     ->whereIn('debenture', ['Corporate Bond', 'Loan']);
             })
             ->when($search, function ($query, $search) {
@@ -42,19 +43,22 @@ class DcmtReportController extends Controller
                                 ->orWhere('issuer_name', 'like', '%' . $search . '%');
                         });
                 });
-            })
-            ->paginate(10)
-            ->withQueryString();
+            });
 
-        // Totals for paginated facilities
-        $totalNominalValue = $facilities->sum(fn($f) => (float) $f->facility_amount);
-        $totalOutstandingSize = $facilities->sum(fn($f) => (float) $f->outstanding_amount);
-        $totalTrusteeFeeAmount1 = $facilities->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_1'));
-        $totalTrusteeFeeAmount2 = $facilities->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_2'));
+        // Clone the base query for totals (no pagination)
+        $allFacilities = $baseQuery->get();
 
-        // Separate Corporate Bond & Loan totals based on issuer.debenture
-        $bondFacilities = $facilities->filter(fn($f) => $f->issuer?->debenture === 'Corporate Bond');
-        $loanFacilities = $facilities->filter(fn($f) => $f->issuer?->debenture === 'Loan');
+        // Now paginate for display
+        $facilities = $baseQuery->paginate(10)->withQueryString();
+
+        // Grand totals (based on all results)
+        $totalNominalValue = $allFacilities->sum(fn($f) => (float) $f->facility_amount);
+        $totalOutstandingSize = $allFacilities->sum(fn($f) => (float) $f->outstanding_amount);
+        $totalTrusteeFeeAmount1 = $allFacilities->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_1'));
+        $totalTrusteeFeeAmount2 = $allFacilities->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_2'));
+
+        $bondFacilities = $allFacilities->filter(fn($f) => $f->issuer?->debenture === 'Corporate Bond');
+        $loanFacilities = $allFacilities->filter(fn($f) => $f->issuer?->debenture === 'Loan');
 
         $bondNominal = $bondFacilities->sum(fn($f) => (float) $f->facility_amount);
         $bondOutstanding = $bondFacilities->sum(fn($f) => (float) $f->outstanding_amount);
@@ -79,16 +83,14 @@ class DcmtReportController extends Controller
         ));
     }
 
-
-
     public function cbReportsA(Request $request)
     {
-        // Get the search query from the request
         $search = $request->input('search');
 
-        $reports = FacilityInformation::with(['issuer.bonds', 'trusteeFees'])
+        // Base query (used for both full and paginated datasets)
+        $baseQuery = FacilityInformation::with(['issuer.bonds', 'trusteeFees'])
             ->whereHas('issuer', function ($query) {
-                $query->where('status', 'Active') // Only active issuers
+                $query->where('status', 'Active')
                     ->whereIn('debenture', ['Corporate Bond', 'Loan']);
             })
             ->when($search, function ($query, $search) {
@@ -100,19 +102,22 @@ class DcmtReportController extends Controller
                                 ->orWhere('issuer_name', 'like', '%' . $search . '%');
                         });
                 });
-            })
-            ->paginate(10)
-            ->withQueryString();
+            });
 
-        // Totals for paginated facilities
-        $totalNominalValue = $reports->sum(fn($f) => (float) $f->facility_amount);
-        $totalOutstandingSize = $reports->sum(fn($f) => (float) $f->outstanding_amount);
-        $totalTrusteeFeeAmount1 = $reports->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_1'));
-        $totalTrusteeFeeAmount2 = $reports->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_2'));
+        // Clone the base query for totals (no pagination)
+        $allFacilities = $baseQuery->get();
 
-        // Separate Corporate Bond & Loan totals based on issuer.debenture
-        $bondFacilities = $reports->filter(fn($f) => $f->issuer?->debenture === 'Corporate Bond');
-        $loanFacilities = $reports->filter(fn($f) => $f->issuer?->debenture === 'Loan');
+        // Now paginate for display
+        $facilities = $baseQuery->paginate(10)->withQueryString();
+
+        // Grand totals (based on all results)
+        $totalNominalValue = $allFacilities->sum(fn($f) => (float) $f->facility_amount);
+        $totalOutstandingSize = $allFacilities->sum(fn($f) => (float) $f->outstanding_amount);
+        $totalTrusteeFeeAmount1 = $allFacilities->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_1'));
+        $totalTrusteeFeeAmount2 = $allFacilities->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_2'));
+
+        $bondFacilities = $allFacilities->filter(fn($f) => $f->issuer?->debenture === 'Corporate Bond');
+        $loanFacilities = $allFacilities->filter(fn($f) => $f->issuer?->debenture === 'Loan');
 
         $bondNominal = $bondFacilities->sum(fn($f) => (float) $f->facility_amount);
         $bondOutstanding = $bondFacilities->sum(fn($f) => (float) $f->outstanding_amount);
@@ -123,7 +128,7 @@ class DcmtReportController extends Controller
         $loanTrusteeFee = $loanFacilities->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_1'));
 
         return view('approver.dcmt-report.cb-reports', compact(
-            'reports',
+            'facilities',
             'totalNominalValue',
             'totalOutstandingSize',
             'totalTrusteeFeeAmount1',
@@ -137,16 +142,31 @@ class DcmtReportController extends Controller
         ));
     }
 
-    public function trusteeReports()
+    public function trusteeReports(Request $request)
     {
-        // Eager-load relationships and filter only Corporate Trust issuers
-        $reports = Issuer::with(['facilities.trusteeFees'])
-            ->where('status', 'Active')
-            ->where('debenture', 'Corporate Trust')
-            ->paginate(10)
-            ->withQueryString();
+        $search = $request->input('search');
 
-        // Compute total trustee fee for each issuer using functional reduce
+        // Build base query
+        $query = Issuer::with(['facilities.trusteeFees'])
+            ->where('status', 'Active')
+            ->where('debenture', 'Corporate Trust');
+
+        // Apply search if provided
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('issuer_name', 'like', "%{$search}%")
+                    ->orWhere('issuer_short_name', 'like', "%{$search}%")
+                    ->orWhereHas('facilities', function ($q2) use ($search) {
+                        $q2->where('facility_code', 'like', "%{$search}%")
+                            ->orWhere('facility_name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Paginate and keep query string
+        $reports = $query->paginate(10)->withQueryString();
+
+        // Compute total trustee fee for each issuer
         $reports->getCollection()->transform(function ($issuer) {
             $totalTrusteeFee = $issuer->facilities->reduce(function ($carry, $facility) {
                 $feeTotal = $facility->trusteeFees->reduce(function ($subCarry, $fee) {
@@ -155,7 +175,6 @@ class DcmtReportController extends Controller
                 return $carry + $feeTotal;
             }, 0);
 
-            // Attach to issuer object
             $issuer->total_trustee_fee = $totalTrusteeFee;
             return $issuer;
         });

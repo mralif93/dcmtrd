@@ -86,6 +86,12 @@
                                         <a href="{{ route('facility-info-a.show', $facility) }}">
                                             {{ $facility->facility_code }}
                                         </a>
+                                        @if ($facility->issuer_short_name)
+                                            <span
+                                                class="ml-2 inline-block px-2 py-0.5 text-xs font-semibold text-indigo-800 bg-indigo-100 rounded-full">
+                                                {{ $facility->issuer_short_name }}
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         {{ $facility->facility_name }}

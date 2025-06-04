@@ -75,7 +75,7 @@
                                     <span class="text-right">
                                         {{ $facility->maturity_date ? $facility->maturity_date->format('d-M-Y') : '-' }}
                                     </span>
-                                </p>                                
+                                </p>
                                 <p class="flex justify-between">
                                     <strong class="text-gray-700">Instrument:</strong>
                                     <span class="text-right">{{ $facility->instrument }}</span>
@@ -145,7 +145,7 @@
                                     <span class="text-right">
                                         {{ $facility->availability_date ? $facility->availability_date->format('d-M-Y') : '-' }}
                                     </span>
-                                </p>                                
+                                </p>
                                 <p class="flex justify-between">
                                     <strong class="text-gray-700">Outstanding (RM):</strong>
                                     <span class="text-right">{{ $facility->outstanding_amount }}</span>
@@ -361,7 +361,8 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse($activeBonds as $bond)
-                                    <tr class="hover:bg-gray-50">
+                                    <tr
+                                        class="hover:bg-red-50 {{ optional($bond->last_traded_date)->lt(now()) ? 'bg-green-50' : '' }}">
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-medium text-gray-900">
                                                 <a href="{{ route('bond-a.show', $bond) }}">
@@ -405,7 +406,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                                        <td colspan="9" class="px-6 py-4 text-center text-gray-500">
                                             No active bonds found
                                         </td>
                                     </tr>
@@ -420,8 +421,8 @@
                     </div>
                 </div>
 
-                  <!-- ADI Holder Accordion -->
-                  <div class="mt-6 bg-white shadow-sm sm:rounded-lg">
+                <!-- ADI Holder Accordion -->
+                <div class="mt-6 bg-white shadow-sm sm:rounded-lg">
                     <button @click="openSection = openSection === 'ADI' ? null : 'ADI'"
                         class="w-full px-6 py-4 text-left hover:bg-gray-50 focus:outline-none">
                         <div class="flex items-center justify-between">
@@ -461,7 +462,7 @@
                                             {{ $holderName }}
                                         </td>
                                         <td class="px-6 py-3 text-right">
-                                            
+
                                         </td>
 
                                     </tr>

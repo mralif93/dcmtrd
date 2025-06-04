@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Bond;
+use App\Models\FacilityInformation;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -10,45 +10,47 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 
 class CorporateBondExport implements FromCollection, WithHeadings, WithTitle
 {
-    protected Collection $bonds;
+    protected Collection $facilities;
 
     public function __construct()
     {
-        $this->bonds = Bond::with(['issuer', 'facility.trusteeFees'])->get();
+        $this->facilities = FacilityInformation::with(['issuer', 'trusteeFees'])
+            ->whereHas('issuer', function ($query) {
+                $query->where('status', 'Active')
+                    ->whereIn('debenture', ['Corporate Bond', 'Loan']);
+            })
+            ->get();
     }
 
     public function collection()
     {
         $rows = collect();
 
-        // Add bond data rows
-        foreach ($this->bonds as $bond) {
+        foreach ($this->facilities as $facility) {
             $rows->push([
-                $bond->issuer->issuer_short_name ?? '-',
-                $bond->facility_code,
-                $bond->bonk_sukuk_name ?? '-',
-                $bond->issuer->issuer_short_name ?? '-',
-                $bond->facility?->facility_name,
-                $bond->issuer->debenture,
-                $bond->issuer->trustee_role_1,
-                $bond->issuer->trustee_role_2,
-                (float) $bond->facility?->facility_amount,
-                (float) $bond->facility?->outstanding_amount,
-                (float) $bond->facility?->trusteeFees->first()?->trustee_fee_amount_1,
-                (float) $bond->facility?->trusteeFees->first()?->trustee_fee_amount_2,
-                optional($bond->issuer->trust_deed_date)?->format('d/m/Y'),
-                optional($bond->issue_date)?->format('d/m/Y'),
-                optional($bond->facility?->maturity_date)?->format('d/m/Y'),
-                optional($bond->created_at)?->format('d/m/Y H:i'),
-                optional($bond->updated_at)?->format('d/m/Y H:i'),
+                $facility->issuer_short_name ?? '-',
+                $facility->facility_code,
+                $facility->issuer->issuer_name ?? '-',
+                $facility->facility_name,
+                $facility->issuer->debenture,
+                $facility->issuer->trustee_role_1,
+                $facility->issuer->trustee_role_2,
+                (float) $facility->facility_amount,
+                (float) $facility->outstanding_amount,
+                (float) $facility->trusteeFees->first()?->trustee_fee_amount_1,
+                (float) $facility->trusteeFees->first()?->trustee_fee_amount_2,
+                optional($facility->issuer->trust_deed_date)?->format('d/m/Y'),
+                optional($facility->issue_date)?->format('d/m/Y'),
+                optional($facility->maturity_date)?->format('d/m/Y'),
+                optional($facility->created_at)?->format('d/m/Y H:i'),
+                optional($facility->updated_at)?->format('d/m/Y H:i'),
             ]);
         }
 
-        // Add a few empty rows
+        // Summary
         $rows->push([]);
         $rows->push(['Summary']);
 
-        // Add summary bar values
         $rows->push([
             'Total Nominal Value',
             '',
@@ -57,9 +59,9 @@ class CorporateBondExport implements FromCollection, WithHeadings, WithTitle
             '',
             '',
             '',
-            '',
-            $this->bonds->sum(fn($b) => (float) $b->facility?->facility_amount)
+            $this->facilities->sum(fn($f) => (float) $f->facility_amount)
         ]);
+
         $rows->push([
             'Total Outstanding Size',
             '',
@@ -69,9 +71,9 @@ class CorporateBondExport implements FromCollection, WithHeadings, WithTitle
             '',
             '',
             '',
-            '',
-            $this->bonds->sum(fn($b) => (float) $b->facility?->outstanding_amount)
+            $this->facilities->sum(fn($f) => (float) $f->outstanding_amount)
         ]);
+
         $rows->push([
             'Trustee Fee Amount 1',
             '',
@@ -82,9 +84,9 @@ class CorporateBondExport implements FromCollection, WithHeadings, WithTitle
             '',
             '',
             '',
-            '',
-            $this->bonds->sum(fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1)
+            $this->facilities->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_1'))
         ]);
+
         $rows->push([
             'Trustee Fee Amount 2',
             '',
@@ -96,30 +98,29 @@ class CorporateBondExport implements FromCollection, WithHeadings, WithTitle
             '',
             '',
             '',
-            '',
-            $this->bonds->sum(fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_2)
+            $this->facilities->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_2'))
         ]);
 
-        // Add empty line and Bond vs Loan
+        // Bond vs Loan Summary
         $rows->push([]);
         $rows->push(['Bond vs Loan Summary']);
         $rows->push(['Type', 'Nominal Value (RM)', 'Outstanding Size (RM)', 'Trustee Fee (RM)']);
 
-        $bondTotals = $this->bonds->filter(fn($b) => $b->issuer->debenture === 'Corporate Bond');
-        $loanTotals = $this->bonds->filter(fn($b) => $b->issuer->debenture === 'Loan');
+        $bondFacilities = $this->facilities->filter(fn($f) => $f->issuer?->debenture === 'Corporate Bond');
+        $loanFacilities = $this->facilities->filter(fn($f) => $f->issuer?->debenture === 'Loan');
 
         $rows->push([
             'Bond',
-            $bondTotals->sum(fn($b) => (float) $b->facility?->facility_amount),
-            $bondTotals->sum(fn($b) => (float) $b->facility?->outstanding_amount),
-            $bondTotals->sum(fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1),
+            $bondFacilities->sum(fn($f) => (float) $f->facility_amount),
+            $bondFacilities->sum(fn($f) => (float) $f->outstanding_amount),
+            $bondFacilities->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_1')),
         ]);
 
         $rows->push([
             'Loan',
-            $loanTotals->sum(fn($b) => (float) $b->facility?->facility_amount),
-            $loanTotals->sum(fn($b) => (float) $b->facility?->outstanding_amount),
-            $loanTotals->sum(fn($b) => (float) $b->facility?->trusteeFees->first()?->trustee_fee_amount_1),
+            $loanFacilities->sum(fn($f) => (float) $f->facility_amount),
+            $loanFacilities->sum(fn($f) => (float) $f->outstanding_amount),
+            $loanFacilities->sum(fn($f) => $f->trusteeFees->sum('trustee_fee_amount_1')),
         ]);
 
         return $rows;
@@ -130,12 +131,11 @@ class CorporateBondExport implements FromCollection, WithHeadings, WithTitle
         return [
             'Issuer Short Name',
             'Facility Code',
-            'Bond/Sukuk Name',
-            'Name',
+            'Issuer Name',
             'Facility Name',
-            'Debenture/Loan',
-            'Trustee Role1',
-            'Trustee Role2',
+            'Debenture Type',
+            'Trustee Role 1',
+            'Trustee Role 2',
             'Nominal Value',
             'Outstanding Size',
             'Trustee Fee Amount 1',
@@ -150,6 +150,6 @@ class CorporateBondExport implements FromCollection, WithHeadings, WithTitle
 
     public function title(): string
     {
-        return 'CB MASTER REPORT'; 
+        return 'CB MASTER REPORT';
     }
 }
