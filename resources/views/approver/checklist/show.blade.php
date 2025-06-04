@@ -85,34 +85,32 @@
                                     </span>
                                 @endif
 
-                                @if($checklist->tenants->isNotEmpty())
-                                    @php
-                                        // Get tenant statuses to determine an overall status
-                                        $tenantStatuses = $checklist->tenants->pluck('pivot.status')->unique();
-                                        
-                                        // Determine an overall status
-                                        $overallStatus = 'N/A';
-                                        if($tenantStatuses->contains('pending')) {
-                                            $overallStatus = 'pending';
-                                        } elseif($tenantStatuses->count() > 0 && $tenantStatuses->every(function($status) { return $status === 'completed'; })) {
-                                            $overallStatus = 'completed';
-                                        } elseif($tenantStatuses->isNotEmpty()) {
-                                            $overallStatus = 'in-progress';
-                                        }
-                                        
-                                        // Set the appropriate CSS classes based on status
-                                        $statusClasses = $overallStatus === 'completed' ? 'bg-green-100 text-green-800' : 
-                                                    ($overallStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800');
-                                    @endphp
+                                @php
+                                    // Get tenant statuses to determine an overall status
+                                    $tenantStatuses = $checklist->tenants->pluck('pivot.status')->unique();
                                     
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $statusClasses }}">
-                                        Tenants: {{ ucfirst($overallStatus) }}
-                                    </span>
-                                @else
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                        Tenants: Pending
-                                    </span>
-                                @endif
+                                    // Determine an overall status
+                                    $overallStatus = 'draft';
+                                    if($tenantStatuses->contains('pending')) {
+                                        $overallStatus = 'pending';
+                                    } elseif($tenantStatuses->count() > 0 && $tenantStatuses->every(function($status) { return $status === 'active'; })) {
+                                        $overallStatus = 'active';
+                                    } elseif($tenantStatuses->isNotEmpty()) {
+                                        $overallStatus = 'not available';
+                                    }
+                                    
+                                    // Set the appropriate CSS classes based on status
+                                    $statusClasses = match($overallStatus) {
+                                        'active' => 'bg-green-100 text-green-800',
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'rejected' => 'bg-red-100 text-red-800',
+                                        default => 'bg-gray-100 text-gray-800'
+                                    };
+                                @endphp
+                                
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $statusClasses }}">
+                                    Tenants: {{ ucfirst($overallStatus) }}
+                                </span>
                                 
                                 @if($checklist->externalAreaCondition)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
@@ -153,29 +151,48 @@
                                     </span>
                                 @endif
 
-                                @if($checklist->disposalInstallation)
-                                    @php
-                                        // Count all disposal installation items
-                                        $totalItems = $checklist->disposalInstallation->count();
+                                @php
+                                    // Count all disposal installation items
+                                    $totalItems = $checklist->disposalInstallation->count();
+                                    
+                                    // If no items, show as draft
+                                    if ($totalItems == 0) {
+                                        $statusText = 'draft';
+                                    } else {
+                                        // Count items by status
+                                        $activeItems = $checklist->disposalInstallation->where('status', 'active')->count();
+                                        $pendingItems = $checklist->disposalInstallation->where('status', 'pending')->count();
                                         
-                                        // Count completed items
-                                        $completedItems = $checklist->disposalInstallation->where('status', 'completed')->count();
-                                        
-                                        // Check if all items are completed
-                                        $allCompleted = ($totalItems > 0 && $completedItems == $totalItems);
-                                        
-                                        // Set status text
-                                        $statusText = $allCompleted ? 'Completed' : 'Pending';
-                                        
-                                        // Set appropriate color classes based on status
-                                        $bgColorClass = $allCompleted ? 'bg-green-100' : 'bg-yellow-100';
-                                        $textColorClass = $allCompleted ? 'text-green-800' : 'text-yellow-800';
-                                    @endphp
+                                        // Determine overall status
+                                        if ($activeItems == $totalItems) {
+                                            $statusText = 'active';
+                                        } elseif ($pendingItems == $totalItems) {
+                                            $statusText = 'pending';
+                                        } else {
+                                            $statusText = 'pending'; // Mixed statuses default to pending
+                                        }
+                                    }
+                                    
+                                    // Set appropriate color classes based on status
+                                    $bgColorClass = match($statusText) {
+                                        'active' => 'bg-green-100',
+                                        'pending' => 'bg-yellow-100',
+                                        'rejected' => 'bg-red-100',
+                                        'draft' => 'bg-gray-100',
+                                        default => 'bg-gray-100'
+                                    };
+                                    $textColorClass = match($statusText) {
+                                        'active' => 'text-green-800',
+                                        'pending' => 'text-yellow-800',
+                                        'rejected' => 'text-red-800',
+                                        'draft' => 'text-gray-800',
+                                        default => 'text-gray-800'
+                                    };
+                                @endphp
 
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $bgColorClass }} {{ $textColorClass }}">
-                                        Installations: {{ $statusText }}
-                                    </span>
-                                @endif
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $bgColorClass }} {{ $textColorClass }}">
+                                    Installations: {{ $statusText }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -202,7 +219,7 @@
                             Internal Areas
                         </button>
                         <button type="button" onclick="switchTab('development')" class="tab-button bg-white py-4 px-6 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" id="tab-development">
-                            Development
+                            Property Development
                         </button>
                         <button type="button" onclick="switchTab('installations')" class="tab-button bg-white py-4 px-6 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" id="tab-installations">
                             Disposal/Installations/Replacement
@@ -322,51 +339,67 @@
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Title Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->title_ref ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->title_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Title Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->title_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->title_location ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Trust Deed Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->trust_deed_ref ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->trust_deed_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Trust Deed Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->trust_deed_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->trust_deed_location ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Sale & Purchase Agreement</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->sale_purchase_agreement ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Sale & Purchase Agreement Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->sale_purchase_agreement_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Sale & Purchase Agreement Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->sale_purchase_agreement_location ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Lease Agreement Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->lease_agreement_ref ?? 'N/A' }}</dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Lease Agreement Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->lease_agreement_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->lease_agreement_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->agreement_to_lease ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Lease Agreement Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->lease_agreement_location ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->agreement_to_lease_ref ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->agreement_to_lease_location ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Maintenance Agreement Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->maintenance_agreement_ref ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->maintenance_agreement_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Maintenance Agreement Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->maintenance_agreement_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->maintenance_agreement_location ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Development Agreement</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->development_agreement ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Development Agreement Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->development_agreement_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Other Legal Documents</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->other_legal_docs ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Development Agreement Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->development_agreement_location ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Other Legal Documents Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->others_ref ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Other Legal Documents Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->others_location ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Remarks</dt>
@@ -387,25 +420,6 @@
 
                 <!-- Action Buttons for Legal Documentation Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->legalDocumentation->status) === 'pending')
-                    <form action="{{ route('checklist-legal-a.approve', $checklist->legalDocumentation) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Approve
-                        </button>
-                    </form>
-                    <button type="button" 
-                        onclick="openRejectModal('legal', '{{ $checklist->legalDocumentation }}', 'Legal Documentation - {{ $checklist->siteVisit->property->name ?? 'N/A' }}', '{{ route('checklist-legal-a.reject', $checklist->legalDocumentation) }}')" 
-                        class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Reject
-                    </button>
-                    @endif
                     <a href="{{ route('checklist-a.index', $checklist->siteVisit->property) }}" 
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -468,39 +482,14 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div class="flex justify-between items-center w-24">
-                                                    @if($tenant->pivot->status === 'pending')
-                                                        <form action="{{ route('checklist-tenant-a.approve', $tenant->pivot->id) }}" method="POST">
-                                                            @csrf
-                                                            <button type="submit" class="text-green-600 hover:text-green-900 p-1" title="Approve">
-                                                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                                </svg>
-                                                            </button>
-                                                        </form>
-                                                        <button type="button" 
-                                                            onclick="openRejectModal('tenant', '{{ $tenant->pivot->id }}', '{{ $tenant->name }}', '{{ route('checklist-tenant-a.reject', $tenant->pivot->id) }}')" 
-                                                            class="text-red-600 hover:text-red-900 p-2 rounded-full hover:bg-red-100" 
-                                                            title="Reject">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                            </svg>
-                                                        </button>
-                                                        <a href="{{ route('tenant-a.show', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900 p-1" title="View">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </a>
-                                                    @else
-                                                        <div></div>
-                                                        <div></div>
-                                                        <a href="{{ route('tenant-a.show', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900 p-1" title="View">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </a>
-                                                    @endif
+                                                    <div></div>
+                                                    <div></div>
+                                                    <a href="{{ route('tenant-a.show', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900 p-1" title="View">
+                                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                        </svg>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -668,25 +657,6 @@
 
                 <!-- Action Buttons for External Areas Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->externalAreaCondition->status) === 'pending')
-                    <form action="{{ route('checklist-external-area-condition-a.approve', $checklist->externalAreaCondition) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Approve
-                        </button>
-                    </form>
-                    <button type="button" 
-                        onclick="openRejectModal('external', '{{ $checklist->externalAreaCondition }}', 'External Area Condition - {{ $checklist->siteVisit->property->name ?? 'N/A' }}', '{{ route('checklist-external-area-condition-a.reject', $checklist->externalAreaCondition) }}')" 
-                        class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Reject
-                    </button>
-                    @endif
                     <a href="{{ route('checklist-a.index', $checklist->siteVisit->property) }}" 
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -915,25 +885,6 @@
 
                 <!-- Action Buttons for Internal Areas Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->internalAreaCondition->status) === 'pending')
-                    <form action="{{ route('checklist-internal-area-condition-a.approve', $checklist->internalAreaCondition) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Approve
-                        </button>
-                    </form>
-                    <button type="button" 
-                        onclick="openRejectModal('internal', '{{ $checklist->internalAreaCondition }}', 'Internal Area Condition - {{ $checklist->siteVisit->property->name ?? 'N/A' }}', '{{ route('checklist-internal-area-condition-a.reject', $checklist->internalAreaCondition) }}')" 
-                        class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Reject
-                    </button>
-                    @endif
                     <a href="{{ route('checklist-a.index', $checklist->siteVisit->property) }}" 
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1098,25 +1049,6 @@
 
                 <!-- Action Buttons for Development Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->propertyDevelopment->status) === 'pending')
-                    <form action="{{ route('checklist-property-development-a.approve', $checklist->propertyDevelopment) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Approve
-                        </button>
-                    </form>
-                    <button type="button" 
-                        onclick="openRejectModal('development', '{{ $checklist->propertyDevelopment }}', 'Property Development - {{ $checklist->siteVisit->property->name ?? 'N/A' }}', '{{ route('checklist-property-development-a.reject', $checklist->propertyDevelopment) }}')" 
-                        class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Reject
-                    </button>
-                    @endif
                     <a href="{{ route('checklist-a.index', $checklist->siteVisit->property) }}" 
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1183,39 +1115,14 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div class="flex justify-between items-center w-32">
-                                                    @if($disposalInstallation->status === 'pending')
-                                                        <form action="{{ route('checklist-disposal-installation-a.approve', $disposalInstallation->id) }}" method="POST">
-                                                            @csrf
-                                                            <button type="submit" class="text-green-600 hover:text-green-900 p-2 rounded-full hover:bg-green-100" title="Approve">
-                                                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                                </svg>
-                                                            </button>
-                                                        </form>
-                                                        <button type="button" 
-                                                            onclick="openRejectModal('installation', '{{ $disposalInstallation->id }}', '{{ $disposalInstallation->component_name }}', '{{ route('checklist-disposal-installation-a.reject', $disposalInstallation->id) }}')" 
-                                                            class="text-red-600 hover:text-red-900 p-2 rounded-full hover:bg-red-100" 
-                                                            title="Reject">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                            </svg>
-                                                        </button>
-                                                        <a href="{{ route('checklist-disposal-installation-m.show', $disposalInstallation) }}" class="text-indigo-600 hover:text-indigo-900 p-2 rounded-full hover:bg-indigo-100" title="Edit">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </a>
-                                                    @else
-                                                        <div></div>
-                                                        <div></div>
-                                                        <a href="{{ route('checklist-disposal-installation-m.show', $disposalInstallation) }}" class="text-indigo-600 hover:text-indigo-900 p-2 rounded-full hover:bg-indigo-100" title="Edit">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </a>
-                                                    @endif
+                                                    <div></div>
+                                                    <div></div>
+                                                    <a href="{{ route('checklist-disposal-installation-a.show', $disposalInstallation) }}" class="text-indigo-600 hover:text-indigo-900 p-2 rounded-full hover:bg-indigo-100" title="Edit">
+                                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                        </svg>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>

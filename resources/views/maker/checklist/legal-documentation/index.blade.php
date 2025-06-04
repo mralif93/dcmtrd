@@ -151,7 +151,7 @@
                                         {{ $doc->trust_deed_ref ?? 'N/A' }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{ $doc->sale_purchase_agreement ? 'Yes' : 'No' }}
+                                        {{ $doc->sale_purchase_agreement_ref ?? 'N/A' }}
                                     </td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
