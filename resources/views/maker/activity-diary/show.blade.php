@@ -277,7 +277,7 @@
                 </div>
 
                 <!-- Status Update Section (if not completed) -->
-                @if ($activity->status !== 'Pending' && $activity->status !== 'Rejected')
+                @if ($activity->status !== 'Pending' && $activity->status !== 'Rejected' && $activity->status !== 'Draft')
                     <div class="px-4 py-5 border-t border-gray-200 sm:px-6">
                         <h3 class="mb-4 text-lg font-medium leading-6 text-gray-900">Update Status</h3>
                         <form action="{{ route('activity-diary-m.update-status', $activity) }}" method="POST"
