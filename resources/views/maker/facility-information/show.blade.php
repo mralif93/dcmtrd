@@ -419,7 +419,8 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse($activeBonds as $bond)
-                                    <tr class="hover:bg-gray-50">
+                                    <tr
+                                        class="hover:bg-red-50 {{ optional($bond->last_traded_date)->lt(now()) ? 'bg-green-50' : '' }}">
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-medium text-gray-900">
                                                 <a href="{{ route('bond-m.show', $bond) }}">
@@ -487,7 +488,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                                        <td colspan="9" class="px-6 py-4 text-center text-gray-500">
                                             No active bonds found
                                         </td>
                                     </tr>
