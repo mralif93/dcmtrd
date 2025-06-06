@@ -907,6 +907,8 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/checklist/{checklist}/details', [ApproverController::class, 'ChecklistDetails'])->name('checklist-a.details')->middleware('permission:REITS');
     Route::post('approver/checklist/{checklist}/approve', [ApproverController::class, 'ChecklistApprove'])->name('checklist-a.approve')->middleware('permission:REITS');
     Route::post('approver/checklist/{checklist}/reject', [ApproverController::class, 'ChecklistReject'])->name('checklist-a.reject')->middleware('permission:REITS');
+    Route::get('approver/checklist/{checklist}/letter', [ApproverController::class, 'ChecklistLetter'])->name('checklist-a.letter')->middleware('permission:REITS');
+
 
     // Checklist Legal Module
     Route::get('approver/checklist-legal/{checklist}', [ApproverController::class, 'ChecklistLegalIndex'])->name('checklist-legal-a.index')->middleware('permission:REITS');

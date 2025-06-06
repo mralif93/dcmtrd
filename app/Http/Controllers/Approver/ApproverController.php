@@ -1750,6 +1750,23 @@ class ApproverController extends Controller
         }
     }
 
+    // Checklist Letter
+    public function ChecklistLetter(Checklist $checklist)
+    {
+        // Load the checklist with its relationships
+        $checklist = $checklist->load([
+            'siteVisit.property.tenants',
+            'legalDocumentation',
+            'externalAreaCondition',
+            'internalAreaCondition',
+            'propertyDevelopment',
+            'disposalInstallation',
+            'tenants'
+        ]);
+
+        return view('approver.checklist.letter', compact('checklist'));
+    }
+
     // Checklist Legal Documentation Module
     public function ChecklistLegalDocumentationApprove(ChecklistLegalDocumentation $checklistLegalDocumentation)
     {
