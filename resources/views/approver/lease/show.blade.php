@@ -1,5 +1,3 @@
-<!-- resources/views/leases/show.blade.php -->
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -25,8 +23,8 @@
             @endif
 
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <!-- Header Section with Actions -->
-                <div class="px-4 py-5 sm:px-6 flex justify-between">
+                <!-- Header Section -->
+                <div class="px-4 py-5 sm:px-6">
                     <h3 class="text-lg font-medium text-gray-900">{{ $lease->lease_name }}</h3>
                 </div>
 
@@ -36,26 +34,36 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ match(strtolower($lease->status)) {
-                                        'active' => 'bg-green-100 text-green-800',
-                                        'pending' => 'bg-yellow-100 text-yellow-800',
-                                        'rejected' => 'bg-red-100 text-red-800',
-                                        default => 'bg-gray-100 text-gray-800'
-                                    } }}">
-                                    {{ ucfirst($lease->status) }}
-                                </span>
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {{ match(strtolower($lease->status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
+                                        {{ ucfirst($lease->status) }}
+                                    </span>
+                                </div>
                             </dd>
                         </div>
-                        <!-- Remarks -->
-                        @if($lease->remarks)
-                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Remarks</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $lease->remarks }}</dd>
-                        </div>
-                        @endif
                     </dl>
                 </div>
+
+                <!-- Remarks Section -->
+                @if($lease->remarks)
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Remarks</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:px-6">
+                            <p class="text-sm text-gray-900">{{ $lease->remarks }}</p>
+                        </div>
+                    </dl>
+                </div>
+                @endif
 
                 <!-- Basic Information Section -->
                 <div class="border-t border-gray-200">
