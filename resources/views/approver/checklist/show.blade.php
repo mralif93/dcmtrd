@@ -1066,7 +1066,7 @@
                                                 {{ $disposalInstallation->component_name }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <div>{{ $disposalInstallation->component_date ? $disposalInstallation->component_date->format('d/m/Y h:i A') : 'N/A' }}</div>
+                                                <div>{{ $disposalInstallation->component_date ? $disposalInstallation->component_date->format('d/m/Y') : 'N/A' }}</div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 @if($disposalInstallation->status)
