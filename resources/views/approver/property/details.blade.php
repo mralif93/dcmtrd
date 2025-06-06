@@ -164,6 +164,49 @@
                     </dl>
                 </div>
 
+                <!-- Documentation Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Documentation</h3>
+                    </div>
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Master Lease Agreement</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                @if($property->master_lease_agreement)
+                                    <div class="flex items-center">
+                                        <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                        </svg>
+                                        <a href="{{ Storage::url($property->master_lease_agreement) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900">
+                                            View Attachment
+                                        </a>
+                                    </div>
+                                @else
+                                    <span class="text-gray-500">No document uploaded</span>
+                                @endif
+                            </dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Valuation Report</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                @if($property->valuation_report)
+                                    <div class="flex items-center">
+                                        <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                        </svg>
+                                        <a href="{{ Storage::url($property->valuation_report) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900">
+                                            View Attachment
+                                        </a>
+                                    </div>
+                                @else
+                                    <span class="text-gray-500">No document uploaded</span>
+                                @endif
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+
                 <!-- Tenants Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">
@@ -239,7 +282,7 @@
                                                 Date & Time
                                             </th>
                                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Inspector
+                                                Personnel
                                             </th>
                                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Notes
@@ -256,16 +299,38 @@
                                                     {{ date('d/m/Y', strtotime($visit->date_visit)) }}<br>
                                                     {{ date('h:i A', strtotime($visit->time_visit)) }}
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {{ $visit->inspector_name ?? 'N/A' }}
+                                                <td class="px-6 py-4 text-sm text-gray-500">
+                                                    @if($visit->trustee || $visit->manager || $visit->maintenance_manager || $visit->building_manager)
+                                                        <ul class="list-disc pl-4">
+                                                            @if($visit->trustee)
+                                                                <li>Trustee: {{ $visit->trustee }}</li>
+                                                            @endif
+                                                            @if($visit->manager)
+                                                                <li>Manager: {{ $visit->manager }}</li>
+                                                            @endif
+                                                            @if($visit->maintenance_manager)
+                                                                <li>Maintenance: {{ $visit->maintenance_manager }}</li>
+                                                            @endif
+                                                            @if($visit->building_manager)
+                                                                <li>Building: {{ $visit->building_manager }}</li>
+                                                            @endif
+                                                        </ul>
+                                                    @else
+                                                        <span>No personnel recorded</span>
+                                                    @endif
                                                 </td>
                                                 <td class="px-6 py-4 text-sm text-gray-500">
                                                     {{ $visit->notes ?? 'No notes' }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        {{ $visit->status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                                        ($visit->status === 'scheduled' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800') }}">
+                                                        {{ match(strtolower($visit->status)) {
+                                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                                            'active' => 'bg-green-100 text-green-800',
+                                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                                            'rejected' => 'bg-red-100 text-red-800',
+                                                            default => 'bg-gray-100 text-gray-800'
+                                                        } }}">
                                                         {{ ucfirst($visit->status) }}
                                                     </span>
                                                 </td>
