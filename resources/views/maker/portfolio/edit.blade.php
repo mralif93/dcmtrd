@@ -65,7 +65,7 @@
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">Current file: 
                                     <a href="{{ Storage::url($portfolio->annual_report) }}" class="text-indigo-600 hover:text-indigo-900" target="_blank">
-                                        View Document
+                                        View Attachment
                                     </a>
                                 </p>
                             </div>
@@ -83,7 +83,7 @@
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">Current file: 
                                     <a href="{{ Storage::url($portfolio->trust_deed_document) }}" class="text-indigo-600 hover:text-indigo-900" target="_blank">
-                                        View Document
+                                        View Attachment
                                     </a>
                                 </p>
                             </div>
@@ -101,7 +101,7 @@
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">Current file: 
                                     <a href="{{ Storage::url($portfolio->insurance_document) }}" class="text-indigo-600 hover:text-indigo-900" target="_blank">
-                                        View Document
+                                        View Attachment
                                     </a>
                                 </p>
                             </div>
@@ -119,7 +119,7 @@
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">Current file: 
                                     <a href="{{ Storage::url($portfolio->valuation_report) }}" class="text-indigo-600 hover:text-indigo-900" target="_blank">
-                                        View Document
+                                        View Attachment
                                     </a>
                                 </p>
                             </div>
