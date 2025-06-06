@@ -40,6 +40,7 @@ use App\Models\Tenant;
 use App\Models\Lease;
 use App\Models\Financial;
 use App\Models\Checklist;
+use App\Models\TenancyLetter;
 use App\Models\ChecklistLegalDocumentation;
 use App\Models\ChecklistTenant;
 use App\Models\ChecklistExternalAreaCondition;
@@ -1285,6 +1286,15 @@ class ApproverController extends Controller
             return back()
                 ->with('error', 'Error rejecting lease: ' . $e->getMessage());
         }
+    }
+
+    // Tenancy Letter Module
+    public function TenancyLetterShow(TenancyLetter $tenancyLetter)
+    {
+        // Load the lease and property relationships
+        $tenancyLetter->load(['lease', 'lease.tenant', 'lease.tenant.property']);
+
+        return view('approver.tenancy-letter.show', compact('tenancyLetter'));
     }
 
     // Site Visit Module

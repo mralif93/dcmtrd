@@ -887,6 +887,9 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/lease/{lease}/approve', [ApproverController::class, 'LeaseApprove'])->name('lease-a.approve')->middleware('permission:REITS');
     Route::post('approver/lease/{lease}/reject', [ApproverController::class, 'LeaseReject'])->name('lease-a.reject')->middleware('permission:REITS');
 
+    // Tenancy Letter Module
+    Route::get('approver/tenancy-letter/{tenancyLetter}/show', [ApproverController::class, 'TenancyLetterShow'])->name('tenancy-letter-a.show')->middleware('permission:REITS');
+
     // SiteVisit Module
     Route::get('approver/site-visit/', [ApproverController::class, 'SiteVisitIndex'])->name('site-visit-a.index')->middleware('permission:REITS');
     Route::get('approver/site-visit/{siteVisit}/show', [ApproverController::class, 'SiteVisitShow'])->name('site-visit-a.show')->middleware('permission:REITS');
@@ -908,7 +911,6 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/checklist/{checklist}/approve', [ApproverController::class, 'ChecklistApprove'])->name('checklist-a.approve')->middleware('permission:REITS');
     Route::post('approver/checklist/{checklist}/reject', [ApproverController::class, 'ChecklistReject'])->name('checklist-a.reject')->middleware('permission:REITS');
     Route::get('approver/checklist/{checklist}/letter', [ApproverController::class, 'ChecklistLetter'])->name('checklist-a.letter')->middleware('permission:REITS');
-
 
     // Checklist Legal Module
     Route::get('approver/checklist-legal/{checklist}', [ApproverController::class, 'ChecklistLegalIndex'])->name('checklist-legal-a.index')->middleware('permission:REITS');
