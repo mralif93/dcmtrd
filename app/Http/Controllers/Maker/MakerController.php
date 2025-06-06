@@ -2268,7 +2268,7 @@ class MakerController extends Controller
         // Check if a master lease agreement file was uploaded
         if ($request->hasFile('master_lease_agreement')) {
             // Store the file and get its path
-            $filePath = $request->file('master_lease_agreement')->store('property-documents');
+            $filePath = $request->file('master_lease_agreement')->store('property-documents', 'public');
 
             // Save the file path to the database
             $validated['master_lease_agreement'] = $filePath;
@@ -2277,7 +2277,7 @@ class MakerController extends Controller
         // Check if a valuation report file was uploaded
         if ($request->hasFile('valuation_report')) {
             // Store the file and get its path
-            $filePath = $request->file('valuation_report')->store('property-documents');
+            $filePath = $request->file('valuation_report')->store('property-documents', 'public');
 
             // Save the file path to the database
             $validated['valuation_report'] = $filePath;
@@ -2315,7 +2315,7 @@ class MakerController extends Controller
 
             // Store the new file and get its path
             $validated['master_lease_agreement'] = $request->file('master_lease_agreement')
-                ->store('property-documents');
+                ->store('property-documents', 'public');
         }
 
         // Check if a new valuation report file was uploaded
@@ -2327,7 +2327,7 @@ class MakerController extends Controller
 
             // Store the new file and get its path
             $validated['valuation_report'] = $request->file('valuation_report')
-                ->store('property-documents');
+                ->store('property-documents', 'public');
         }
         try {
             $property->update($validated);
