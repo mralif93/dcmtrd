@@ -281,26 +281,6 @@
 
                 <!-- Action Buttons for Main Details Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->status) === 'pending')
-                    <form action="{{ route('checklist-a.approve', $checklist->id) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Approve
-                        </button>
-                    </form>
-                    <form action="{{ route('checklist-a.reject', $checklist->id) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            Reject
-                        </button>
-                    </form>
-                    @endif
                     <a href="{{ route('checklist-a.index', $checklist->siteVisit->property) }}" 
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -484,7 +464,7 @@
                                                 <div class="flex justify-between items-center w-24">
                                                     <div></div>
                                                     <div></div>
-                                                    <a href="{{ route('tenant-a.show', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900 p-1" title="View">
+                                                    <a href="{{ route('checklist-tenant-a.show', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900 p-1" title="View">
                                                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>

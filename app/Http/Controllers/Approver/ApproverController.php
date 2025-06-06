@@ -1959,6 +1959,11 @@ class ApproverController extends Controller
     }
 
     // Checklist Disposal/Installation/Replacement Module
+    public function ChecklistDisposalInstallationShow(ChecklistDisposalInstallation $checklistDisposalInstallation)
+    {
+        return view('approver.checklist.disposal-installation.show', compact('checklistDisposalInstallation'));
+    }
+
     public function ChecklistDisposalInstallationApprove(ChecklistDisposalInstallation $checklistDisposalInstallation)
     {
         try {
