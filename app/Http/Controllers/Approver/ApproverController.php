@@ -1718,10 +1718,11 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklist)
+                ->route('checklist-a.main', $checklist)
                 ->with('success', 'Checklist approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving checklist: ' . $e->getMessage());
         }
     }
@@ -1740,10 +1741,11 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklist)
+                ->route('checklist-a.main', $checklist)
                 ->with('success', 'Checklist rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting checklist: ' . $e->getMessage());
         }
     }
@@ -1763,6 +1765,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist Legal Documentation approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving legal documentation: ' . $e->getMessage());
         }
     }
@@ -1785,6 +1788,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist Legal Documentation rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting legal documentation: ' . $e->getMessage());
         }
     }
@@ -1809,6 +1813,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist Tenant approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving tenant checklist: ' . $e->getMessage());
         }
     }
@@ -1831,6 +1836,7 @@ class ApproverController extends Controller
                 ->with('success', 'ChecklistTenant rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting tenant checklist: ' . $e->getMessage());
         }
     }
@@ -1850,6 +1856,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist External Area Condition approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving external area condition: ' . $e->getMessage());
         }
     }
@@ -1872,6 +1879,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist External Area Condition rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting external area condition: ' . $e->getMessage());
         }
     }
@@ -1891,6 +1899,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist Internal Area Condition approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving internal area condition: ' . $e->getMessage());
         }
     }
@@ -1913,6 +1922,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist Internal Area Condition rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting internal area condition: ' . $e->getMessage());
         }
     }
@@ -1932,6 +1942,7 @@ class ApproverController extends Controller
                 ->with('success', 'Property Development approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving property development: ' . $e->getMessage());
         }
     }
@@ -1954,6 +1965,7 @@ class ApproverController extends Controller
                 ->with('success', 'Property Development rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting property development: ' . $e->getMessage());
         }
     }
@@ -1978,6 +1990,7 @@ class ApproverController extends Controller
                 ->with('success', 'Disposal/Installation/Replacement approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving disposal/installation/replacement: ' . $e->getMessage());
         }
     }
@@ -2000,6 +2013,7 @@ class ApproverController extends Controller
                 ->with('success', 'Disposal/Installation/Replacement rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting disposal/installation/replacement: ' . $e->getMessage());
         }
     }
