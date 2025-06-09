@@ -70,6 +70,7 @@ use App\Jobs\TrusteeFee\SendTrusteeFeeApprovedNotification;
 use App\Jobs\TrusteeFee\SendTrusteeFeeRejectedNotification;
 use App\Jobs\ActivityDiary\SendActivityDiaryApprovedEmailJob;
 use App\Jobs\ActivityDiary\SendActivityDiaryRejectedEmailJob;
+use App\Models\TenancyLetter;
 
 class ApproverController extends Controller
 {
@@ -1310,6 +1311,15 @@ class ApproverController extends Controller
         }
     }
 
+    // Tenancy Letter Module
+    public function TenancyLetterShow(TenancyLetter $tenancyLetter)
+    {
+        // Load the lease and property relationships
+        $tenancyLetter->load(['lease', 'lease.tenant', 'lease.tenant.property']);
+
+        return view('approver.tenancy-letter.show', compact('tenancyLetter'));
+    }
+
     // Site Visit Module
     public function SiteVisitIndex(Property $property)
     {
@@ -1741,10 +1751,11 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklist)
+                ->route('checklist-a.main', $checklist)
                 ->with('success', 'Checklist approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving checklist: ' . $e->getMessage());
         }
     }
@@ -1763,12 +1774,30 @@ class ApproverController extends Controller
             ]);
 
             return redirect()
-                ->route('checklist-a.details', $checklist)
+                ->route('checklist-a.main', $checklist)
                 ->with('success', 'Checklist rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting checklist: ' . $e->getMessage());
         }
+    }
+
+    // Checklist Letter
+    public function ChecklistLetter(Checklist $checklist)
+    {
+        // Load the checklist with its relationships
+        $checklist = $checklist->load([
+            'siteVisit.property.tenants',
+            'legalDocumentation',
+            'externalAreaCondition',
+            'internalAreaCondition',
+            'propertyDevelopment',
+            'disposalInstallation',
+            'tenants'
+        ]);
+
+        return view('approver.checklist.letter', compact('checklist'));
     }
 
     // Checklist Legal Documentation Module
@@ -1786,6 +1815,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist Legal Documentation approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving legal documentation: ' . $e->getMessage());
         }
     }
@@ -1808,6 +1838,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist Legal Documentation rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting legal documentation: ' . $e->getMessage());
         }
     }
@@ -1832,6 +1863,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist Tenant approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving tenant checklist: ' . $e->getMessage());
         }
     }
@@ -1854,6 +1886,7 @@ class ApproverController extends Controller
                 ->with('success', 'ChecklistTenant rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting tenant checklist: ' . $e->getMessage());
         }
     }
@@ -1873,6 +1906,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist External Area Condition approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving external area condition: ' . $e->getMessage());
         }
     }
@@ -1895,6 +1929,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist External Area Condition rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting external area condition: ' . $e->getMessage());
         }
     }
@@ -1914,6 +1949,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist Internal Area Condition approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving internal area condition: ' . $e->getMessage());
         }
     }
@@ -1936,6 +1972,7 @@ class ApproverController extends Controller
                 ->with('success', 'Checklist Internal Area Condition rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting internal area condition: ' . $e->getMessage());
         }
     }
@@ -1955,6 +1992,7 @@ class ApproverController extends Controller
                 ->with('success', 'Property Development approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving property development: ' . $e->getMessage());
         }
     }
@@ -1977,11 +2015,17 @@ class ApproverController extends Controller
                 ->with('success', 'Property Development rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting property development: ' . $e->getMessage());
         }
     }
 
     // Checklist Disposal/Installation/Replacement Module
+    public function ChecklistDisposalInstallationShow(ChecklistDisposalInstallation $checklistDisposalInstallation)
+    {
+        return view('approver.checklist.disposal-installation.show', compact('checklistDisposalInstallation'));
+    }
+
     public function ChecklistDisposalInstallationApprove(ChecklistDisposalInstallation $checklistDisposalInstallation)
     {
         try {
@@ -1996,6 +2040,7 @@ class ApproverController extends Controller
                 ->with('success', 'Disposal/Installation/Replacement approved successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error approving disposal/installation/replacement: ' . $e->getMessage());
         }
     }
@@ -2018,6 +2063,7 @@ class ApproverController extends Controller
                 ->with('success', 'Disposal/Installation/Replacement rejected successfully.');
         } catch (\Exception $e) {
             return back()
+                ->withInput()
                 ->with('error', 'Error rejecting disposal/installation/replacement: ' . $e->getMessage());
         }
     }

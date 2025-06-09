@@ -1871,19 +1871,27 @@ class MakerController extends Controller
 
         // Handle file uploads
         if ($request->hasFile('annual_report')) {
-            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports', 'public');
+            $file = $request->file('annual_report');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['annual_report'] = $file->storeAs('annual_reports', $fileName, 'public');
         }
 
         if ($request->hasFile('trust_deed_document')) {
-            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents', 'public');
+            $file = $request->file('trust_deed_document');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['trust_deed_document'] = $file->storeAs('trust_deed_documents', $fileName, 'public');
         }
 
         if ($request->hasFile('insurance_document')) {
-            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents', 'public');
+            $file = $request->file('insurance_document');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['insurance_document'] = $file->storeAs('insurance_documents', $fileName, 'public');
         }
 
         if ($request->hasFile('valuation_report')) {
-            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports', 'public');
+            $file = $request->file('valuation_report');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['valuation_report'] = $file->storeAs('valuation_reports', $fileName, 'public');
         }
 
         try {
@@ -1909,30 +1917,38 @@ class MakerController extends Controller
         // Handle file uploads
         if ($request->hasFile('annual_report')) {
             if ($portfolio->annual_report) {
-                Storage::disk('public')->delete($portfolio->annual_report);
+                Storage::delete($portfolio->annual_report);
             }
-            $validated['annual_report'] = $request->file('annual_report')->store('annual_reports', 'public');
+            $file = $request->file('annual_report');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['annual_report'] = $file->storeAs('annual_reports', $fileName, 'public');
         }
 
         if ($request->hasFile('trust_deed_document')) {
             if ($portfolio->trust_deed_document) {
-                Storage::disk('public')->delete($portfolio->trust_deed_document);
+                Storage::delete($portfolio->trust_deed_document);
             }
-            $validated['trust_deed_document'] = $request->file('trust_deed_document')->store('trust_deed_documents', 'public');
+            $file = $request->file('trust_deed_document');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['trust_deed_document'] = $file->storeAs('trust_deed_documents', $fileName, 'public');
         }
 
         if ($request->hasFile('insurance_document')) {
             if ($portfolio->insurance_document) {
-                Storage::disk('public')->delete($portfolio->insurance_document);
+                Storage::delete($portfolio->insurance_document);
             }
-            $validated['insurance_document'] = $request->file('insurance_document')->store('insurance_documents', 'public');
+            $file = $request->file('insurance_document');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['insurance_document'] = $file->storeAs('insurance_documents', $fileName, 'public');
         }
 
         if ($request->hasFile('valuation_report')) {
             if ($portfolio->valuation_report) {
-                Storage::disk('public')->delete($portfolio->valuation_report);
+                Storage::delete($portfolio->valuation_report);
             }
-            $validated['valuation_report'] = $request->file('valuation_report')->store('valuation_reports', 'public');
+            $file = $request->file('valuation_report');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['valuation_report'] = $file->storeAs('valuation_reports', $fileName, 'public');
         }
 
 
@@ -2267,20 +2283,16 @@ class MakerController extends Controller
 
         // Check if a master lease agreement file was uploaded
         if ($request->hasFile('master_lease_agreement')) {
-            // Store the file and get its path
-            $filePath = $request->file('master_lease_agreement')->store('property-documents');
-
-            // Save the file path to the database
-            $validated['master_lease_agreement'] = $filePath;
+            $file = $request->file('master_lease_agreement');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['master_lease_agreement'] = $file->storeAs('property-documents', $fileName, 'public');
         }
 
         // Check if a valuation report file was uploaded
         if ($request->hasFile('valuation_report')) {
-            // Store the file and get its path
-            $filePath = $request->file('valuation_report')->store('property-documents');
-
-            // Save the file path to the database
-            $validated['valuation_report'] = $filePath;
+            $file = $request->file('valuation_report');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['valuation_report'] = $file->storeAs('property-documents', $fileName, 'public');
         }
 
         try {
@@ -2313,9 +2325,9 @@ class MakerController extends Controller
                 Storage::delete($property->master_lease_agreement);
             }
 
-            // Store the new file and get its path
-            $validated['master_lease_agreement'] = $request->file('master_lease_agreement')
-                ->store('property-documents');
+            $file = $request->file('master_lease_agreement');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['master_lease_agreement'] = $file->storeAs('property-documents', $fileName, 'public');
         }
 
         // Check if a new valuation report file was uploaded
@@ -2325,9 +2337,9 @@ class MakerController extends Controller
                 Storage::delete($property->valuation_report);
             }
 
-            // Store the new file and get its path
-            $validated['valuation_report'] = $request->file('valuation_report')
-                ->store('property-documents');
+            $file = $request->file('valuation_report');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['valuation_report'] = $file->storeAs('property-documents', $fileName, 'public');
         }
         try {
             $property->update($validated);
@@ -2540,7 +2552,9 @@ class MakerController extends Controller
 
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('lease-attachments', 'public');
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('lease-attachments', $fileName, 'public');
         }
 
         try {
@@ -2569,10 +2583,12 @@ class MakerController extends Controller
         if ($request->hasFile('attachment')) {
             // Delete old file if exists
             if ($lease->attachment && Storage::disk('public')->exists($lease->attachment)) {
-                Storage::disk('public')->delete($lease->attachment);
+                Storage::delete($lease->attachment);
             }
 
-            $validated['attachment'] = $request->file('attachment')->store('lease-attachments', 'public');
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('lease-attachments', $fileName, 'public');
         }
 
         try {
@@ -2819,7 +2835,9 @@ class MakerController extends Controller
 
         // Handle file upload if present
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('site-visit-attachments', $fileName, 'public');
         }
 
         if ($request->has('follow_up_required')) {
@@ -2852,10 +2870,12 @@ class MakerController extends Controller
         if ($request->hasFile('attachment')) {
             // Delete old file if exists
             if ($siteVisit->attachment && Storage::disk('public')->exists($siteVisit->attachment)) {
-                Storage::disk('public')->delete($siteVisit->attachment);
+                Storage::delete($siteVisit->attachment);
             }
 
-            $validated['attachment'] = $request->file('attachment')->store('site-visit-attachments', 'public');
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('site-visit-attachments', $fileName, 'public');
         }
 
         if ($request->has('follow_up_required')) {
@@ -3935,7 +3955,9 @@ class MakerController extends Controller
         $validated['status'] = 'draft';
 
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('appointments', 'public');
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('appointments', $fileName, 'public');
         }
 
         try {
@@ -3970,10 +3992,12 @@ class MakerController extends Controller
         if ($request->hasFile('attachment')) {
             // delete exist
             if ($appointment->attachment && Storage::disk('public')->exists($appointment->attachment)) {
-                Storage::disk('public')->delete($appointment->attachment);
+                Storage::delete($appointment->attachment);
             }
 
-            $validated['attachment'] = $request->file('attachment')->store('appointments', 'public');
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('appointments', $fileName, 'public');
         }
 
         try {
@@ -4096,7 +4120,9 @@ class MakerController extends Controller
         $validated['status'] = 'draft';
 
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('approval-forms', $fileName, 'public');
         }
 
         try {
@@ -4133,10 +4159,12 @@ class MakerController extends Controller
         if ($request->hasFile('attachment')) {
             // Delete old attachment if exists
             if ($approvalForm->attachment) {
-                Storage::disk('public')->delete($approvalForm->attachment);
+                Storage::delete($approvalForm->attachment);
             }
 
-            $validated['attachment'] = $request->file('attachment')->store('approval-forms', 'public');
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('approval-forms', $fileName, 'public');
         }
 
         // Check if send_date is being added or updated
@@ -4451,7 +4479,9 @@ class MakerController extends Controller
 
         // attachment
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('public');
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('approval-properties', $fileName, 'public');
         }
 
         // Add system fields
@@ -4485,12 +4515,12 @@ class MakerController extends Controller
         if ($request->hasFile('attachment')) {
             // Delete old attachment if exists
             if ($approvalProperty->attachment) {
-                Storage::disk('public')->delete($approvalProperty->attachment);
+                Storage::delete($approvalProperty->attachment);
             }
 
-            // Store new attachment
-            $path = $request->file('attachment')->store('approval-properties', 'public');
-            $validated['attachment'] = $path;
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $validated['attachment'] = $file->storeAs('approval-properties', $fileName, 'public');
         }
 
         try {
