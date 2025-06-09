@@ -19,7 +19,7 @@
                     <!-- Document Content -->
                     <div id="printableArea" class="bg-white document">
                         <!-- Space for ART Letter Head -->
-                        <div style="height: 80px; margin-bottom: 20px;">
+                        <div style="height: 80px; margin-bottom: 10px;">
                             <!-- ART Letter Head will be here -->
                         </div>
                         
@@ -99,13 +99,13 @@
                                     <td style="vertical-align: top;">:</td>
                                     <td style="padding: 5px 0;">
                                         @if($tenancyLetter->lease->monthly_gsto_year_1)
-                                            Year 1: {{ $tenancyLetter->lease->monthly_gsto_year_1 }}% of Monthly Gross Sales Turnover<br>
+                                            Year 1 - Base Rent of RM {{ number_format($tenancyLetter->lease->base_rate_year_1, 2) }} per square foot per month or {{ $tenancyLetter->lease->monthly_gsto_year_1 }}% of monthly GSTO, {{ $tenancyLetter->lease->remarks_year_1 }}<br>
                                         @endif
                                         @if($tenancyLetter->lease->monthly_gsto_year_2)
-                                            Year 2: {{ $tenancyLetter->lease->monthly_gsto_year_2 }}% of Monthly Gross Sales Turnover<br>
+                                            Year 2 - Base Rent of RM {{ number_format($tenancyLetter->lease->base_rate_year_2, 2) }} per square foot per month or {{ $tenancyLetter->lease->monthly_gsto_year_2 }}% of monthly GSTO, {{ $tenancyLetter->lease->remarks_year_2 }}<br>
                                         @endif
                                         @if($tenancyLetter->lease->monthly_gsto_year_3)
-                                            Year 3: {{ $tenancyLetter->lease->monthly_gsto_year_3 }}% of Monthly Gross Sales Turnover
+                                            Year 3 - Base Rent of RM {{ number_format($tenancyLetter->lease->base_rate_year_3, 2) }} per square foot per month or {{ $tenancyLetter->lease->monthly_gsto_year_3 }}% of monthly GSTO, {{ $tenancyLetter->lease->remarks_year_3 }}
                                         @endif
                                     </td>
                                 </tr>
@@ -152,8 +152,8 @@
             margin: 0 auto;
             background: white;
             font-family: 'Roboto', sans-serif;
-            font-size: 12px;
-            line-height: 1.5;
+            font-size: 10px;
+            line-height: 1.4;
             padding: 30px;
         }
         
