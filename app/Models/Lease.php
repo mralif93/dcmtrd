@@ -59,9 +59,9 @@ class Lease extends Model implements Auditable
      * @var array
      */
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'approval_datetime' => 'date',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'approval_datetime' => 'datetime',
     ];
 
     /**
