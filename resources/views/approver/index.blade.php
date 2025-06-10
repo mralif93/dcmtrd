@@ -89,7 +89,7 @@
 
                 <div class="pb-6">
                     <h2 class="text-xl font-bold leading-tight text-gray-800">
-                        {{ __('Debt Capital Market & Trust (DCMT)') }}
+                        {{ __('Debt Capital Market & Trusts (DCMT)') }}
                     </h2>
                 </div>
 
