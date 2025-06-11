@@ -34,7 +34,6 @@ return new class extends Migration
 
             // Date
             $table->date('letter_offer_date')->nullable();
-            $table->date('supplemental_letter_offer_date')->nullable();
             
             // Signature information
             $table->string('approver_name')->nullable();
