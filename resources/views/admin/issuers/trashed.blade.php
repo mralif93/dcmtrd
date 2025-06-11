@@ -93,6 +93,7 @@
                                                 onsubmit="return confirm('Are you sure you want to permanently delete this issuer?');"
                                                 class="inline">
                                                 @csrf
+                                                @method('DELETE')
                                                 <button type="submit" class="text-red-600 hover:text-red-900"
                                                     title="Force Delete">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor"
