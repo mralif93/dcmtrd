@@ -16,15 +16,15 @@ class FacilityInformationController extends Controller
     public function index(Request $request)
     {
         $searchTerm = $request->input('search');
-        
+
         $facilities = FacilityInformation::with('issuer')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where(function ($q) use ($searchTerm) {
                     $q->where('facility_code', 'like', "%{$searchTerm}%")
-                      ->orWhere('facility_name', 'like', "%{$searchTerm}%")
-                      ->orWhereHas('issuer', function ($q) use ($searchTerm) {
-                          $q->where('issuer_name', 'like', "%{$searchTerm}%");
-                      });
+                        ->orWhere('facility_name', 'like', "%{$searchTerm}%")
+                        ->orWhereHas('issuer', function ($q) use ($searchTerm) {
+                            $q->where('issuer_name', 'like', "%{$searchTerm}%");
+                        });
                 });
             })
             ->latest()
@@ -93,7 +93,7 @@ class FacilityInformationController extends Controller
     {
         return view('admin.facility-informations.show', [
             'facility' => $facilityInformation->load([
-                'issuer' => function($query) {
+                'issuer' => function ($query) {
                     $query->with('bonds');
                 },
             ])
@@ -119,8 +119,8 @@ class FacilityInformationController extends Controller
     {
         $validated = $request->validate([
             'issuer_id' => 'required|exists:issuers,id',
-            'facility_code' => 'required|max:50|unique:facility_informations,facility_code,'.$facilityInformation->id,
-            'facility_number' => 'required|max:50|unique:facility_informations,facility_number,'.$facilityInformation->id,
+            'facility_code' => 'required|max:50|unique:facility_informations,facility_code,' . $facilityInformation->id,
+            'facility_number' => 'required|max:50|unique:facility_informations,facility_number,' . $facilityInformation->id,
             'facility_name' => 'required|max:100',
             'principle_type' => 'required|max:50',
             'islamic_concept' => 'nullable|max:100',
@@ -164,5 +164,28 @@ class FacilityInformationController extends Controller
             DB::rollBack();
             return back()->withInput()->with('error', 'Error delete: ' . $e->getMessage());
         }
+    }
+
+    public function trashed()
+    {
+        $trashedFacilities = FacilityInformation::onlyTrashed()->paginate(10);
+
+        return view('admin.facility-informations.trashed', compact('trashedFacilities'));
+    }
+
+    public function restore($id)
+    {
+        $facility = FacilityInformation::onlyTrashed()->findOrFail($id);
+        $facility->restore();
+
+        return redirect()->route('admin.facility-informations.trashed')->with('success', 'Facility restored successfully.');
+    }
+
+    public function forceDelete($id)
+    {
+        $facility = FacilityInformation::onlyTrashed()->findOrFail($id);
+        $facility->forceDelete();
+
+        return redirect()->route('admin.facility-informations.trashed')->with('success', 'Facility permanently deleted.');
     }
 }

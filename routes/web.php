@@ -138,6 +138,12 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
         Route::delete('/admin/bonds/{id}/force-delete', [BondController::class, 'forceDelete'])->name('/adminforce-delete');
     });
 
+    Route::prefix('admin/facility-informations')->name('admin.facility-informations.')->group(function () {
+        Route::get('trashed', [FacilityInformationController::class, 'trashed'])->name('trashed');
+        Route::post('{id}/restore', [FacilityInformationController::class, 'restore'])->name('restore');
+        Route::delete('{id}/force-delete', [FacilityInformationController::class, 'forceDelete'])->name('forceDelete');
+    });
+
     Route::resource('/admin/rating-movements', RatingMovementController::class);
     Route::resource('/admin/payment-schedules', PaymentScheduleController::class);
     Route::resource('/admin/redemptions', RedemptionController::class);
