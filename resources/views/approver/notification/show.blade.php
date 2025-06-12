@@ -4,7 +4,7 @@
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 {{ __('Notification Details') }}
             </h2>
-            <a href="{{ route('notification-m.index') }}"
+            <a href="{{ route('notification-a.index') }}"
                 class="inline-flex items-center px-4 py-2 text-xs font-medium tracking-widest text-gray-700 uppercase bg-gray-200 border border-transparent rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">

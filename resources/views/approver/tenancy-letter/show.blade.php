@@ -5,11 +5,8 @@
                 <div class="p-6">
                     <!-- Buttons (Back, Edit and Print in one line) -->
                     <div class="print-controls mb-4 flex justify-end space-x-4">
-                        <a href="{{ route('lease-m.show', $tenancyLetter->lease) }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                        <a href="{{ route('lease-a.show', $tenancyLetter->lease) }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                             <i class="fa fa-arrow-left mr-2"></i> Back to Lease
-                        </a>
-                        <a href="{{ route('tenancy-letter-m.edit', $tenancyLetter) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            <i class="fa fa-edit mr-2"></i> Edit Document
                         </a>
                         <button id="printButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             <i class="fa fa-print mr-2"></i> Print Document

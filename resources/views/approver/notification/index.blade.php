@@ -4,7 +4,7 @@
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 {{ __('Notification Management') }}
             </h2>
-            <a href="{{ route('maker.dashboard', ['section' => 'reits']) }}"
+            <a href="{{ route('approver.dashboard', ['section' => 'reits']) }}"
                 class="inline-flex items-center px-4 py-2 text-xs font-medium tracking-widest text-gray-700 uppercase bg-gray-200 border border-transparent rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -65,7 +65,6 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period Date</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remaining Time</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -143,17 +142,6 @@
                                                     {{ ucfirst($lease->status) }}
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div class="flex justify-end space-x-2">
-                                                    <a href="{{ route('lease-m.show', $lease) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5
-                                                            .064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                        </svg>
-                                                    </a>
-                                                </div>
-                                            </td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -182,55 +170,54 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visit Date/Time</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remaining Time</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse($siteVisits as $siteVisit)
                                         @php
-                                            // Parse date and combine with time properly
-                                            $visitDate = \Carbon\Carbon::parse($siteVisit->date_visit)->startOfDay();
+                                        // Parse date and combine with time properly
+                                        $visitDate = \Carbon\Carbon::parse($siteVisit->date_visit)->startOfDay();
 
-                                            // Create datetime by modifying time
-                                            $visitDateTime = $visitDate->copy()->modify($siteVisit->time_visit);
+                                        // Create datetime by modifying time
+                                        $visitDateTime = $visitDate->copy()->modify($siteVisit->time_visit);
 
-                                            // Calculate time remaining until site visit
-                                            $now = \Carbon\Carbon::now();
-                                            $today = $now->copy()->startOfDay();
-                                            $tomorrow = $today->copy()->addDay();
-                                            $daysRemaining = $today->diffInDays($visitDate, false);
-                                            $hoursRemaining = $now->diffInHours($visitDateTime, false);
+                                        // Calculate time remaining until site visit
+                                        $now = \Carbon\Carbon::now();
+                                        $today = $now->copy()->startOfDay();
+                                        $tomorrow = $today->copy()->addDay();
+                                        $daysRemaining = $today->diffInDays($visitDate, false);
+                                        $hoursRemaining = $now->diffInHours($visitDateTime, false);
 
-                                            // Format the time remaining text and badge color
-                                            if ($daysRemaining < 0) {
-                                                // Past date - no special formatting
-                                                $timeRemaining = 'Past';
-                                                $badgeClass = 'bg-gray-100 text-gray-500';
-                                            } elseif ($visitDate->isSameDay($today)) {
-                                                // Today
-                                                $timeRemaining = 'Today';
+                                        // Format the time remaining text and badge color
+                                        if ($daysRemaining < 0) {
+                                            // Past date - no special formatting
+                                            $timeRemaining = 'Past';
+                                            $badgeClass = 'bg-gray-100 text-gray-500';
+                                        } elseif ($visitDate->isSameDay($today)) {
+                                            // Today
+                                            $timeRemaining = 'Today';
+                                            $badgeClass = 'bg-red-100 text-red-800';
+                                        } elseif ($visitDate->isSameDay($tomorrow)) {
+                                            // Tomorrow  
+                                            $timeRemaining = 'Tomorrow';
+                                            $badgeClass = 'bg-red-100 text-red-800';
+                                        } elseif ($daysRemaining == 0) {
+                                            // If it's within 24 hours but not today/tomorrow
+                                            $timeRemaining = number_format($hoursRemaining, 1) . ' ' . Str::plural('hour', $hoursRemaining);
+                                            $badgeClass = 'bg-red-100 text-red-800';
+                                        } else {
+                                            // Show total days remaining as integer (no decimals)
+                                            $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
+
+                                            // Apply color coding based on urgency
+                                            if ($daysRemaining <= 7) {
                                                 $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($visitDate->isSameDay($tomorrow)) {
-                                                // Tomorrow  
-                                                $timeRemaining = 'Tomorrow';
-                                                $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($daysRemaining == 0) {
-                                                // If it's within 24 hours but not today/tomorrow
-                                                $timeRemaining = number_format($hoursRemaining, 1) . ' ' . Str::plural('hour', $hoursRemaining);
-                                                $badgeClass = 'bg-red-100 text-red-800';
+                                            } elseif ($daysRemaining <= 30) {
+                                                $badgeClass = 'bg-yellow-100 text-yellow-800';
                                             } else {
-                                                // Show total days remaining as integer (no decimals)
-                                                $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
-                                                
-                                                // Apply color coding based on urgency
-                                                if ($daysRemaining <= 7) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 30) {
-                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                } else {
-                                                    $badgeClass = 'bg-blue-100 text-blue-800';
-                                                }
+                                                $badgeClass = 'bg-blue-100 text-blue-800';
                                             }
+                                        }
                                         @endphp
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">
@@ -258,17 +245,6 @@
                                                     } }}">
                                                     {{ ucfirst($siteVisit->status) }}
                                                 </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div class="flex justify-end space-x-2">
-                                                    <a href="{{ route('site-visit-m.show', $siteVisit) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5
-                                                            .064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                        </svg>
-                                                    </a>
-                                                </div>
                                             </td>
                                         </tr>
                                     @empty
@@ -298,64 +274,63 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visit Date</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remaining Time</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse($siteVisitLogs as $siteVisitLog)
                                         @php
-                                            // Create a date from the components using the full visit date attribute
-                                            $fullVisitDate = $siteVisitLog->getFullVisitDateAttribute();
+                                        // Create a date from the components using the full visit date attribute
+                                        $fullVisitDate = $siteVisitLog->getFullVisitDateAttribute();
 
-                                            // Parse the date properly
-                                            if ($fullVisitDate) {
-                                                $visitDate = \Carbon\Carbon::createFromFormat('d/m/Y', $fullVisitDate)->startOfDay();
+                                        // Parse the date properly
+                                        if ($fullVisitDate) {
+                                            $visitDate = \Carbon\Carbon::createFromFormat('d/m/Y', $fullVisitDate)->startOfDay();
+                                        } else {
+                                            // Fallback if the full date is not available
+                                            $visitDate = \Carbon\Carbon::create(
+                                                $siteVisitLog->visit_year,
+                                                $siteVisitLog->visit_month,
+                                                $siteVisitLog->visit_day
+                                            )->startOfDay();
+                                        }
+
+                                        // Calculate days and hours since the visit
+                                        $now = \Carbon\Carbon::now();
+                                        $today = $now->copy()->startOfDay();
+                                        $tomorrow = $today->copy()->addDay();
+                                        $daysRemaining = $today->diffInDays($visitDate, false);
+                                        $hoursRemaining = $now->diffInHours($visitDate, false);
+
+                                        // Format the time remaining text and badge color
+                                        if ($daysRemaining < 0) {
+                                            // Past date - show as "Past"
+                                            $timeRemaining = 'Past';
+                                            $badgeClass = 'bg-gray-100 text-gray-500';
+                                        } elseif ($visitDate->isSameDay($today)) {
+                                            // Today
+                                            $timeRemaining = 'Today';
+                                            $badgeClass = 'bg-red-100 text-red-800';
+                                        } elseif ($visitDate->isSameDay($tomorrow)) {
+                                            // Tomorrow
+                                            $timeRemaining = 'Tomorrow';
+                                            $badgeClass = 'bg-red-100 text-red-800';
+                                        } elseif ($daysRemaining == 0) {
+                                            // If it's within 24 hours but not today/tomorrow
+                                            $timeRemaining = number_format($hoursRemaining, 1) . ' ' . Str::plural('hour', $hoursRemaining);
+                                            $badgeClass = 'bg-red-100 text-red-800';
+                                        } else {
+                                            // Show total days remaining as integer (no decimals)
+                                            $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
+
+                                            // Apply color coding based on urgency
+                                            if ($daysRemaining <= 7) {
+                                                $badgeClass = 'bg-red-100 text-red-800';
+                                            } elseif ($daysRemaining <= 30) {
+                                                $badgeClass = 'bg-yellow-100 text-yellow-800';
                                             } else {
-                                                // Fallback if the full date is not available
-                                                $visitDate = \Carbon\Carbon::create(
-                                                    $siteVisitLog->visit_year,
-                                                    $siteVisitLog->visit_month,
-                                                    $siteVisitLog->visit_day
-                                                )->startOfDay();
+                                                $badgeClass = 'bg-blue-100 text-blue-800';
                                             }
-
-                                            // Calculate days and hours since the visit
-                                            $now = \Carbon\Carbon::now();
-                                            $today = $now->copy()->startOfDay();
-                                            $tomorrow = $today->copy()->addDay();
-                                            $daysRemaining = $today->diffInDays($visitDate, false);
-                                            $hoursRemaining = $now->diffInHours($visitDate, false);
-
-                                            // Format the time remaining text and badge color
-                                            if ($daysRemaining < 0) {
-                                                // Past date - show as "Past"
-                                                $timeRemaining = 'Past';
-                                                $badgeClass = 'bg-gray-100 text-gray-500';
-                                            } elseif ($visitDate->isSameDay($today)) {
-                                                // Today
-                                                $timeRemaining = 'Today';
-                                                $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($visitDate->isSameDay($tomorrow)) {
-                                                // Tomorrow
-                                                $timeRemaining = 'Tomorrow';
-                                                $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($daysRemaining == 0) {
-                                                // If it's within 24 hours but not today/tomorrow
-                                                $timeRemaining = number_format($hoursRemaining, 1) . ' ' . Str::plural('hour', $hoursRemaining);
-                                                $badgeClass = 'bg-red-100 text-red-800';
-                                            } else {
-                                                // Show total days remaining as integer (no decimals)
-                                                $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
-
-                                                // Apply color coding based on urgency
-                                                if ($daysRemaining <= 7) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 30) {
-                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                } else {
-                                                    $badgeClass = 'bg-blue-100 text-blue-800';
-                                                }
-                                            }
+                                        }
                                         @endphp
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">
@@ -379,7 +354,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                                     {{ match(strtolower($siteVisitLog->status)) {
                                                         'pending' => 'bg-yellow-100 text-yellow-800',
                                                         'active' => 'bg-green-100 text-green-800',
@@ -389,17 +364,6 @@
                                                     } }}">
                                                     {{ ucfirst($siteVisitLog->status) }}
                                                 </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div class="flex justify-end space-x-2">
-                                                    <a href="{{ route('site-visit-log-m.show', $siteVisitLog) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5
-                                                            .064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                        </svg>
-                                                    </a>
-                                                </div>
                                             </td>
                                         </tr>
                                     @empty
@@ -429,50 +393,49 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remaining Time</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse($appointments as $appointment)
                                         @php
-                                            // Calculate time remaining
-                                            $appointmentDate = \Carbon\Carbon::parse($appointment->date_of_approval)->startOfDay();
-                                            $now = \Carbon\Carbon::now();
-                                            $today = $now->copy()->startOfDay();
-                                            $tomorrow = $today->copy()->addDay();
-                                            $daysRemaining = $today->diffInDays($appointmentDate, false);
-                                            $hoursRemaining = $now->diffInHours($appointmentDate, false);
+                                        // Calculate time remaining
+                                        $appointmentDate = \Carbon\Carbon::parse($appointment->date_of_approval)->startOfDay();
+                                        $now = \Carbon\Carbon::now();
+                                        $today = $now->copy()->startOfDay();
+                                        $tomorrow = $today->copy()->addDay();
+                                        $daysRemaining = $today->diffInDays($appointmentDate, false);
+                                        $hoursRemaining = $now->diffInHours($appointmentDate, false);
 
-                                            // Format the time remaining text and badge class
-                                            if ($daysRemaining < 0) {
-                                                // Past date - show as "Past"
-                                                $timeRemaining = 'Past';
-                                                $badgeClass = 'bg-gray-100 text-gray-500';
-                                            } elseif ($appointmentDate->isSameDay($today)) {
-                                                // Today
-                                                $timeRemaining = 'Today';
+                                        // Format the time remaining text and badge class
+                                        if ($daysRemaining < 0) {
+                                            // Past date - show as "Past"
+                                            $timeRemaining = 'Past';
+                                            $badgeClass = 'bg-gray-100 text-gray-500';
+                                        } elseif ($appointmentDate->isSameDay($today)) {
+                                            // Today
+                                            $timeRemaining = 'Today';
+                                            $badgeClass = 'bg-red-100 text-red-800';
+                                        } elseif ($appointmentDate->isSameDay($tomorrow)) {
+                                            // Tomorrow
+                                            $timeRemaining = 'Tomorrow';
+                                            $badgeClass = 'bg-red-100 text-red-800';
+                                        } elseif ($daysRemaining == 0) {
+                                            // When 0 days remaining but not today/tomorrow, show hours
+                                            $timeRemaining = number_format($hoursRemaining, 1) . ' ' . Str::plural('hour', $hoursRemaining);
+                                            $badgeClass = 'bg-red-100 text-red-800';
+                                        } else {
+                                            // Show total days remaining as integer (no decimals)
+                                            $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
+
+                                            // Apply color coding based on urgency
+                                            if ($daysRemaining <= 7) {
                                                 $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($appointmentDate->isSameDay($tomorrow)) {
-                                                // Tomorrow
-                                                $timeRemaining = 'Tomorrow';
-                                                $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($daysRemaining == 0) {
-                                                // When 0 days remaining but not today/tomorrow, show hours
-                                                $timeRemaining = number_format($hoursRemaining, 1) . ' ' . Str::plural('hour', $hoursRemaining);
-                                                $badgeClass = 'bg-red-100 text-red-800';
+                                            } elseif ($daysRemaining <= 30) {
+                                                $badgeClass = 'bg-yellow-100 text-yellow-800';
                                             } else {
-                                                // Show total days remaining as integer (no decimals)
-                                                $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
-
-                                                // Apply color coding based on urgency
-                                                if ($daysRemaining <= 7) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 30) {
-                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                } else {
-                                                    $badgeClass = 'bg-blue-100 text-blue-800';
-                                                }
+                                                $badgeClass = 'bg-blue-100 text-blue-800';
                                             }
+                                        }
                                         @endphp
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">
@@ -494,7 +457,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                                                     {{ match(strtolower($appointment->status ?? '')) {
                                                         'approved' => 'bg-green-100 text-green-800',
                                                         'pending' => 'bg-yellow-100 text-yellow-800',
@@ -506,17 +469,6 @@
                                                     {{ ucfirst($appointment->status ?? 'Unknown') }}
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div class="flex justify-end space-x-2">
-                                                    <a href="{{ route('appointment-m.show', $appointment) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5
-                                                            .064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                        </svg>
-                                                    </a>
-                                                </div>
-                                            </td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -527,7 +479,7 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            
+
                             <!-- Pagination with tab preservation -->
                             <div class="mt-4">
                                 {{ $appointments->appends(['active_tab' => 'appointments'])->links() }}
@@ -545,44 +497,42 @@
             // Check URL parameters for active tab
             const urlParams = new URLSearchParams(window.location.search);
             const activeTab = urlParams.get('active_tab');
-            
+
             // If active tab is specified in URL, switch to it
             if (activeTab) {
                 switchTab(activeTab);
             }
         });
-        
+
         function switchTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.add('hidden');
             });
 
-            // Show the selected tab content
-            document.getElementById('content-' + tabName).classList.remove('hidden');
-            
-            // Update active tab styling
+            // Remove active styling from all tab buttons
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.classList.remove('border-indigo-500', 'text-indigo-600');
                 button.classList.add('border-transparent', 'text-gray-500');
             });
 
-            document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500');
-            document.getElementById('tab-' + tabName).classList.add('border-indigo-500', 'text-indigo-600');
-            
-            // Update URL with the active tab parameter without reloading the page
+            // Show the selected tab content
+            const selectedContent = document.getElementById(`content-${tabName}`);
+            if (selectedContent) {
+                selectedContent.classList.remove('hidden');
+            }
+
+            // Add active styling to the selected tab button
+            const selectedButton = document.getElementById(`tab-${tabName}`);
+            if (selectedButton) {
+                selectedButton.classList.remove('border-transparent', 'text-gray-500');
+                selectedButton.classList.add('border-indigo-500', 'text-indigo-600');
+            }
+
+            // Update URL without page reload
             const url = new URL(window.location);
             url.searchParams.set('active_tab', tabName);
-            
-            // Preserve any existing page parameters
-            const pageParams = ['page'];
-            pageParams.forEach(param => {
-                if (url.searchParams.has(param)) {
-                    // Keep the page parameter
-                }
-            });
-            
-            window.history.pushState({}, '', url);
+            window.history.replaceState({}, '', url);
         }
     </script>
 </x-app-layout>

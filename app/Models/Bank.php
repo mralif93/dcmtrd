@@ -25,7 +25,7 @@ class Bank extends Model implements Auditable
         'remarks',
         'approval_datetime',
     ];
-    
+
     /**
      * The attributes that should be cast.
      *

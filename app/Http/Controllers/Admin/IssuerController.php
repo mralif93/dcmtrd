@@ -17,18 +17,18 @@ class IssuerController extends Controller
     {
         $search = $request->input('search');
         $status = $request->input('status');
-        
+
         $issuers = Issuer::when($search, function ($query) use ($search) {
             $query->where('issuer_short_name', 'like', "%{$search}%")
-                  ->orWhere('issuer_name', 'like', "%{$search}%")
-                  ->orWhere('registration_number', 'like', "%{$search}%");
+                ->orWhere('issuer_name', 'like', "%{$search}%")
+                ->orWhere('registration_number', 'like', "%{$search}%");
         })
-        ->when($status, function ($query) use ($status) {
-            $query->where('status', $status);
-        })
-        ->latest()
-        ->paginate(10)
-        ->appends($request->except('page')); // Preserve all filters in pagination
+            ->when($status, function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends($request->except('page')); // Preserve all filters in pagination
 
         return view('admin.issuers.index', compact('issuers'));
     }
@@ -132,17 +132,31 @@ class IssuerController extends Controller
             return back()->withInput()->with('error', 'Error deleting: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Get all facilities for a given issuer
-     *
-     * @param  \App\Models\Issuer  $issuer
-     * @return \Illuminate\Http\Response
-     */
     public function getFacilities(Issuer $issuer)
     {
         return FacilityInformation::where('issuer_id', $issuer->id)
             ->select('id', 'facility_code', 'name')
             ->get();
+    }
+    public function trashed()
+    {
+        $trashedIssuers = Issuer::onlyTrashed()->paginate(10);
+
+        return view('admin.issuers.trashed', compact('trashedIssuers'));
+    }
+
+    public function restore($id)
+    {
+        $issuer = Issuer::onlyTrashed()->findOrFail($id);
+        $issuer->restore();
+
+        return redirect()->route('admin.issuers.trashed')->with('success', 'Issuer restored successfully.');
+    }
+    public function forceDelete($id)
+    {
+        $issuer = Issuer::onlyTrashed()->findOrFail($id);
+        $issuer->forceDelete();
+
+        return redirect()->route('admin.issuers.trashed')->with('success', 'Issuer permanently deleted.');
     }
 }

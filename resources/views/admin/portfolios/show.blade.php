@@ -115,7 +115,7 @@
                             <dd class="mt-1 text-sm text-gray-900">
                                 @if($portfolio->annual_report)
                                     <a href="{{ Storage::url($portfolio->annual_report) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
-                                        View Document
+                                        View Attachment
                                     </a>
                                 @else
                                     <p class="text-sm text-gray-400">No document uploaded</p>
@@ -127,7 +127,7 @@
                             <dd class="mt-1 text-sm text-gray-900">
                                 @if($portfolio->trust_deed_document)
                                     <a href="{{ Storage::url($portfolio->trust_deed_document) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
-                                        View Document
+                                        View Attachment
                                     </a>
                                 @else
                                     <p class="text-sm text-gray-400">No document uploaded</p>
@@ -139,7 +139,7 @@
                             <dd class="mt-1 text-sm text-gray-900">
                                 @if($portfolio->insurance_document)
                                     <a href="{{ Storage::url($portfolio->insurance_document) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
-                                        View Document
+                                        View Attachment
                                     </a>
                                 @else
                                     <p class="text-sm text-gray-400">No document uploaded</p>
@@ -151,7 +151,7 @@
                             <dd class="mt-1 text-sm text-gray-900">
                                 @if($portfolio->valuation_report)
                                     <a href="{{ Storage::url($portfolio->valuation_report) }}" target="_blank" class="inline-flex items-center mt-1 px-3 py-1 bg-indigo-100 border border-transparent rounded-md font-semibold text-xs text-indigo-700 hover:bg-indigo-200">
-                                        View Document
+                                        View Attachment
                                     </a>
                                 @else
                                     <p class="text-sm text-gray-400">No document uploaded</p>

@@ -165,17 +165,13 @@
                         @if($approvalProperty->prepared_by)
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Prepared By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $approvalProperty->preparedBy->name ?? $approvalProperty->prepared_by }}
-                            </dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $approvalProperty->prepared_by }}</dd>
                         </div>
                         @endif
                         @if($approvalProperty->verified_by)
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Verified By</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ $approvalProperty->verifiedBy->name ?? $approvalProperty->verified_by }}
-                            </dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $approvalProperty->verified_by }}</dd>
                         </div>
                         @endif
                         @if($approvalProperty->approval_datetime)

@@ -68,21 +68,7 @@ class FinancialProperty extends Model
         return $this->belongsTo(Property::class);
     }
 
-    /**
-     * Get the user who prepared the record.
-     */
-    public function preparedBy()
-    {
-        return $this->belongsTo(User::class, 'prepared_by', 'id');
-    }
 
-    /**
-     * Get the user who verified the record.
-     */
-    public function verifiedBy()
-    {
-        return $this->belongsTo(User::class, 'verified_by', 'id');
-    }
 
     /**
      * Calculate loan-to-value ratio.

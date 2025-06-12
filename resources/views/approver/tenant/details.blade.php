@@ -290,7 +290,7 @@
 
     <script>
         function openRejectModal(tenantId) {
-            document.getElementById('rejectForm').action = `/tenant/${tenantId}/reject`;
+            document.getElementById('rejectForm').action = `/approver/tenant/${tenantId}/reject`;
             document.getElementById('rejectModal').classList.remove('hidden');
         }
         

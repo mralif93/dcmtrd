@@ -304,7 +304,7 @@
                     <div class="icon-container blue-bg-light">
                         <i class="fas fa-building blue-icon fa-3x"></i>
                     </div>
-                    <h2 class="mb-4 text-2xl font-bold text-center">Debt Capital Market & Trust (DCMT)</h2>
+                    <h2 class="mb-4 text-2xl font-bold text-center">Debt Capital Market & Trusts (DCMT)</h2>
                     <p class="mb-6 text-center text-gray-600">Track bond performance, market trends, and explore issuers available in the market.</p>
                     <div class="flex justify-center">
                         <span class="inline-flex items-center px-4 py-2 font-medium rounded-md blue-btn">

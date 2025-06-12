@@ -59,9 +59,9 @@ class Lease extends Model implements Auditable
      * @var array
      */
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'approval_datetime' => 'date',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'approval_datetime' => 'datetime',
     ];
 
     /**
@@ -88,6 +88,14 @@ class Lease extends Model implements Auditable
     public function tenancyLetters()
     {
         return $this->hasMany(TenancyLetter::class);
+    }
+
+    /**
+     * Get the first tenancy letter associated with the lease.
+     */
+    public function tenancyLetter()
+    {
+        return $this->hasOne(TenancyLetter::class);
     }
 
     // check is tenancy letter under lease id already created or not

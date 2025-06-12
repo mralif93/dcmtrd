@@ -65,11 +65,5 @@ class ApprovalForm extends Model implements Auditable
         return $this->belongsTo(Property::class);
     }
 
-    /**
-     * Get the user who prepared the approval form.
-     */
-    public function preparedBy()
-    {
-        return $this->belongsTo(User::class, 'prepared_by', 'id');
-    }
+
 }

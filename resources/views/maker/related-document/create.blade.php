@@ -95,14 +95,21 @@
 
                         <!-- Row 5: Document Upload -->
                         <div>
-                            <label for="document_file" class="block text-sm font-medium text-gray-700">Document File
-                                *</label>
+                            <label for="document_file" class="block text-sm font-medium text-gray-700">
+                                Document File <span class="text-red-500">*</span>
+                            </label>
+
+                            {{-- Note about file size --}}
+                            <p class="mt-1 text-sm text-gray-500">Only PDF files. Max file size: 20 MB.</p>
+
                             <input type="file" name="document_file" id="document_file" required
                                 class="block w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
+
                             @error('document_file')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
+
                     </div>
 
                     <!-- Form Actions -->

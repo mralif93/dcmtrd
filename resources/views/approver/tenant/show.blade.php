@@ -45,39 +45,6 @@
                                         } }}">
                                         {{ ucfirst($tenant->status) }}
                                     </span>
-
-                                    @if(strtolower($tenant->status) === 'pending')
-                                        <div class="flex space-x-2">
-                                            <form action="{{ route('tenant-a.approve', $tenant) }}" method="POST" class="ml-4" id="approve-form">
-                                                @csrf
-                                                <button type="button" 
-                                                        onclick="confirmAction('approve')"
-                                                        class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-full font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                                    Approve
-                                                </button>
-                                            </form>
-                                            
-                                            <form action="{{ route('tenant-a.reject', $tenant) }}" method="POST" class="ml-4" id="reject-form">
-                                                @csrf
-                                                <button type="button" 
-                                                        onclick="confirmAction('reject')"
-                                                        class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-full font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                                    Reject
-                                                </button>
-                                            </form>
-                                        </div>
-                                        
-                                        <script>
-                                            function confirmAction(action) {
-                                                const actionText = action === 'approve' ? 'approve' : 'reject';
-                                                const formId = action === 'approve' ? 'approve-form' : 'reject-form';
-                                                
-                                                if (confirm(`Are you sure you want to ${actionText} this tenant?`)) {
-                                                    document.getElementById(formId).submit();
-                                                }
-                                            }
-                                        </script>
-                                    @endif
                                 </div>
                             </dd>
                         </div>

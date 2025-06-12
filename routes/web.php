@@ -121,6 +121,12 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
 
     // Bond
     Route::resource('/admin/users', UserAdminController::class);
+
+    Route::prefix('admin/issuers')->name('admin.issuers.')->group(function () {
+        Route::get('trashed', [IssuerController::class, 'trashed'])->name('trashed');
+        Route::post('{id}/restore', [IssuerController::class, 'restore'])->name('restore');
+        Route::delete('{id}/force-delete', [IssuerController::class, 'forceDelete'])->name('forceDelete');
+    });
     Route::resource('/admin/issuers', IssuerController::class);
 
     Route::resource('/admin/bonds', BondController::class);
@@ -130,6 +136,12 @@ Route::middleware(['auth', 'two-factor', 'role:admin'])->group(function () {
         Route::get('/admin/bonds/trashed', [BondController::class, 'trashed'])->name('trashed');
         Route::patch('/admin/bonds/{id}/restore', [BondController::class, 'restore'])->name('restore');
         Route::delete('/admin/bonds/{id}/force-delete', [BondController::class, 'forceDelete'])->name('/adminforce-delete');
+    });
+
+    Route::prefix('admin/facility-informations')->name('admin.facility-informations.')->group(function () {
+        Route::get('trashed', [FacilityInformationController::class, 'trashed'])->name('trashed');
+        Route::post('{id}/restore', [FacilityInformationController::class, 'restore'])->name('restore');
+        Route::delete('{id}/force-delete', [FacilityInformationController::class, 'forceDelete'])->name('forceDelete');
     });
 
     Route::resource('/admin/rating-movements', RatingMovementController::class);
@@ -428,7 +440,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
         Route::post('/cb-reports/cutoff', [DcmtReportController::class, 'cutOff'])->name('cb-reports.cutoff');
         Route::get('/cb-reports/batches', [DcmtReportController::class, 'viewBatches'])->name('cb-reports.batches');
         Route::get('/export-cb', function () {
-            return Excel::download(new CorporateBondExport, 'corporate_bonds.xlsx');
+            return Excel::download(new CorporateBondExport, 'CB Master.xlsx');
         })->name('cb-export');
         Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReports'])->name('trustee-reports');
         Route::delete('/cb-reports/batches/{id}', [DcmtReportController::class, 'deleteBatch'])->name('cb-reports.delete');
@@ -624,7 +636,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/financial/{financial}/update', [MakerController::class, 'FinancialUpdate'])->name('financial-m.update')->middleware('permission:REITS');
     Route::get('maker/financial/{financial}/show', [MakerController::class, 'FinancialShow'])->name('financial-m.show')->middleware('permission:REITS');
     Route::get('maker/financial/{financial}/submit-for-approval', [MakerController::class, 'SubmitApprovalFinancial'])->name('financial-m.approval')->middleware('permission:REITS');
-    
+
     // Property Module
     Route::get('maker/property/{portfolio}/', [MakerController::class, 'PropertyIndex'])->name('property-m.index')->middleware('permission:REITS');
     Route::get('maker/property/{portfolio}/create', [MakerController::class, 'PropertyCreate'])->name('property-m.create')->middleware('permission:REITS');
@@ -670,7 +682,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/site-visit/{siteVisit}/update', [MakerController::class, 'SiteVisitUpdate'])->name('site-visit-m.update')->middleware('permission:REITS');
     Route::get('maker/site-visit/{siteVisit}/show', [MakerController::class, 'SiteVisitShow'])->name('site-visit-m.show')->middleware('permission:REITS');
     Route::get('maker/site-visit/{siteVisit}/submit-for-approval', [MakerController::class, 'SubmitApprovalSiteVisit'])->name('site-visit-m.approval')->middleware('permission:REITS');
-    
+
     // Checklist Module
     Route::get('maker/checklist/{property}/', [MakerController::class, 'ChecklistIndex'])->name('checklist-m.index')->middleware('permission:REITS');
     Route::get('maker/checklist/{property}/create', [MakerController::class, 'ChecklistCreate'])->name('checklist-m.create')->middleware('permission:REITS');
@@ -689,7 +701,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/checklist-legal-documentation/{legalDocumentation}/update', [MakerController::class, 'ChecklistLegalDocumentationUpdate'])->name('checklist-legal-documentation-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist-legal-documentation/{legalDocumentation}/show', [MakerController::class, 'ChecklistLegalDocumentationShow'])->name('checklist-legal-documentation-m.show')->middleware('permission:REITS');
     Route::post('maker/checklist-legal-documentation/{legalDocumentation}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistLegalDocumentation'])->name('checklist-legal-documentation-m.approval')->middleware('permission:REITS');
-    
+
     // Checklist Tenant Module
     Route::get('maker/checklist-tenant/{checklist}/', [MakerController::class, 'ChecklistTenantIndex'])->name('checklist-tenant-m.index')->middleware('permission:REITS');
     Route::get('maker/checklist-tenant/{checklist}/create', [MakerController::class, 'ChecklistTenantCreate'])->name('checklist-tenant-m.create')->middleware('permission:REITS');
@@ -734,7 +746,7 @@ Route::middleware(['auth', 'two-factor', 'role:maker'])->group(function () {
     Route::put('maker/checklist-disposal-installation/{checklistDisposalInstallation}/update', [MakerController::class, 'ChecklistDisposalInstallationUpdate'])->name('checklist-disposal-installation-m.update')->middleware('permission:REITS');
     Route::get('maker/checklist-disposal-installation/{checklistDisposalInstallation}/show', [MakerController::class, 'ChecklistDisposalInstallationShow'])->name('checklist-disposal-installation-m.show')->middleware('permission:REITS');
     Route::post('maker/checklist-disposal-installation/{checklistDisposalInstallation}/submission-for-approval', [MakerController::class, 'SubmitApprovalChecklistDisposalInstallation'])->name('checklist-disposal-installation-m.approval')->middleware('permission:REITS');
-    
+
     // Appointment Module
     Route::get('maker/appointment/', [MakerController::class, 'AppointmentIndex'])->name('appointment-m.index')->middleware('permission:REITS');
     Route::get('maker/appointment/create', [MakerController::class, 'AppointmentCreate'])->name('appointment-m.create')->middleware('permission:REITS');
@@ -777,7 +789,7 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
         Route::get('/cb-reports/batches/{id}/download', [DcmtReportController::class, 'downloadBatchA'])->name('cb-reports.download.a');
         Route::delete('/cb-reports/batches/{id}', [DcmtReportController::class, 'deleteBatchA'])->name('cb-reports.delete.a');
         Route::get('/export-cb', function () {
-            return Excel::download(new CorporateBondExport, 'corporate_bonds.xlsx');
+            return Excel::download(new CorporateBondExport, 'CB Master.xlsx');
         })->name('cb-export.a');
         Route::get('/trustee-reports', [DcmtReportController::class, 'trusteeReportsA'])->name('trustee-reports.a');
         Route::get('/trustee-reports/batches', [DcmtReportController::class, 'viewTrusteeBatchesA'])->name('trustee-reports.batches.a');
@@ -887,6 +899,9 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/lease/{lease}/approve', [ApproverController::class, 'LeaseApprove'])->name('lease-a.approve')->middleware('permission:REITS');
     Route::post('approver/lease/{lease}/reject', [ApproverController::class, 'LeaseReject'])->name('lease-a.reject')->middleware('permission:REITS');
 
+    // Tenancy Letter Module
+    Route::get('approver/tenancy-letter/{tenancyLetter}/show', [ApproverController::class, 'TenancyLetterShow'])->name('tenancy-letter-a.show')->middleware('permission:REITS');
+
     // SiteVisit Module
     Route::get('approver/site-visit/', [ApproverController::class, 'SiteVisitIndex'])->name('site-visit-a.index')->middleware('permission:REITS');
     Route::get('approver/site-visit/{siteVisit}/show', [ApproverController::class, 'SiteVisitShow'])->name('site-visit-a.show')->middleware('permission:REITS');
@@ -895,6 +910,11 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::post('approver/site-visit/{siteVisit}/approve', [ApproverController::class, 'SiteVisitApprove'])->name('site-visit-a.approve')->middleware('permission:REITS');
     Route::post('approver/site-visit/{siteVisit}/reject', [ApproverController::class, 'SiteVisitReject'])->name('site-visit-a.reject')->middleware('permission:REITS');
 
+    // Notification Module
+    Route::get('approver/notification', [ApproverController::class, 'NotificationIndex'])->name('notification-a.index')->middleware('permission:REITS');
+    Route::get('approver/notification/{notification}', [ApproverController::class, 'NotificationShow'])->name('notification-a.show')->middleware('permission:REITS');
+    Route::post('approver/notification/{notification}/mark-as-read', [ApproverController::class, 'NotificationMarkAsRead'])->name('notification-a.mark-as-read')->middleware('permission:REITS');
+
     // Checklist Module
     Route::get('approver/checklist/{property}', [ApproverController::class, 'ChecklistIndex'])->name('checklist-a.index')->middleware('permission:REITS');
     Route::get('approver/checklist/{checklist}/show', [ApproverController::class, 'ChecklistShow'])->name('checklist-a.show')->middleware('permission:REITS');
@@ -902,6 +922,7 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
     Route::get('approver/checklist/{checklist}/details', [ApproverController::class, 'ChecklistDetails'])->name('checklist-a.details')->middleware('permission:REITS');
     Route::post('approver/checklist/{checklist}/approve', [ApproverController::class, 'ChecklistApprove'])->name('checklist-a.approve')->middleware('permission:REITS');
     Route::post('approver/checklist/{checklist}/reject', [ApproverController::class, 'ChecklistReject'])->name('checklist-a.reject')->middleware('permission:REITS');
+    Route::get('approver/checklist/{checklist}/letter', [ApproverController::class, 'ChecklistLetter'])->name('checklist-a.letter')->middleware('permission:REITS');
 
     // Checklist Legal Module
     Route::get('approver/checklist-legal/{checklist}', [ApproverController::class, 'ChecklistLegalIndex'])->name('checklist-legal-a.index')->middleware('permission:REITS');
@@ -913,7 +934,7 @@ Route::middleware(['auth', 'two-factor', 'role:approver'])->group(function () {
 
     // Checklist Tenant Module
     Route::get('approver/checklist-tenant/{checklist}', [ApproverController::class, 'ChecklistTenantIndex'])->name('checklist-tenant-a.index')->middleware('permission:REITS');
-    Route::get('approver/checklist-tenant/{checklistTenant}/show', [ApproverController::class, 'PENDING'])->name('checklist-tenant-a.show')->middleware('permission:REITS');
+    Route::get('approver/checklist-tenant/{checklistTenant}/show', [ApproverController::class, 'ChecklistTenantShow'])->name('checklist-tenant-a.show')->middleware('permission:REITS');
     Route::get('approver/checklist-tenant/', [ApproverController::class, 'ChecklistTenantMain'])->name('checklist-tenant-a.main')->middleware('permission:REITS');
     Route::get('approver/checklist-tenant/{checklistTenant}/details', [ApproverController::class, 'ChecklistTenantDetails'])->name('checklist-tenant-a.details')->middleware('permission:REITS');
     Route::post('approver/checklist-tenant/{checklistTenant}/approve', [ApproverController::class, 'ChecklistTenantApprove'])->name('checklist-tenant-a.approve')->middleware('permission:REITS');

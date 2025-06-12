@@ -54,21 +54,7 @@ class ApprovalProperty extends Model
         return $this->belongsTo(Property::class);
     }
 
-    /**
-     * Get the user who prepared the approval.
-     */
-    public function preparedBy()
-    {
-        return $this->belongsTo(User::class, 'prepared_by', 'id');
-    }
 
-    /**
-     * Get the user who verified the approval.
-     */
-    public function verifiedBy()
-    {
-        return $this->belongsTo(User::class, 'verified_by', 'id');
-    }
 
     /**
      * Scope a query to only include approvals with a specific status.

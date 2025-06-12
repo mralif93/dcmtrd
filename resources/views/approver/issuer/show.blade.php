@@ -148,6 +148,35 @@
                     </dl>
                 </div>
 
+                <!-- PIC Name, Phone No, Address Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg font-medium leading-6 text-gray-900">Additional Issuer Details</h3>
+                    </div>
+                    <dl>
+                        <!-- PIC Name -->
+                        <div class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">PIC Name</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $issuer->pic_name ?? 'N/A' }}</dd>
+                        </div>
+
+                        <!-- Phone No -->
+                        <div class="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Phone Number</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $issuer->phone_no ?? 'N/A' }}</dd>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Address</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ $issuer->address ?? 'N/A' }}</dd>
+                        </div>
+                    </dl>
+                </div>
+
                 <!-- Share Information Section -->
                 <div class="border-t border-gray-200">
                     <div class="px-4 py-5 sm:px-6">

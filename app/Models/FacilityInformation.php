@@ -64,6 +64,8 @@ class FacilityInformation extends Model implements Auditable
         'is_redeemed' => 'boolean',
     ];
 
+    protected $dates = ['deleted_at'];
+
     // Relationships
     public function issuer(): BelongsTo
     {

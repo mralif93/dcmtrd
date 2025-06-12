@@ -45,10 +45,6 @@
                                         } }}">
                                         {{ ucfirst($siteVisit->status) }}
                                     </span>
-
-                                    @if($siteVisit->status === 'pending')
-
-                                    @endif
                                 </div>
                             </dd>
                         </div>

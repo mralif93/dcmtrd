@@ -85,34 +85,32 @@
                                     </span>
                                 @endif
 
-                                @if($checklist->tenants->isNotEmpty())
-                                    @php
-                                        // Get tenant statuses to determine an overall status
-                                        $tenantStatuses = $checklist->tenants->pluck('pivot.status')->unique();
-                                        
-                                        // Determine an overall status
-                                        $overallStatus = 'N/A';
-                                        if($tenantStatuses->contains('pending')) {
-                                            $overallStatus = 'pending';
-                                        } elseif($tenantStatuses->count() > 0 && $tenantStatuses->every(function($status) { return $status === 'completed'; })) {
-                                            $overallStatus = 'completed';
-                                        } elseif($tenantStatuses->isNotEmpty()) {
-                                            $overallStatus = 'in-progress';
-                                        }
-                                        
-                                        // Set the appropriate CSS classes based on status
-                                        $statusClasses = $overallStatus === 'completed' ? 'bg-green-100 text-green-800' : 
-                                                    ($overallStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800');
-                                    @endphp
+                                @php
+                                    // Get tenant statuses to determine an overall status
+                                    $tenantStatuses = $checklist->tenants->pluck('pivot.status')->unique();
                                     
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $statusClasses }}">
-                                        Tenants: {{ ucfirst($overallStatus) }}
-                                    </span>
-                                @else
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                        Tenants: Pending
-                                    </span>
-                                @endif
+                                    // Determine an overall status
+                                    $overallStatus = 'draft';
+                                    if($tenantStatuses->contains('pending')) {
+                                        $overallStatus = 'pending';
+                                    } elseif($tenantStatuses->count() > 0 && $tenantStatuses->every(function($status) { return $status === 'active'; })) {
+                                        $overallStatus = 'active';
+                                    } elseif($tenantStatuses->isNotEmpty()) {
+                                        $overallStatus = 'not available';
+                                    }
+                                    
+                                    // Set the appropriate CSS classes based on status
+                                    $statusClasses = match($overallStatus) {
+                                        'active' => 'bg-green-100 text-green-800',
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'rejected' => 'bg-red-100 text-red-800',
+                                        default => 'bg-gray-100 text-gray-800'
+                                    };
+                                @endphp
+                                
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $statusClasses }}">
+                                    Tenants: {{ ucfirst($overallStatus) }}
+                                </span>
                                 
                                 @if($checklist->externalAreaCondition)
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
@@ -153,29 +151,48 @@
                                     </span>
                                 @endif
 
-                                @if($checklist->disposalInstallation)
-                                    @php
-                                        // Count all disposal installation items
-                                        $totalItems = $checklist->disposalInstallation->count();
+                                @php
+                                    // Count all disposal installation items
+                                    $totalItems = $checklist->disposalInstallation->count();
+                                    
+                                    // If no items, show as draft
+                                    if ($totalItems == 0) {
+                                        $statusText = 'draft';
+                                    } else {
+                                        // Count items by status
+                                        $activeItems = $checklist->disposalInstallation->where('status', 'active')->count();
+                                        $pendingItems = $checklist->disposalInstallation->where('status', 'pending')->count();
                                         
-                                        // Count completed items
-                                        $completedItems = $checklist->disposalInstallation->where('status', 'completed')->count();
-                                        
-                                        // Check if all items are completed
-                                        $allCompleted = ($totalItems > 0 && $completedItems == $totalItems);
-                                        
-                                        // Set status text
-                                        $statusText = $allCompleted ? 'Completed' : 'Pending';
-                                        
-                                        // Set appropriate color classes based on status
-                                        $bgColorClass = $allCompleted ? 'bg-green-100' : 'bg-yellow-100';
-                                        $textColorClass = $allCompleted ? 'text-green-800' : 'text-yellow-800';
-                                    @endphp
+                                        // Determine overall status
+                                        if ($activeItems == $totalItems) {
+                                            $statusText = 'active';
+                                        } elseif ($pendingItems == $totalItems) {
+                                            $statusText = 'pending';
+                                        } else {
+                                            $statusText = 'pending'; // Mixed statuses default to pending
+                                        }
+                                    }
+                                    
+                                    // Set appropriate color classes based on status
+                                    $bgColorClass = match($statusText) {
+                                        'active' => 'bg-green-100',
+                                        'pending' => 'bg-yellow-100',
+                                        'rejected' => 'bg-red-100',
+                                        'draft' => 'bg-gray-100',
+                                        default => 'bg-gray-100'
+                                    };
+                                    $textColorClass = match($statusText) {
+                                        'active' => 'text-green-800',
+                                        'pending' => 'text-yellow-800',
+                                        'rejected' => 'text-red-800',
+                                        'draft' => 'text-gray-800',
+                                        default => 'text-gray-800'
+                                    };
+                                @endphp
 
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $bgColorClass }} {{ $textColorClass }}">
-                                        Installations: {{ $statusText }}
-                                    </span>
-                                @endif
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $bgColorClass }} {{ $textColorClass }}">
+                                    Installations: {{ $statusText }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -202,7 +219,7 @@
                             Internal Areas
                         </button>
                         <button type="button" onclick="switchTab('development')" class="tab-button bg-white py-4 px-6 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" id="tab-development">
-                            Development
+                            Property Development
                         </button>
                         <button type="button" onclick="switchTab('installations')" class="tab-button bg-white py-4 px-6 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" id="tab-installations">
                             Disposal/Installations/Replacement
@@ -264,26 +281,6 @@
 
                 <!-- Action Buttons for Main Details Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->status) === 'pending')
-                    <form action="{{ route('checklist-a.approve', $checklist->id) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Approve
-                        </button>
-                    </form>
-                    <form action="{{ route('checklist-a.reject', $checklist->id) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            Reject
-                        </button>
-                    </form>
-                    @endif
                     <a href="{{ route('checklist-a.index', $checklist->siteVisit->property) }}" 
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -322,51 +319,67 @@
                     <dl>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Title Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->title_ref ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->title_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Title Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->title_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->title_location ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Trust Deed Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->trust_deed_ref ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->trust_deed_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Trust Deed Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->trust_deed_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->trust_deed_location ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Sale & Purchase Agreement</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->sale_purchase_agreement ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Sale & Purchase Agreement Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->sale_purchase_agreement_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Sale & Purchase Agreement Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->sale_purchase_agreement_location ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Lease Agreement Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->lease_agreement_ref ?? 'N/A' }}</dd>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Lease Agreement Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->lease_agreement_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->lease_agreement_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->agreement_to_lease ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Lease Agreement Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->lease_agreement_location ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->agreement_to_lease_ref ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Agreement to Lease Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->agreement_to_lease_location ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Maintenance Agreement Reference</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->maintenance_agreement_ref ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->maintenance_agreement_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">Maintenance Agreement Location</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->maintenance_agreement_location ?? 'N/A' }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->maintenance_agreement_location ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Development Agreement</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->development_agreement ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Development Agreement Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->development_agreement_ref ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Other Legal Documents</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->other_legal_docs ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Development Agreement Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->development_agreement_location ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Other Legal Documents Reference</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->others_ref ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Other Legal Documents Location</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->legalDocumentation->others_location ?? 'N/A' }}</dd>
                         </div>
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Remarks</dt>
@@ -387,25 +400,6 @@
 
                 <!-- Action Buttons for Legal Documentation Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->legalDocumentation->status) === 'pending')
-                    <form action="{{ route('checklist-legal-a.approve', $checklist->legalDocumentation) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Approve
-                        </button>
-                    </form>
-                    <button type="button" 
-                        onclick="openRejectModal('legal', '{{ $checklist->legalDocumentation }}', 'Legal Documentation - {{ $checklist->siteVisit->property->name ?? 'N/A' }}', '{{ route('checklist-legal-a.reject', $checklist->legalDocumentation) }}')" 
-                        class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Reject
-                    </button>
-                    @endif
                     <a href="{{ route('checklist-a.index', $checklist->siteVisit->property) }}" 
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -468,39 +462,14 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div class="flex justify-between items-center w-24">
-                                                    @if($tenant->pivot->status === 'pending')
-                                                        <form action="{{ route('checklist-tenant-a.approve', $tenant->pivot->id) }}" method="POST">
-                                                            @csrf
-                                                            <button type="submit" class="text-green-600 hover:text-green-900 p-1" title="Approve">
-                                                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                                </svg>
-                                                            </button>
-                                                        </form>
-                                                        <button type="button" 
-                                                            onclick="openRejectModal('tenant', '{{ $tenant->pivot->id }}', '{{ $tenant->name }}', '{{ route('checklist-tenant-a.reject', $tenant->pivot->id) }}')" 
-                                                            class="text-red-600 hover:text-red-900 p-2 rounded-full hover:bg-red-100" 
-                                                            title="Reject">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                            </svg>
-                                                        </button>
-                                                        <a href="{{ route('tenant-a.show', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900 p-1" title="View">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </a>
-                                                    @else
-                                                        <div></div>
-                                                        <div></div>
-                                                        <a href="{{ route('tenant-a.show', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900 p-1" title="View">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </a>
-                                                    @endif
+                                                    <div></div>
+                                                    <div></div>
+                                                    <a href="{{ route('checklist-tenant-a.show', $tenant->pivot->id) }}" class="text-indigo-600 hover:text-indigo-900 p-1" title="View">
+                                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                        </svg>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -558,8 +527,12 @@
                                 <dt class="text-sm font-medium text-gray-500">3.1 General Cleanliness</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ $checklist->externalAreaCondition->is_general_cleanliness_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $checklist->externalAreaCondition->is_general_cleanliness_satisfied ? 'Satisfactory' : 'Unsatisfactory' }}
+                                        {{ isset($checklist->externalAreaCondition->is_general_cleanliness_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_general_cleanliness_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') : 
+                                            'bg-gray-100 text-gray-800' }}">
+                                        {{ isset($checklist->externalAreaCondition->is_general_cleanliness_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_general_cleanliness_satisfied ? 'Satisfactory' : 'Unsatisfactory') : 
+                                            'N/A' }}
                                     </span>
                                     @if($checklist->externalAreaCondition->general_cleanliness_remarks)
                                     <p class="mt-2 text-sm text-gray-700">{{ $checklist->externalAreaCondition->general_cleanliness_remarks }}</p>
@@ -570,8 +543,12 @@
                                 <dt class="text-sm font-medium text-gray-500">3.2 Fencing & Main Gate</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ $checklist->externalAreaCondition->is_fencing_gate_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $checklist->externalAreaCondition->is_fencing_gate_satisfied ? 'Satisfactory' : 'Unsatisfactory' }}
+                                        {{ isset($checklist->externalAreaCondition->is_fencing_gate_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_fencing_gate_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') : 
+                                            'bg-gray-100 text-gray-800' }}">
+                                        {{ isset($checklist->externalAreaCondition->is_fencing_gate_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_fencing_gate_satisfied ? 'Satisfactory' : 'Unsatisfactory') : 
+                                            'N/A' }}
                                     </span>
                                     @if($checklist->externalAreaCondition->fencing_gate_remarks)
                                     <p class="mt-2 text-sm text-gray-700">{{ $checklist->externalAreaCondition->fencing_gate_remarks }}</p>
@@ -582,8 +559,12 @@
                                 <dt class="text-sm font-medium text-gray-500">3.3 External Facade</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ $checklist->externalAreaCondition->is_external_facade_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $checklist->externalAreaCondition->is_external_facade_satisfied ? 'Satisfactory' : 'Unsatisfactory' }}
+                                        {{ isset($checklist->externalAreaCondition->is_external_facade_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_external_facade_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') : 
+                                            'bg-gray-100 text-gray-800' }}">
+                                        {{ isset($checklist->externalAreaCondition->is_external_facade_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_external_facade_satisfied ? 'Satisfactory' : 'Unsatisfactory') : 
+                                            'N/A' }}
                                     </span>
                                     @if($checklist->externalAreaCondition->external_facade_remarks)
                                     <p class="mt-2 text-sm text-gray-700">{{ $checklist->externalAreaCondition->external_facade_remarks }}</p>
@@ -594,8 +575,12 @@
                                 <dt class="text-sm font-medium text-gray-500">3.4 Car Park</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ $checklist->externalAreaCondition->is_car_park_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $checklist->externalAreaCondition->is_car_park_satisfied ? 'Satisfactory' : 'Unsatisfactory' }}
+                                        {{ isset($checklist->externalAreaCondition->is_car_park_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_car_park_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') : 
+                                            'bg-gray-100 text-gray-800' }}">
+                                        {{ isset($checklist->externalAreaCondition->is_car_park_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_car_park_satisfied ? 'Satisfactory' : 'Unsatisfactory') : 
+                                            'N/A' }}
                                     </span>
                                     @if($checklist->externalAreaCondition->car_park_remarks)
                                     <p class="mt-2 text-sm text-gray-700">{{ $checklist->externalAreaCondition->car_park_remarks }}</p>
@@ -606,8 +591,12 @@
                                 <dt class="text-sm font-medium text-gray-500">3.5 Land Settlement</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ $checklist->externalAreaCondition->is_land_settlement_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $checklist->externalAreaCondition->is_land_settlement_satisfied ? 'Satisfactory' : 'Unsatisfactory' }}
+                                        {{ isset($checklist->externalAreaCondition->is_land_settlement_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_land_settlement_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') : 
+                                            'bg-gray-100 text-gray-800' }}">
+                                        {{ isset($checklist->externalAreaCondition->is_land_settlement_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_land_settlement_satisfied ? 'Satisfactory' : 'Unsatisfactory') : 
+                                            'N/A' }}
                                     </span>
                                     @if($checklist->externalAreaCondition->land_settlement_remarks)
                                     <p class="mt-2 text-sm text-gray-700">{{ $checklist->externalAreaCondition->land_settlement_remarks }}</p>
@@ -618,8 +607,12 @@
                                 <dt class="text-sm font-medium text-gray-500">3.6 Rooftop</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ $checklist->externalAreaCondition->is_rooftop_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $checklist->externalAreaCondition->is_rooftop_satisfied ? 'Satisfactory' : 'Unsatisfactory' }}
+                                        {{ isset($checklist->externalAreaCondition->is_rooftop_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_rooftop_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') : 
+                                            'bg-gray-100 text-gray-800' }}">
+                                        {{ isset($checklist->externalAreaCondition->is_rooftop_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_rooftop_satisfied ? 'Satisfactory' : 'Unsatisfactory') : 
+                                            'N/A' }}
                                     </span>
                                     @if($checklist->externalAreaCondition->rooftop_remarks)
                                     <p class="mt-2 text-sm text-gray-700">{{ $checklist->externalAreaCondition->rooftop_remarks }}</p>
@@ -630,27 +623,27 @@
                                 <dt class="text-sm font-medium text-gray-500">3.7 Drainage</dt>
                                 <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ $checklist->externalAreaCondition->is_drainage_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $checklist->externalAreaCondition->is_drainage_satisfied ? 'Satisfactory' : 'Unsatisfactory' }}
+                                        {{ isset($checklist->externalAreaCondition->is_drainage_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_drainage_satisfied ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') : 
+                                            'bg-gray-100 text-gray-800' }}">
+                                        {{ isset($checklist->externalAreaCondition->is_drainage_satisfied) ? 
+                                            ($checklist->externalAreaCondition->is_drainage_satisfied ? 'Satisfactory' : 'Unsatisfactory') : 
+                                            'N/A' }}
                                     </span>
                                     @if($checklist->externalAreaCondition->drainage_remarks)
                                     <p class="mt-2 text-sm text-gray-700">{{ $checklist->externalAreaCondition->drainage_remarks }}</p>
                                     @endif
                                 </dd>
                             </div>
+
+                            <!-- External Remarks -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">External Remarks</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->externalAreaCondition->external_remarks ?? 'N/A' }}</dd>
                             </div>
 
-                            <!-- Remarks -->
-                            <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Remarks</dt>
-                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->externalAreaCondition->remarks ?? 'N/A' }}</dd>
-                            </div>
-
                             <!-- Approval Information -->
-                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">Approval Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     <div>Prepared by: {{ $checklist->externalAreaCondition->prepared_by ?? 'N/A' }}</div>
@@ -658,6 +651,14 @@
                                     <div>Approved on: {{ $checklist->externalAreaCondition->approval_datetime ? date('d/m/Y h:i A', strtotime($checklist->externalAreaCondition->approval_datetime)) : 'N/A' }}</div>
                                 </dd>
                             </div>
+
+                            <!-- Remarks -->
+                            @if($checklist->externalAreaCondition->remarks)
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->externalAreaCondition->remarks ?? 'N/A' }}</dd>
+                            </div>
+                            @endif
                         @else
                             <div class="bg-white px-4 py-5 sm:px-6">
                                 <p class="text-sm text-gray-500 text-center">No external area condition information available for this checklist.</p>
@@ -668,25 +669,6 @@
 
                 <!-- Action Buttons for External Areas Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->externalAreaCondition->status) === 'pending')
-                    <form action="{{ route('checklist-external-area-condition-a.approve', $checklist->externalAreaCondition) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Approve
-                        </button>
-                    </form>
-                    <button type="button" 
-                        onclick="openRejectModal('external', '{{ $checklist->externalAreaCondition }}', 'External Area Condition - {{ $checklist->siteVisit->property->name ?? 'N/A' }}', '{{ route('checklist-external-area-condition-a.reject', $checklist->externalAreaCondition) }}')" 
-                        class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Reject
-                    </button>
-                    @endif
                     <a href="{{ route('checklist-a.index', $checklist->siteVisit->property) }}" 
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -735,7 +717,7 @@
                                         </span>
                                     @else
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Not Inspected
+                                            N/A
                                         </span>
                                     @endif
                                     @if($checklist->internalAreaCondition->door_window_remarks)
@@ -755,7 +737,7 @@
                                         </span>
                                     @else
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Not Inspected
+                                            N/A
                                         </span>
                                     @endif
                                     @if($checklist->internalAreaCondition->staircase_remarks)
@@ -775,7 +757,7 @@
                                         </span>
                                     @else
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Not Inspected
+                                            N/A
                                         </span>
                                     @endif
                                     @if($checklist->internalAreaCondition->toilet_remarks)
@@ -795,7 +777,7 @@
                                         </span>
                                     @else
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Not Inspected
+                                            N/A
                                         </span>
                                     @endif
                                     @if($checklist->internalAreaCondition->ceiling_remarks)
@@ -815,7 +797,7 @@
                                         </span>
                                     @else
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Not Inspected
+                                            N/A
                                         </span>
                                     @endif
                                     @if($checklist->internalAreaCondition->wall_remarks)
@@ -835,7 +817,7 @@
                                         </span>
                                     @else
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Not Inspected
+                                            N/A
                                         </span>
                                     @endif
                                     @if($checklist->internalAreaCondition->water_seeping_remarks)
@@ -855,7 +837,7 @@
                                         </span>
                                     @else
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Not Inspected
+                                            N/A
                                         </span>
                                     @endif
                                     @if($checklist->internalAreaCondition->loading_bay_remarks)
@@ -875,7 +857,7 @@
                                         </span>
                                     @else
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Not Inspected
+                                            N/A
                                         </span>
                                     @endif
                                     @if($checklist->internalAreaCondition->basement_car_park_remarks)
@@ -890,21 +872,23 @@
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->internal_remarks ?? 'N/A' }}</dd>
                             </div>
 
-                            <!-- Remarks -->
+                            <!-- Approval Information -->
                             <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">Remarks</dt>
-                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->remarks ?? 'N/A' }}</dd>
-                            </div>
-
-                            <!-- System Information -->
-                            <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">System Information</dt>
+                                <dt class="text-sm font-medium text-gray-500">Approval Information</dt>
                                 <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     <div>Prepared by: {{ $checklist->internalAreaCondition->prepared_by ?? 'N/A' }}</div>
                                     <div>Verified by: {{ $checklist->internalAreaCondition->verified_by ?? 'N/A' }}</div>
                                     <div>Approval date: {{ $checklist->internalAreaCondition->approval_datetime ? date('d/m/Y h:i A', strtotime($checklist->internalAreaCondition->approval_datetime)) : 'N/A' }}</div>
                                 </dd>
                             </div>
+
+                            <!-- Remarks -->
+                            @if($checklist->internalAreaCondition->remarks)
+                            <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $checklist->internalAreaCondition->remarks ?? 'N/A' }}</dd>
+                            </div>
+                            @endif
                         @else
                             <div class="bg-white px-4 py-5 sm:px-6">
                                 <p class="text-sm text-gray-500 text-center">No internal area condition information available for this checklist.</p>
@@ -915,25 +899,6 @@
 
                 <!-- Action Buttons for Internal Areas Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->internalAreaCondition->status) === 'pending')
-                    <form action="{{ route('checklist-internal-area-condition-a.approve', $checklist->internalAreaCondition) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Approve
-                        </button>
-                    </form>
-                    <button type="button" 
-                        onclick="openRejectModal('internal', '{{ $checklist->internalAreaCondition }}', 'Internal Area Condition - {{ $checklist->siteVisit->property->name ?? 'N/A' }}', '{{ route('checklist-internal-area-condition-a.reject', $checklist->internalAreaCondition) }}')" 
-                        class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Reject
-                    </button>
-                    @endif
                     <a href="{{ route('checklist-a.index', $checklist->siteVisit->property) }}" 
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -974,23 +939,29 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">5.1 Development/Expansion</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                @if($checklist->development_date)
-                                <div>Date: {{ date('d/m/Y', strtotime($checklist->development_date)) }}</div>
+                                @if(optional($checklist->propertyDevelopment)->development_date)
+                                <div>Date: {{ date('d/m/Y', strtotime($checklist->propertyDevelopment->development_date)) }}</div>
                                 @endif
-                                @if($checklist->development_expansion_status)
-                                <div class="mt-1">Scope: {{ $checklist->development_expansion_status }}</div>
+                                @if(optional($checklist->propertyDevelopment)->development_scope_of_work)
+                                <div class="mt-1">Scope: {{ $checklist->propertyDevelopment->development_scope_of_work }}</div>
                                 @endif
-                                @if($checklist->development_status)
+                                @if(optional($checklist->propertyDevelopment)->development_status)
                                 <div class="mt-1">Status: 
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $checklist->development_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                    ($checklist->development_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                    ($checklist->development_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
-                                        {{ ucfirst(str_replace('_', ' ', $checklist->development_status)) }}
+                                        {{ match(strtolower($checklist->propertyDevelopment->development_status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
+                                        {{ ucfirst(str_replace('_', ' ', $checklist->propertyDevelopment->development_status)) }}
                                     </span>
                                 </div>
                                 @endif
-                                @if(!$checklist->development_date && !$checklist->development_expansion_status && !$checklist->development_status)
+                                @if(!optional($checklist->propertyDevelopment)->development_date && 
+                                    !optional($checklist->propertyDevelopment)->development_scope_of_work && 
+                                    !optional($checklist->propertyDevelopment)->development_status)
                                 N/A
                                 @endif
                             </dd>
@@ -1000,23 +971,29 @@
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">5.2 Renovation</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                @if($checklist->renovation_date)
-                                <div>Date: {{ date('d/m/Y', strtotime($checklist->renovation_date)) }}</div>
+                                @if(optional($checklist->propertyDevelopment)->renovation_date)
+                                <div>Date: {{ date('d/m/Y', strtotime($checklist->propertyDevelopment->renovation_date)) }}</div>
                                 @endif
-                                @if($checklist->renovation_status)
-                                <div class="mt-1">Scope: {{ $checklist->renovation_status }}</div>
+                                @if(optional($checklist->propertyDevelopment)->renovation_scope_of_work)
+                                <div class="mt-1">Scope: {{ $checklist->propertyDevelopment->renovation_scope_of_work }}</div>
                                 @endif
-                                @if($checklist->renovation_completion_status)
+                                @if(optional($checklist->propertyDevelopment)->renovation_status)
                                 <div class="mt-1">Status: 
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $checklist->renovation_completion_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                    ($checklist->renovation_completion_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                    ($checklist->renovation_completion_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
-                                        {{ ucfirst(str_replace('_', ' ', $checklist->renovation_completion_status)) }}
+                                        {{ match(strtolower($checklist->propertyDevelopment->renovation_status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
+                                        {{ ucfirst(str_replace('_', ' ', $checklist->propertyDevelopment->renovation_status)) }}
                                     </span>
                                 </div>
                                 @endif
-                                @if(!$checklist->renovation_date && !$checklist->renovation_status && !$checklist->renovation_completion_status)
+                                @if(!optional($checklist->propertyDevelopment)->renovation_date && 
+                                    !optional($checklist->propertyDevelopment)->renovation_scope_of_work && 
+                                    !optional($checklist->propertyDevelopment)->renovation_status)
                                 N/A
                                 @endif
                             </dd>
@@ -1026,23 +1003,29 @@
                         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                             <dt class="text-sm font-medium text-gray-500">5.3 External Repainting</dt>
                             <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                @if($checklist->repainting_date)
-                                <div>Date: {{ date('d/m/Y', strtotime($checklist->repainting_date)) }}</div>
+                                @if(optional($checklist->propertyDevelopment)->external_repainting_date)
+                                <div>Date: {{ date('d/m/Y', strtotime($checklist->propertyDevelopment->external_repainting_date)) }}</div>
                                 @endif
-                                @if($checklist->external_repainting_status)
-                                <div class="mt-1">Scope: {{ $checklist->external_repainting_status }}</div>
+                                @if(optional($checklist->propertyDevelopment)->external_repainting_scope_of_work)
+                                <div class="mt-1">Scope: {{ $checklist->propertyDevelopment->external_repainting_scope_of_work }}</div>
                                 @endif
-                                @if($checklist->repainting_completion_status)
+                                @if(optional($checklist->propertyDevelopment)->external_repainting_status)
                                 <div class="mt-1">Status: 
                                     <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {{ $checklist->repainting_completion_status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                    ($checklist->repainting_completion_status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 
-                                    ($checklist->repainting_completion_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
-                                        {{ ucfirst(str_replace('_', ' ', $checklist->repainting_completion_status)) }}
+                                        {{ match(strtolower($checklist->propertyDevelopment->external_repainting_status)) {
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'active' => 'bg-green-100 text-green-800',
+                                            'inactive' => 'bg-gray-100 text-gray-800',
+                                            'rejected' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        } }}">
+                                        {{ ucfirst(str_replace('_', ' ', $checklist->propertyDevelopment->external_repainting_status)) }}
                                     </span>
                                 </div>
                                 @endif
-                                @if(!$checklist->repainting_date && !$checklist->external_repainting_status && !$checklist->repainting_completion_status)
+                                @if(!optional($checklist->propertyDevelopment)->external_repainting_date && 
+                                    !optional($checklist->propertyDevelopment)->external_repainting_scope_of_work && 
+                                    !optional($checklist->propertyDevelopment)->external_repainting_status)
                                 N/A
                                 @endif
                             </dd>
@@ -1075,14 +1058,6 @@
                                 @endif
                             </dd>
                         </div>
-
-                        <!-- Remarks -->
-                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                            <dt class="text-sm font-medium text-gray-500">Remarks</dt>
-                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                {{ optional($checklist->propertyDevelopment)->remarks ?? 'N/A' }}
-                            </dd>
-                        </div>
                         
                         <!-- Approval Information Section -->
                         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -1093,30 +1068,21 @@
                                 <div>Approved on: {{ optional($checklist->propertyDevelopment)->approval_datetime ? date('d/m/Y h:i A', strtotime($checklist->propertyDevelopment->approval_datetime)) : 'N/A' }}</div>
                             </dd>
                         </div>
+
+                        <!-- Remarks -->
+                        @if(optional($checklist->propertyDevelopment)->remarks)
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ optional($checklist->propertyDevelopment)->remarks ?? 'N/A' }}
+                            </dd>
+                        </div>
+                        @endif
                     </dl>
                 </div>
 
                 <!-- Action Buttons for Development Section -->
                 <div class="p-4 flex justify-end space-x-2 border-t border-gray-50">
-                    @if(strtolower($checklist->propertyDevelopment->status) === 'pending')
-                    <form action="{{ route('checklist-property-development-a.approve', $checklist->propertyDevelopment) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Approve
-                        </button>
-                    </form>
-                    <button type="button" 
-                        onclick="openRejectModal('development', '{{ $checklist->propertyDevelopment }}', 'Property Development - {{ $checklist->siteVisit->property->name ?? 'N/A' }}', '{{ route('checklist-property-development-a.reject', $checklist->propertyDevelopment) }}')" 
-                        class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Reject
-                    </button>
-                    @endif
                     <a href="{{ route('checklist-a.index', $checklist->siteVisit->property) }}" 
                         class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1154,8 +1120,7 @@
                                                 {{ $disposalInstallation->component_name }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <div>{{ $disposalInstallation->component_date ? $disposalInstallation->component_date->format('d/m/Y h:i A') : 'N/A' }}</div>
-                                                <div>{{ ucfirst($disposalInstallation->component_status) }}</div>
+                                                <div>{{ $disposalInstallation->component_date ? $disposalInstallation->component_date->format('d/m/Y') : 'N/A' }}</div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 @if($disposalInstallation->status)
@@ -1183,39 +1148,14 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div class="flex justify-between items-center w-32">
-                                                    @if($disposalInstallation->status === 'pending')
-                                                        <form action="{{ route('checklist-disposal-installation-a.approve', $disposalInstallation->id) }}" method="POST">
-                                                            @csrf
-                                                            <button type="submit" class="text-green-600 hover:text-green-900 p-2 rounded-full hover:bg-green-100" title="Approve">
-                                                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                                </svg>
-                                                            </button>
-                                                        </form>
-                                                        <button type="button" 
-                                                            onclick="openRejectModal('installation', '{{ $disposalInstallation->id }}', '{{ $disposalInstallation->component_name }}', '{{ route('checklist-disposal-installation-a.reject', $disposalInstallation->id) }}')" 
-                                                            class="text-red-600 hover:text-red-900 p-2 rounded-full hover:bg-red-100" 
-                                                            title="Reject">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                            </svg>
-                                                        </button>
-                                                        <a href="{{ route('checklist-disposal-installation-m.show', $disposalInstallation) }}" class="text-indigo-600 hover:text-indigo-900 p-2 rounded-full hover:bg-indigo-100" title="Edit">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </a>
-                                                    @else
-                                                        <div></div>
-                                                        <div></div>
-                                                        <a href="{{ route('checklist-disposal-installation-m.show', $disposalInstallation) }}" class="text-indigo-600 hover:text-indigo-900 p-2 rounded-full hover:bg-indigo-100" title="Edit">
-                                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                            </svg>
-                                                        </a>
-                                                    @endif
+                                                    <div></div>
+                                                    <div></div>
+                                                    <a href="{{ route('checklist-disposal-installation-a.show', $disposalInstallation) }}" class="text-indigo-600 hover:text-indigo-900 p-2 rounded-full hover:bg-indigo-100" title="Edit">
+                                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                        </svg>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
