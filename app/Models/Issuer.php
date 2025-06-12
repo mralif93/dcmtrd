@@ -43,6 +43,8 @@ class Issuer extends Model implements Auditable
         'approval_datetime' => 'datetime',
     ];
 
+    protected $dates = ['deleted_at'];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'prepared_by');
