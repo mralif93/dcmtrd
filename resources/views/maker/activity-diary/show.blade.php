@@ -70,9 +70,15 @@
 
                             @if ($activity->due_date)
                                 @php
-                                    $remainingDays = \Carbon\Carbon::now()
-                                        ->startOfDay()
-                                        ->diffInDays($activity->due_date, false);
+                                    use Carbon\Carbon;
+                                    use Illuminate\Support\Str;
+                                
+                                    // Parse dates at start of day
+                                    $dueDate = Carbon::parse($activity->due_date)->startOfDay();
+                                    $today = Carbon::today();
+                                
+                                    // Calculate exclusive days difference
+                                    $remainingDays = $today->diffInDays($dueDate, false);
                                 @endphp
                                 <span
                                     class="ml-3 text-sm {{ $remainingDays < 0 ? 'text-red-600 font-medium' : ($remainingDays <= 2 ? 'text-orange-600 font-medium' : 'text-gray-600') }}">
@@ -176,9 +182,15 @@
                         <div class="space-y-6">
                             @foreach ($dueDates as $index => $dateInfo)
                                 @php
-                                    $daysFromNow = \Carbon\Carbon::now()
-                                        ->startOfDay()
-                                        ->diffInDays(\Carbon\Carbon::parse($dateInfo['date']), false);
+                                    use Carbon\Carbon;
+                                    use Illuminate\Support\Str;
+                                
+                                    // Parse dates at start of day
+                                    $dateToCheck = Carbon::parse($dateInfo['date'])->startOfDay();
+                                    $today = Carbon::today();
+                                
+                                    // Calculate exclusive days difference
+                                    $daysFromNow = $today->diffInDays($dateToCheck, false);
                                     $isPast = $daysFromNow < 0;
                                     $dateLabel = $index === 0 ? 'Original Due Date' : 'Extension ' . $index;
                                     $badgeColor =

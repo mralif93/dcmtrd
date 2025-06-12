@@ -138,7 +138,12 @@ class UserTenantApprovalController extends Controller
         $expiryStatus = null;
         
         if ($currentLease && $currentLease->end_date) {
-            $daysToExpiry = now()->diffInDays($currentLease->end_date, false);
+            // Parse dates at start of day
+            $endDate = \Carbon\Carbon::parse($currentLease->end_date)->startOfDay();
+            $today = \Carbon\Carbon::today();
+            
+            // Calculate exclusive days difference
+            $daysToExpiry = $today->diffInDays($endDate, false);
             
             if ($daysToExpiry < 0) {
                 $expiryStatus = 'expired';

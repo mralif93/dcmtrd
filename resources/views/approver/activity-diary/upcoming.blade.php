@@ -163,7 +163,15 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
-                                        $remainingDays = \Carbon\Carbon::now()->startOfDay()->diffInDays($activity->due_date, false);
+                                        use Carbon\Carbon;
+                                        use Illuminate\Support\Str;
+                                    
+                                        // Parse dates at start of day
+                                        $dueDate = Carbon::parse($activity->due_date)->startOfDay();
+                                        $today = Carbon::today();
+                                    
+                                        // Calculate exclusive days difference
+                                        $remainingDays = $today->diffInDays($dueDate, false);
                                     @endphp
                                     <div class="text-sm {{ $remainingDays < 0 ? 'text-red-600 font-bold' : ($remainingDays <= 2 ? 'text-orange-600 font-medium' : 'text-gray-900') }}">
                                         {{ $remainingDays < 0 ? 'Overdue by ' . abs($remainingDays) . ' days' : $remainingDays . ' days' }}

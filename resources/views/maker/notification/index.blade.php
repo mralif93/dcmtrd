@@ -71,46 +71,35 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse($leases as $lease)
                                         @php
-                                            // Calculate time remaining until lease end
-                                            $endDate = \Carbon\Carbon::parse($lease->end_date)->startOfDay();
-                                            $now = \Carbon\Carbon::now();
-                                            $tomorrow = $now->copy()->addDay()->startOfDay();
-                                            $daysRemaining = $now->diffInDays($endDate, false);
-                                            $hoursRemaining = $now->diffInHours($endDate, false);
-
-                                            // Format the time remaining text and badge color
-                                            if ($daysRemaining < 0) {
-                                                // Past date - no special formatting
-                                                $timeRemaining = 'Past';
-                                                $badgeClass = 'bg-gray-100 text-gray-500';
-                                            } else {
-                                                // Check if the date is today
-                                                if ($now->format('Y-m-d') === $endDate->format('Y-m-d')) {
-                                                    $timeRemaining = 'Today';
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                }
-                                                // Check if the date is tomorrow
-                                                elseif ($endDate->format('Y-m-d') === $tomorrow->format('Y-m-d')) {
-                                                    $timeRemaining = 'Tomorrow';
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                }
-                                                // If it's within 24 hours but not today/tomorrow
-                                                elseif ((int)$daysRemaining === 0) {
-                                                    $timeRemaining = number_format($hoursRemaining, 2) . ' ' . Str::plural('hour', $hoursRemaining);
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } else {
-                                                    // Show total days remaining as integer (no decimals)
-                                                    $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
-                                                    
-                                                    // Apply color coding based on urgency
-                                                    if ($daysRemaining <= 7) {
-                                                        $badgeClass = 'bg-red-100 text-red-800';
-                                                    } elseif ($daysRemaining <= 30) {
-                                                        $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                    } else {
-                                                        $badgeClass = 'bg-blue-100 text-blue-800';
-                                                    }
-                                                }
+                                            use Carbon\Carbon;
+                                            use Illuminate\Support\Str;
+                                        
+                                            // Parse dates at start of day
+                                            $end   = Carbon::parse($lease->end_date)->startOfDay();
+                                            $today = Carbon::today();
+                                        
+                                            // Calculate exclusive days difference
+                                            $days  = $today->diffInDays($end, false);
+                                        
+                                            if ($days < 0) {
+                                                $label = 'Past';
+                                                $badge = 'bg-gray-100 text-gray-500';
+                                            }
+                                            elseif ($days === 0) {
+                                                $label = 'Today';
+                                                $badge = 'bg-red-100 text-red-800';
+                                            }
+                                            elseif ($days === 1) {
+                                                $label = 'Tomorrow';
+                                                $badge = 'bg-red-100 text-red-800';
+                                            }
+                                            else {
+                                                $label = "{$days} " . Str::plural('day', $days) . ' left';
+                                                $badge = match (true) {
+                                                    $days <= 7  => 'bg-red-100 text-red-800',
+                                                    $days <= 30 => 'bg-yellow-100 text-yellow-800',
+                                                    default     => 'bg-blue-100 text-blue-800',
+                                                };
                                             }
                                         @endphp
                                         <tr>
@@ -127,8 +116,8 @@
                                                 <div class="text-sm font-medium text-gray-900">{{ date('d/m/Y', strtotime($lease->start_date)) }} - {{ date('d/m/Y', strtotime($lease->end_date)) }}</div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badgeClass }}">
-                                                    {{ $timeRemaining }}
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badge }}">
+                                                    {{ $label }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
@@ -188,48 +177,32 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse($siteVisits as $siteVisit)
                                         @php
-                                            // Parse date and combine with time properly
+                                            // Parse dates at start of day
                                             $visitDate = \Carbon\Carbon::parse($siteVisit->date_visit)->startOfDay();
+                                            $today = \Carbon\Carbon::today();
 
-                                            // Create datetime by modifying time
-                                            $visitDateTime = $visitDate->copy()->modify($siteVisit->time_visit);
-
-                                            // Calculate time remaining until site visit
-                                            $now = \Carbon\Carbon::now();
-                                            $today = $now->copy()->startOfDay();
-                                            $tomorrow = $today->copy()->addDay();
+                                            // Calculate exclusive days difference
                                             $daysRemaining = $today->diffInDays($visitDate, false);
-                                            $hoursRemaining = $now->diffInHours($visitDateTime, false);
 
-                                            // Format the time remaining text and badge color
                                             if ($daysRemaining < 0) {
-                                                // Past date - no special formatting
                                                 $timeRemaining = 'Past';
                                                 $badgeClass = 'bg-gray-100 text-gray-500';
-                                            } elseif ($visitDate->isSameDay($today)) {
-                                                // Today
+                                            }
+                                            elseif ($daysRemaining === 0) {
                                                 $timeRemaining = 'Today';
                                                 $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($visitDate->isSameDay($tomorrow)) {
-                                                // Tomorrow  
+                                            }
+                                            elseif ($daysRemaining === 1) {
                                                 $timeRemaining = 'Tomorrow';
                                                 $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($daysRemaining == 0) {
-                                                // If it's within 24 hours but not today/tomorrow
-                                                $timeRemaining = number_format($hoursRemaining, 1) . ' ' . Str::plural('hour', $hoursRemaining);
-                                                $badgeClass = 'bg-red-100 text-red-800';
-                                            } else {
-                                                // Show total days remaining as integer (no decimals)
-                                                $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
-                                                
-                                                // Apply color coding based on urgency
-                                                if ($daysRemaining <= 7) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 30) {
-                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                } else {
-                                                    $badgeClass = 'bg-blue-100 text-blue-800';
-                                                }
+                                            }
+                                            else {
+                                                $timeRemaining = "{$daysRemaining} " . \Illuminate\Support\Str::plural('day', $daysRemaining);
+                                                $badgeClass = match (true) {
+                                                    $daysRemaining <= 7  => 'bg-red-100 text-red-800',
+                                                    $daysRemaining <= 30 => 'bg-yellow-100 text-yellow-800',
+                                                    default              => 'bg-blue-100 text-blue-800',
+                                                };
                                             }
                                         @endphp
                                         <tr>
@@ -319,42 +292,29 @@
                                                 )->startOfDay();
                                             }
 
-                                            // Calculate days and hours since the visit
-                                            $now = \Carbon\Carbon::now();
-                                            $today = $now->copy()->startOfDay();
-                                            $tomorrow = $today->copy()->addDay();
+                                            // Calculate exclusive days difference
+                                            $today = \Carbon\Carbon::today();
                                             $daysRemaining = $today->diffInDays($visitDate, false);
-                                            $hoursRemaining = $now->diffInHours($visitDate, false);
 
-                                            // Format the time remaining text and badge color
                                             if ($daysRemaining < 0) {
-                                                // Past date - show as "Past"
                                                 $timeRemaining = 'Past';
                                                 $badgeClass = 'bg-gray-100 text-gray-500';
-                                            } elseif ($visitDate->isSameDay($today)) {
-                                                // Today
+                                            }
+                                            elseif ($daysRemaining === 0) {
                                                 $timeRemaining = 'Today';
                                                 $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($visitDate->isSameDay($tomorrow)) {
-                                                // Tomorrow
+                                            }
+                                            elseif ($daysRemaining === 1) {
                                                 $timeRemaining = 'Tomorrow';
                                                 $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($daysRemaining == 0) {
-                                                // If it's within 24 hours but not today/tomorrow
-                                                $timeRemaining = number_format($hoursRemaining, 1) . ' ' . Str::plural('hour', $hoursRemaining);
-                                                $badgeClass = 'bg-red-100 text-red-800';
-                                            } else {
-                                                // Show total days remaining as integer (no decimals)
-                                                $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
-
-                                                // Apply color coding based on urgency
-                                                if ($daysRemaining <= 7) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 30) {
-                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                } else {
-                                                    $badgeClass = 'bg-blue-100 text-blue-800';
-                                                }
+                                            }
+                                            else {
+                                                $timeRemaining = "{$daysRemaining} " . \Illuminate\Support\Str::plural('day', $daysRemaining);
+                                                $badgeClass = match (true) {
+                                                    $daysRemaining <= 7  => 'bg-red-100 text-red-800',
+                                                    $daysRemaining <= 30 => 'bg-yellow-100 text-yellow-800',
+                                                    default              => 'bg-blue-100 text-blue-800',
+                                                };
                                             }
                                         @endphp
                                         <tr>
@@ -435,43 +395,32 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse($appointments as $appointment)
                                         @php
-                                            // Calculate time remaining
+                                            // Parse dates at start of day
                                             $appointmentDate = \Carbon\Carbon::parse($appointment->date_of_approval)->startOfDay();
-                                            $now = \Carbon\Carbon::now();
-                                            $today = $now->copy()->startOfDay();
-                                            $tomorrow = $today->copy()->addDay();
-                                            $daysRemaining = $today->diffInDays($appointmentDate, false);
-                                            $hoursRemaining = $now->diffInHours($appointmentDate, false);
+                                            $today = \Carbon\Carbon::today();
 
-                                            // Format the time remaining text and badge class
+                                            // Calculate exclusive days difference
+                                            $daysRemaining = $today->diffInDays($appointmentDate, false);
+
                                             if ($daysRemaining < 0) {
-                                                // Past date - show as "Past"
                                                 $timeRemaining = 'Past';
                                                 $badgeClass = 'bg-gray-100 text-gray-500';
-                                            } elseif ($appointmentDate->isSameDay($today)) {
-                                                // Today
+                                            }
+                                            elseif ($daysRemaining === 0) {
                                                 $timeRemaining = 'Today';
                                                 $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($appointmentDate->isSameDay($tomorrow)) {
-                                                // Tomorrow
+                                            }
+                                            elseif ($daysRemaining === 1) {
                                                 $timeRemaining = 'Tomorrow';
                                                 $badgeClass = 'bg-red-100 text-red-800';
-                                            } elseif ($daysRemaining == 0) {
-                                                // When 0 days remaining but not today/tomorrow, show hours
-                                                $timeRemaining = number_format($hoursRemaining, 1) . ' ' . Str::plural('hour', $hoursRemaining);
-                                                $badgeClass = 'bg-red-100 text-red-800';
-                                            } else {
-                                                // Show total days remaining as integer (no decimals)
-                                                $timeRemaining = (int)$daysRemaining . ' ' . Str::plural('day', (int)$daysRemaining);
-
-                                                // Apply color coding based on urgency
-                                                if ($daysRemaining <= 7) {
-                                                    $badgeClass = 'bg-red-100 text-red-800';
-                                                } elseif ($daysRemaining <= 30) {
-                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
-                                                } else {
-                                                    $badgeClass = 'bg-blue-100 text-blue-800';
-                                                }
+                                            }
+                                            else {
+                                                $timeRemaining = "{$daysRemaining} " . \Illuminate\Support\Str::plural('day', $daysRemaining);
+                                                $badgeClass = match (true) {
+                                                    $daysRemaining <= 7  => 'bg-red-100 text-red-800',
+                                                    $daysRemaining <= 30 => 'bg-yellow-100 text-yellow-800',
+                                                    default              => 'bg-blue-100 text-blue-800',
+                                                };
                                             }
                                         @endphp
                                         <tr>
