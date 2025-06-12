@@ -71,12 +71,9 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse($leases as $lease)
                                         @php
-                                            use Carbon\Carbon;
-                                            use Illuminate\Support\Str;
-                                        
                                             // Parse dates at start of day
-                                            $end   = Carbon::parse($lease->end_date)->startOfDay();
-                                            $today = Carbon::today();
+                                            $end   = Carbon\Carbon::parse($lease->end_date)->startOfDay();
+                                            $today = Carbon\Carbon::today();
                                         
                                             // Calculate exclusive days difference
                                             $days  = $today->diffInDays($end, false);
@@ -94,7 +91,7 @@
                                                 $badge = 'bg-red-100 text-red-800';
                                             }
                                             else {
-                                                $label = "{$days} " . Str::plural('day', $days) . ' left';
+                                                $label = "{$days} " . Illuminate\Support\Str::plural('day', $days) . ' left';
                                                 $badge = match (true) {
                                                     $days <= 7  => 'bg-red-100 text-red-800',
                                                     $days <= 30 => 'bg-yellow-100 text-yellow-800',

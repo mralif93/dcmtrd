@@ -70,12 +70,9 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse($leases as $lease)
                                         @php
-                                            use Carbon\Carbon;
-                                            use Illuminate\Support\Str;
-                                        
                                             // Parse dates at start of day
-                                            $end   = Carbon::parse($lease->end_date)->startOfDay();
-                                            $today = Carbon::today();
+                                            $end   = Carbon\Carbon::parse($lease->end_date)->startOfDay();
+                                            $today = Carbon\Carbon::today();
                                         
                                             // Calculate exclusive days difference
                                             $days  = $today->diffInDays($end, false);
@@ -93,7 +90,7 @@
                                                 $badgeClass = 'bg-red-100 text-red-800';
                                             }
                                             else {
-                                                $timeRemaining = "{$days} " . Str::plural('day', $days);
+                                                $timeRemaining = "{$days} " . Illuminate\Support\Str::plural('day', $days);
                                                 $badgeClass = match (true) {
                                                     $days <= 7  => 'bg-red-100 text-red-800',
                                                     $days <= 30 => 'bg-yellow-100 text-yellow-800',
@@ -164,12 +161,9 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @forelse($siteVisits as $siteVisit)
                                         @php
-                                            use Carbon\Carbon;
-                                            use Illuminate\Support\Str;
-                                        
                                             // Parse dates at start of day
-                                            $visitDate = Carbon::parse($siteVisit->date_visit)->startOfDay();
-                                            $today = Carbon::today();
+                                            $visitDate = Carbon\Carbon::parse($siteVisit->date_visit)->startOfDay();
+                                            $today = Carbon\Carbon::today();
                                         
                                             // Calculate exclusive days difference
                                             $daysRemaining = $today->diffInDays($visitDate, false);
@@ -187,7 +181,7 @@
                                                 $badgeClass = 'bg-red-100 text-red-800';
                                             }
                                             else {
-                                                $timeRemaining = "{$daysRemaining} " . Str::plural('day', $daysRemaining);
+                                                $timeRemaining = "{$daysRemaining} " . Illuminate\Support\Str::plural('day', $daysRemaining);
                                                 $badgeClass = match (true) {
                                                     $daysRemaining <= 7  => 'bg-red-100 text-red-800',
                                                     $daysRemaining <= 30 => 'bg-yellow-100 text-yellow-800',
